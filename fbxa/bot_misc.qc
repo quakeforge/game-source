@@ -41,6 +41,8 @@ this notice in its entirety.
 
 */
 
+#include "libfrikbot.h"
+
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -163,8 +165,8 @@ string () PickARandomName =
 	{
 		test = ceil(random() * 16);
 		h = BotName(test);
-		t = find(world, netname, h);
-		if (t == world)
+		t = find(NIL, netname, h);
+		if (t == NIL)
 			y = FALSE;
 	}
 	return h;
@@ -534,15 +536,15 @@ Kick A Bot.
 void() KickABot =
 {
 	local entity ty;
-	ty = find(world, classname, "player");
-	while (ty != world)
+	ty = find(NIL, classname, "player");
+	while (ty != NIL)
 	{
 		if (!(ty.ishuman))
 		{
 			
 			BotDisconnect(ty);
 			ty.ishuman = TRUE;
-			ty = world;
+			ty = NIL;
 		}
 		else
 			ty = find(ty, classname, "player");
@@ -686,7 +688,7 @@ float (entity targ1, entity targ2) wisible =
 		traceline (spot1, spot2, TRUE, ignore);
 		spot1 = realorigin(trace_ent);
                 ignore = trace_ent;
-	} while ((trace_ent != world) && (trace_fraction != 1));
+	} while ((trace_ent != NIL) && (trace_fraction != 1));
 	if (trace_endpos == spot2)
 		return TRUE;
 	else 

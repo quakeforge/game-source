@@ -2,7 +2,7 @@
 For instructions please read the
 wayedit.txt that comes with FrikBot */
 
-void(vector org, vector bit1, float bit4, float flargs) make_way;
+#include "libfrikbot.h"
 
 void() map_dm4 =
 {

@@ -42,6 +42,8 @@ this notice in its entirety.
 
 */
 
+#include "libfrikbot.h"
+
 
 
 /*
@@ -55,7 +57,7 @@ Waypoint Linking code
 
 float (entity e1, entity e2) CheckLinked =
 {
-	if ((e1 == e2) || (e2 == world) || (e1 == world))
+	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
 		return FALSE;
 	else if (e1.target1 == e2)
 	{
@@ -88,27 +90,27 @@ float (entity e1, entity e2) CheckLinked =
 
 float (entity e1, entity e2) LinkWays =
 {
-	if ((e1 == e2) || (e2 == world) || (e1 == world))
+	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
 		return FALSE;
 	else if (CheckLinked(e1, e2))
 		return FALSE; // already linked!!!
 
-	if (e1.target1 == world)
+	if (e1.target1 == NIL)
 	{
 		e1.target1 = e2;
 		return TRUE;
 	}
-	else if (e1.target2 == world)
+	else if (e1.target2 == NIL)
 	{
 		e1.target2 = e2;
 		return TRUE;
 	}
-	else if (e1.target3 == world)
+	else if (e1.target3 == NIL)
 	{
 		e1.target3 = e2;
                 return TRUE;
 	}
-	else if (e1.target4 == world)
+	else if (e1.target4 == NIL)
 	{
 		e1.target4 = e2;
 		return TRUE;
@@ -120,30 +122,30 @@ float (entity e1, entity e2) LinkWays =
 
 float (entity e1, entity e2) TeleLinkWays =
 {
-	if ((e1 == e2) || (e2 == world) || (e1 == world))
+	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
 		return FALSE;
 	else if (CheckLinked(e1, e2))
 		return FALSE; // already linked!!!
 
-	if (e1.target1 == world)
+	if (e1.target1 == NIL)
 	{
 		e1.target1 = e2;
 		e1.b_aiflags = e1.b_aiflags | AI_TELELINK_1;
 		return TRUE;
 	}
-	else if (e1.target2 == world)
+	else if (e1.target2 == NIL)
 	{
 		e1.target2 = e2;
 		e1.b_aiflags = e1.b_aiflags | AI_TELELINK_2;
 		return TRUE;
 	}
-	else if (e1.target3 == world)
+	else if (e1.target3 == NIL)
 	{
 		e1.target3 = e2;
 		e1.b_aiflags = e1.b_aiflags | AI_TELELINK_3;
             return TRUE;
 	}
-	else if (e1.target4 == world)
+	else if (e1.target4 == NIL)
 	{
 		e1.target4 = e2;
 		e1.b_aiflags = e1.b_aiflags | AI_TELELINK_4;
@@ -156,7 +158,7 @@ float (entity e1, entity e2) TeleLinkWays =
 
 void (entity e1, entity e2) UnlinkWays =
 {
-	if ((e1 == e2) || (e2 == world) || (e1 == world))
+	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
 		return;
 	else if (!CheckLinked(e1, e2))
 		return;
@@ -164,22 +166,22 @@ void (entity e1, entity e2) UnlinkWays =
 	if (e1.target1 == e2)
 	{
 		e1.b_aiflags = e1.b_aiflags - (e1.b_aiflags & AI_TELELINK_1);
-		e1.target1 = world;
+		e1.target1 = NIL;
 	}
 	if (e1.target2 == e2)
 	{
 		e1.b_aiflags = e1.b_aiflags - (e1.b_aiflags & AI_TELELINK_2);
-		e1.target2 = world;
+		e1.target2 = NIL;
 	}
 	if (e1.target3 == e2)
 	{
 		e1.b_aiflags = e1.b_aiflags - (e1.b_aiflags & AI_TELELINK_3);
-		e1.target3 = world;
+		e1.target3 = NIL;
 	}
 	if (e1.target4 == e2)
 	{
 		e1.b_aiflags = e1.b_aiflags - (e1.b_aiflags & AI_TELELINK_4);
-		e1.target4 = world;
+		e1.target4 = NIL;
 	}
 
 };
@@ -207,7 +209,7 @@ entity(entity start) FindWayPoint =
 	org = realorigin(self);
 
 	t = way_head; 
-	if (start != world)
+	if (start != NIL)
 	{
 		dst = vlen(start.origin - org);
 		best = start;
@@ -215,7 +217,7 @@ entity(entity start) FindWayPoint =
 	else
 	{
 		dst = 100000;
-		best = world;
+		best = NIL;
 	}
 	while(t)
 	{
@@ -302,7 +304,7 @@ void() DynamicWaypoint =
 			if (!self.ishuman)
 			{
 				bot_lost(self.target1, TRUE);
-				self.enemy = world;
+				self.enemy = NIL;
 			}
 		}
 		self.portal_time = self.teleport_time;
@@ -357,7 +359,7 @@ void() DynamicWaypoint =
 			}
 		}
 		self.dyn_dest = '0 0 0';
-		self.current_way = world;
+		self.current_way = NIL;
 		self.dyn_flags = 0;
 		return;
 	}
@@ -507,8 +509,8 @@ void() ClearAllWays =
 		remove(t);
 		t = n;
 	}
-	way_head = world;
-	way_foot = world;
+	way_head = NIL;
+	way_foot = NIL;
 	waypoints = 0;
 };
 
@@ -516,7 +518,7 @@ entity(float num) WaypointForNum =
 {
 	local entity t;
 	if (!num)
-		return world;
+		return NIL;
 
 	t = way_head;
 	while (t)
@@ -525,7 +527,7 @@ entity(float num) WaypointForNum =
 			return t;
 		t = t._next;
 	}
-	return world;
+	return NIL;
 };
 
 void() FixThisWaypoint = 
@@ -536,10 +538,10 @@ void() FixThisWaypoint =
 	self.enemy.target4 = WaypointForNum(self.enemy.b_frags);
 	self.enemy = self.enemy._next;
 	self.nextthink = time;
-	if (self.enemy == world)
+	if (self.enemy == NIL)
 	{
 		remove(self);
-		fixer = world;
+		fixer = NIL;
 	}
 };
 
@@ -576,7 +578,7 @@ void(entity what) delete_waypoint =
 		t = t._next;
 	}
 	if (self.current_way == what)
-		self.current_way = world;
+		self.current_way = NIL;
 	remove(what);
 };
 
@@ -596,9 +598,9 @@ entity(string s) FindThing =
 	local float tdst, dst;
 	local entity best;
 	dst = 100000;
-	best = world;
-	t = find (world, classname, s);
-	while (t != world)
+	best = NIL;
+	t = find (NIL, classname, s);
+	while (t != NIL)
 	{
 		tdst = vlen(((t.absmin + t.absmax) * 0.5) - self.origin);
             if (tdst < dst)
@@ -632,13 +634,13 @@ entity(entity lastone) FindRoute =
 	flag = ClientBitFlag(self.b_clientno);
 	t = way_head;
 	dst = 100000;
-	best = world;
+	best = NIL;
 	while(t)
 	{
 		tdst = vlen(t.origin - self.origin);
             if ((tdst < dst) &&  (t.b_sound & flag))
 		{
-			if ((lastone == world) || (CheckLinked(lastone, t)))
+			if ((lastone == NIL) || (CheckLinked(lastone, t)))
 			{
 				dst = tdst;
 				best = t;
@@ -665,7 +667,7 @@ void() ClearRouteTable =
 	while (t)
 	{
 		t. keys = FALSE;
-		t.enemy = world;
+		t.enemy = NIL;
 		t.items = -1; // not in table
 		t = t._next;
 	}
@@ -716,7 +718,7 @@ void(entity this) mark_path =
 	if (this.classname != "player")
 		this.current_way = t;
 		
-	if (t.enemy == world)
+	if (t.enemy == NIL)
 	{
 		bot_lost(this, FALSE);
 		if (waypoint_mode == WM_DYNAMIC)
@@ -864,7 +866,7 @@ float() begin_route =
 	if (busy_waypoints > 0)
 		return FALSE;
 	
-	if (route_table != world)
+	if (route_table != NIL)
 	{
 		if (!route_table.ishuman)
 		{
@@ -877,7 +879,7 @@ float() begin_route =
 	ClearRouteTable();
 	self.last_way = FindWayPoint(self.current_way);
 
-	if (self.last_way != world)
+	if (self.last_way != NIL)
 	{
 		self.last_way.items = vlen(self.last_way.origin - self.origin);
 		self.last_way.nextthink = time;
@@ -888,7 +890,7 @@ float() begin_route =
 	}
 	else 
 	{
-		route_table = world;
+		route_table = NIL;
 		busy_waypoints = 0;
 		return FALSE;
 	}
@@ -896,14 +898,14 @@ float() begin_route =
 
 void(entity this, float direct) bot_get_path =
 {
-	if (this == world)
+	if (this == NIL)
 		return;
 
 	if (route_table == self)
 	{
 		if (busy_waypoints <= 0)
 		{
-			route_table = world;
+			route_table = NIL;
 			mark_path(this);
 		}
 		return;

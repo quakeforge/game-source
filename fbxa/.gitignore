@@ -1,0 +1,6 @@
+*.a
+*.dat
+*.qfo
+*.sym
+ChangeLog
+progdefs.h

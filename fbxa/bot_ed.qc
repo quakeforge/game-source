@@ -42,6 +42,8 @@ this notice in its entirety.
 
 */
 
+#include "libfrikbot.h"
+
 float saved1, saved2, saved3, scratch1, scratch2, scratch3, scratch4;
 float bytecounter, filecount;
 
@@ -339,7 +341,7 @@ void() bot_menu_display =
 			if (self.impulse == 1)
 			{
 				if (self.current_way)
-					self.current_way.target1 = self.current_way.target2 = self.current_way.target3 = self.current_way.target4 = world;
+					self.current_way.target1 = self.current_way.target2 = self.current_way.target3 = self.current_way.target4 = NIL;
 			}
 			else if (self.impulse == 2)
 			{
@@ -554,7 +556,7 @@ void() bot_menu_display =
 					{
 						target_add(b_temp3);
 						bot_get_path(b_temp3, TRUE);
-						self = world;
+						self = NIL;
 					}
 					else
 						self = self._next;
@@ -574,8 +576,8 @@ void() bot_menu_display =
 				{
 					if (!self.ishuman)
 					{
-						self.target1 = self.target2 = self.target3 = self.target4 = world;
-						route_table = world;
+						self.target1 = self.target2 = self.target3 = self.target4 = NIL;
+						route_table = NIL;
 					}
 					self = self._next;
 				}
@@ -632,7 +634,7 @@ void() bot_menu_display =
 				t = way_head;
 				while(t)
 				{
-					if ((t.target1 == world) && (t.target2 == world) && (t.target3 == world) && (t.target4 == world))
+					if ((t.target1 == NIL) && (t.target2 == NIL) && (t.target3 == NIL) && (t.target4 == NIL))
 					{
 						sprint(self, "Waypoint #");
 						h = ftos(t.count);
@@ -1058,7 +1060,7 @@ void() PrintWaypoint =
 	local float needcolon;
 	local string h;
 	
-	if (self.enemy == world)
+	if (self.enemy == NIL)
 		t = way_head;
 	else
 		t = self.enemy._next;
@@ -1073,10 +1075,10 @@ void() PrintWaypoint =
 		bprint("\n// **** break here **** \n");
 		bytecounter = 26;
 	}
-	if (t == world)
+	if (t == NIL)
 	{
 		remove(self);
-		fixer = world;
+		fixer = NIL;
 		bprint("saved4 3\n// end waypoint dump\n");
 		bytecounter = bytecounter + 27;
 		return;
@@ -1208,7 +1210,7 @@ void() DumpWaypoints =
 		fixer = spawn();
 		fixer.nextthink = time + 0.01;
 		fixer.think = PrintWaypoint;
-		fixer.enemy = world;
+		fixer.enemy = NIL;
 	}
 };
 
@@ -1217,15 +1219,15 @@ void() PrintQCWaypoint =
 	local entity t;
 	local string h;
 	
-	if (self.enemy == world)
+	if (self.enemy == NIL)
 		t = way_head;
 	else
 		t = self.enemy._next;
 
-	if (t == world)
+	if (t == NIL)
 	{
 		remove(self);
-		fixer = world;
+		fixer = NIL;
 		bprint("};\n\n// End dump\n");
 		return;
 	}
@@ -1272,7 +1274,7 @@ void() QCDumpWaypoints =
 		fixer = spawn();
 		fixer.nextthink = time + 0.01;
 		fixer.think = PrintQCWaypoint;
-		fixer.enemy = world;
+		fixer.enemy = NIL;
 	}
 };
 
@@ -1281,16 +1283,16 @@ void() PrintBSPWaypoint =
 	local entity t;
 	local string h;
 
-	if (self.enemy == world)
+	if (self.enemy == NIL)
 		t = way_head;
 	else
 		t = self.enemy._next;
 
-	if (t == world)
+	if (t == NIL)
 	{
 		bprint("\n\n// End dump\n");
 		remove(self);
-		fixer = world;
+		fixer = NIL;
 		return;
 	}
 	bprint("{\n\"classname\" \"waypoint\"\n\"origin\" \"");
@@ -1349,6 +1351,6 @@ void() BSPDumpWaypoints =
 		fixer = spawn();
 		fixer.nextthink = time + 0.01;
 		fixer.think = PrintBSPWaypoint;
-		fixer.enemy = world;
+		fixer.enemy = NIL;
 	}
 };

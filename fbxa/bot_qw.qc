@@ -93,6 +93,8 @@ ClientFixRankings(); // FrikBot
 --------------------------------------
 */
 
+#include "libfrikbot.h"
+
 void() bot_map_load =
 {
 	// place your qc loaded waypoints here
@@ -141,67 +143,6 @@ for all variable in the bot...
 .vector dyn_dest;
 .vector	punchangle; // HACK - Don't want to screw with bot_phys
 
-// --------defines-----
-float SVC_UPDATENAME	= 13;
-float SVC_UPDATEFRAGS	= 14;
-float SVC_UPDATECOLORS	= 17;
-
-// used for the physics & movement AI
-float KEY_MOVEUP 		= 1;
-float KEY_MOVEDOWN 	= 2;
-float KEY_MOVELEFT 	= 4;
-float KEY_MOVERIGHT 	= 8;
-float KEY_MOVEFORWARD	= 16;
-float KEY_MOVEBACK	= 32;
-float KEY_LOOKUP		= 64;
-float KEY_LOOKDOWN	= 128;
-float KEY_LOOKLEFT	= 256;
-float KEY_LOOKRIGHT	= 512;
-
-// these are aiflags for waypoints
-// some overlap to the bot
-float AI_TELELINK_1	= 1; // link type
-float AI_TELELINK_2	= 2; // link type
-float AI_TELELINK_3	= 4; // link type
-float AI_TELELINK_4	= 8; // link type
-float AI_DOORFLAG		= 16; // read ahead
-float AI_PRECISION	= 32; // read ahead + point
-float AI_SURFACE		= 64; // point 
-float AI_BLIND		= 128; // read ahead + point
-float AI_JUMP		= 256; // point + ignore
-float AI_DIRECTIONAL	= 512; // read ahead + ignore
-float AI_PLAT_BOTTOM	= 1024; // read ahead 
-float AI_RIDE_TRAIN	= 2048; // read ahead 
-float AI_SUPER_JUMP	= 4096; // point + ignore + route test
-float AI_SNIPER		= 8192; // point type 
-float AI_AMBUSH		= 16384; // point type
-float AI_DOOR_NO_OPEN	= 32768; // read ahead
-float AI_DIFFICULT	= 65536; // route test
-float AI_TRACE_TEST	= 131072; // route test
-
-// these are flags for bots/players (dynamic/editor flags)
-float AI_OBSTRUCTED	= 1;
-float AI_HOLD_SELECT	= 2;
-float AI_ROUTE_FAILED	= 2;
-float AI_WAIT		= 4;
-float AI_DANGER		= 8;
-
-// addition masks
-float AI_POINT_TYPES 	= 29152;
-float AI_READAHEAD_TYPES	= 36528;
-float AI_IGNORE_TYPES	= 4864;
-
-float WM_UNINIT		= 0;
-float WM_DYNAMIC		= 1;
-float WM_LOADING		= 2;
-float WM_LOADED		= 3;
-// editor modes aren't available in QW, but we retain support of them
-// since the editor is still built into the AI in places
-float WM_EDITOR		= 4;
-float WM_EDITOR_DYNAMIC	= 5;
-float WM_EDITOR_DYNLINK	= 6;
-
-float OPT_NOCHAT	= 2;
 
 // -------globals-----
 float		active_clients1, active_clients2;
@@ -218,63 +159,6 @@ entity 		player_head, player_tail, phys_head, way_head;
 float		busy_waypoints;
 
 float coop = 0; // hack
-
-// -------ProtoTypes------
-// external
-void()				ClientConnect;
-void()				ClientDisconnect;
-void()				SetNewParms;
-
-// rankings
-float(float clientno)		ClientBitFlag;
-float()				ClientNextAvailable;
-void(float whatbot, float whatskill) BotConnect;
-void(entity bot)			BotDisconnect;
-void(float clientno)		BotInvalidClientNo;
-void(entity who)			UpdateClient;
-
-// waypointing
-void()				DynamicWaypoint;
-entity(vector org)		make_waypoint;
-void()				ClearAllWays;
-void()				FixWaypoints;
-float()				begin_route;
-void(entity this, float direct)			bot_get_path;
-void()				WaypointThink;
-entity(entity start)				FindWayPoint;
-
-// physics & movement
-float(entity e)			bot_can_rj;
-void()				bot_jump;
-void()				frik_bot_roam;
-float(vector weird)		frik_walkmove;
-void()				frik_movetogoal;
-void()				frik_obstacles;
-float(float flag)			frik_recognize_plat;
-float(vector sdir)		frik_KeysForDir;
-void(vector whichway, float danger) frik_obstructed;
-void()				SV_Physics_Client;
-void()				SV_ClientThink;
-void() 				CL_KeyMove;
-
-// ai & misc
-string()				PickARandomName;
-float(entity targ)		fov;
-float(float y1, float y2)	angcomp;
-float(entity targ1, entity targ2)		wisible;
-float(entity targ)		sisible;
-float(entity targ)		fisible;
-vector(entity ent)		realorigin;
-void(entity ent)			target_drop;
-void(entity ent)			target_add;
-void()				KickABot;
-void()				BotImpulses;
-void(entity targ, float success) bot_lost;
-string(float r)			BotName;
-float(float v)			frik_anglemod;
-void() bot_chat;
-void(float tpic) bot_start_topic;
-
 
 // ----------Commands---------
 void(entity e, float chan, string samp, float vol, float atten) frik_sound = #8;
@@ -432,7 +316,7 @@ void() ClientFixRankings =
 		return;
 	self.switch_wallhug = 0;
 
-	b_temp2 = nextent(world);
+	b_temp2 = nextent(NIL);
 	cno = 0;
 
 	while (cno < max_clients)
@@ -462,7 +346,7 @@ void() ClientInRankings =
 			while (e) {
 				if (e._next == self) {
 					self._last = e;
-					e = world;
+					e = NIL;
 				} else {
 					e = e._next;
 				}
@@ -473,7 +357,7 @@ void() ClientInRankings =
 			while (e) {
 				if (e._last == self) {
 					self._next = e;
-					e = world;
+					e = NIL;
 				} else {
 					e = e._last;
 				}
@@ -488,7 +372,7 @@ void() ClientInRankings =
 			self._next._last = self._last;
 		else if (self._last)
 			player_tail = self._last;
-		self._last = self._next = world;
+		self._last = self._next = NIL;
 	}
 	if (player_head)
 		player_head._last = self;
@@ -502,7 +386,7 @@ void() ClientInRankings =
 	if (!self.phys_obj)
 	{
 		b_temp2 = phys_head;
-		while (b_temp2 != world && b_temp2.owner != self)
+		while (b_temp2 != NIL && b_temp2.owner != self)
 			b_temp2 = b_temp2._next;
 		self.phys_obj = b_temp2;
 	}
@@ -637,17 +521,17 @@ void() BotInit =
 	local float numents = 0;
 	
 	// spawn entities for the physics
-	ent = nextent(world);
+	ent = nextent(NIL);
 	max_clients = 0;
 
-	while(ent != world)
+	while(ent != NIL)
 	{
 		max_clients = max_clients + 1;
 		ent = nextent(ent);
 	}
 
-	ent = nextent(world);
-	fisent = world;
+	ent = nextent(NIL);
+	fisent = NIL;
 	while (numents < max_clients)
 	{
 
@@ -798,7 +682,7 @@ BotConnect and related functions.
 entity(float num) GetClientEntity =
 {
 	local entity upsy;
-	upsy = world;
+	upsy = NIL;
 	num = num + 1;
 	while (num > 0)
 	{
@@ -920,7 +804,7 @@ void() BotFrame =
 	local float num;
 	local string h;
 	
-	h = infokey(world, "bot_options");
+	h = infokey(NIL, "bot_options");
 	b_options = stof(h);
 	
 	// for the sake of speed
@@ -932,7 +816,7 @@ void() BotFrame =
 	real_frametime = time - lasttime; // in QW frametime is fuxx0red
 	lasttime = time;
 	
-	self = nextent(world);
+	self = nextent(NIL);
 	num = 0;
 	while (num < max_clients)
 	{
@@ -980,7 +864,7 @@ void() BotImpulses =
 	
 	if (self.impulse == 100)
 	{
-		h = infokey(world, "skill");
+		h = infokey(NIL, "skill");
 		f = stof(h);
 		BotConnect(0, f);
 	}

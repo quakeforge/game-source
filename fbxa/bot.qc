@@ -557,7 +557,7 @@ void() ClientFixRankings =
 		return;
 	self.switch_wallhug = 0;
 
-	b_temp2 = nextent(world);
+	b_temp2 = nextent(NIL);
 	cno = 0;
 
 	while (cno < max_clients)
@@ -576,13 +576,13 @@ void() ClientInRankings =
 		player_head._last = self;
 
 	self._next = player_head;
-	self._last = world;
+	self._last = NIL;
 	player_head = self;
 
 	if (!self.phys_obj)
 	{
 		b_temp2 = phys_head;
-		while (b_temp2 != world && b_temp2.owner != self)
+		while (b_temp2 != NIL && b_temp2.owner != self)
 			b_temp2 = b_temp2._next;
 		self.phys_obj = b_temp2;
 	}
@@ -735,10 +735,10 @@ void() BotInit =
 	local float numents;
 	
 	// spawn entities for the physics
-	ent = nextent(world);
+	ent = nextent(NIL);
 	max_clients = 0;
 
-	while(ent != world)
+	while(ent != NIL)
 	{
 		max_clients = max_clients + 1;
 		ent = nextent(ent);
@@ -746,8 +746,8 @@ void() BotInit =
 	if (max_clients > 16)
 		max_clients = 16;
 
-	ent = nextent(world);
-	fisent = world;
+	ent = nextent(NIL);
+	fisent = NIL;
 	while (numents < max_clients)
 	{
 
@@ -904,7 +904,7 @@ float(float tcolor) FindAnotherColor =
 		{
 			b_temp2 = player_head;
 			pcount = 0;
-			while(b_temp2 != world)
+			while(b_temp2 != NIL)
 			{
 				if (b_temp2.team == scolor + 1)
 					pcount = pcount + 1;
@@ -939,7 +939,7 @@ BotConnect and related functions.
 entity(float num) GetClientEntity =
 {
 	local entity upsy;
-	upsy = world;
+	upsy = NIL;
 	num = num + 1;
 	while (num > 0)
 	{
@@ -1189,7 +1189,7 @@ void() BotFrame =
 	sv_stopspeed = cvar("sv_stopspeed");
 	real_frametime = frametime; // in NQ this is alright
 	
-	self = nextent(world);
+	self = nextent(NIL);
 	num = 0;
 	while (num < max_clients)
 	{

@@ -47,6 +47,8 @@ this notice in its entirety.
 
 */
 
+#include "libfrikbot.h"
+
 /*
 =========================================
 
@@ -355,7 +357,7 @@ float() SV_RunThink  =
 		thinktime = time;
 	self.nextthink = 0;
 	time = thinktime; 
-	other = world;
+	other = NIL;
 	makevectors(self.v_angle); // hack
 	self.think();
 	time = bkuptime;
@@ -399,7 +401,7 @@ float() SV_CheckWater =
 void() RemoveThud = // well sometimes
 { 
 	local entity oself;
-	if (other == world)
+	if (other == NIL)
 	{
 		if (self.flags & FL_ONGROUND)
 		{
@@ -585,20 +587,20 @@ void() SV_FlyMove =
 {
 	// This is nothing like the Quake function.
 
-	if (self.phys_obj == world)
+	if (self.phys_obj == NIL)
 	{
-		self.phys_obj = find(world,classname,"phys_obj");
+		self.phys_obj = find(NIL,classname,"phys_obj");
 		while (self.phys_obj.owner != self)
 		{
 			self.phys_obj = find(self.phys_obj,classname,"phys_obj");
-			if (self.phys_obj == world)
+			if (self.phys_obj == NIL)
 			{
 				error("No physics entity spawned!\nMake sure BotInit was called\n");
 			}
 		}
 	}
 
-	setmodel (self.phys_obj, string_null);
+	setmodel (self.phys_obj, NIL);
 	self.phys_obj.movetype = MOVETYPE_STEP;
 	
 	self.phys_obj.solid = SOLID_TRIGGER;

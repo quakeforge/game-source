@@ -42,6 +42,8 @@ this notice in its entirety.
 
 */
 
+#include "libfrikbot.h"
+
 void() bot_jump =
 {
 	// TODO check for precision, etc.
@@ -82,7 +84,7 @@ float(float flag) frik_recognize_plat =
 	if ((self.classname != "waypoint") && !(self.flags & FL_ONGROUND))
 		return FALSE;
 	traceline(self.origin, self.origin - '0 0 64', TRUE, self);
-	if (trace_ent != world)
+	if (trace_ent != NIL)
 	{
 		if (flag) // afect bot movement too
 		{
@@ -412,7 +414,7 @@ void() frik_movetogoal =
 	local vector way;
 	local float g;
 
-	if (self.target1 == world)
+	if (self.target1 == NIL)
 	{
 		makevectors(self.v_angle);
 		frik_walkmove(v_forward);

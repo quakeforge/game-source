@@ -42,6 +42,8 @@ this notice in its entirety.
 
 */
 
+#include "libfrikbot.h"
+
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -54,7 +56,7 @@ checks to see if an entity is on the bot's stack
 
 float(entity scot) target_onstack =
 {
-	if (scot == world)
+	if (scot == NIL)
 		return FALSE;
 	else if (self.target1 == scot)
 		return 1;
@@ -81,7 +83,7 @@ LIFO stack, this will be the bot's new target1
 
 void(entity ent) target_add =
 {
-	if (ent == world)
+	if (ent == NIL)
 		return;
 	if (target_onstack(ent))
 		return;
@@ -117,21 +119,21 @@ void(entity ent) target_drop =
 		self.target1 = self.target2;
 		self.target2 = self.target3;
 		self.target3 = self.target4;
-		self.target4 = world;
+		self.target4 = NIL;
 	}
 	else if (tg == 2)
 	{
 		self.target1 = self.target3;
 		self.target2 = self.target4;
-		self.target3 = self.target4 = world;
+		self.target3 = self.target4 = NIL;
 	}
 	else if (tg == 3)
 	{
 		self.target1 = self.target4;
-		self.target2 = self.target3 = self.target4 = world;
+		self.target2 = self.target3 = self.target4 = NIL;
 	}
 	else if (tg == 4)
-		self.target1 = self.target2 = self.target3 = self.target4 = world;
+		self.target1 = self.target2 = self.target3 = self.target4 = NIL;
 	self.search_time = time + 5;
 };
 
@@ -157,7 +159,7 @@ void(entity targ, float success) bot_lost =
 	// find a new route
 	if (!success)
 	{
-		self.target1 = self.target2 = self.target3 = self.target4 = world;
+		self.target1 = self.target2 = self.target3 = self.target4 = NIL;
 		self.last_way = FindWayPoint(self.current_way);
 		ClearMyRoute();
 		self.b_aiflags = 0;
@@ -170,8 +172,8 @@ void(entity targ, float success) bot_lost =
                 
                 if (targ.flags & FL_ITEM)
                 {
-                        if (targ.model == string_null)
-                                targ._last = world;
+                        if (!targ.model)
+                                targ._last = NIL;
                         else
                                 targ._last = self;
                 }
@@ -197,7 +199,7 @@ void(entity targ) bot_check_lost =
 	local vector dist;
 	dist = realorigin(targ) - self.origin;
 	dist_z = 0;
-	if (targ == world)
+	if (targ == NIL)
 		return;
 
 	// waypoints and items are lost if you get close enough to them
@@ -206,7 +208,7 @@ void(entity targ) bot_check_lost =
 	{
 		if (vlen(targ.origin - self.origin) < 32)
 			bot_lost(targ, TRUE);
-		else if (targ.model == string_null)
+		else if (!targ.model)
 			bot_lost(targ, TRUE);
 	}
 	else if (targ.classname == "waypoint")
@@ -278,7 +280,7 @@ void(entity targ) bot_check_lost =
 		{
 			bot_lost(targ, TRUE);
 			if (self.enemy == targ)
-				self.enemy = world;
+				self.enemy = NIL;
 			//if (self.target1)
 			//	bot_get_path(self.target1, TRUE);
 				
@@ -362,7 +364,7 @@ void() bot_handle_ai =
 			{
 				if (newt.targetname)
 				{
-					newt = find(world, target, newt.targetname);
+					newt = find(NIL, target, newt.targetname);
 					if (newt.health > 0) 
 					{
 						self.enemy = newt;
@@ -549,7 +551,7 @@ void() bot_path =
 				// linked doors fix
 				if (trace_ent.owner)
 					trace_ent = trace_ent.owner;
-				if ((trace_ent.health > 0) && (self.enemy == world))
+				if ((trace_ent.health > 0) && (self.enemy == NIL))
 				{
 					self.enemy = trace_ent;
 					bot_weapon_switch(1);
@@ -557,7 +559,7 @@ void() bot_path =
 				}
 				else if (trace_ent.targetname)
 				{
-					tele = find(world, target, trace_ent.targetname);
+					tele = find(NIL, target, trace_ent.targetname);
 					if (tele.health > 0) 
 					{
 						self.enemy = tele;
@@ -610,7 +612,7 @@ float(entity thing) priority_for_thing =
 	thisp = 0;
 	// This is the most executed function in the bot. Careful what you do here.
 
-	if ((thing.flags & FL_ITEM) && thing.model != string_null && thing.search_time < time)
+	if ((thing.flags & FL_ITEM) && thing.model && thing.search_time < time)
 	{
 		// ugly hack
                 if (thing._last != self)
@@ -722,7 +724,7 @@ float(entity thing) priority_for_thing =
 
 void(float scope) bot_look_for_crap =
 {
-	local entity foe, best = world;
+	local entity foe, best = NIL;
 	local float thatp, bestp, dist;
 
 	if (scope == 1)
@@ -746,7 +748,7 @@ void(float scope) bot_look_for_crap =
 		}
 		foe = foe.chain;
 	}
-	if (best == world)
+	if (best == NIL)
 		return;
 	if (!target_onstack(best))
 	{	
@@ -834,7 +836,7 @@ void() bot_angle_set =
 			self.v_angle_x = self.v_angle_x - 360;
 
 	}
-	else if ((self.enemy == world || self.enemy.movetype == MOVETYPE_PUSH) && self.target1.classname != "player")
+	else if ((self.enemy == NIL || self.enemy.movetype == MOVETYPE_PUSH) && self.target1.classname != "player")
 	{
 		self.keys = self.keys & 63;
 		self.v_angle = self.b_angle;
@@ -885,8 +887,8 @@ void() BotAI =
 		self.keys = 0;
 		self.b_aiflags = 0;
 		ClearMyRoute();
-		self.target1 = self.target2 = self.target3 = self.target4 = self.enemy = world;
-		self.last_way = world;
+		self.target1 = self.target2 = self.target3 = self.target4 = self.enemy = NIL;
+		self.last_way = NIL;
 		return;
 	}
 		

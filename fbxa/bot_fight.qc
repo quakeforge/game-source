@@ -42,6 +42,8 @@ this notice in its entirety.
 
 */
 
+#include "libfrikbot.h"
+
 .entity avoid;
 
 float(entity e) bot_size_player =
@@ -83,7 +85,7 @@ void() bot_dodge_stuff =
 	if (waypoint_mode > WM_LOADED)
 		return;
 
-	self.avoid = world;
+	self.avoid = NIL;
 
 
 	if (self.enemy)
@@ -99,7 +101,7 @@ void() bot_dodge_stuff =
 	}
 	avdist = 256;
 
-	foe = find(world, classname, "grenade");
+	foe = find(NIL, classname, "grenade");
 	while(foe)
 	{
 		flen = vlen(foe.origin - self.origin);
@@ -112,7 +114,7 @@ void() bot_dodge_stuff =
 	}
 	if (!self.avoid)
 	{
-		foe = find(world, classname, "missile");
+		foe = find(NIL, classname, "missile");
 		while(foe)
 		{
 			if (foe.owner != self)
@@ -128,7 +130,7 @@ void() bot_dodge_stuff =
 		}
 		if (!self.avoid)
 		{
-			foe = find(world, classname, "spike");
+			foe = find(NIL, classname, "spike");
 			while(foe)
 			{
 				if (foe.owner != self)
@@ -358,17 +360,17 @@ void() bot_fight_style =
 
 	if (self.enemy.health <= 0)
 	{
-		self.enemy = world;
+		self.enemy = NIL;
 		return;
 	}
 	else if (!self.enemy.takedamage)
 	{
-		self.enemy = world;
+		self.enemy = NIL;
 		return;
 	}
 	else if (!fisible(self.enemy))
 	{
-		self.enemy = world;
+		self.enemy = NIL;
 		return;
 	}
 
