@@ -23,28 +23,33 @@ void() item_health = {
 		self.noise2 = "items/r_item1.wav";
 		self.health = 15;
 	} else if (self.spawnflags & SPAWNFLAGS_HEALTH_MEGA) {
-		item_megahealth();
+		item_megahealth ();
 		return;
 	} else {
-		if (!self.model) self.model = "maps/b_bh25.bsp";
-		if (!self.noise2) self.noise2 = "items/health1.wav";
-		if (!self.health) self.health = 25;
+		if (!self.model)
+			self.model = "maps/b_bh25.bsp";
+		if (!self.noise2)
+			self.noise2 = "items/health1.wav";
+		if (!self.health)
+			self.health = 25;
 	}
-	
+
 	if (self.mins == '0 0 0' && self.maxs == '0 0 0')
-		setsize(self, '0 0 0', '32 32 56');
-	
-	item_generic();
+		setsize (self, '0 0 0', '32 32 56');
+
+	item_generic ();
 };
 
 /*QUAKED item_armor (0 .5 .8) (-16 -16 0) (16 16 32)
 */
 void() item_armor = {
-	if (!self.model) self.model = "progs/armor.mdl";
-	if (!self.noise2) self.noise2 = "items/armor1.wav";
+	if (!self.model)
+		self.model = "progs/armor.mdl";
+	if (!self.noise2)
+		self.noise2 = "items/armor1.wav";
 	if (self.mins == '0 0 0' && self.maxs == '0 0 0')
-		setsize(self, '-16 -16 0', '16 16 56');
-	item_generic();
+		setsize (self, '-16 -16 0', '16 16 56');
+	item_generic ();
 };
 
 // ========================================================================
@@ -52,14 +57,16 @@ void() item_armor = {
 /*QUAKED item_ammo (0 .5 .8) (0 0 0) (32 32 32)
 */
 void() item_ammo = {
-	if (!self.model) self.model = "progs/backpack.mdl";
-	if (!self.noise2) self.noise2 = "weapons/lock4.wav";
+	if (!self.model)
+		self.model = "progs/backpack.mdl";
+	if (!self.noise2)
+		self.noise2 = "weapons/lock4.wav";
 	if (self.mins == '0 0 0' && self.maxs == '0 0 0')
 		setsize(self, '0 0 0', '32 32 56');
 	if (!self.wait && !self.delay) {
 		self.wait = 25;
 		self.delay = 10;
 	}
-	item_generic();
+	item_generic ();
 };
 

@@ -2,12 +2,12 @@
 @extern {
 #endif
 
-entity intermission_head;
-entity spawn_head;
-void() info_notnull;
-void() light;
-void() misc_explobox;
-void() func_wall;
+	entity intermission_head;
+	entity spawn_head;
+	void () info_notnull;
+	void () light;
+	void () misc_explobox;
+	void () func_wall;
 
 #ifndef IMPLEMENT_MAPENTS
 };

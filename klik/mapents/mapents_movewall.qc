@@ -43,31 +43,31 @@
 */
 
 void() _deathmsg_squish = {
-	bprint(PRINT_DEATH, name(self), " was squished.\n");
+	bprint (PRINT_DEATH, name(self), " was squished.\n");
 };
 
 .vector finaldest;
 void() _move_to_pos_done = {
 	self.velocity = '0 0 0';
-	setorigin(self, self.finaldest);
+	setorigin (self, self.finaldest);
 	self.nextthink = -1;
 
 	if (self.think1)
-		self.think1();
+		self.think1 ();
 };
 
 /* calculate velocity and direction to move to position at spd. */
 /* _ONLY_ use this with MOVETYPE_PUSH's! */
 void(vector position, float spd, void() think_func) util_move_to_pos = {
-	local vector offs;
-	local float dist;
+	local float		dist;
+	local vector	offs;
 
 	self.finaldest = position;
 	self.speed = spd;
 
 	offs = position - self.origin;
-	dist = vlen(offs);
-	offs = offs * (1/dist);
+	dist = vlen (offs);
+	offs *= (1/ dist);
 
 	self.velocity = offs * spd;
 
@@ -80,10 +80,10 @@ void(vector position, float spd, void() think_func) util_move_to_pos = {
 };
 
 void() _movewall_done = {
-	self.state = self.state + 0.5;
+	self.state += 0.5;
 
 	if (self.w_think)
-		self.w_think();
+		self.w_think ();
 };
 
 void() _movewall_use = {
@@ -100,14 +100,16 @@ void() _movewall_use = {
 		return;
 
 	spd = self.goalentity.speed;
-	if (!spd) spd = self.speed;
-	util_move_to_pos(self.goalentity.pos2 - self.view_ofs, spd, _movewall_done);
+	if (!spd)
+		spd = self.speed;
+	util_move_to_pos (self.goalentity.pos2 - self.view_ofs, spd,
+					  _movewall_done);
 
 	self.state = self.goalentity.style - 0.5;
 	self.goalentity = self.goalentity.goalentity;
 
 	if (self.w_think)
-		self.w_think();
+		self.w_think ();
 };
 
 void() movewall_init = {
@@ -126,7 +128,7 @@ void() movewall_init = {
 
 void() _movewall_wait_think = {
 	if (self.pain_finished <= self.ltime) {
-		_movewall_use();
+		_movewall_use ();
 		return;
 	}
 
@@ -136,7 +138,7 @@ void() _movewall_wait_think = {
 void() _movewall_state0_use = {
 	if (self.state != 0)
 		return;
-	_movewall_use();
+	_movewall_use ();
 };
 
 void() _movewall_binary_think = {
@@ -144,7 +146,7 @@ void() _movewall_binary_think = {
 		local vector tmp;
 
 		if (self.noise3)
-			sound(self, CHAN_BODY, self.noise3, 1, ATTN_NORM);
+			sound (self, CHAN_BODY, self.noise3, 1, ATTN_NORM);
 
 		tmp = self.pos2;
 		self.pos2 = self.pos1;
@@ -152,7 +154,7 @@ void() _movewall_binary_think = {
 		self.style = 1 - self.style;
 	} else {
 		if (self.noise4)
-			sound(self, CHAN_BODY|CHAN_NO_PHS_ADD, self.noise4, 1, ATTN_NORM);
+			sound (self, CHAN_BODY|CHAN_NO_PHS_ADD, self.noise4, 1, ATTN_NORM);
 
 		if (self.state == 1) {
 			self.think = _movewall_wait_think;
@@ -163,11 +165,11 @@ void() _movewall_binary_think = {
 
 void() _movewall_block_ignore = {
 	if (self.dmg)
-		damage(other, self, self, self.dmg*frametime, _deathmsg_squish);
+		damage (other, self, self, self.dmg * frametime, _deathmsg_squish);
 
 	/* recalculate the move.. */
 	if (self.nextthink && self.think == _movewall_done)
-		util_move_to_pos(self.finaldest, self.speed, self.think1);
+		util_move_to_pos (self.finaldest, self.speed, self.think1);
 };
 
 void() _movewall_block_goback = {
@@ -178,15 +180,15 @@ void() _movewall_block_goback = {
 
 void() _movewall_trigger_touch = {
 	self = self.owner;
-	self.flags = self.flags | FL_JUMPRELEASED;
-	self.touch();
-	self.flags = self.flags - FL_JUMPRELEASED;
+	self.flags |= FL_JUMPRELEASED;
+	self.touch ();
+	self.flags &= ~FL_JUMPRELEASED;
 };
 
 entity(vector org, vector tmin, vector tmax) _movewall_spawn_trigger = {
-	local entity trigger;
+	local entity	trigger;
 
-	trigger = spawn("TRIGGER");
+	trigger = spawn ("TRIGGER");
 
 	trigger.solid = SOLID_TRIGGER;
 	trigger.movetype = MOVETYPE_NONE;
@@ -195,8 +197,8 @@ entity(vector org, vector tmin, vector tmax) _movewall_spawn_trigger = {
 
 	trigger.owner = self;
 
-	setsize(trigger, tmin, tmax);
-	setorigin(trigger, org);
+	setsize (trigger, tmin, tmax);
+	setorigin (trigger, org);
 
 	return trigger;
 };
@@ -209,15 +211,15 @@ entity(vector org, vector tmin, vector tmax) _movewall_spawn_trigger = {
 
 #define SPAWNFLAGS_DOOR_START_OPEN 1
 #define SPAWNFLAGS_DOOR_DONT_LINK 4
-#define SPAWNFLAGS_DOOR_GOLD_KEY 8	/* legacy	*/
-#define SPAWNFLAGS_DOOR_SILVER_KEY 16	/* legacy	*/
+#define SPAWNFLAGS_DOOR_GOLD_KEY 8		// legacy
+#define SPAWNFLAGS_DOOR_SILVER_KEY 16	// legacy
 #define SPAWNFLAGS_DOOR_TOGGLE 32
 
 float(float d) _movewall_door_takedamage = {
 	local entity oldself;
 
 	if (self.owner.state != 0) {
-		deathmsg_nodisplay();
+		deathmsg_nodisplay ();
 		return FALSE;
 	}
 
@@ -230,8 +232,8 @@ float(float d) _movewall_door_takedamage = {
 		self.health = self.max_health;
 
 		while (self) {
-			if (util_use_targets()) {
-				self.use();
+			if (util_use_targets ()) {
+				self.use ();
 
 				/* Hack for id compat... */
 				/* Use target if you need it to go more
@@ -247,14 +249,14 @@ float(float d) _movewall_door_takedamage = {
 
 	self = oldself;
 
-	deathmsg_nodisplay();
-	return FALSE;	/* lie */
+	deathmsg_nodisplay ();
+	return FALSE;	// lie
 };
 
 void() _movewall_door_touch = {
-	local entity oldself;
+	local entity	oldself;
 
-	if (!is_living(other))
+	if (!is_living (other))
 		return;
 
 	oldself = self;
@@ -268,8 +270,8 @@ void() _movewall_door_touch = {
 		}
 	} else {
 		while (self) {
-			if (util_use_targets()) {
-				_movewall_use();
+			if (util_use_targets ()) {
+				_movewall_use ();
 
 				/* Hack for id compat... */
 				/* Use target if you need it to go more
@@ -286,25 +288,25 @@ void() _movewall_door_touch = {
 };
 
 void() _door_link = {
-	local entity head, tail;
+	local entity	head, tail;
 
 	tail = self;
 	tail.owner = self;
 
 	head = self;
 	while (1) {
-		head = find(head, classname, self.classname);
+		head = find (head, classname, self.classname);
 		if (!head)
 			break;
 
 		if (head.spawnflags & SPAWNFLAGS_DOOR_DONT_LINK)
 			continue;
 
-		if (!util_entities_touch(self, head))
+		if (!util_entities_touch (self, head))
 			continue;
 
 		if (head.owner != head)
-			objerror("Crosslinked doors\n");
+			objerror ("Crosslinked doors\n");
 
 		tail.enemy = head;
 		tail = head;
@@ -313,16 +315,25 @@ void() _door_link = {
 		tail.owner = self;
 
 		/* *Sigh*.  Id compat. */
-		if (tail.noise1) self.noise1 = tail.noise1;
-		if (tail.noise2) self.noise2 = tail.noise2;
-		if (tail.noise3) self.noise3 = tail.noise3;
-		if (tail.noise4) self.noise4 = tail.noise4;
-		if (tail.noise5) self.noise5 = tail.noise5;
-		if (tail.noise6) self.noise6 = tail.noise6;
-		if (tail.message) self.message = tail.message;
+		if (tail.noise1)
+			self.noise1 = tail.noise1;
+		if (tail.noise2)
+			self.noise2 = tail.noise2;
+		if (tail.noise3)
+			self.noise3 = tail.noise3;
+		if (tail.noise4)
+			self.noise4 = tail.noise4;
+		if (tail.noise5)
+			self.noise5 = tail.noise5;
+		if (tail.noise6)
+			self.noise6 = tail.noise6;
+		if (tail.message)
+			self.message = tail.message;
 
-		if (tail.health) self.health = tail.health;
-		if (tail.targetname) self.targetname = tail.targetname;
+		if (tail.health)
+			self.health = tail.health;
+		if (tail.targetname)
+			self.targetname = tail.targetname;
 
 		tail.message = "";
 
@@ -366,72 +377,93 @@ void() _door_link = {
 
 void() func_door = {
 	if (!self.noise5) {
-		if (world.worldtype == 0) {
+		switch (world.worldtype) {
+		case 0:
 			self.noise5 = "doors/medtry.wav";
 			self.noise6 = "doors/meduse.wav";
-		} else if (world.worldtype == 1) {
+			break;
+		case 1:
 			self.noise5 = "doors/runetry.wav";
 			self.noise6 = "doors/runeuse.wav";
-		} else if (world.worldtype == 2) {
+			break;
+		case 2:
 			self.noise5 = "doors/basetry.wav";
 			self.noise6 = "doors/baseuse.wav";
+			break;
+		default:
+			break;
 		}
 	}
 
 	if (!self.noise3) {
-		if (self.sounds == 1) {
+		switch (self.sounds) {
+		case 1:
 			self.noise3 = "doors/doormv1.wav";
 			self.noise4 = "doors/drclos4.wav";
-		} else if (self.sounds == 2) {
+			break;
+		case 2:
 			self.noise3 = "doors/hydro1.wav";
 			self.noise4 = "doors/hydro2.wav";
-		} else if (self.sounds == 3) {
+			break;
+		case 3:
 			self.noise3 = "doors/stndr1.wav";
 			self.noise4 = "doors/stndr2.wav";
-		} else if (self.sounds == 4) {
+			break;
+		case 4:
 			self.noise3 = "doors/ddoor1.wav";
 			self.noise4 = "doors/ddoor2.wav";
+			break;
+		default:
+			break;
 		}
 	}
-	
-	if (self.noise3) precache_sound(self.noise3);
-	if (self.noise4) precache_sound(self.noise4);
+
+	if (self.noise3)
+		precache_sound(self.noise3);
+	if (self.noise4)
+		precache_sound(self.noise4);
 
 	if (self.message != "" && !self.noise1 && !self.noise2)
 		self.noise2 = "misc/talk.wav";
 
-	if (!self.speed)	self.speed = 100;
-	if (!self.wait)		self.wait = 3;
-	if (!self.lip)		self.lip = 8;
+	if (!self.speed)
+		self.speed = 100;
+	if (!self.wait)
+		self.wait = 3;
+	if (!self.lip)
+		self.lip = 8;
 
-	if (!self.dmg)		self.dmg = 2;
-	if (self.dmg < 0)	self.dmg = 0;
+	if (!self.dmg)
+		self.dmg = 2;
+	if (self.dmg < 0)
+		self.dmg = 0;
 
 	if (self.spawnflags & SPAWNFLAGS_DOOR_SILVER_KEY) {
-		self.spawnflags = self.spawnflags | SPAWNFLAGS_CHECK_ITEMS;
-		self.items = self.items | IT_KEY1;
+		self.spawnflags |= SPAWNFLAGS_CHECK_ITEMS;
+		self.items |= IT_KEY1;
 		self.wait = -1;
 	}
 
 	if (self.spawnflags & SPAWNFLAGS_DOOR_GOLD_KEY) {
-		self.spawnflags = self.spawnflags | SPAWNFLAGS_CHECK_ITEMS;
-		self.items = self.items | IT_KEY2;
+		self.spawnflags |= SPAWNFLAGS_CHECK_ITEMS;
+		self.items |= IT_KEY2;
 		self.wait = -1;
 	}
 
 	self.max_health = self.health;
 
-	movewall_init();
+	movewall_init ();
 
-	util_map_entity_init();
+	util_map_entity_init ();
 
-	util_set_movedir();
+	util_set_movedir ();
 
 	self.pos1 = self.origin;
-	self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
+	self.pos2 = self.pos1 + self.movedir * (fabs (self.movedir * self.size)
+											- self.lip);
 
 	if (self.spawnflags & SPAWNFLAGS_DOOR_START_OPEN) {
-		setorigin(self, self.pos2);
+		setorigin (self, self.pos2);
 		self.pos2 = self.pos1;
 		self.pos1 = self.origin;
 	}
@@ -448,7 +480,7 @@ void() func_door = {
 	self.blocked = _movewall_block_goback;
 	self.w_think = _movewall_binary_think;
 
-	self.owner = self;	/* In case we get triggered before 0.1 */
+	self.owner = self;	// In case we get triggered before 0.1
 
 	self.think = _door_link;
 	self.nextthink = self.ltime + 0.1;
@@ -464,7 +496,7 @@ void() _movewall_plat_touch = {
 	if (!(self.flags & FL_JUMPRELEASED))
 		return;
 
-	_movewall_door_touch();
+	_movewall_door_touch ();
 };
 
 void() func_plat = {
@@ -480,22 +512,26 @@ void() func_plat = {
 		}
 	}
 
-	if (self.noise3) precache_sound(self.noise3);
-	if (self.noise4) precache_sound(self.noise4);
+	if (self.noise3)
+		precache_sound(self.noise3);
+	if (self.noise4)
+		precache_sound(self.noise4);
 
-	if (!self.speed)	self.speed = 150;
-	if (!self.wait)		self.wait = 1;
+	if (!self.speed)
+		self.speed = 150;
+	if (!self.wait)
+		self.wait = 1;
 
-	movewall_init();
+	movewall_init ();
 
-	util_map_entity_init();
+	util_map_entity_init ();
 
 	if (!self.height)
 		self.height = self.size_z - 8;
 
 	self.pos1 = self.origin;
 	self.pos2 = self.origin;
-	self.pos2_z = self.pos2_z - self.height;
+	self.pos2_z -= self.height;
 
 	// =============
 	tmin = self.mins + '25 25 0';
@@ -514,7 +550,7 @@ void() func_plat = {
 	// =============
 
 	if (!self.targetname) {
-		setorigin(self, self.pos2);
+		setorigin (self, self.pos2);
 		self.pos2 = self.pos1;
 		self.pos1 = self.origin;
 
@@ -541,12 +577,12 @@ void() func_plat = {
 /* buttons, out pos1, in pos2 */
 
 void() _movewall_button_think = {
-	if (floor(self.state) != self.state) {
-		local vector tmp;
+	if (floor (self.state) != self.state) {
+		local vector	tmp;
 
 		if (self.state == 0.5) {
 			if (self.noise3)
-				sound(self, CHAN_BODY, self.noise3, 1, ATTN_NORM);
+				sound (self, CHAN_BODY, self.noise3, 1, ATTN_NORM);
 		}
 
 		tmp = self.pos2;
@@ -556,11 +592,12 @@ void() _movewall_button_think = {
 	} else {
 		if (self.state == 1) {
 			if (self.noise4)
-				sound(self, CHAN_BODY|CHAN_NO_PHS_ADD, self.noise4, 1, ATTN_NORM);
+				sound (self, CHAN_BODY|CHAN_NO_PHS_ADD, self.noise4, 1,
+					   ATTN_NORM);
 
 			self.think = _movewall_wait_think;
 
-			if (util_use_targets()) {
+			if (util_use_targets ()) {
 				self.frame = 1;
 				self.nextthink = self.ltime + self.wait;
 			} else {
@@ -573,17 +610,16 @@ void() _movewall_button_think = {
 };
 
 void() _movewall_button_touch = {
-	if (!is_living(other))
+	if (!is_living (other))
 		return;
-
 	if (self.state != 0)
 		return;
 
-	self.use();
+	self.use ();
 };
 
 float(float d) _movewall_button_takedamage = {
-	deathmsg_nodisplay();
+	deathmsg_nodisplay ();
 
 	if (self.state != 0)
 		return FALSE;
@@ -592,35 +628,53 @@ float(float d) _movewall_button_takedamage = {
 
 	if (self.health <= 0) {
 		self.health = self.max_health;
-		self.use();
+		self.use ();
 	}
 
-	return FALSE;	/* lie */
+	return FALSE;	// lie
 };
 
 void() func_button = {
 	if (!self.noise3) {
-		if (self.sounds == 0)		self.noise3 = "buttons/airbut1.wav";
-		else if (self.sounds == 1)	self.noise3 = "buttons/switch21.wav";
-		else if (self.sounds == 2)	self.noise3 = "buttons/switch02.wav";
-		else if (self.sounds == 3)	self.noise3 = "buttons/switch04.wav";
+		switch (self.sounds) {
+		case 0:
+			self.noise3 = "buttons/airbut1.wav";
+			break;
+		case 1:
+			self.noise3 = "buttons/switch21.wav";
+			break;
+		case 2:
+			self.noise3 = "buttons/switch02.wav";
+			break;
+		case 3:
+			self.noise3 = "buttons/switch04.wav";
+			break;
+		default:
+			break;
+		}
 	}
 	
-	if (self.noise3)	precache_sound(self.noise3);
-	if (self.noise4)	precache_sound(self.noise4);
+	if (self.noise3)
+		precache_sound (self.noise3);
+	if (self.noise4)
+		precache_sound (self.noise4);
 
-	if (!self.speed)	self.speed = 40;
-	if (!self.wait)		self.wait = 1;
-	if (!self.lip)		self.lip = 4;
+	if (!self.speed)
+		self.speed = 40;
+	if (!self.wait)
+		self.wait = 1;
+	if (!self.lip)
+		self.lip = 4;
 
-	movewall_init();
+	movewall_init ();
 
-	util_map_entity_init();
+	util_map_entity_init ();
 
-	util_set_movedir();
+	util_set_movedir ();
 
 	self.pos1 = self.origin;
-	self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
+	self.pos2 = self.pos1 + self.movedir * (fabs (self.movedir * self.size)
+											- self.lip);
 
 	self.style = 1;
 	self.state = 1 - self.style;
@@ -662,52 +716,54 @@ void() func_button = {
 /* pos1 is state 0 position */
 
 void() _movewall_secret_use = {
-	/* Stay open... */
+	// Stay open...
 	if (self.count == 2 && self.state == 2)
 		self.nextthink = self.ltime + self.wait;
 
 	if (self.state != 0)
 		return;
 
-	_movewall_use();
+	_movewall_use ();
 };
 
 .vector dest1, dest2;
 void() _movewall_secret_think = {
-	if (floor(self.state) != self.state) {
+	if (floor (self.state) != self.state) {
 		if (self.count == 0 && self.state == 0.5) {
 			self.message = NIL;
 			self.noise2 = NIL;
 
-			if (!util_use_targets()) {
+			if (!util_use_targets ()) {
 				self.velocity = '0 0 0';
-				setorigin(self, self.pos1);
+				setorigin (self, self.pos1);
 
 				self.state = 0;
 				self.nextthink = -1;
-				
+
 				return;
 			}
 		}
 
 		if (self.noise3)
-			sound(self, CHAN_BODY, self.noise3, 1, ATTN_NORM);
+			sound (self, CHAN_BODY, self.noise3, 1, ATTN_NORM);
 
 		return;
 	}
 
 	if (self.noise4)
-		sound(self, CHAN_BODY|CHAN_NO_PHS_ADD, self.noise4, 1, ATTN_NORM);
+		sound (self, CHAN_BODY|CHAN_NO_PHS_ADD, self.noise4, 1, ATTN_NORM);
 
 	self.think = _movewall_use;
 	self.nextthink = self.ltime + 1.0;
 
-	if (self.count == 0 && self.state == 0) {
-		self.style = 1;
-		self.pos2 = self.dest1;
-	} if (self.count == 0 && self.state == 1) {
-		self.style = 2;
-		self.pos2 = self.dest2;
+	if (self.count == 0) {
+		if (self.state == 0) {
+			self.style = 1;
+			self.pos2 = self.dest1;
+		} else if (self.state == 1) {
+			self.style = 2;
+			self.pos2 = self.dest2;
+		}
 	} else if (self.count == 1 && self.state == 2) {
 		if (self.spawnflags & SPAWNFLAGS_SECRET_ONCE) {
 			self.nextthink = -1;
@@ -733,13 +789,13 @@ void() _movewall_secret_think = {
 };
 
 float(float d) _movewall_secret_takedamage = {
-	self.use();
-	deathmsg_nodisplay();
+	self.use ();
+	deathmsg_nodisplay ();
 	return FALSE;
 };
 
 void() _movewall_secret_touch = {
-	if (!is_living(other))
+	if (!is_living (other))
 		return;
 
 	if (time < self.attack_finished)
@@ -748,11 +804,12 @@ void() _movewall_secret_touch = {
 	self.attack_finished = time + 2;
 
 	if (self.message) {
-		if (is_cl(other))
-			centerprint(other, self.message);
+		if (is_cl (other))
+			centerprint (other, self.message);
 
 		if (self.noise2)
-			sound(other, CHAN_ITEM, self.noise2, self.volume, self.attenuation);
+			sound (other, CHAN_ITEM, self.noise2, self.volume,
+				   self.attenuation);
 	}
 };
 
@@ -771,35 +828,47 @@ dmg		damage to inflict when blocked (default 2)
 
 void() func_door_secret = {
 	if (!self.noise3) {
-		if (self.sounds == 1) {
+		switch (self.sounds) {
+		case 1:
 			self.noise1 = "doors/latch2.wav";
 			self.noise3 = "doors/winch2.wav";
 			self.noise4 = "doors/drclos4.wav";
-		} else if (self.sounds == 2) {
+			break;
+		case 2:
 			self.noise3 = "doors/airdoor1.wav";
 			self.noise4 = "doors/airdoor2.wav";
-		} else if (self.sounds == 0 || self.sounds == 3) {
+			break;
+		case 0:
+		case 3:
 			self.noise3 = "doors/basesec1.wav";
 			self.noise4 = "doors/basesec2.wav";
+			break;
+		default:
+			break;
 		}
 	}
 
 	if (self.message != "" && !self.noise2)
 		self.noise2 = "misc/talk.wav";
 
-	if (self.noise3)	precache_sound(self.noise3);
-	if (self.noise4)	precache_sound(self.noise4);
+	if (self.noise3)
+		precache_sound(self.noise3);
+	if (self.noise4)
+		precache_sound(self.noise4);
 
 	self.solid = SOLID_BSP;
 	self.movetype = MOVETYPE_PUSH;
 
-	if (!self.speed)	self.speed = 50;
-	if (!self.wait)		self.wait = 5;
-	if (!self.dmg)		self.dmg = 2;
+	if (!self.speed)
+		self.speed = 50;
+	if (!self.wait)
+		self.wait = 5;
+	if (!self.dmg)
+		self.dmg = 2;
 
-	movewall_init();
+	movewall_init ();
 
-	util_map_entity_init();
+	util_map_entity_init ();
 
 	self.use = _movewall_secret_use;
 
@@ -809,13 +878,13 @@ void() func_door_secret = {
 
 	if (!self.t_width) {
 		if (self.spawnflags & SPAWNFLAGS_SECRET_1ST_DOWN)
-			self.t_width = fabs(v_up * self.size);
+			self.t_width = fabs (v_up * self.size);
 		else
-			self.t_width = fabs(v_right * self.size);
+			self.t_width = fabs (v_right * self.size);
 	}
 
 	if (!self.t_length) {
-		self.t_length = fabs(v_forward * self.size);
+		self.t_length = fabs (v_forward * self.size);
 	}
 
 	self.pos1 = self.origin;
@@ -859,10 +928,11 @@ void() func_door_secret = {
 void() _movewall_train_think = {
 	if (floor(self.state) != self.state) {
 		if (self.count != self.state && self.noise3)
-			sound(self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
+			sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
 	} else {
 		if (self.noise4)
-			sound(self, CHAN_VOICE|CHAN_NO_PHS_ADD, self.noise4, 1, ATTN_NORM);
+			sound (self, CHAN_VOICE|CHAN_NO_PHS_ADD, self.noise4, 1,
+				   ATTN_NORM);
 
 		self.think = _movewall_wait_think;
 		self.nextthink = self.ltime + self.wait;
@@ -872,22 +942,25 @@ void() _movewall_train_think = {
 };
 
 void() _train_finalize = {
-	local entity oldself;
+	local entity	oldself;
 
 	oldself = self;
 	while (self) {
-		if (self.goalentity) break;	/* Looped. FIXME: Use short circuit when compiler supports */
+		if (self.goalentity)
+			break;	// Looped. FIXME: Use short circuit when compiler supports
 
-		if (!self.target)	objerror("Train without target\n");
-		self.goalentity = find(world, targetname, self.target);
-		if (!self.goalentity)	objerror("Unable to find train target\n");
+		if (!self.target)
+			objerror ("Train without target\n");
+		self.goalentity = find (world, targetname, self.target);
+		if (!self.goalentity)
+			objerror ("Unable to find train target\n");
 
 		self = self.goalentity;
 		self.pos2 = self.origin;
 	}
 	self = oldself;
 
-	setorigin(self, self.goalentity.origin - self.view_ofs);
+	setorigin (self, self.goalentity.origin - self.view_ofs);
 
 	if (!self.targetname) {
 		self.think = _movewall_wait_think;
@@ -905,13 +978,19 @@ void() func_train = {
 		}
 	}
 
-	if (self.noise3)	precache_sound(self.noise3);
-	if (self.noise4)	precache_sound(self.noise4);
+	if (self.noise3)
+		precache_sound(self.noise3);
+	if (self.noise4)
+		precache_sound(self.noise4);
 
-	if (!self.speed)	self.speed = 100;
-	if (!self.wait)		self.wait = 0.1;
-	if (!self.dmg)		self.dmg = 2;
-	if (self.dmg < 0)	self.dmg = 0;
+	if (!self.speed)
+		self.speed = 100;
+	if (!self.wait)
+		self.wait = 0.1;
+	if (!self.dmg)
+		self.dmg = 2;
+	if (self.dmg < 0)
+		self.dmg = 0;
 
 	self.view_ofs = self.mins;
 
@@ -922,7 +1001,7 @@ void() func_train = {
 
 	util_map_entity_init();
 
-	/* Make sure all the targetnames are set */
+	// Make sure all the targetnames are set
 	self.think = _train_finalize;
 	self.nextthink = self.ltime + sv_mintic;
 };

@@ -146,7 +146,7 @@ float() util_use_targets = {
 };
 
 float(entity e) is_living = {
-	return (e.deadflag == DEAD_NO) && is_solid(e);
+	return (e.deadflag == DEAD_NO) && is_solid (e);
 };
 
 float(entity e) is_solid = {
