@@ -1,6 +1,6 @@
 QFCC=qfcc
 QCFLAGS=-z -qq -g -Werror
-QCPPFLAGS=-DLIBFRIKBOT
+QCPPFLAGS=
 
 libfrikbot_source = \
 	bot_ai.qc		\
