@@ -28,7 +28,7 @@
 @extern .float spawnsilent;
 @extern .vector old_velocity;
 //POX v1.2 REMOVED EARTHQUAKE! (not suitable for DM)
-@extern void() func_earthquake = {remove(@self);};
+@extern void() func_earthquake;
 //Water Movement
 @extern .float uwmuffle;		//underwater muffle sound timeout
 @extern .float onwsound;		//on water sound timeout
