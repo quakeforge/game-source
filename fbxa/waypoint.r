@@ -56,7 +56,6 @@ Array waypoint_array;
 {
 	if (!waypoint_array) {
 		waypoint_array = [[Array alloc] init];
-		[waypoint_array addItem:NIL];
 		waypoint_queue = [[List alloc] init];
 		waypoint_thinker = spawn ();
 		waypoint_thinker.classname = "waypoint_thinker";
@@ -74,8 +73,8 @@ Array waypoint_array;
 {
 	[self init];
 	[waypoint_array addItem: self];
-
-	if ([waypoint_array count] == 2) {
+	origin = org;
+	if ([waypoint_array count] == 1) {
 		local id obj = [Waypoint class];
 		local IMP imp = [obj methodForSelector: @selector (fixWaypoints)];
 		waypoint_thinker.think = (void ()) imp;
@@ -210,7 +209,9 @@ Waypoint Loading from file
 
 +(Waypoint)waypointForNum:(integer)num
 {
-	return [waypoint_array getItemAt:num];
+	if (!num)
+		return NIL;
+	return [waypoint_array getItemAt:num - 1];
 }
 
 -(void)fix
@@ -238,7 +239,7 @@ Waypoint Loading from file
 	rad = rad * rad;			// radius squared
 
 	count = [waypoint_array count];
-	for (i = 1; i < count; i++) {
+	for (i = 0; i < count; i++) {
 		w = [waypoint_array getItemAt:i];
 		dif = w.origin - org;
 		dist = dif * dif;		// dist squared, really
