@@ -565,7 +565,7 @@ void() trigger_bouncepad =
 //============================================================================
 void() trigger_monsterjump_touch =
 {
-	if ( other.flags & (FL_MONSTER | FL_FLY | FL_SWIM) != FL_MONSTER )
+	if ((other.flags & (FL_MONSTER | FL_FLY | FL_SWIM)) != FL_MONSTER )
 		return;
 // set XY even if not on ground, so the jump will clear lips
 	other.velocity_x = self.movedir_x * self.speed;
