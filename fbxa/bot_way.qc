@@ -351,7 +351,7 @@ tripping the runaway loop counter
 	}
 }
 
--(id)queueForthink
+-(id)queueForThink
 {
 	if (waypoint_thinker.@this) {
 		[waypoint_queue addItemAtTail: self];
