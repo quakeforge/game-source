@@ -110,8 +110,7 @@ void(float shotcount, vector spread, void() deathmessage) _fire_bullets =
 	dist_left = 8192;
 
 	do {
-		/* FIXME: Remove '0' when compiler is fixed */
-		for (0; shotcount > 0; shotcount--) {
+		for (; shotcount > 0; shotcount--) {
 			direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 			traceline(src, src + direction*dist_left, FALSE, ignore);
 
