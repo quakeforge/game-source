@@ -1,11 +1,8 @@
-/*
-*/
 void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
 void () player_run;
-void(entity bomb, entity attacker, float rad, entity ignore) T_RadiusDamage;
-void(vector org, vector vel, float damage) SpawnBlood;
-void() SuperDamageSound;
-
+void (entity bomb, entity attacker, float rad, entity ignore) T_RadiusDamage;
+void (vector org, vector vel, float damage) SpawnBlood;
+void () SuperDamageSound;
 
 // called by worldspawn
 void() W_Precache =
@@ -26,7 +23,7 @@ void() W_Precache =
 
 float() crandom =
 {
-	return 2*(random() - 0.5);
+	return 2 * (random () - 0.5);
 };
 
 /*
@@ -36,7 +33,7 @@ W_FireAxe
 */
 void() W_FireAxe =
 {
-	local	vector	org, source;
+	local vector	org, source;
 
 	makevectors (self.v_angle);
 	source = self.origin + '0 0 16';
@@ -221,8 +218,8 @@ void() W_FireShotgun =
 	sound (self, CHAN_WEAPON, "weapons/guncock.wav", 1, ATTN_NORM);	
 
 	self.punchangle_x = -2;
-	
-	self.currentammo = self.ammo_shells--;
+
+	self.currentammo = --self.ammo_shells;
 	dir = aim (self, 100000);
 	FireBullets (6, dir, '0.04 0.04 0');
 };
@@ -244,7 +241,6 @@ void() W_FireSuperShotgun =
 	dir = aim (self, 100000);
 	FireBullets (14, dir, '0.14 0.08 0');
 };
-
 
 /*
 ==============================================================================
@@ -273,12 +269,12 @@ void() BecomeExplosion =
 
 void() T_MissileTouch =
 {
-	local float	damg;
+	local float		damg;
 
 	if (other == self.owner)
 		return;		// don't explode on owner
 
-	if (pointcontents(self.origin) == CONTENT_SKY) {
+	if (pointcontents (self.origin) == CONTENT_SKY) {
 		remove (self);
 		return;
 	}
@@ -306,7 +302,7 @@ void() T_MissileTouch =
 
 void() W_FireRocket =
 {
-	local	entity missile;
+	local entity	missile;
 	
 	self.currentammo = self.ammo_rockets--;
 	
@@ -590,17 +586,20 @@ void() spike_touch =
 		spawn_touchblood (9);
 		T_Damage (other, self, self.owner, 9);
 	} else {
+		local float		spike = TE_SPIKE;
+
 		switch (self.classname) {
 		case "wizspike":
-			WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_WIZSPIKE);
+			spike = TE_WIZSPIKE;
 			break;
 		case "knightspike":
-			WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_KNIGHTSPIKE);
+			spike = TE_KNIGHTSPIKE;
 			break;
 		default:
-			WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_SPIKE);
+			// Already set in declaration
 			break;
 		}
+		WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, spike);
 		WriteCoordV (MSG_BROADCAST, self.origin);
 	}
 
