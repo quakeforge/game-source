@@ -35,7 +35,7 @@ for i in "$@"; do
 		WEAPONS[$IMPULSE]="${WEAPONS[$IMPULSE]} $NAME"
 		
 cat << EOF
-float(float action) w_${NAME};
+@extern float(float action) w_${NAME};
 EOF
 	done
 done

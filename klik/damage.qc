@@ -5,6 +5,30 @@
 
 #include "server.qh"
 
+.entity dmg_attacker;
+
+.void() deathmsg;
+.string deathmsg1, deathmsg2, deathmsg3, deathmsg4, deathmsg5, deathmsg6;
+
+// You _MUST_ have th_takedamage if you .takedamage!
+// Return TRUE if you were damaged, FALSE otherwise.
+.float(float dmg) th_takedamage;
+
+/* Allows you to globally override damage you deal */
+/* self = you, other = target */
+/* returns new amount of damage, or < 0 for don't */
+.float(float dmg) th_dealdamage;
+
+.void(entity missile) th_attack;
+
+/* Update frags in these. */
+.void() th_die;
+.void() th_kill;
+
+.float(entity missile) th_projectile;
+
+entity ghost_inflictor;
+
 void() damage_init = {
 	ghost_inflictor = spawn("GHOST_INFLICTOR");
 };

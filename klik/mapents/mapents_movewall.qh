@@ -1,6 +1,6 @@
 #ifndef MAPENTS_MOVEWALL_qh
 #define MAPENTS_MOVEWALL_qh 1
 
-void() func_train;
+@extern void() func_train;
 
 #endif

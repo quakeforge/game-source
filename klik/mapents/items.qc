@@ -5,6 +5,8 @@
 
 #include "items.qh"
 
+.float() th_takeitem;
+
 void() _item_regen_think = {
 	self.solid = SOLID_TRIGGER;
 	setmodel(self, self.model);

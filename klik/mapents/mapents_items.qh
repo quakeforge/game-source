@@ -1,7 +1,7 @@
 #ifndef MAPENTS_ITEMS_qh
 #define MAPENTS_ITEMS_qh 1
 
-void() item_armor;
-void() item_ammo;
+@extern void() item_armor;
+@extern void() item_ammo;
 
 #endif

@@ -17,6 +17,20 @@
 
 #include "mapents.qh"
 
+float max_clients;
+
+// Various cvars [possibly] referenced by QC
+float rocket_jump;
+
+float sv_mintic, sv_maxtic;
+
+float sv_gravity;
+float sv_stopspeed, sv_maxspeed, sv_spectatormaxspeed;
+float sv_accelerate, sv_airaccelerate, sv_wateraccelerate;
+float sv_friction, sv_waterfriction;
+
+float cl_rollangle, cl_rollspeed;
+
 #define	SV_FRAMES_BEFORE_SPAWN	3
 
 void() main = {

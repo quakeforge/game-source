@@ -1,7 +1,7 @@
 #ifndef MDL_EYES_qh
 #define MDL_EYES_qh 1
 
-void() mdl_eyes_init;
-void() mdl_setup_eyes;
+@extern void() mdl_eyes_init;
+@extern void() mdl_setup_eyes;
 
 #endif

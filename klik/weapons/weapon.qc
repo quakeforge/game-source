@@ -4,6 +4,11 @@
 
 #include "weapon.qh"
 
+.void() w_think;
+.float(float action) w_func;
+.float attack_finished;
+.float w_thought;
+
 .float weapon_imp;
 .float weapons;		/* Alas, a bitfield. */
 

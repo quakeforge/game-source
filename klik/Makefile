@@ -13,8 +13,8 @@ QFCCFLAGS=-q --warn all --code v6only $(CPPFLAGS)
 
 ###############################################
 
-QW_SOURCES=	$(prefix qw/,								\
-			system.qc	builtins.qc	sz_watch.qc	effect.qc	\
+QW_SOURCES=	$(addprefix qw/,								\
+			sys_defs.qc	builtins.qc	sz_watch.qc	effect.qc	\
 		)
 
 WEAPONS_SOURCES=weapon.qc	weapon_g.qc	\
@@ -33,6 +33,7 @@ MAPENTS_SOURCES=mapents_util.qc	\
 
 COMMON_SOURCES=system.qc	\
 	\
+	equip.qc	\
 	equipid.qc	\
 	server.qc	worldspawn.qc	\
 	client.qc	spectate.qc	\

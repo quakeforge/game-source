@@ -1,6 +1,10 @@
 #include "common.qh"
 #include "menu.qh"
 
+.float menu_state;
+.float menu_time;
+.void() menu_think;
+
 void(void() menu_func) menu_set = {
 	self.menu_state = 0;
 	self.menu_time = 0;

@@ -3,6 +3,13 @@
 #include "bodyque.qh"
 #include "mdl.qh"
 
+.void(float func, float extra) mdl_func;
+.float mdl_mod;
+
+.void() mdl_think;
+.float mdl_thought;
+.float mdl_var;
+
 void() _mdl_bodyque_think = {
 	if (!self.mdl_thought)	self.mdl_think();
 	self.mdl_thought = FALSE;

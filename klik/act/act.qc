@@ -6,6 +6,10 @@
 #include "mdl.qh"
 #include "weapon.qh"
 
+.void() prethink;
+.void() actthink;
+.void() postthink;
+
 void() PlayerPreThink = {
 	if (is_cl(self))
 		PlayerStartFrame();

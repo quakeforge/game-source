@@ -2,6 +2,14 @@
 #include "equip.qh"
 #include "math.qh"
 
+.float equip_state;
+
+..float itemfield;
+.float itemfield_1;
+.float itemfield_2;
+.float itemfield_3;
+.float itemfield_4;
+
 float(entity e, float eid) equip_flag = {
 	if (eid < 24) {
 		e.itemfield = itemfield_1;

@@ -4,6 +4,8 @@
 #include "protocol.qh"
 #include "misc.qh"
 
+float sv_spawning;
+
 /*
 	All this crap is to make sure we don't overflow the signon
 	buffer or message buffer, since Quake doesn't bother to

@@ -5,6 +5,8 @@
 #include "misc.qh"
 #include "teleport.qh"
 
+.float(vector org) th_teleport;
+
 void() _deathmsg_teleport = {
 	local string att_nname, def_nname;
 

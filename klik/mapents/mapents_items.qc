@@ -15,7 +15,8 @@ megahealth will add 100 health, then
 rot you down to your maximum health limit,
 one point per second.
 */
-void() item_megahealth;
+@extern void() item_megahealth;
+
 void() item_health = {
 	if (self.spawnflags & SPAWNFLAGS_HEALTH_ROTTEN) {
 		self.model = "maps/b_bh10.bsp";

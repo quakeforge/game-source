@@ -5,6 +5,8 @@
 #include "teleport.qh"
 #include "weapon.qh"
 
+.float tl_notsolid;
+
 // ===================================================================== //
 
 entity(string clname) spawn = {

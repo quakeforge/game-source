@@ -4,6 +4,8 @@
 
 #include "mapents_util.qh"
 
+.void() th_activate;
+
 void() util_map_entity_init = {
 	self.deadflag = DEAD_NONLIVING;
 

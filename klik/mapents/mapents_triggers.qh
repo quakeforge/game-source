@@ -2,6 +2,6 @@
 #define MAPENTS_TRIGGERS_qh 1
 
 #define SPAWNFLAGS_TRIGGER_NOTOUCH 2
-void() trigger_generic;
+@extern void() trigger_generic;
 
 #endif
