@@ -7,16 +7,7 @@ integer respawn_enabled = 1;
 
 @static {
 
-void () hes_dead_jim = [ self.frame, no_hes_not, 5 ] { }
-
-void () no_hes_not = [ self.frame, im_alive, 5 ]
-{
-	//ThrowGib ("progs/gib1.mdl", self.health);
-	//ThrowGib ("progs/gib2.mdl", self.health);
-	//ThrowGib ("progs/gib3.mdl", self.health);
-	spawn_tfog (self.origin);
-	setmodel (self, "");
-}
+void () hes_dead_jim = [ self.frame, im_alive, 10 ] { }
 
 void () im_alive = [ 0, (self.th_walk), 0.2 ]
 {
@@ -29,7 +20,7 @@ void () im_alive = [ 0, (self.th_walk), 0.2 ]
 	
 	setmodel(self, self.weaponmodel);
 	self.health = self.max_health;
-
+	
 	switch (self.classname) {
 		case "monster_demon1":
 		case "monster_ogre":
@@ -54,15 +45,20 @@ void () im_alive = [ 0, (self.th_walk), 0.2 ]
 			break;
 	}
 	
-	spawn_tfog (self.origin);
 	spawn_tdeath (self.origin, self);
+	spawn_tfog (self.origin);
 
 	//Don't stay angry at everyone.
 	self.enemy = NIL;
-
+	
+	//We have to set the origin no matter what kind of creature it is, so the
+	//thing becomes solid again. (Maybe, maybe not? Can't hurt anyway...)
 	if (!(self.flags & FL_FLY) && !(self.flags & FL_SWIM)) {
 		setorigin (self, self.origin + '0 0 1');
 		droptofloor ();
+	} else {
+		//Flyer/Fish
+		setorigin (self, self.origin);
 	}
 }
 
@@ -70,11 +66,11 @@ void () im_alive = [ 0, (self.th_walk), 0.2 ]
 
 void () savecritter =
 {
-	// .max_health was only used by player untill now
+	// .max_health was only used by player until now
 	self.max_health = self.health;
-	// .oldorigin only used by secret doors, untill now.
+	// .oldorigin only used by secret doors, until now.
 	self.oldorigin  = self.origin;
-	// .weaponmodel is only used to show the players currentweapon (on the hud)
+	// .weaponmodel is only used to show the players current weapon (on the hud)
 	self.weaponmodel = self.model;
 };
 
