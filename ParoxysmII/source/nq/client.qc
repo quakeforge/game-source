@@ -1,9 +1,8 @@
-
 // prototypes
 void () W_WeaponFrame;
-void() W_SetCurrentAmmo;
-void() player_pain;
-void() player_stand1;
+void () W_SetCurrentAmmo;
+void () player_pain;
+void () player_stand1;
 void (vector org) spawn_tfog;
 void (vector org, entity death_owner) spawn_tdeath;
 
@@ -76,15 +75,13 @@ entity() FindIntermission =
 
 // look for info_intermission first
 	spot = find (world, classname, "info_intermission");
-	if (spot)
-	{	// pick a random one
+	if (spot) {		// pick a random one
 		cyc = random() * 4;
-		while (cyc > 1)
-		{
+		while (cyc > 1) {
 			spot = find (spot, classname, "info_intermission");
 			if (!spot)
 				spot = find (spot, classname, "info_intermission");
-			cyc = cyc - 1;
+			cyc--;
 		}
 		return spot;
 	}
@@ -106,7 +103,7 @@ entity() FindIntermission =
 string nextmap;
 void() GotoNextMap =
 {
-	if (cvar("samelevel"))	// if samelevel is set, stay on same level
+	if (cvar ("samelevel"))	// if samelevel is set, stay on same level
 		changelevel (mapname);
 	else
 		changelevel (nextmap);
@@ -116,8 +113,7 @@ void() GotoNextMap =
 void() ExitIntermission =
 {
 // skip any text in deathmatch
-	if (deathmatch)
-	{
+	if (deathmatch) {
 		GotoNextMap ();
 		return;
 	}
@@ -158,15 +154,12 @@ void() execute_changelevel =
 	else
 		intermission_exittime = time + 2;
 
-	WriteByte (MSG_ALL, SVC_CDTRACK);
-	WriteByte (MSG_ALL, 3);
-	WriteByte (MSG_ALL, 3);
+	WriteBytes (MSG_ALL, SVC_CDTRACK, 3.0, 3.0);
 	
 	pos = FindIntermission ();
 
 	other = find (world, classname, "player");
-	while (other != world)
-	{
+	while (other != world) {
 		other.view_ofs = '0 0 0';
 		other.angles = other.v_angle = pos.mangle;
 		other.fixangle = TRUE;		// turn this way immediately
@@ -190,14 +183,12 @@ void() changelevel_touch =
 	if (other.classname != "player")
 		return;
 
-	if ((cvar("noexit") == 1) || ((cvar("noexit") == 2) && (mapname != "start")))
-	{
+	if ((cvar("noexit") == 1) || ((cvar("noexit") == 2) && (mapname != "start"))) {
 		T_Damage (other, self, self, 50000);
 		return;
 	}
 
-	if (coop || deathmatch)
-	{
+	if (coop || deathmatch) {
 		bprint (other.netname);
 		bprint (" exited the level\n");
 	}
@@ -206,9 +197,8 @@ void() changelevel_touch =
 
 	SUB_UseTargets ();
 
-	if ( (self.spawnflags & 1) && (deathmatch == 0) )
-	{	// NO_INTERMISSION
-		GotoNextMap();
+	if ((self.spawnflags & 1) && (deathmatch == 0)) {	// NO_INTERMISSION
+		GotoNextMap ();
 		return;
 	}
 	

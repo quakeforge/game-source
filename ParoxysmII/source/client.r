@@ -83,8 +83,8 @@ Returns the entity to view from
 */
 entity() FindIntermission =
 {
-	local	entity spot;
-	local	float cyc;
+	local entity	spot;
+	local float		cyc;
 
 	// look for info_intermission first
 	if ((spot = find (world, classname, "info_intermission"))) {	// pick a random one
@@ -152,6 +152,7 @@ Take the players to the intermission spot
 void() execute_changelevel =
 {
 	local entity	pos;
+
 	intermission_running = 1;
 	
 	// enforce a wait time before allowing changelevel
@@ -159,15 +160,9 @@ void() execute_changelevel =
 	pos = FindIntermission ();
 
 	// play intermission music
-	WriteByte (MSG_ALL, SVC_CDTRACK);
-	WriteByte (MSG_ALL, 3);
-	WriteByte (MSG_ALL, SVC_INTERMISSION);
-	WriteCoord (MSG_ALL, pos.origin_x);
-	WriteCoord (MSG_ALL, pos.origin_y);
-	WriteCoord (MSG_ALL, pos.origin_z);
-	WriteAngle (MSG_ALL, pos.mangle_x);
-	WriteAngle (MSG_ALL, pos.mangle_y);
-	WriteAngle (MSG_ALL, pos.mangle_z);
+	WriteBytes (MSG_ALL, SVC_CDTRACK, 3.0, SVC_INTERMISSION);
+	WriteCoordV (MSG_ALL, pos.origin);
+	WriteAngleV (MSG_ALL, pos.mangle);
 	
 	other = find (world, classname, "player");
 	while (other != world) {
@@ -186,8 +181,7 @@ void() changelevel_touch =
 // if "noexit" is set, blow up the player trying to leave
 //ZOID, 12-13-96, noexit isn't supported in QW.	 Overload samelevel
 //	if ((cvar("noexit") == 1) || ((cvar("noexit") == 2) && (mapname != "start")))
-	if ((cvar("samelevel") == 2) || ((cvar("samelevel") == 3) && (mapname != "start")))
-	{
+	if ((cvar("samelevel") == 2) || ((cvar("samelevel") == 3) && (mapname != "start"))) {
 		T_Damage (other, @self, @self, 50000);
 		return;
 	}
@@ -225,10 +219,12 @@ void() respawn =
 	// make a copy of the dead body for appearances sake
 	CopyToBodyQue (@self);
 	// set default spawn parms
-	//SetNewParms (); //POX v1.12
+//	SetNewParms (); //POX v1.12
 	// respawn		
 	PutClientInServer ();
 };
+
+void() NextLevel; //POX v1.12
 
 /*
 ============
@@ -236,8 +232,6 @@ ClientKill
 Player entered the suicide command
 ============
 */
-void() NextLevel; //POX v1.12
-
 void() ClientKill =
 {	
 	//POX v1.12 - don't let LMS observers suicide!
@@ -245,14 +239,14 @@ void() ClientKill =
 		sprint (@self, PRINT_HIGH, "Observers can't suicide!\n");
 		return;
 	}
-	
+
 	BPRINT (PRINT_MEDIUM, @self.netname);
 	BPRINT (PRINT_MEDIUM, " suicides\n");
 	set_suicide_frame ();
 	@self.modelindex = modelindex_player;
 	LOGFRAG (@self, @self);
 	@self.frags -= 2;	// extra penalty
-	
+
 	//POX v1.12 - forgot about stink'n suicides
 	if ((deathmatch & DM_LMS) && (@self.LMS_registered)) {
 		if (@self.frags <= 0) {
@@ -261,17 +255,17 @@ void() ClientKill =
 			@self.frags = 0;
 			@self.LMS_registered = 0;
 			@self.LMS_observer = 2;
-			
-			BPRINT(PRINT_HIGH, @self.netname);
-			BPRINT(PRINT_HIGH, " is eliminated!\n");
+
+			BPRINT (PRINT_HIGH, @self.netname);
+			BPRINT (PRINT_HIGH, " is eliminated!\n");
 			
 			sound (@self, CHAN_BODY, "nar/n_elim.wav", 1, ATTN_NONE);
-	
+
 			if (lms_plrcount <= 1) //1 player left so end the game 
 				NextLevel ();
 		}
 	}
-	
+
 	respawn ();
 };
 
@@ -288,10 +282,8 @@ Returns the entity to spawn at
 */
 entity() SelectSpawnPoint =
 {
-	local entity	spot, thing;
-	local entity	spots;
-	local float 	numspots, totalspots;
-	local float 	pcount;
+	local float 	numspots, pcount, totalspots;
+	local entity	spot, spots, thing;
 
 	numspots = 0;
 	totalspots = 0;
@@ -361,40 +353,32 @@ ValidateUser
 float(entity e) ValidateUser =
 {
 /*
-	local string	s;
-	local string	userclan;
+	local string	userclan, s;
 	local float	rank, rankmin, rankmax;
-//
 // if the server has set "clan1" and "clan2", then it
 // is a clan match that will allow only those two clans in
-//
 	s = serverinfo("clan1");
-	if (s)
-	{
-		userclan = masterinfo(e,"clan");
+	if (s) {
+		userclan = masterinfo (e, "clan");
 		if (s == userclan)
 			return true;
-		s = serverinfo("clan2");
+		s = serverinfo ("clan2");
 		if (s == userclan)
 			return true;
 		return false;
 	}
-//
 // if the server has set "rankmin" and/or "rankmax" then
 // the users rank must be between those two values
-//
 	s = masterinfo (e, "rank");
 	rank = stof (s);
 	s = serverinfo("rankmin");
-	if (s)
-	{
+	if (s) {
 		rankmin = stof (s);
 		if (rank < rankmin)
 			return false;
 	}
-	s = serverinfo("rankmax");
-	if (s)
-	{
+	s = serverinfo ("rankmax");
+	if (s) {
 		rankmax = stof (s);
 		if (rankmax < rank)
 			return false;
@@ -402,6 +386,7 @@ float(entity e) ValidateUser =
 	return true;
 */
 };
+
 /*
 ===========
 PutClientInServer
@@ -460,7 +445,7 @@ void() PutClientInServer =
 	
 	@self.deadflag = DEAD_NO;
 
-	// paustime is set by teleporters to keep the player from moving a while
+	// pausetime is set by teleporters to keep the player from moving a while
 	@self.pausetime = 0;
 	
 	// reset reload_rocket after death
@@ -553,7 +538,6 @@ void() PutClientInServer =
 	
 	// + POX - Predator mode
 	if (deathmatch & DM_PREDATOR) {	
-
 		sound (@self, CHAN_AUTO, "items/inv1.wav", 1, ATTN_NORM);
 		stuffcmd (@self, "bf\n");
 
@@ -568,30 +552,35 @@ void() PutClientInServer =
 				QUAKED FUNCTIONS
 =============================================================================
 */
+
 /*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 24)
 The normal starting point for a level.
 */
 void() info_player_start =
 {
 };
+
 /*QUAKED info_player_start2 (1 0 0) (-16 -16 -24) (16 16 24)
 Only used on start map for the return point from an episode.
 */
 void() info_player_start2 =
 {
 };
+
 /*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 24)
 potential spawning position for deathmatch games
 */
 void() info_player_deathmatch =
 {
 };
+
 /*QUAKED info_player_coop (1 0 1) (-16 -16 -24) (16 16 24)
 potential spawning position for coop games
 */
 void() info_player_coop =
 {
 };
+
 /*
 ===============================================================================
 RULES
@@ -720,7 +709,7 @@ void() PlayerJump =
 	if (@self.waterlevel >= 2) {	// play swimming sound
 		if (@self.swim_flag < time) {
 			@self.swim_flag = time + 1;
-			if (random() < 0.5)
+			if (random () < 0.5)
 				sound (@self, CHAN_BODY, "misc/water1.wav", 1, ATTN_NORM);
 			else
 				sound (@self, CHAN_BODY, "misc/water2.wav", 1, ATTN_NORM);
@@ -743,7 +732,7 @@ void() PlayerJump =
 		}
 		return;
 	}
-// - POX 
+// - POX
 
 	if (!(@self.flags & FL_ONGROUND))
 		return;
@@ -751,22 +740,23 @@ void() PlayerJump =
 	if (!(@self.flags & FL_JUMPRELEASED) )
 		return;		// don't pogo stick
 
-	@self.flags -= FL_JUMPRELEASED;
+	@self.flags &= ~FL_JUMPRELEASED;
 	@self.button2 = 0;
 
 	// player jumping sound
 	sound (@self, CHAN_VOICE, "player/plyrjmp8.wav", 1, ATTN_NORM);
 };
 
+.float	dmgtime;
+
 /*
 ===========
 WaterMove
 ============
 */
-.float	dmgtime;
 void() WaterMove =
 {
-//	dprint (ftos(@self.waterlevel));
+//	dprint (ftos (@self.waterlevel));
 	if (@self.movetype == MOVETYPE_NOCLIP)
 		return;
 	if (@self.health < 0)
@@ -793,7 +783,7 @@ void() WaterMove =
 	if (!@self.waterlevel) {
 		if (@self.flags & FL_INWATER) {	// play leave water sound
 			sound (@self, CHAN_BODY, "misc/outwater.wav", 1, ATTN_NORM);
-			@self.flags = @self.flags - FL_INWATER;
+			@self.flags &= ~FL_INWATER;
 			
 			//POX v1.2 - fixed rare cases of underwater sound not cancelling out
 			if (@self.outwsound == 1) {
@@ -842,28 +832,23 @@ void() WaterMove =
 	}	
 
 // + POX - New water movement sounds
-if (@self.waterlevel >= 3)
-	{
+if (@self.waterlevel >= 3) {
 		@self.onwsound = time;
 		@self.outwsound = 1;
 	
-		if (@self.inwsound == 1)
-		{
+		if (@self.inwsound == 1) {
 			sound (@self, CHAN_VOICE, "misc/inh2ob.wav", 1, ATTN_NORM);
 			@self.inwsound = 0;
 		}
-	
-		if (@self.uwmuffle < time)
-		{
+
+		if (@self.uwmuffle < time) {
 			sound (@self, CHAN_BODY, "misc/uwater.wav", 1, ATTN_STATIC);
 			@self.uwmuffle = time + 3.58;
 		}
 	}
 	
-	if (@self.waterlevel == 2)
-	{	
-		if (@self.outwsound == 1)
-		{
+	if (@self.waterlevel == 2) {	
+		if (@self.outwsound == 1) {
 			sound (@self, CHAN_BODY, "misc/owater2.wav", 1, ATTN_NORM);
 			@self.outwsound = 0;
 			@self.inwsound = 1;
@@ -876,14 +861,13 @@ if (@self.waterlevel >= 3)
 		@self.uwmuffle = time;
 		
 		/* POX - now done in footstep routine
-		if (@self.onwsound < time)
-		{	
+		if (@self.onwsound < time) {	
 			if (random() < 0.5)
 				sound (@self, CHAN_BODY, "misc/water2.wav", 1, ATTN_NORM);
 			else
 				sound (@self, CHAN_BODY, "misc/water1.wav", 1, ATTN_NORM);
 			
-			@self.onwsound = time + random()*2;
+			@self.onwsound = time + random () * 2;
 		}
 		*/
 	}
@@ -900,14 +884,12 @@ void() CheckWaterJump =
 	normalize(v_forward);
 	end = start + v_forward*24;
 	traceline (start, end, TRUE, @self);
-	if (trace_fraction < 1)
-	{	// solid at waist
-		start_z = start_z + @self.maxs_z - 8;
-		end = start + v_forward*24;
+	if (trace_fraction < 1) {		// solid at waist
+		start_z += @self.maxs_z - 8;
+		end = start + v_forward * 24;
 		@self.movedir = trace_plane_normal * -50;
 		traceline (start, end, TRUE, @self);
-		if (trace_fraction == 1)
-		{	// open at eye level
+		if (trace_fraction == 1) {	// open at eye level
 			@self.flags |= FL_WATERJUMP;
 			@self.velocity_z = 225;
 			@self.flags &= ~FL_JUMPRELEASED;
@@ -916,6 +898,7 @@ void() CheckWaterJump =
 		}
 	}
 };
+
 /*
 ================
 PlayerPreThink
@@ -924,23 +907,20 @@ Called every frame before physics are run
 */
 void() PlayerPreThink =
 {
-	if (intermission_running)
-	{
+	if (intermission_running) {
 		IntermissionThink ();	// otherwise a button could be missed between
 		return;					// the think tics
 	}
 	if (@self.view_ofs == '0 0 0')
 		return;		// intermission or finale
 	makevectors (@self.v_angle);		// is this still used
-    @self.deathtype = "";
+	@self.deathtype = "";
 	
 	CheckRules ();
 	
 	// + POX - for LMS observer - POX 1.2 moved above WaterMove();
-	if (deathmatch & DM_LMS && @self.LMS_observer)
-	{	
-		if (@self.deadflag >= DEAD_DEAD)
-		{
+	if (deathmatch & DM_LMS && @self.LMS_observer) {	
+		if (@self.deadflag >= DEAD_DEAD) {
 			PlayerDeathThink ();
 			return;
 		}
@@ -952,8 +932,7 @@ void() PlayerPreThink =
 	if (@self.waterlevel == 2)
 		CheckWaterJump ();
 */
-	if (@self.deadflag >= DEAD_DEAD)
-	{
+	if (@self.deadflag >= DEAD_DEAD) {
 		PlayerDeathThink ();
 		return;
 	}
@@ -961,8 +940,7 @@ void() PlayerPreThink =
 	if (@self.deadflag == DEAD_DYING)
 		return; // dying, so do nothing
 	
-	if (@self.button2)
-	{
+	if (@self.button2) {
 		PlayerJump ();
 	}
 	else
@@ -972,11 +950,9 @@ void() PlayerPreThink =
 		@self.velocity = '0 0 0';
 	
 	// POX
-	if (deathmatch & DM_AUTOSWITCH)
-	{
+	if (deathmatch & DM_AUTOSWITCH) {
 	
-		if(time > @self.attack_finished && @self.currentammo == 0 && @self.weapon != IT_AXE)
-		{
+		if (time > @self.attack_finished && @self.currentammo == 0 && @self.weapon != IT_AXE) {
 			@self.weapon = W_BestWeapon ();
 			W_SetCurrentAmmo ();
 		}
@@ -995,9 +971,9 @@ void() CheckPowerups =
 		return;
 // + POX - Rot armour down to 150 (max 250)
 	if (@self.armorvalue > 150 && @self.armor_rot < time) {
-		@self.armorvalue = @self.armorvalue - 1;
+		@self.armorvalue -= 1;
 		@self.armor_rot = time + 1;
-	
+
 		// change armour to Yellow
 		if (@self.armorvalue == 150) {
 			@self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
@@ -1009,30 +985,25 @@ void() CheckPowerups =
 	if (@self.invisible_finished)
 	{
 // sound and screen flash when items starts to run out
-		if (@self.invisible_sound < time)
-		{
+		if (@self.invisible_sound < time) {
 			sound (@self, CHAN_AUTO, "items/inv3.wav", 0.5, ATTN_IDLE);
 			@self.invisible_sound = time + ((random() * 3) + 1);
 		}
-		if (@self.invisible_finished < time + 3)
-		{
-			if (@self.invisible_time == 1)
-			{
+		if (@self.invisible_finished < time + 3) {
+			if (@self.invisible_time == 1) {
 				sprint (@self, PRINT_HIGH, "Cloak is failing...\n");
 				stuffcmd (@self, "bf\n");
 				sound (@self, CHAN_AUTO, "items/inv2.wav", 1, ATTN_NORM);
 				@self.invisible_time = time + 1;
 			}
 			
-			if (@self.invisible_time < time)
-			{
+			if (@self.invisible_time < time) {
 				@self.invisible_time = time + 1;
 				stuffcmd (@self, "bf\n");
 			}
 		}
-		if (@self.invisible_finished < time)
-		{	// just stopped
-			@self.items -= IT_INVISIBILITY;
+		if (@self.invisible_finished < time) {	// just stopped
+			@self.items &= ~IT_INVISIBILITY;
 			@self.invisible_finished = 0;
 			@self.invisible_time = 0;
 		}
@@ -1044,77 +1015,65 @@ void() CheckPowerups =
 	else
 		@self.modelindex = modelindex_player;	// don't use eyes
 // invincibility
-	if (@self.invincible_finished)
-	{
+	if (@self.invincible_finished) {
 // sound and screen flash when items starts to run out
-		if (@self.invincible_finished < time + 3)
-		{
-			if (@self.invincible_time == 1)
-			{
+		if (@self.invincible_finished < time + 3) {
+			if (@self.invincible_time == 1) {
 				sprint (@self, PRINT_HIGH, "MegaShields are almost burned out...\n");
 				stuffcmd (@self, "bf\n");
 				sound (@self, CHAN_AUTO, "items/protect2.wav", 1, ATTN_NORM);
 				@self.invincible_time = time + 1;
 			}
 			
-			if (@self.invincible_time < time)
-			{
+			if (@self.invincible_time < time) {
 				@self.invincible_time = time + 1;
 				stuffcmd (@self, "bf\n");
 			}
 		}
 		
-		if (@self.invincible_finished < time)
-		{	// just stopped
-			@self.items -= IT_INVULNERABILITY;
+		if (@self.invincible_finished < time) {	// just stopped
+			@self.items &= ~IT_INVULNERABILITY;
 			@self.invincible_time = 0;
 			@self.invincible_finished = 0;
 		}
 		// + POX - ignore light effects in Dark Mode
-		if (@self.invincible_finished > time && !(deathmatch & DM_DARK))
-		{
+		if (@self.invincible_finished > time && !(deathmatch & DM_DARK)) {
 			@self.effects |= EF_DIMLIGHT;
 			@self.effects |= EF_RED;
-		}
-		else
-		{
+		} else {
 			@self.effects &= ~EF_DIMLIGHT;
 			@self.effects &= ~EF_RED;
 		}
 	}
 // super damage
-	if (@self.super_damage_finished)
-	{
+	if (@self.super_damage_finished) {
 // sound and screen flash when items starts to run out
-		if (@self.super_damage_finished < time + 3)
-		{
-			if (@self.super_time == 1)
-			{
-				//if (deathmatch == 4)
-				//	sprint (@self, PRINT_HIGH, "OctaPower is wearing off\n");
-				//else
+		if (@self.super_damage_finished < time + 3) {
+			if (@self.super_time == 1) {
+//				if (deathmatch == 4)
+//					sprint (@self, PRINT_HIGH, "OctaPower is wearing off\n");
+//				else
 					sprint (@self, PRINT_HIGH, "Quad Damage is wearing off\n");
 				stuffcmd (@self, "bf\n");
 				sound (@self, CHAN_AUTO, "items/damage2.wav", 1, ATTN_NORM);
 				@self.super_time = time + 1;
-			}	  
-			
-			if (@self.super_time < time)
-			{
+			}
+
+			if (@self.super_time < time) {
 				@self.super_time = time + 1;
 				stuffcmd (@self, "bf\n");
 			}
 		}
-		if (@self.super_damage_finished < time)
-		{	// just stopped
+		if (@self.super_damage_finished < time) {	// just stopped
 			@self.items &= ~IT_QUAD;
-			/*if (deathmatch == 4)
-			{
+/*			
+			if (deathmatch == 4) {
 				@self.ammo_cells = 255;
 				@self.armorvalue = 1;
 				@self.armortype = 0.8;
 				@self.health = 100;
-			}*/
+			}
+*/
 			@self.super_damage_finished = 0;
 			@self.super_time = 0;
 		}
@@ -1245,9 +1204,9 @@ void () PlayerPostThink =
 			local float	d;
 
 			@self.deathtype = "falling";
-			
+
 			d = (@self.jump_flag + 625) * -0.1;	// scale damage by fall height
-			T_Damage (@self, world, world, d); 
+			T_Damage (@self, world, world, d);
 			sound (@self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
 		} else {
 			sound (@self, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);

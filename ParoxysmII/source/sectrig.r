@@ -46,9 +46,9 @@ vector() wall_velocity =
 	local vector	vel;
 	
 	vel = normalize (@self.velocity);
-	vel = normalize(vel + v_up*(random()- 0.5) + v_right*(random()- 0.5));
-	vel = vel + 2*trace_plane_normal;
-	vel = vel * 200;
+	vel = normalize (vel + v_up * (random ()- 0.5) + v_right * (random () - 0.5));
+	vel += 2 * trace_plane_normal;
+	vel *= 200;
 	
 	return vel;
 };
@@ -88,29 +88,26 @@ void() T_MplasmaTouch =
 
 	if (other == @self.owner)
 		return;		// don't explode on owner
-	
+
 	if (@self.voided) {
 		return;
 	}
-	
+
 	@self.voided = 1;
-	
-	if (pointcontents(@self.origin) == CONTENT_SKY) {
-		remove(@self);
+
+	if (pointcontents (@self.origin) == CONTENT_SKY) {
+		remove (@self);
 		return;
 	}
-	damg = 120 + random()*20;
-	
+	damg = 120 + random () * 20;
+
 	T_RadiusDamage (@self, @self.owner, damg, world, "megaplasma");
 
 	sound (@self, CHAN_WEAPON, "weapons/mplasex.wav", 1, ATTN_NORM);
 	@self.origin = @self.origin - 8*normalize(@self.velocity);
 
-	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-	WriteByte (MSG_MULTICAST, TE_EXPLOSION);
-	WriteCoord (MSG_MULTICAST, @self.origin_x);
-	WriteCoord (MSG_MULTICAST, @self.origin_y);
-	WriteCoord (MSG_MULTICAST, @self.origin_z);
+	WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_EXPLOSION);
+	WriteCoordV (MSG_MULTICAST, @self.origin);
 	multicast (@self.origin, MULTICAST_PHS);
 	remove(@self);
 };
@@ -120,7 +117,7 @@ void() launch_megaplasma =
 {
 	local vector	dir;
 	
-	@self.currentammo = @self.ammo_cells = @self.ammo_cells - 9;
+	@self.currentammo = @self.ammo_cells -= 9;
 	
 	sound (@self, CHAN_WEAPON, "weapons/mplasma.wav", 1, ATTN_NORM);
 	msg_entity = @self;
@@ -128,7 +125,7 @@ void() launch_megaplasma =
 	
 	//Added weapon kickback (as long as you're not in mid air)
 	if (@self.flags & FL_ONGROUND)
-		@self.velocity = @self.velocity + v_forward* -270;
+		@self.velocity += v_forward * -270;
 
 	newmis = spawn ();
 	newmis.voided = 0;
@@ -144,16 +141,16 @@ void() launch_megaplasma =
 	newmis.avelocity = '300 300 300';
 	newmis.angles = vectoangles(newmis.velocity);
 	newmis.velocity = normalize(newmis.velocity);
-	newmis.velocity = newmis.velocity * 950;
-	
+	newmis.velocity *= 950;
+
 	newmis.touch = T_MplasmaTouch;
-	
+
 	// set duration
 	newmis.think = SUB_Remove;
 	newmis.nextthink = time + 5;
 	setmodel (newmis, "progs/plasma.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');		
-	setorigin (newmis, @self.origin + v_forward*12 + '0 0 12');
+	setorigin (newmis, @self.origin + v_forward * 12 + '0 0 12');
 };
 //End MegaPlasmaBurst
 //=================================================================================
@@ -176,7 +173,7 @@ void() T_PballTouch =
 	
 	if (pointcontents(@self.origin) == CONTENT_SKY)
 	{
-		remove(@self);
+		remove (@self);
 		return;
 	}
 	
@@ -184,15 +181,12 @@ void() T_PballTouch =
 	T_RadiusDamage (@self, @self.owner, damg, world, "impactgrenade");
 
 //	sound (@self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
-	@self.origin = @self.origin - 8*normalize(@self.velocity);
+	@self.origin = @self.origin - 8 * normalize (@self.velocity);
 
-	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-	WriteByte (MSG_MULTICAST, TE_EXPLOSION);
-	WriteCoord (MSG_MULTICAST, @self.origin_x);
-	WriteCoord (MSG_MULTICAST, @self.origin_y);
-	WriteCoord (MSG_MULTICAST, @self.origin_z);
+	WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_EXPLOSION);
+	WriteCoordV (MSG_MULTICAST, @self.origin);
 	multicast (@self.origin, MULTICAST_PHS);
-	remove(@self);
+	remove (@self);
 };
 /*
 ================
@@ -252,11 +246,8 @@ void() M_DamExplode =
 	@self.voided = 1;
 	
 	T_RadiusDamage (@self, @self.owner, 95, world, "mine");
-	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-	WriteByte (MSG_MULTICAST, TE_EXPLOSION);
-	WriteCoord (MSG_MULTICAST, @self.origin_x);
-	WriteCoord (MSG_MULTICAST, @self.origin_y);
-	WriteCoord (MSG_MULTICAST, @self.origin_z);
+	WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_EXPLOSION);
+	WriteCoordV (MSG_MULTICAST, @self.origin);
 	multicast (@self.origin, MULTICAST_PHS);
 	
 	remove (@self);
@@ -471,9 +462,9 @@ void() W_FireMine =
 //----------------------------------------------------------
 //These functions launch a single spike in a random direction
 void() spikenal_touch =
-{	
-	if (pointcontents(@self.origin) == CONTENT_SKY) {
-		remove(@self);
+{
+	if (pointcontents (@self.origin) == CONTENT_SKY) {
+		remove (@self);
 		return;
 	}
 
@@ -490,30 +481,28 @@ void() spikenal_touch =
 		spawn_touchblood (12);
 		other.deathtype = "shrapnel";
 		T_Damage (other, @self, @self.owner, 12);
-		remove(@self);
+		remove (@self);
 	}
 	
 	else if (random() > 0.9) {
-		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-		WriteByte (MSG_MULTICAST, TE_SPIKE);
-		WriteCoord (MSG_MULTICAST, @self.origin_x);
-		WriteCoord (MSG_MULTICAST, @self.origin_y);
-		WriteCoord (MSG_MULTICAST, @self.origin_z);
+		WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_SPIKE);
+		WriteCoordV (MSG_MULTICAST, @self.origin);
 		multicast (@self.origin, MULTICAST_PHS);
-		remove(@self);
+		remove (@self);
 	}
 };
 
 //POX - Get a random vector for Shrapnel
 vector() VelocityForShrapnel =
 {
-	local vector v;
-	v_x = 200 * crandom();
-	v_y = 200 * crandom();
-	v_z = 200 * crandom();
+	local vector	v;
+
+	v_x = 200 * crandom ();
+	v_y = 200 * crandom ();
+	v_z = 200 * crandom ();
 	
-	if (random() > 0.5)
-		v_z = v_z - (v_z*2);
+	if (random () > 0.5)
+		v_z *= -1;
 	
 	v = v * 6;
 	return v;
@@ -533,9 +522,9 @@ void(vector org) launch_shrapnel =
 	newmis.classname = "spikenal";
 
 	newmis.velocity = VelocityForShrapnel();
-	newmis.avelocity_x = random()*800;
-	newmis.avelocity_y = random()*800;
-	newmis.avelocity_z = random()*800;
+	newmis.avelocity_x = random () * 800;
+	newmis.avelocity_y = random () * 800;
+	newmis.avelocity_z = random () * 800;
 
 	newmis.think = SUB_Remove;
 	newmis.nextthink = time + 3;
@@ -559,7 +548,7 @@ void() ShrapnelExplode =
 
 	// Toss the nails (this function is with the spike stuff since it uses the same touch)
 	for (i = 0; i < 10; i++)
-		launch_shrapnel(@self.origin);
+		launch_shrapnel (@self.origin);
 
 	for (i = 0; i < 60; i++) {	// Toss some spikes
 		direction_x = (4096 * random ()) - 2048;
@@ -575,14 +564,10 @@ void() ShrapnelExplode =
 	if (@self.owner != world)
 		@self.owner.shrap_detonate = FALSE; // Enable next launch
 	
-	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-	WriteByte (MSG_MULTICAST, TE_EXPLOSION);
-	WriteCoord (MSG_MULTICAST, @self.origin_x);
-	WriteCoord (MSG_MULTICAST, @self.origin_y);
-	WriteCoord (MSG_MULTICAST, @self.origin_z);
+	WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_EXPLOSION);
+	WriteCoordV (MSG_MULTICAST, @self.origin);
 	multicast (@self.origin, MULTICAST_PHS);
 	remove (@self);
-
 };
 
 void() ShrapnelDetonate =
@@ -626,9 +611,8 @@ void() ShrapnelTouch =
 	if (other == @self.owner)
 		return;		// don't explode on owner
 	
-	if (other.takedamage == DAMAGE_AIM)
-	{
-		ShrapnelDetonate();
+	if (other.takedamage == DAMAGE_AIM) {
+		ShrapnelDetonate ();
 		return;
 	}
 	
@@ -652,14 +636,14 @@ W_FireShrapnel
 */
 void() W_FireShrapnel =
 {
-	@self.ammo_rockets = @self.ammo_rockets - 1;
-	@self.currentammo = @self.ammo_nails = @self.ammo_nails - 30;
+	@self.ammo_rockets -= 1;
+	@self.currentammo = @self.ammo_nails -= 30;
 	sound (@self, CHAN_WEAPON, "weapons/gren2.wav", 1, ATTN_NORM);
-	
+
 	msg_entity = @self;
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
-	
-	//Added weapon kickback (as long as you're not in mid air)
+
+	// Added weapon kickback (as long as you're not in mid air)
 	if (@self.flags & FL_ONGROUND)
 		@self.velocity = @self.velocity + v_forward* -115;
 	newmis = spawn ();
@@ -668,7 +652,7 @@ void() W_FireShrapnel =
 	newmis.movetype = MOVETYPE_BOUNCE;
 	newmis.solid = SOLID_BBOX;
 	newmis.classname = "shrapnel";
-	
+
 	newmis.shrap_time = time + 120;
 
 	// set newmis speed
@@ -676,12 +660,12 @@ void() W_FireShrapnel =
 	if (@self.v_angle_x) {
 		newmis.velocity = v_forward*600 + v_up * 200 + crandom()*v_right*10 + crandom()*v_up*10;
 	} else {
-		newmis.velocity = aim(@self, 10000);
+		newmis.velocity = aim (@self, 10000);
 		newmis.velocity = newmis.velocity * 600;
 		newmis.velocity_z = 200;
 	}
 	newmis.avelocity = '300 300 300';
-	newmis.angles = vectoangles(newmis.velocity);
+	newmis.angles = vectoangles (newmis.velocity);
 	newmis.touch = ShrapnelTouch;
 
 	// set newmis duration
@@ -714,7 +698,7 @@ void() W_SecondTrigger =
 
 				// make a reload sound
 				sound (@self, CHAN_WEAPON, "weapons/tsload.wav", 1, ATTN_NORM);
-				player_reshot1(); // play prime animation
+				player_reshot1 (); // play prime animation
 
 				@self.prime_tshot = TRUE; // set the prime bit
 			}
@@ -727,9 +711,9 @@ void() W_SecondTrigger =
 					@self.items |= IT_ROCKETS;
 					@self.currentammo = @self.ammo_rockets;
 					@self.which_ammo = 1;
-					player_gshot1();
-					SuperDamageSound();
-					W_FirePball();
+					player_gshot1 ();
+					SuperDamageSound ();
+					W_FirePball ();
 					@self.st_pball = time + 0.9;
 				} else {	// misfire if it hasn't been long enough
 					sound (@self, CHAN_WEAPON, "weapons/mfire1.wav", 1, ATTN_NORM);

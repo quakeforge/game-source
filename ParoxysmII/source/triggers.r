@@ -285,11 +285,8 @@ void (vector org) spawn_tfog =
 	s.origin = org;
 	s.nextthink = time + 0.1; // + POX - quicker
 	s.think = play_teleport;
-	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-	WriteByte (MSG_MULTICAST, TE_TELEPORT);
-	WriteCoord (MSG_MULTICAST, org_x);
-	WriteCoord (MSG_MULTICAST, org_y);
-	WriteCoord (MSG_MULTICAST, org_z);
+	WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_TELEPORT);
+	WriteCoordV (MSG_MULTICAST, org);
 	multicast (org, MULTICAST_PHS);
 };
 

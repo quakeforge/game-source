@@ -82,37 +82,31 @@ W_FireAxe
 */
 void() W_FireAxe =
 {
-	local	vector	source;
-	local	vector	org;
+	local vector	org, source;
 
 	makevectors (@self.v_angle);
 	source = @self.origin + '0 0 16';
-	traceline (source, source + v_forward*64, FALSE, @self);
+	traceline (source, source + v_forward * 64, FALSE, @self);
 	if (trace_fraction == 1.0)
 		return;
 	
-	org = trace_endpos - v_forward*4;
+	org = trace_endpos - v_forward * 4;
 
 	if (trace_ent.takedamage) {
 		trace_ent.axhitme = 1;
 		SpawnBlood (org, 20);
-		//if (deathmatch > 3)
-		//	T_Damage (trace_ent, @self, @self, 75);
-		//else
+//		if (deathmatch > 3)
+//			T_Damage (trace_ent, @self, @self, 75);
+//		else
 			T_Damage (trace_ent, @self, @self, 20);
 	} else {	// hit wall
 		sound (@self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
 
-		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-		WriteByte (MSG_MULTICAST, TE_GUNSHOT);
-		WriteByte (MSG_MULTICAST, 3);
-		WriteCoord (MSG_MULTICAST, org_x);
-		WriteCoord (MSG_MULTICAST, org_y);
-		WriteCoord (MSG_MULTICAST, org_z);
+		WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_GUNSHOT, 3.0);
+		WriteCoordV (MSG_MULTICAST, org);
 		multicast (org, MULTICAST_PVS);
 	}
 };
-
 
 //============================================================================
 
@@ -133,11 +127,11 @@ void(vector org, vector vel) SpawnMeatSpray =
 	makevectors (@self.angles);
 
 	missile.velocity = vel;
-	missile.velocity_z = missile.velocity_z + 250 + 50*random();
+	missile.velocity_z = missile.velocity_z + 250 + 50 * random();
 
 	missile.avelocity = '3000 1000 2000';
-	
-// set missile duration
+
+	// set missile duration
 	missile.nextthink = time + 1;
 	missile.think = SUB_Remove;
 
@@ -153,21 +147,21 @@ SpawnBlood
 */
 void(vector org, float damage) SpawnBlood =
 {
+	local float	type, count;
+
 	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
 
 	if (trace_ent.nobleed) {
-		WriteByte (MSG_MULTICAST, TE_GUNSHOT);
-		WriteByte (MSG_MULTICAST, 5);
+		type = TE_GUNSHOT;
+		count = 5.0
 	} else {
-		WriteByte (MSG_MULTICAST, TE_BLOOD);
-		WriteByte (MSG_MULTICAST, 1);
+		type = TE_BLOOD;
+		count = 1.0;
 	}
-	WriteCoord (MSG_MULTICAST, org_x);
-	WriteCoord (MSG_MULTICAST, org_y);
-	WriteCoord (MSG_MULTICAST, org_z);
+	WriteBytes (MSG_MULTICAST, SVC_TEMPENTIty, type, count);
+	WriteCoordV (MSG_MULTICAST, org);
 	multicast (org, MULTICAST_PVS);
 };
-
 
 /*
 ================
@@ -180,7 +174,7 @@ void(float damage) spawn_touchblood =
 
 	vel = wall_velocity () * 0.2;
 	
-	SpawnBlood (@self.origin + vel*0.01, damage);
+	SpawnBlood (@self.origin + vel * 0.01, damage);
 };
 
 /*
@@ -222,39 +216,25 @@ void(entity hit, float damage) AddMultiDamage =
 	if (!hit)
 		return;
 	
-	if (hit != multi_ent)
-	{
+	if (hit != multi_ent) {
 		ApplyMultiDamage ();
 		multi_damage = damage;
 		multi_ent = hit;
-	}
-	else
-		multi_damage = multi_damage + damage;
+	} else
+		multi_damage += damage;
 };
 
 void() Multi_Finish =
 {
-	if (puff_count)
-	{
-		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-		WriteByte (MSG_MULTICAST, TE_GUNSHOT);
-		WriteByte (MSG_MULTICAST, puff_count);
-		WriteCoord (MSG_MULTICAST, puff_org_x);
-		WriteCoord (MSG_MULTICAST, puff_org_y);
-		WriteCoord (MSG_MULTICAST, puff_org_z);
-		multicast (puff_org, MULTICAST_PVS);
+	if (puff_count) {
+		WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_GUNSHOT, puff_count);
+		WriteCoordV (MSG_MULTICAST, puff_org);
 	}
-
-	if (blood_count)
-	{
-		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-		WriteByte (MSG_MULTICAST, TE_BLOOD);
-		WriteByte (MSG_MULTICAST, blood_count);
-		WriteCoord (MSG_MULTICAST, blood_org_x);
-		WriteCoord (MSG_MULTICAST, blood_org_y);
-		WriteCoord (MSG_MULTICAST, blood_org_z);
-		multicast (puff_org, MULTICAST_PVS);
+	if (blood_count) {
+		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY, TE_BLOOD, blood_count);
+		WriteCoordV (MSG_MULTICAST, blood_org);
 	}
+	multicast (puff_org, MULTICAST_PVS);
 };
 
 /*
@@ -270,33 +250,25 @@ TraceAttack
 */
 void(float damage, vector dir) TraceAttack =
 {
-	local	vector	vel, org;
-	
-	vel = normalize(dir + v_up*crandom() + v_right*crandom());
-	vel = vel + 2*trace_plane_normal;
-	vel = vel * 200;
+	local vector	org, vel;
 
-	org = trace_endpos - dir*4;
+	vel = normalize (dir + v_up * crandom () + v_right * crandom ());
+	vel += 2 * trace_plane_normal;
+	vel *= 200;
+
+	org = trace_endpos - dir * 4;
 	
 	// + POX - added nobleed check
-	if (trace_ent.takedamage && !trace_ent.nobleed)
-	{
-		blood_count = blood_count + 1;
+	if (trace_ent.takedamage && !trace_ent.nobleed) {
+		blood_count++;
 		blood_org = org;
 		AddMultiDamage (trace_ent, damage);
-	}
-	
-	else if (trace_ent.takedamage && trace_ent.nobleed)
-	{
-		puff_count = puff_count + 1;
+	} else if (trace_ent.takedamage && trace_ent.nobleed) {
+		puff_count++;
 		puff_org = org;
 		AddMultiDamage (trace_ent, damage);
-	}
-	// - POX
-	
-	else
-	{
-		puff_count = puff_count + 1;
+	} else {	// - POX
+		puff_count++;
 	}
 };
 
@@ -310,27 +282,25 @@ Go to the trouble of combining multiple pellets into a single damage call.
 */
 void(float shotcount, vector dir, vector spread) FireBullets2 =
 {
-	local	vector direction;
-	local	vector	src;
-	
-	makevectors(@self.v_angle);
+	local vector	direction, src;
 
-	src = @self.origin + v_forward*10;
+	makevectors (@self.v_angle);
+
+	src = @self.origin + v_forward * 10;
 	src_z = @self.absmin_z + @self.size_z * 0.7;
 
 	ClearMultiDamage ();
 
-	traceline (src, src + dir*2048, FALSE, @self);
-	puff_org = trace_endpos - dir*4;
+	traceline (src, src + dir * 2048, FALSE, @self);
+	puff_org = trace_endpos - dir * 4;
 
-	while (shotcount > 0)
-	{
-		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
-		traceline (src, src + direction*2048, FALSE, @self);
+	while (shotcount > 0) {
+		direction = dir + crandom () * spread_x * v_right + crandom () * spread_y * v_up;
+		traceline (src, src + direction * 2048, FALSE, @self);
 		if (trace_fraction != 1.0)
 			TraceAttack (8, direction); //POX 4*2
 
-		shotcount = shotcount - 1;
+		shotcount--;
 	}
 	ApplyMultiDamage ();
 	Multi_Finish ();
@@ -346,27 +316,24 @@ Go to the trouble of combining multiple pellets into a single damage call.
 */
 void(float shotcount, vector dir, vector spread) FireBullets =
 {
-	local	vector direction;
-	local	vector	src;
+	local vector	direction, src;
 	
-	makevectors(@self.v_angle);
+	makevectors (@self.v_angle);
 
 	src = @self.origin + v_forward*10;
 	src_z = @self.absmin_z + @self.size_z * 0.7;
 
 	ClearMultiDamage ();
 
-	traceline (src, src + dir*2048, FALSE, @self);
-	puff_org = trace_endpos - dir*4;
+	traceline (src, src + dir * 2048, FALSE, @self);
+	puff_org = trace_endpos - dir * 4;
 
-	while (shotcount > 0)
-	{
-		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
-		traceline (src, src + direction*2048, FALSE, @self);
+	while (shotcount > 0) {
+		direction = dir + crandom () * spread_x * v_right + crandom () * spread_y * v_up;
+		traceline (src, src + direction * 2048, FALSE, @self);
 		if (trace_fraction != 1.0)
 			TraceAttack (4, direction);
-
-		shotcount = shotcount - 1;
+		shotcount--;
 	}
 	ApplyMultiDamage ();
 	Multi_Finish ();
@@ -379,7 +346,7 @@ W_FireShotgun
 */
 void() W_FireShotgun =
 {
-	local vector dir;
+	local vector	dir;
 
 	sound (@self, CHAN_WEAPON, "weapons/tsfire.wav", 1, ATTN_NORM);
 
@@ -388,14 +355,13 @@ void() W_FireShotgun =
 	
 	//POX - May not need this (SVC_SMALLKICK?)
 	if (@self.flags & FL_ONGROUND)
-		@self.velocity = @self.velocity + v_forward* -35;
+		@self.velocity = @self.velocity + v_forward * -35;
 
-	@self.currentammo = @self.ammo_shells = @self.ammo_shells - 1;
+	@self.currentammo = @self.ammo_shells -= 1;
 
 	dir = aim (@self, 100000);
 	FireBullets (6, dir, '0.04 0.04 0');
 };
-
 
 /*
 ================
@@ -404,15 +370,14 @@ W_FireSuperShotgun
 */
 void() W_FireSuperShotgun =
 {
-	local vector dir;
-	local float bullets, used;
+	local float		bullets, used;
+	local vector	dir;
 	
 	bullets = 14;
 	used = 2;
 	
 	//POX v1.1 don't plat tShot sound...
-	if (@self.currentammo == 1)
-	{
+	if (@self.currentammo == 1) {
 		bullets = 6;
 		used = 1;
 	}
@@ -421,17 +386,16 @@ void() W_FireSuperShotgun =
 
 	msg_entity = @self;
 	WriteByte (MSG_ONE, SVC_BIGKICK);
-	
+
 	if (@self.flags & FL_ONGROUND)
 		@self.velocity = @self.velocity + v_forward* -60;
 	
 	//if (deathmatch != 4)
-	@self.currentammo = @self.ammo_shells = @self.ammo_shells - used;
+	@self.currentammo = @self.ammo_shells -= used;
 	
 	dir = aim (@self, 100000);
 	FireBullets (14, dir, '0.14 0.08 0');
 };
-
 
 /*
 ==============================================================================
@@ -447,22 +411,19 @@ void() T_MissileTouch =
 
 	if (other == @self.owner)
 		return;		// don't explode on owner
-
 	if (@self.voided) {
 		return;
 	}
 	@self.voided = 1;
 
-	if (pointcontents(@self.origin) == CONTENT_SKY)
-	{
-		remove(@self);
+	if (pointcontents(@self.origin) == CONTENT_SKY) {
+		remove (@self);
 		return;
 	}
 
-	damg = 20 + random()*10;
-	
-	if (other.health)
-	{
+	damg = 20 + random() * 10;
+
+	if (other.health) {
 		other.deathtype = "rocket";
 		T_Damage (other, @self, @self.owner, damg );
 	}
@@ -473,20 +434,15 @@ void() T_MissileTouch =
 
 	T_RadiusDamage (@self, @self.owner, 90, other, "rocket");
 
-//  sound (@self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
-	@self.origin = @self.origin - 8 * normalize(@self.velocity);
+//	sound (@self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
+	@self.origin = @self.origin - 8 * normalize (@self.velocity);
 
-	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-	WriteByte (MSG_MULTICAST, TE_EXPLOSION);
-	WriteCoord (MSG_MULTICAST, @self.origin_x);
-	WriteCoord (MSG_MULTICAST, @self.origin_y);
-	WriteCoord (MSG_MULTICAST, @self.origin_z);
+	WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_EXPLOSION);
+	WriteCoordV (MSG_MULTICAST, @self.origin);
 	multicast (@self.origin, MULTICAST_PHS);
 
-	remove(@self);
+	remove (@self);
 };
-
-
 
 /*
 ================
@@ -495,43 +451,38 @@ W_FireRocket
 */
 void(vector barrel) W_FireRocket =
 {
-	@self.currentammo = @self.ammo_rockets = @self.ammo_rockets - 0.5;
+	@self.currentammo = @self.ammo_rockets -= 0.5;
 	
-	//if player fired last rocket reset the reload bit
+	// if player fired last rocket reset the reload bit
 	if (@self.ammo_rockets == 0)
 		@self.reload_rocket = 0;
-	else //player has rockets left so ad 1 to reload count
-		@self.reload_rocket = @self.reload_rocket + 1;
-	
+	else		// player has rockets left so add 1 to reload count
+		@self.reload_rocket += 1;
+
 	newmis = spawn ();
 	newmis.owner = @self;
 	newmis.movetype = MOVETYPE_TOSS;
 	newmis.solid = SOLID_BBOX;
-		
-// set newmis speed	
 
+	// set newmis speed
 	makevectors (@self.v_angle);
-	
-	newmis.velocity = v_forward*1100 + v_up * 220 + v_right* -22;
-
-	newmis.angles = vectoangles(newmis.velocity);
+	newmis.velocity = v_forward * 1100 + v_up * 220 + v_right * -22;
+	newmis.angles = vectoangles (newmis.velocity);
 	
 	newmis.touch = T_MissileTouch;
-	
 	newmis.voided = 0;
-	
-// set newmis duration
+
+	// set newmis duration
 	newmis.nextthink = time + 5;
 	newmis.think = SUB_Remove;
 	newmis.classname = "rocket";
 
 	setmodel (newmis, "progs/grenade.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');		
-	setorigin (newmis, @self.origin + v_forward* 8 + v_right* 12 + barrel);
+	setorigin (newmis, @self.origin + v_forward * 8 + v_right * 12 + barrel);
 };
 
 //=============================================================================
-
 
 void() GrenadeExplode =
 {
@@ -542,11 +493,8 @@ void() GrenadeExplode =
 
 	T_RadiusDamage (@self, @self.owner, 120, world, "grenade");
 
-	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-	WriteByte (MSG_MULTICAST, TE_EXPLOSION);
-	WriteCoord (MSG_MULTICAST, @self.origin_x);
-	WriteCoord (MSG_MULTICAST, @self.origin_y);
-	WriteCoord (MSG_MULTICAST, @self.origin_z);
+	WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_EXPLOSION);
+	WriteCoordV (MSG_MULTICAST, @self.origin);
 	multicast (@self.origin, MULTICAST_PHS);
 
 	remove (@self);
@@ -554,15 +502,14 @@ void() GrenadeExplode =
 
 void() GrenadeTouch =
 {
-	local	float	r;
+	local float		r;
 	
-	r=random();
+	r = random ();
 	
 	if (other == @self.owner)
 		return;		// don't explode on owner
-	if (other.takedamage == DAMAGE_AIM)
-	{
-		GrenadeExplode();
+	if (other.takedamage == DAMAGE_AIM) {
+		GrenadeExplode ();
 		return;
 	}
 	
@@ -589,9 +536,9 @@ void() W_FireGrenade =
 
 	msg_entity = @self;
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
-	
+
 	if (@self.flags & FL_ONGROUND)
-		@self.velocity = @self.velocity + v_forward* -75;
+		@self.velocity += v_forward * -75;
 
 	newmis = spawn ();
 	newmis.voided=0;
@@ -599,26 +546,22 @@ void() W_FireGrenade =
 	newmis.movetype = MOVETYPE_BOUNCE;
 	newmis.solid = SOLID_BBOX;
 	newmis.classname = "grenade";
-		
-// set newmis speed	
 
+	// set newmis speed	
 	makevectors (@self.v_angle);
-
-	if (@self.v_angle_x)
-		newmis.velocity = v_forward*600 + v_up * 200 + crandom()*v_right*10 + crandom()*v_up*10;
-	else
-	{
-		newmis.velocity = aim(@self, 10000);
-		newmis.velocity = newmis.velocity * 600;
+	if (@self.v_angle_x) {
+		newmis.velocity = v_forward * 600 + v_up * 200 + crandom () * v_right * 10 + crandom () * v_up * 10;
+	} else {
+		newmis.velocity = aim (@self, 10000);
+		newmis.velocity *= 600;
 		newmis.velocity_z = 200;
 	}
 
 	newmis.avelocity = '300 300 300';
 
 	newmis.angles = vectoangles(newmis.velocity);
-	
+
 	newmis.touch = GrenadeTouch;
-	
 
 	newmis.nextthink = time + 2.5;
 
@@ -628,7 +571,6 @@ void() W_FireGrenade =
 	setsize (newmis, '0 0 0', '0 0 0');		
 	setorigin (newmis, @self.origin);
 };
-
 
 //=============================================================================
 // + POX - Plasma
@@ -646,30 +588,23 @@ void() plasma_touch =
 	if (other.solid == SOLID_TRIGGER)
 		return; // trigger field, do nothing
 
-	if (pointcontents(@self.origin) == CONTENT_SKY)
-	{
-		remove(@self);
+	if (pointcontents(@self.origin) == CONTENT_SKY) {
+		remove (@self);
 		return;
 	}
 	
 // hit something that bleeds
-	if (other.takedamage)
-	{
+	if (other.takedamage) {
 		spawn_touchblood (7);
 		other.deathtype = "plasma";
 		T_Damage (other, @self, @self.owner, 7);
-	}
-	else
-	{
-		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-		WriteByte (MSG_MULTICAST, TE_SPIKE);
-		WriteCoord (MSG_MULTICAST, @self.origin_x);
-		WriteCoord (MSG_MULTICAST, @self.origin_y);
-		WriteCoord (MSG_MULTICAST, @self.origin_z);
+	} else {
+		WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_SPIKE);
+		WriteCoordV (MSG_MULTICAST, @self.origin);
 		multicast (@self.origin, MULTICAST_PHS);
 	}
 
-	remove(@self);
+	remove (@self);
 
 };
 
@@ -706,7 +641,7 @@ void(float ox) W_FirePlasma =
 
 	dir = aim (@self, 1000);
 	
-	launch_plasma (@self.origin + v_forward*12 + '0 0 12' + v_right*ox, dir);
+	launch_plasma (@self.origin + v_forward * 12 + '0 0 12' + v_right * ox, dir);
 
 	msg_entity = @self;
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
@@ -736,11 +671,8 @@ void() spike_touch =
 		other.deathtype = "nail";
 		T_Damage (other, @self, @self.owner, 9);
 	} else {
-		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-		WriteByte (MSG_MULTICAST, TE_SPIKE);
-		WriteCoord (MSG_MULTICAST, @self.origin_x);
-		WriteCoord (MSG_MULTICAST, @self.origin_y);
-		WriteCoord (MSG_MULTICAST, @self.origin_z);
+		WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_SPIKE);
+		WriteCoordV (MSG_MULTICAST, @self.origin);
 		multicast (@self.origin, MULTICAST_PHS);
 	}
 
@@ -768,11 +700,8 @@ void() superspike_touch =
 		other.deathtype = "supernail";
 		T_Damage (other, @self, @self.owner, 18);
 	} else {
-		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-		WriteByte (MSG_MULTICAST, TE_SUPERSPIKE);
-		WriteCoord (MSG_MULTICAST, @self.origin_x);
-		WriteCoord (MSG_MULTICAST, @self.origin_y);
-		WriteCoord (MSG_MULTICAST, @self.origin_z);
+		WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_SUPERSPIKE);
+		WriteCoordV (MSG_MULTICAST, @self.origin);
 		multicast (@self.origin, MULTICAST_PHS);
 	}
 
@@ -819,7 +748,7 @@ void(float ox) W_FireNails =
 	
 	sound (@self, CHAN_WEAPON, "weapons/hog.wav", 0.8, ATTN_NORM);
 	
-	@self.currentammo = @self.ammo_nails = @self.ammo_nails - 1;
+	@self.currentammo = @self.ammo_nails -= 1;
 	
 	dir = aim (@self, 1000);
 	launch_spike (@self.origin + '0 0 16' + v_right*ox, dir);
@@ -939,6 +868,7 @@ void() W_SetCurrentAmmo =
 		default:
 			@self.weaponmodel = "";
 			@self.currentammo = 0;
+			break;
 	}
 };
 

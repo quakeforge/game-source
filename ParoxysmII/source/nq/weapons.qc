@@ -98,21 +98,14 @@ void() W_Precache =
 	precache_model ("progs/d_gren.mdl");
 	precache_model ("progs/d_rhino.mdl");
 
-//No weapon Death Model (weapons are dropped)
+// No weapon Death Model (weapons are dropped)
 	precache_model ("progs/death_p.mdl");
-
 };
 
-
-/*
-================
-SpawnMeatSpray
-================
-*/
 void(vector org, vector vel) SpawnMeatSpray =
 {
-	local	entity missile, mpuff;
-	local	vector	org;
+	local entity	missile, mpuff;
+	local vector	org;
 
 	missile = spawn ();
 	missile.owner = self;
@@ -122,7 +115,7 @@ void(vector org, vector vel) SpawnMeatSpray =
 	makevectors (self.angles);
 
 	missile.velocity = vel;
-	missile.velocity_z = missile.velocity_z + 250 + 50*random();
+	missile.velocity_z = missile.velocity_z + 250 + 50 * random();
 
 	missile.avelocity = '3000 1000 2000';
 	
@@ -143,7 +136,7 @@ SpawnBlood
 */
 void(vector org, vector vel, float damage) SpawnBlood =
 {	
-	local float	blood;
+	local float		blood;
 	
 	//check for a bleeder
 	if (!trace_ent.nobleed)
@@ -151,7 +144,7 @@ void(vector org, vector vel, float damage) SpawnBlood =
 	else
 		blood = 6;
 	
-	particle (org, vel*0.4, blood, damage*3);
+	particle (org, vel * 0.4, blood, damage * 3);
 };
 
 
@@ -173,18 +166,12 @@ void(entity who,float damage) spawn_touchblood =
 	
 	vel = wall_velocity () * 0.2;
 	
-	particle (self.origin, vel*0.4, blood, damage*2);
+	particle (self.origin, vel * 0.4, blood, damage * 2);
 };
 
-
-/*
-================
-SpawnChunk
-================
-*/
 void(vector org, vector vel) SpawnChunk =
 {
-	particle (org, vel*0.02, 0, 10);
+	particle (org, vel * 0.02, 0, 10);
 };
 
 /*
@@ -196,85 +183,50 @@ of the sound and animation code to accomodate the new model (see player.qc)
 W_FireSaw
 
 ================
-
 */
-
 void() W_FireSaw =
-
 {
-
-	local	vector	source;
-
-	local	vector	org;
-
-
+	local vector	org, source;
 
 	makevectors (self.v_angle);
 
-
-//POX - v1.02b - increased range
-
+	//POX - v1.02b - increased range
 	source = self.origin + '0 0 24';
 
-	traceline (source, source + v_forward*64, FALSE, self);
+	traceline (source, source + v_forward * 64, FALSE, self);
 
 	if (trace_fraction == 1.0)
-
 		return;
-
 	
+	org = trace_endpos - v_forward * 4;
 
-	org = trace_endpos - v_forward*4;
-
-
-
-	if (trace_ent.takedamage)
-
-	{
-
+	if (trace_ent.takedamage) {
 		trace_ent.axhitme = 2;
 		
 		//POX v1.1 - nobleed fix
-		if (trace_ent.nobleed)
-		{
-			WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-			WriteByte (MSG_BROADCAST, TE_GUNSHOT);
-			WriteCoord (MSG_BROADCAST, org_x);
-			WriteCoord (MSG_BROADCAST, org_y);
-			WriteCoord (MSG_BROADCAST, org_z);
-		}
-		else
-		{
+		if (trace_ent.nobleed) {
+			WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_GUNSHOT);
+			WriteCoordV (MSG_BROADCAST, org);
+		} else {
 			SpawnBlood(trace_endpos, '0 0 5', 20);
-			SpawnMeatSpray (self.origin + v_forward*16, ((random()*300) - 150) * v_right + (100 * v_forward));
+			SpawnMeatSpray (self.origin + v_forward * 16,
+							((random() * 300) - 150) * v_right
+							+ (100 * v_forward));
 		}
-
 
 		T_Damage (trace_ent, self, self, 17); //POX 1.01b - reduced damage - POX 1.1 increased damage :)
-
 
 		trace_ent.velocity = trace_ent.velocity * 0.5;
 
 		sound (self, CHAN_WEAPON, "weapons/sawguts.wav", 1, ATTN_NORM);
 
 		self.punchangle_x = -8;
-
-	}
-
-	else
-
-	{	// hit wall
-
+	} else {	// hit wall
 		sound (self, CHAN_WEAPON, "weapons/sawhit.wav", 1, ATTN_NORM);
 
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
-		WriteCoord (MSG_BROADCAST, org_x);
-		WriteCoord (MSG_BROADCAST, org_y);
-		WriteCoord (MSG_BROADCAST, org_z);
-
+		WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_GUNSHOT);
+		WriteCoordV (MSG_BROADCAST, org);
 	}
-
 };
 
 
@@ -312,14 +264,13 @@ void(entity hit, float damage) AddMultiDamage =
 	if (!hit)
 		return;
 	
-	if (hit != multi_ent)
-	{
+	if (hit != multi_ent) {
 		ApplyMultiDamage ();
 		multi_damage = damage;
 		multi_ent = hit;
+	} else {
+		multi_damage += damage;
 	}
-	else
-		multi_damage = multi_damage + damage;
 };
 
 /*
@@ -330,43 +281,25 @@ BULLETS
 ==============================================================================
 */
 
-/*
-================
-TraceAttack
-================
-*/
 void(float damage, vector dir) TraceAttack =
 {
-	local	vector	vel, org;
+	local vector	org, vel;
 	
-	vel = normalize(dir + v_up*crandom() + v_right*crandom());
-	vel = vel + 2*trace_plane_normal;
-	vel = vel * 200;
+	vel = normalize (dir + v_up * crandom () + v_right * crandom ());
+	vel += 2 * trace_plane_normal;
+	vel *= 200;
 
-	org = trace_endpos - dir*4;
+	org = trace_endpos - dir * 4;
 
 //POX - v1.1 - Fixed nobleed not working with shotguns
-	if (trace_ent.takedamage && !trace_ent.nobleed)
-	{
-		SpawnBlood (org, vel*0.2, damage);
+	if (trace_ent.takedamage && !trace_ent.nobleed) {
+		SpawnBlood (org, vel * 0.2, damage);
 		AddMultiDamage (trace_ent, damage);
-	}
-	else if (trace_ent.takedamage && trace_ent.nobleed)
-	{
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
-		WriteCoord (MSG_BROADCAST, org_x);
-		WriteCoord (MSG_BROADCAST, org_y);
-		WriteCoord (MSG_BROADCAST, org_z);
-		AddMultiDamage (trace_ent, damage);
-	}
-	else
-	{
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
-		WriteCoord (MSG_BROADCAST, org_x);
-		WriteCoord (MSG_BROADCAST, org_y);
-		WriteCoord (MSG_BROADCAST, org_z);
+	} else {
+		WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_GUNSHOT);
+		WriteCoordV (MSG_BROADCAST, org);
+		if (trace_ent.takedamage && trace_ent.nobleed)
+			AddMultiDamage (trace_ent, damage);
 	}
 };
 
@@ -380,24 +313,23 @@ Made a seperate function for the tShot second trigger
 */
 void(float shotcount, vector dir, vector spread) FireBullets2 =
 {
-	local	vector direction;
-	local	vector	src;
+	local vector	direction, src;
 	
-	makevectors(self.v_angle);
+	makevectors (self.v_angle);
 
-	src = self.origin + v_forward*10;
+	src = self.origin + v_forward * 10;
 	src_z = self.absmin_z + self.size_z * 0.7;
 
 	ClearMultiDamage ();
-	while (shotcount > 0)
-	{
-		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
+	while (shotcount > 0) {
+		direction = dir + crandom () * spread_x * v_right
+			+ crandom () * spread_y * v_up;
 
-		traceline (src, src + direction*2048, FALSE, self);
+		traceline (src, src + direction * 2048, FALSE, self);
 		if (trace_fraction != 1.0)
 			TraceAttack (8, direction);
 
-		shotcount = shotcount - 1;
+		shotcount--;
 	}
 	ApplyMultiDamage ();
 };
@@ -412,88 +344,70 @@ Go to the trouble of combining multiple pellets into a single damage call.
 */
 void(float shotcount, vector dir, vector spread) FireBullets =
 {
-	local	vector direction;
-	local	vector	src;
+	local vector	direction, src;
 	
-	makevectors(self.v_angle);
+	makevectors (self.v_angle);
 
-	src = self.origin + v_forward*10;
+	src = self.origin + v_forward * 10;
 	src_z = self.absmin_z + self.size_z * 0.7;
 
 	ClearMultiDamage ();
-	while (shotcount > 0)
-	{
-		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
+	while (shotcount > 0) {
+		direction = dir + crandom() * spread_x * v_right
+			+ crandom () * spread_y * v_up;
 
-		traceline (src, src + direction*2048, FALSE, self);
+		traceline (src, src + direction * 2048, FALSE, self);
 		if (trace_fraction != 1.0)
 			TraceAttack (4, direction);
 
-		shotcount = shotcount - 1;
+		shotcount--;
 	}
 	ApplyMultiDamage ();
 };
 
-
-/*
-================
-W_FireShotgun
-================
-*/
-
 void() W_FireShotgun =
 {
 	local vector dir;
-	
-	sound (self, CHAN_WEAPON, "weapons/tsfire.wav", 1, ATTN_NORM);	
+
+	sound (self, CHAN_WEAPON, "weapons/tsfire.wav", 1, ATTN_NORM);
 
 	self.punchangle_x = -2;
-	
+
 	//Added weapon kickback (as long as you're not in mid air)
 	if (self.flags & FL_ONGROUND)
-		self.velocity = self.velocity + v_forward* -35;
-	
-	self.currentammo = self.ammo_shells = self.ammo_shells - 1;
+		self.velocity = self.velocity + v_forward * -35;
+
+	self.currentammo = --self.ammo_shells;
 	dir = aim (self, 100000);
 	FireBullets (6, dir, '0.04 0.04 0');
 };
 
-
-/*
-================
-W_FireSuperShotgun
-================
-*/
 void() W_FireSuperShotgun =
 {
-	local vector dir;
-	local float bullets, used;
-	
+	local float		bullets, used;
+	local vector	dir;
+
 	bullets = 14;
 	used = 2;
-	
+
 	//POX v1.1 don't plat tShot sound...
-	if (self.currentammo == 1)
-	{
+	if (self.currentammo == 1) {
 		bullets = 6;
 		used = 1;
 	}
 		
-	sound (self ,CHAN_WEAPON, "weapons/shotgn2.wav", 1, ATTN_NORM);	
+	sound (self, CHAN_WEAPON, "weapons/shotgn2.wav", 1, ATTN_NORM);	
 
 	self.punchangle_x = -4;
 	
 	//Added weapon kickback (as long as you're not in mid air)
 	if (self.flags & FL_ONGROUND)
-		self.velocity = self.velocity + v_forward* -60;
+		self.velocity = self.velocity + v_forward * -60;
 	
-	self.currentammo = self.ammo_shells = self.ammo_shells - used;
+	self.currentammo = self.ammo_shells -= used;
 	dir = aim (self, 100000);
 	FireBullets (bullets, dir, '0.14 0.08 0');
 };
-
-
-
 
 /*
 ==============================================================================
@@ -505,7 +419,7 @@ ROCKETS
 
 void() T_MissileTouch =
 {
-	local float	damg;
+	local float		damg;
 
 	if (other == self.owner)
 		return;		// don't explode on owner
@@ -516,13 +430,12 @@ void() T_MissileTouch =
 		
 	self.voided = 1;
 	
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
-		remove(self);
+	if (pointcontents (self.origin) == CONTENT_SKY) {
+		remove (self);
 		return;
 	}
 
-	damg = 20 + random()*10;
+	damg = 20 + random () * 10;
 	
 	if (other.health)
 		T_Damage (other, self, self.owner, damg);
@@ -534,31 +447,23 @@ void() T_MissileTouch =
 
 //	For some reason, ID called explosions sounds from all over the place
 //	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
-	self.origin = self.origin - 8*normalize(self.velocity);
+	self.origin = self.origin - 8 * normalize (self.velocity);
 
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, self.origin_x);
-	WriteCoord (MSG_BROADCAST, self.origin_y);
-	WriteCoord (MSG_BROADCAST, self.origin_z);
+	WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_EXPLOSION);
+	WriteCoordV (MSG_BROADCAST, self.origin);
 
 	BecomeExplosion ();
 };
 
-/*
-================
-W_FireRocket
-================
-*/
 void(vector barrel) W_FireRocket =
 {
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 0.5;
+	self.currentammo = self.ammo_rockets -= 0.5;
 	
 	//if player fired last rocket reset the reload bit
 	if (self.ammo_rockets == 0)
 		self.reload_rocket = 0;
 	else //player has rockets left so ad 1 to reload count
-		self.reload_rocket = self.reload_rocket + 1;
+		self.reload_rocket++;
 	
 	newmis = spawn ();
 	newmis.voided = 0;
@@ -568,16 +473,14 @@ void(vector barrel) W_FireRocket =
 	newmis.classname = "rocket";
 		
 // set newmis speed	
-
 	makevectors (self.v_angle);
 
-	newmis.velocity = v_forward*1100 + v_up * 220 + v_right* -22;
+	newmis.velocity = v_forward * 1100 + v_up * 220 + v_right * -22;
 
-	newmis.angles = vectoangles(newmis.velocity);
+	newmis.angles = vectoangles (newmis.velocity);
 	
 	newmis.touch = T_MissileTouch;
 
-	
 // set newmis duration
 	newmis.nextthink = time + 5;
 	newmis.think = SUB_Remove;
@@ -585,8 +488,7 @@ void(vector barrel) W_FireRocket =
 	setmodel (newmis, "progs/grenade.mdl");
 		
 	setsize (newmis, '0 0 0', '0 0 0');
-	setorigin (newmis, self.origin + v_forward* 8 + v_right* 12 + barrel);
-	
+	setorigin (newmis, self.origin + v_forward * 8 + v_right * 12 + barrel);
 };
 
 //=============================================================================
@@ -605,11 +507,8 @@ void() GrenadeExplode =
 	
 	T_RadiusDamage (self, self.owner, 120, world);
 
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, self.origin_x);
-	WriteCoord (MSG_BROADCAST, self.origin_y);
-	WriteCoord (MSG_BROADCAST, self.origin_z);
+	WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_EXPLOSION);
+	WriteCoordV (MSG_BROADCAST, self.origin);
 
 	BecomeExplosion ();
 };
@@ -617,32 +516,26 @@ void() GrenadeExplode =
 void() GrenadeTouch =
 {
 	local	float	r;
-	
-	r=random();
-	
+
+	r = random ();
+
 	if (other == self.owner)
 		return;		// don't explode on owner
-	if (other.takedamage == DAMAGE_AIM)
-	{
-		GrenadeExplode();
+	if (other.takedamage == DAMAGE_AIM) {
+		GrenadeExplode ();
 		return;
 	}
-	
-	//pick a bounce sound
+
+	// pick a bounce sound
 	if (r < 0.75)
 		sound (self, CHAN_VOICE, "weapons/bounce.wav", 1, ATTN_NORM);
 	else
 		sound (self, CHAN_VOICE, "weapons/bounce2.wav", 1, ATTN_NORM);
-		
+
 	if (self.velocity == '0 0 0')
 		self.avelocity = '0 0 0';
 };
 
-/*
-================
-W_FireGrenade
-================
-*/
 void() W_FireGrenade =
 {
 	
@@ -654,7 +547,7 @@ void() W_FireGrenade =
 	
 	//Added weapon kickback (as long as you're not in mid air)
 	if (self.flags & FL_ONGROUND)
-		self.velocity = self.velocity + v_forward* -75;
+		self.velocity = self.velocity + v_forward * -75;
 
 	newmis = spawn ();
 	newmis.voided = 0;
@@ -664,21 +557,20 @@ void() W_FireGrenade =
 	newmis.classname = "grenade";
 		
 // set newmis speed	
-
 	makevectors (self.v_angle);
 
-	if (self.v_angle_x)
-		newmis.velocity = v_forward*600 + v_up * 200 + crandom()*v_right*10 + crandom()*v_up*10;
-	else
-	{
-		newmis.velocity = aim(self, 10000);
+	if (self.v_angle_x) {
+		newmis.velocity = v_forward * 600 + v_up * 200
+			+ crandom () * v_right * 10 + crandom () * v_up * 10;
+	} else {
+		newmis.velocity = aim (self, 10000);
 		newmis.velocity = newmis.velocity * 600;
 		newmis.velocity_z = 200;
 	}
 
 	newmis.avelocity = '300 300 300';
 
-	newmis.angles = vectoangles(newmis.velocity);
+	newmis.angles = vectoangles (newmis.velocity);
 	
 	newmis.touch = GrenadeTouch;
 	
@@ -691,16 +583,15 @@ void() W_FireGrenade =
 	setorigin (newmis, self.origin);
 };
 
-
 /*
-=================================================================================
+===============================================================================
 Start Plasma Gun Fire
-=================================================================================
+===============================================================================
 */
 
 void() plasma_touch =
 {
-local float rand;
+	local float		rand;
 	
 	if (other == self.owner)
 		return;
@@ -714,31 +605,22 @@ local float rand;
 	//if (other.solid == SOLID_TRIGGER)
 	//	return;	// trigger field, do nothing
 
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
-		remove(self);
+	if (pointcontents (self.origin) == CONTENT_SKY) {
+		remove (self);
 		return;
 	}
 	
 // hit something that bleeds
-	if (other.takedamage)
-	{
+	if (other.takedamage) {
 		spawn_touchblood (other, 7);
 
-			
 		T_Damage (other, self, self.owner, 7);
-	}
-	else
-	{
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
-		WriteCoord (MSG_BROADCAST, self.origin_x);
-		WriteCoord (MSG_BROADCAST, self.origin_y);
-		WriteCoord (MSG_BROADCAST, self.origin_z);
+	} else {
+		WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_GUNSHOT);
+		WriteCoordV (MSG_BROADCAST, self.origin);
 	}
 
-	remove(self);
-
+	remove (self);
 };
 
 void(vector org, vector dir) launch_plasma =
@@ -749,29 +631,26 @@ void(vector org, vector dir) launch_plasma =
 	newmis.movetype = MOVETYPE_FLYMISSILE;
 	newmis.solid = SOLID_BBOX;
 
-	newmis.angles = vectoangles(dir);
+	newmis.angles = vectoangles (dir);
 	
 	newmis.touch = plasma_touch;
 	newmis.classname = "plasma";
 	
-		/*POX v1.11
-	if (self.classname == "bot")
-	{
+	/*POX v1.11
+	if (self.classname == "bot") {
 		newmis.nextthink = time + 0.05;
 		newmis.think = bot_missile_think;
-	}
-	else
-	{*/
+	} else {
+	*/
 		newmis.think = SUB_Remove;
 		newmis.nextthink = time + 5;
-	//}
-	
+//	}
+
 	setmodel (newmis, "progs/laser.mdl");
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
 	setorigin (newmis, org);
 
 	newmis.velocity = dir * 1400;
-
 };
 
 void(float ox) W_FirePlasma =
@@ -782,23 +661,21 @@ void(float ox) W_FirePlasma =
 	
 	sound (self, CHAN_WEAPON, "weapons/plasma.wav", 0.8, ATTN_NORM);
 	
-	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+	self.currentammo = --self.ammo_cells;
 	
 	self.punchangle_x = -1;
 	
 	dir = aim (self, 1000);
 	
-	launch_plasma (self.origin + v_forward*12 + '0 0 12' + v_right*ox, dir);
+	launch_plasma (self.origin + v_forward * 12 + '0 0 12' + v_right * ox, dir);
 	//POX v1.11
-	//spawn_spark(ox);
-
-	
+//	spawn_spark (ox);
 };
 
 /*
-=================================================================================
+===============================================================================
 Start nailgun fire
-=================================================================================
+===============================================================================
 */
 void() spike_touch =
 {
@@ -812,29 +689,21 @@ void() spike_touch =
 		
 	self.voided = 1;
 
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
-		remove(self);
+	if (pointcontents (self.origin) == CONTENT_SKY) {
+		remove (self);
 		return;
 	}
 	
 // hit something that bleeds
-	if (other.takedamage)
-	{	
-		spawn_touchblood (other, 9);	
+	if (other.takedamage) {
+		spawn_touchblood (other, 9);
 		T_Damage (other, self, self.owner, 9);
-	}
-	else
-	{
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_SPIKE);
-		WriteCoord (MSG_BROADCAST, self.origin_x);
-		WriteCoord (MSG_BROADCAST, self.origin_y);
-		WriteCoord (MSG_BROADCAST, self.origin_z);
+	} else {
+		WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_SPIKE);
+		WriteCoordV (MSG_BROADCAST, self.origin);
 	}
 
-	remove(self);
-
+	remove (self);
 };
 
 void() superspike_touch =
@@ -848,31 +717,22 @@ void() superspike_touch =
 		
 	self.voided = 1;
 
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
-		remove(self);
+	if (pointcontents (self.origin) == CONTENT_SKY) {
+		remove (self);
 		return;
 	}
 	
 // hit something that bleeds
-	if (other.takedamage)
-	{	
+	if (other.takedamage) {	
 		spawn_touchblood (other, 18);
 
-			
 		T_Damage (other, self, self.owner, 18);
-	}
-	else
-	{
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_SUPERSPIKE);
-		WriteCoord (MSG_BROADCAST, self.origin_x);
-		WriteCoord (MSG_BROADCAST, self.origin_y);
-		WriteCoord (MSG_BROADCAST, self.origin_z);
+	} else {
+		WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_SUPERSPIKE);
+		WriteCoordV (MSG_BROADCAST, self.origin);
 	}
 
-	remove(self);
-
+	remove (self);
 };
 
 void(vector org, vector dir) launch_spike =
@@ -883,29 +743,26 @@ void(vector org, vector dir) launch_spike =
 	newmis.movetype = MOVETYPE_FLYMISSILE;
 	newmis.solid = SOLID_BBOX;
 
-	newmis.angles = vectoangles(dir);
-	
+	newmis.angles = vectoangles (dir);
+
 	newmis.touch = spike_touch;
 	newmis.classname = "spike";
-	
+
 	/*POX v1.11
-	if (self.classname == "bot")
-	{
+	if (self.classname == "bot") {
 		newmis.nextthink = time + 0.05;
 		newmis.think = bot_missile_think;
-	}
-	else
-	{*/
+	} else {
+	*/
 		newmis.think = SUB_Remove;
 		newmis.nextthink = time + 6;
-	//}	
-	
+//	}	
+
 	setmodel (newmis, "progs/spike.mdl");
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
 	setorigin (newmis, org);
 
 	newmis.velocity = dir * 1000;
-
 };
 
 // New Nailgun fire
@@ -920,14 +777,13 @@ void(float ox) W_FireNails =
 	 
 	sound (self, CHAN_WEAPON, "weapons/hog.wav", 0.8, ATTN_NORM); // new nailgun sound
 	
-	self.currentammo = self.ammo_nails = self.ammo_nails - 1;
+	self.currentammo = --self.ammo_nails;
 	dir = aim (self, 1000);
 	launch_spike (self.origin + '0 0 16' + v_right*ox, dir);
 	newmis.touch = spike_touch;
 	setmodel (newmis, "progs/spike.mdl");
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
 	self.punchangle_x = -2;
-	
 };
 
 // Left for spike trap use
@@ -937,14 +793,13 @@ void() W_FireSuperSpikes =
 	local entity	old;
 	
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
-	//self.attack_finished = time + 0.15;
-	self.currentammo = self.ammo_nails = self.ammo_nails - 1;
+//	self.attack_finished = time + 0.15;
+	self.currentammo = --self.ammo_nails;
 	dir = aim (self, 1000);
 	launch_spike (self.origin + '0 0 16', dir);
 	newmis.touch = superspike_touch;
 	setmodel (newmis, "progs/s_spike.mdl");
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
-	
 };
 
 // Obselete?
@@ -952,28 +807,24 @@ void(float ox) W_FireSpikes =
 {
 	local vector	dir;
 	local entity	old;
-	
+
 	makevectors (self.v_angle);
-	
+
 	/*
-	if (self.weapon == IT_SUPER_NAILGUN)
-	{
+	if (self.weapon == IT_SUPER_NAILGUN) {
 		W_FireNails (ox); // Go to the New Nail attack
 		return;
-	}
-	
-	else
-	{*/
+	} else {
+	*/
 		sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
-		//self.attack_finished = time + 0.2;
-		self.currentammo = self.ammo_nails = self.ammo_nails - 1;
+//		self.attack_finished = time + 0.2;
+		self.currentammo = --self.ammo_nails;
 		dir = aim (self, 1000);
 		launch_spike (self.origin + '0 0 16' + v_right*ox, dir);
 
 		self.punchangle_x = -2;
-	//}
+//	}
 };
-
 
 /*
 ===============================================================================
@@ -987,134 +838,109 @@ void() W_SetCurrentAmmo =
 {
 	//POX v1.21 - Moved this to the top to avoid weirdness...
 	//Silence the BoneSaw and flag it off
-	if (self.weapon != IT_BONESAW)
-	{
-		//sound (self, CHAN_WEAPON, "misc/null.wav", 1, ATTN_NORM);//Bot sound problems...
+	if (self.weapon != IT_BONESAW) {
+//		sound (self, CHAN_WEAPON, "misc/null.wav", 1, ATTN_NORM);//Bot sound problems...
 		self.saw_on = FALSE;
 	}
-	
+
 	//POX - saw_on is a hack to keep the BoneSaw's animation playing correctly
 	if (!self.saw_on)
 		player_run ();		// get out of any weapon firing states
 
-	self.items &= ~(IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
-	
-	self.weaponmodel = ""; //Hack for ChaseCam
-	
-	if (self.weapon == IT_BONESAW)
-	{
-	
-		self.currentammo = 0;
-		
-	if (self.aflag != TRUE)
-		self.weaponmodel = "progs/v_bsaw.mdl";
+	self.items &= ~(IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS);
 
-	}
-	else if (self.weapon == IT_TSHOT)
-	{
+	self.weaponmodel = ""; //Hack for ChaseCam
+
+	if (self.weapon == IT_BONESAW) {
+		self.currentammo = 0;
+
+		if (self.aflag != TRUE)
+			self.weaponmodel = "progs/v_bsaw.mdl";
+	} else if (self.weapon == IT_TSHOT) {
 		self.currentammo = self.ammo_shells;
-	
-	if (self.aflag != TRUE)
-		self.weaponmodel = "progs/v_tshot.mdl";
-	
+
+		if (self.aflag != TRUE)
+			self.weaponmodel = "progs/v_tshot.mdl";
+
 		self.weaponframe = 0;
-		
 		self.items |= IT_SHELLS;
-	}
-	else if (self.weapon == IT_COMBOGUN)
-	{	
-	
-	if (self.aflag != TRUE)
-		self.weaponmodel = "progs/v_combo.mdl";
-		
+	} else if (self.weapon == IT_COMBOGUN) {	
+		if (self.aflag != TRUE)
+			self.weaponmodel = "progs/v_combo.mdl";
+
 		self.weaponframe = 0;
-		
+
 		//POX - ammo depends on last active trigger
-		if (self.which_ammo == 1)
-		{
+		if (self.which_ammo == 1) {
 			self.currentammo = self.ammo_rockets;
 			self.items |= IT_ROCKETS;
-		}
-		else
-		{
+		} else {
 			self.currentammo = self.ammo_shells;
 			self.items |= IT_SHELLS;
 		}
-	}
-	else if (self.weapon == IT_PLASMAGUN)
-	{
+	} else if (self.weapon == IT_PLASMAGUN) {
 		self.currentammo = self.ammo_cells;
-	
-	if (self.aflag != TRUE)
-		self.weaponmodel = "progs/v_plasma.mdl";
-	
+		if (self.aflag != TRUE)
+			self.weaponmodel = "progs/v_plasma.mdl";
+
 		self.weaponframe = 0;
 		self.items |= IT_CELLS;
-	}
-	else if (self.weapon == IT_SUPER_NAILGUN)
-	{
+	} else if (self.weapon == IT_SUPER_NAILGUN) {
 		self.currentammo = self.ammo_nails;
-	
-	if (self.aflag != TRUE)
-		self.weaponmodel = "progs/v_nailg.mdl";
-	
+
+		if (self.aflag != TRUE)
+			self.weaponmodel = "progs/v_nailg.mdl";
+
 		self.weaponframe = 0;
 		self.items |= IT_NAILS;
-	}
-	else if (self.weapon == IT_GRENADE_LAUNCHER)
-	{
+	} else if (self.weapon == IT_GRENADE_LAUNCHER) {
 		self.currentammo = self.ammo_rockets;
-	
-	if (self.aflag != TRUE)
-		self.weaponmodel = "progs/v_gren.mdl";
+
+		if (self.aflag != TRUE)
+			self.weaponmodel = "progs/v_gren.mdl";
 
 		self.weaponframe = 0;
 		self.items |= IT_ROCKETS;
-	}
-	else if (self.weapon == IT_ROCKET_LAUNCHER)
-	{
+	} else if (self.weapon == IT_ROCKET_LAUNCHER) {
 		self.currentammo = self.ammo_rockets;
-	
-	if (self.aflag != TRUE)
-		self.weaponmodel = "progs/v_rhino.mdl";
+
+		if (self.aflag != TRUE)
+			self.weaponmodel = "progs/v_rhino.mdl";
 
 		self.weaponframe = 0;
 		self.items |= IT_ROCKETS;
-	}
-	else
-	{
+	} else {
 		self.currentammo = 0;
 		self.weaponmodel = "";
 		self.weaponframe = 0;
 	}
 	
-	getmodel(self.weapon, self);  // VisWeap MOD: updates the model to take new weapon into account.
-
+	getmodel (self.weapon, self);  // VisWeap MOD: updates the model to take new weapon into account.
 };
 
 /* BEST WEAPON MARKER */
 float() W_BestWeapon =
 {
-	local	float	it;
+	local float		it;
 	
 	it = self.items;
 	
 	// A hacky way to keep SuperShot Gun Active when out of rockets
-	if ((self.weapon == IT_COMBOGUN) && ( self.ammo_shells >= 2 && (self.ammo_rockets < 1)))
-	{
+	if ((self.weapon == IT_COMBOGUN) && (self.ammo_shells >= 2
+										 && (self.ammo_rockets < 1))) {
 		self.which_ammo = 0;//POX v1.21 - fix for DM_AUTOSWITCH bug
 		return IT_COMBOGUN;
 	}
 
 	//if (self.waterlevel <= 1 && self.ammo_cells >= 1 && (it & IT_FLAMETHROWER) )
 	//		return IT_FLAMETHROWER;
-	if(self.ammo_cells >= 1 && (it & IT_PLASMAGUN) )
+	if (self.ammo_cells >= 1 && (it & IT_PLASMAGUN) )
 		return IT_PLASMAGUN;
-	if(self.ammo_nails >= 2 && (it & IT_SUPER_NAILGUN) )
+	if (self.ammo_nails >= 2 && (it & IT_SUPER_NAILGUN) )
 		return IT_SUPER_NAILGUN;
-	if(self.ammo_shells >= 2 && (it & IT_COMBOGUN) )
+	if (self.ammo_shells >= 2 && (it & IT_COMBOGUN) )
 		return IT_COMBOGUN;
-	if(self.ammo_shells >= 1 && (it & IT_TSHOT) )
+	if (self.ammo_shells >= 1 && (it & IT_TSHOT) )
 		return IT_TSHOT;
 	return IT_BONESAW;
 };
@@ -1123,7 +949,6 @@ float() W_CheckNoAmmo =
 {
 	if (self.currentammo > 0)
 		return TRUE;
-
 	if (self.weapon == IT_BONESAW)
 		return TRUE;
 	
@@ -1136,6 +961,9 @@ float() W_CheckNoAmmo =
 };
 /* BEST WEAPON MARKER */
 
+//POX v1.1 moved protypes to sectrig.qc added intermission check
+float	intermission_running;
+
 /*
 ============
 W_Attack
@@ -1143,209 +971,149 @@ W_Attack
 An attack impulse can be triggered now
 ============
 */
-
-//POX v1.1 moved protypes to sectrig.qc added intermission check
-float	intermission_running;
-
 void() W_Attack =
 {
 	// + POX - from URQW patch...
 	// 1999-07-05 Firing during intermission fix by numb - start
     if (intermission_running)
         return;
-
-	if (deathmatch & DM_AUTOSWITCH)
-	{
+	if (deathmatch & DM_AUTOSWITCH) {
 		if (!W_CheckNoAmmo ())
 		return;
 	}
-	
+
 	makevectors	(self.v_angle);			// calculate forward angle for velocity
 	self.show_hostile = time + 1;	// wake monsters up
 
-	
-	if (self.weapon == IT_BONESAW)
-	{		
+	if (self.weapon == IT_BONESAW) {		
 		if (!self.saw_on)
 			player_bonesaw1();
 		else
 			player_bonesaw3();
 
 		self.attack_finished = time + 0.55;
-
-	}
-	else if (self.weapon == IT_TSHOT)
-	{	
-		if (self.ammo_shells < 1)
-		{
+	} else if (self.weapon == IT_TSHOT) {
+		if (self.ammo_shells < 1) {
 			sound (self, CHAN_AUTO, "weapons/mfire1.wav", 1, ATTN_NORM);
 			self.attack_finished = time + 0.5;
-		}
-		else if (self.st_tshotload < time) //prime done so shoot
-		{	
+		} else if (self.st_tshotload < time) {			// prime done so shoot
 			//t-shot is primed so do a triple shot
 			//have to double check ammo since switch to ComboGun can mess it up
-			if ((self.prime_tshot == TRUE) && (self.ammo_shells > 2))
-			{
+			if ((self.prime_tshot == TRUE) && (self.ammo_shells > 2)) {
 				player_tshot1 ();
 				W_FireTShot ();
 				self.attack_finished = time + 0.7;
 				self.prime_tshot = FALSE;
-			}
-			else //normal shot
-			{
+			} else {				// normal shot
 				player_shot1 ();
 				W_FireShotgun ();
 				self.attack_finished = time + 0.5;
-			//reset prime since switching to ComboGun can use up shells
+				// reset prime since switching to ComboGun can use up shells
 				self.prime_tshot = FALSE;
 			}
 		}
-	}
-	
-	else if ((self.weapon == IT_COMBOGUN) && (self.st_sshotgun < time))
-	{	
-		if (self.ammo_shells < 1)
-		{	
+	} else if ((self.weapon == IT_COMBOGUN) && (self.st_sshotgun < time)) {
+		if (self.ammo_shells < 1) {
 			self.currentammo = self.ammo_shells;
-			self.items &= ~(IT_ROCKETS) );
+			self.items &= ~(IT_ROCKETS);
 			self.items |= IT_SHELLS;
 			self.which_ammo = 0;
 			sound (self, CHAN_AUTO, "weapons/mfire1.wav", 1, ATTN_NORM);
 			self.st_sshotgun = time + 0.7;
-		}
-		
-		else
-		{
+		} else {
 			self.currentammo = self.ammo_shells;
-			self.items &= ~(IT_ROCKETS) );
+			self.items &= ~(IT_ROCKETS);
 			self.items |= IT_SHELLS;
 			self.which_ammo = 0;
 			player_shot1 ();
 			W_FireSuperShotgun ();
 			self.st_sshotgun = time + 0.7;
 		}
-	}
-	else if ((self.weapon == IT_PLASMAGUN) && (self.st_plasma < time) && (self.st_mplasma < time))
-	{
-		if (self.ammo_cells < 1)
-		{
+	} else if ((self.weapon == IT_PLASMAGUN) && (self.st_plasma < time)
+				&& (self.st_mplasma < time)) {
+		if (self.ammo_cells < 1) {
 			sound (self, CHAN_AUTO, "weapons/mfire2.wav", 1, ATTN_NORM);
 			self.st_plasma = time + 0.05;//POX v1.21
+		} else if (!self.LorR) {
+			// check which barrel fired last
+			player_plasma1 ();
+		} else {
+			player_plasma2 ();
 		}
-		else if (!self.LorR) // check which barrel fired last
-				player_plasma1 ();
-			else
-				player_plasma2 ();	
-	}
-
-	else if ((self.weapon == IT_SUPER_NAILGUN) && (self.st_nailgun < time))
-	{		
-		if (self.ammo_nails < 1)
-		{
+	} else if ((self.weapon == IT_SUPER_NAILGUN) && (self.st_nailgun < time)) {
+		if (self.ammo_nails < 1) {
 			sound (self, CHAN_AUTO, "weapons/mfire1.wav", 1, ATTN_NORM);
-			self.st_nailgun = time + 0.4;//POX v1.21
+			self.st_nailgun = time + 0.4;		//POX v1.21
+		} else {
+			player_nail1 ();
 		}
-		else
-			player_nail1 ();			
-	}
-	else if ((self.weapon == IT_GRENADE_LAUNCHER) && (self.st_grenade < time))
-	{
-		if (self.ammo_rockets < 1)
-		{
+	} else if ((self.weapon == IT_GRENADE_LAUNCHER)
+				&& (self.st_grenade < time)) {
+		if (self.ammo_rockets < 1) {
 			sound (self, CHAN_AUTO, "weapons/mfire1.wav", 1, ATTN_NORM);
 			self.st_grenade = time + 0.6;
-		}
-		else
-		{
-			player_grenade1();
-			W_FireGrenade();
+		} else {
+			player_grenade1 ();
+			W_FireGrenade ();
 			self.st_grenade = time + 0.6;
 		}
-	}
-	else if (self.weapon == IT_ROCKET_LAUNCHER)
-	{
-		if (self.ammo_rockets < 1) //no rockets so missfire
-		{
+	} else if (self.weapon == IT_ROCKET_LAUNCHER) {
+		if (self.ammo_rockets < 1) {			// no rockets so misfire
 			sound (self, CHAN_AUTO, "weapons/mfire1.wav", 1, ATTN_NORM);
 			self.attack_finished = time + 0.4;
-		}
-		else if (self.reload_rocket > 6) //have to reload so missfire
-		{
+		} else if (self.reload_rocket > 6) {
+			// have to reload so missfire
 			sound (self, CHAN_AUTO, "weapons/error.wav", 1, ATTN_NORM);
 			self.attack_finished = time + 0.42;
-		}
-		else if (self.st_rocketload > time) // still reloading so do nothing
-		{
+		} else if (self.st_rocketload > time) { // still reloading, do nothing
 			SUB_Null;
-		}
-		else
-		{
-			player_rocket1();
+		} else {
+			player_rocket1 ();
 			self.attack_finished = time + 0.4;
 		}
 	}
-
 };
 
-/*
-============
-W_ChangeWeapon
-============
-*/
 void() W_ChangeWeapon =
 {
-	local	float	it, am, fl;
+	local float		am, fl, it;
 	
 	it = self.items;
 	am = 0;
 	self.which_ammo = 0; // Default ammo to shells for SuperShotgun
 	
-	if (self.impulse == 1)
-	{
+	if (self.impulse == 1) {
 		fl = IT_BONESAW;
 		//self.p_flex = time + 8;
-	}
-	else if (self.impulse == 2)
-	{
+	} else if (self.impulse == 2) {
 		fl = IT_TSHOT;
 		if (self.ammo_shells < 1)
 			am = 1;
-	}
-	else if (self.impulse == 3)
-	{
+	} else if (self.impulse == 3) {
 		fl = IT_COMBOGUN;
-		if (self.ammo_shells < 2)
-		{
+		if (self.ammo_shells < 2) {
 			am = 1;
 			//POX v1.1 - fix for dm_autoswitch
-			if (self.ammo_rockets > 0 && !deathmatch & DM_AUTOSWITCH) // allow player to select SuperShotgun if he has rockets
-			{
-				self.which_ammo = 1; // tell W_SetCurrentAmmo to use rockets - not shells
+			// allow player to select SuperShotgun if he has rockets
+			if (self.ammo_rockets > 0 && !deathmatch & DM_AUTOSWITCH) {
+				// tell W_SetCurrentAmmo to use rockets - not shells
+				self.which_ammo = 1;
 				am = 0;
 			}
 		}
-	}		
-	else if (self.impulse == 4)
-	{
+	} else if (self.impulse == 4) {
 		fl = IT_PLASMAGUN;
 		if (self.ammo_cells < 1)
 			am = 1;
-	}
-	else if (self.impulse == 5)
-	{
+	} else if (self.impulse == 5) {
 		fl = IT_SUPER_NAILGUN;
 		if (self.ammo_nails < 2)
 			am = 1;
-	}
-	else if (self.impulse == 6)
-	{
+	} else if (self.impulse == 6) {
 		fl = IT_GRENADE_LAUNCHER;
 		if (self.ammo_rockets < 1)
 			am = 1;
-	}
-	else if (self.impulse == 7)
-	{
+	} else if (self.impulse == 7) {
 		fl = IT_ROCKET_LAUNCHER;
 		if (self.ammo_rockets < 1)
 			am = 1;
@@ -1353,33 +1121,23 @@ void() W_ChangeWeapon =
 	
 	self.impulse = 0;
 	
-	if (!(self.items & fl))
-	{	// don't have the weapon or the ammo
+	if (!(self.items & fl)) {	// don't have the weapon or the ammo
 		sprint (self, "no weapon.\n");
 		return;
 	}
 	
-	if (am)
-	{	// don't have the ammo
+	if (am) {	// don't have the ammo
 		sprint (self, "not enough ammo.\n");
 		return;
 	}
 
-//
-// set weapon, set ammo
-//
+	// set weapon, set ammo
 	self.weapon = fl;		
 	W_SetCurrentAmmo ();
 };
 
-/*
-============
-CheatCommand
-============
-*/
 void() CheatCommand =
 {
-
 	if (deathmatch || coop)
 		return;
 
@@ -1405,72 +1163,56 @@ Go to the next weapon with ammo
 */
 void() CycleWeaponCommand =
 {
-	local	float	it, am;
+	local float		am, it;
 	
 	it = self.items;
 	self.impulse = 0;
 	
-	while (1)
-	{
+	while (1) {
 		am = 0;
 		self.which_ammo = 0;  // Default ammo to shells for SuperShotgun
 
-		if (self.weapon == IT_ROCKET_LAUNCHER)
-		{
+		if (self.weapon == IT_ROCKET_LAUNCHER) {
 			self.weapon = IT_BONESAW;
-		}
-		else if (self.weapon == IT_BONESAW)
-		{
+		} else if (self.weapon == IT_BONESAW) {
 			self.weapon = IT_TSHOT;
 			if (self.ammo_shells < 1)
 				am = 1;
-		}
-		else if (self.weapon == IT_TSHOT)
-		{
+		} else if (self.weapon == IT_TSHOT) {
 			self.weapon = IT_COMBOGUN;
-			if (self.ammo_shells < 2)
-			{
+			if (self.ammo_shells < 2) {
 				am = 1;
 				//POX v1.1 - fix for dm_autoswitch
-				if (self.ammo_rockets > 0 && !deathmatch & DM_AUTOSWITCH) // allow player to select SuperShotgun if he has rockets
-				{
-					self.which_ammo = 1; // tell W_SetCurrentAmmo to use rockets - not shells
+				// allow player to select SuperShotgun if he has rockets
+				if (self.ammo_rockets > 0 && !deathmatch & DM_AUTOSWITCH) {
+					// tell W_SetCurrentAmmo to use rockets - not shells
+					self.which_ammo = 1;
 					am = 0;
 				}
 			}
-		}		
-		else if (self.weapon == IT_COMBOGUN)
-		{
+		} else if (self.weapon == IT_COMBOGUN) {
 			self.weapon = IT_PLASMAGUN;
 			if (self.ammo_cells < 1)
 				am = 1;
-		}
-		else if (self.weapon == IT_PLASMAGUN)
-		{
+		} else if (self.weapon == IT_PLASMAGUN) {
 			self.weapon = IT_SUPER_NAILGUN;
 			if (self.ammo_nails < 2)
 				am = 1;
-		}
-		else if (self.weapon == IT_SUPER_NAILGUN)
-		{
+		} else if (self.weapon == IT_SUPER_NAILGUN) {
 			self.weapon = IT_GRENADE_LAUNCHER;
 			if (self.ammo_rockets < 1)
 				am = 1;
-		}
-		else if (self.weapon == IT_GRENADE_LAUNCHER)
-		{
+		} else if (self.weapon == IT_GRENADE_LAUNCHER) {
 			self.weapon = IT_ROCKET_LAUNCHER;
 			if (self.ammo_rockets < 1)
 				am = 1;
 		}
 	
-		if ( (it & self.weapon) && am == 0)
-		{
+		if ((it & self.weapon) && am == 0) {
 			W_SetCurrentAmmo ();
 			return;
 		}
 	}
-
 };
 
 /*
@@ -1482,75 +1224,58 @@ Go to the prev weapon with ammo
 */
 void() CycleWeaponReverseCommand =
 {
-	local	float	it, am;
+	local float		am, it;
 	
 	it = self.items;
 	self.impulse = 0;
 
-	while (1)
-	{
+	while (1) {
 		am = 0;
 		self.which_ammo = 0;  // Default ammo to shells for SuperShotgun
 
-		if (self.weapon == IT_ROCKET_LAUNCHER)
-		{
+		if (self.weapon == IT_ROCKET_LAUNCHER) {
 			self.weapon = IT_GRENADE_LAUNCHER;
 			if (self.ammo_rockets < 1)
 				am = 1;
-		}
-		else if (self.weapon == IT_GRENADE_LAUNCHER)
-		{
+		} else if (self.weapon == IT_GRENADE_LAUNCHER) {
 			self.weapon = IT_SUPER_NAILGUN;
 			if (self.ammo_nails < 2)
 				am = 1;
-		}
-		else if (self.weapon == IT_SUPER_NAILGUN)
-		{
+		} else if (self.weapon == IT_SUPER_NAILGUN) {
 			self.weapon = IT_PLASMAGUN;
 			if (self.ammo_cells < 1)
 				am = 1;
-		}
-		else if (self.weapon == IT_PLASMAGUN)
-		{
+		} else if (self.weapon == IT_PLASMAGUN) {
 			self.weapon = IT_COMBOGUN;
-			
+
 			// allow player to select ComboGun if he has rockets
 			// BUT NOT IF DM_AUTOSWITCH!!
-			if (self.ammo_shells < 2)
-			{
+			if (self.ammo_shells < 2) {
 				am = 1;
-				if (self.ammo_rockets > 0 && !deathmatch & DM_AUTOSWITCH)
-				{
-					self.which_ammo = 1; // tell W_SetCurrentAmmo to use rockets - not shells
+				if (self.ammo_rockets > 0 && !deathmatch & DM_AUTOSWITCH) {
+					// tell W_SetCurrentAmmo to use rockets - not shells
+					self.which_ammo = 1;
 					am = 0;
 				}
 			}
-		}			
-		else if (self.weapon == IT_COMBOGUN)
-		{
+		} else if (self.weapon == IT_COMBOGUN) {
 			self.weapon = IT_TSHOT;
 			if (self.ammo_shells < 1)
 				am = 1;
-		}
-		else if (self.weapon == IT_TSHOT)
-		{
+		} else if (self.weapon == IT_TSHOT) {
 			self.weapon = IT_BONESAW;
 			//self.p_flex = time + 8;
-		}
-		else if (self.weapon == IT_BONESAW)
-		{
+		} else if (self.weapon == IT_BONESAW) {
 			self.weapon = IT_ROCKET_LAUNCHER;
 			if (self.ammo_rockets < 1)
 				am = 1;
 		}
 	
-		if ( (it & self.weapon) && am == 0)
-		{
+		if ((it & self.weapon) && am == 0) {
 			W_SetCurrentAmmo ();
 			return;
 		}
 	}
-
 };
 
 /*
@@ -1575,13 +1300,6 @@ void() QuadCheat =
 	dprint ("quad cheat\n");
 };
 
-
-/*
-============
-ImpulseCommands
-
-============
-*/
 //POX - put this in a sperate routine so the same impulse can be used in autocam/setup mode
 void() DisplayRules =
 {
@@ -1628,8 +1346,8 @@ void() DisplayRules =
 //POX - stuff added here, bot & camera impulses
 void() ImpulseCommands =
 {
-	local	float	cells; // used for underwater MegaPlasmaBurst
-	
+	local float		cells; // used for underwater MegaPlasmaBurst
+
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon ();
 	if (self.impulse == 9)
@@ -1644,23 +1362,20 @@ void() ImpulseCommands =
 		QuadCheat ();
 
 //POX - v1.1 target identifier toggle
-	if (self.impulse == 16)
-	{
-		self.target_id_temp = TRUE;//POX v1.2 - hack to get targid to work accross level changes
+	if (self.impulse == 16) {
+		//POX v1.2 - hack to get targid to work accross level changes
+		self.target_id_temp = TRUE;
 		stuffcmd (self, "play misc/talk.wav\n"); //POX v1.2 audio confirmation
-		
-		if (self.target_id_toggle)
-		{
+
+		if (self.target_id_toggle) {
 			self.target_id_toggle = FALSE;
-			
+
 			//POX v1.12 - don't centerprint if a message is up
 			if (self.target_id_finished < time)
 				centerprint (self, "Target Identifier OFF\n");
 			else
 				sprint (self, "Target Identifier OFF\n");
-		}
-		else
-		{
+		} else {
 			self.target_id_toggle = TRUE;
 			
 			//POX v1.12 - don't centerprint if a message is up
@@ -1668,54 +1383,43 @@ void() ImpulseCommands =
 				centerprint (self, "Target Identifier ON\n");
 			else
 				sprint (self, "Target Identifier ON\n");
-				
-			self.target_id_finished = time + 3;		
+
+			self.target_id_finished = time + 3;
 		}
 	}
 
-//POX - v1.11 GL FlashBlend (hacky fix) - Toggles dynamiclights vs lightglows
-	
-	if (self.impulse == 17)
-	{
-		if(!self.gl_fix)
-		{
+	//POX - v1.11 GL FlashBlend (hack!) - Toggles dynamiclights vs lightglows
+
+	if (self.impulse == 17) {
+		if(!self.gl_fix) {
 	  		stuffcmd (self, "gl_flashblend 0\n");
 	  		self.gl_fix = TRUE;
-	  	}
-	  	else
-	  	{
+	  	} else {
 	  		stuffcmd (self, "gl_flashblend 1\n");
 	  		self.gl_fix = FALSE;
 	  	}
 	}
-	
 
-//pOx - 1.4 - Flashlight toggle for darkmode
-
+	//pOx - 1.4 - Flashlight toggle for darkmode
 	if ((self.impulse == 21) && (deathmatch & DM_DARK))
-		flash_toggle();
-		
+		flash_toggle ();
 
 // KasCam ->
-    if (self.impulse == 250)
-    {	
-    //If client hit observer in LMS mode, drop the player count
-		if ((deathmatch & DM_LMS) && self.frags > 0)
-		{
+    if (self.impulse == 250) {	
+		// If client hit observer in LMS mode, drop the player count
+		if ((deathmatch & DM_LMS) && self.frags > 0) {
 			lms_plrcount = lms_plrcount - 1;
 			self.LMS_registered = FALSE; //Don't display LMS dead message
 			self.frags = 0;        
 			CamClientInit ();
-		}
-		else
-		{
+		} else {
 			self.frags = 0;        
 			CamClientInit ();
 		}
     }
 // <- KasCam
 
-//ChaseCam
+// ChaseCam ->
 	if (self.impulse == 254)
 		CCam ();
 		
@@ -1731,21 +1435,21 @@ void() ImpulseCommands =
 		CCamRight (-2);
 	if (self.impulse == 155)
 		CCamForward (-2); 
-//ChaseCam
+// <- ChaseCam
 
-	//Bot impulses - no coop/single player
+	// Bot impulses - no coop/single player
+/*
+	// Create Enemy bot (FF or Team)
+	if (self.impulse == 251 && deathmatch)
+		create_bot (1);
 	
-	//Create Enemy bot (FF or Team)
-	//if (self.impulse == 251 && deathmatch)
-	//	create_bot(1);
-	
-	//Create TeamBot
-	//if (self.impulse == 252 && deathmatch && teamplay)
-	//	create_bot(2);
-	
-	//Display Server Rules Impulse
+	// Create TeamBot
+	if (self.impulse == 252 && deathmatch && teamplay)
+		create_bot (2);
+*/
+	// Display Server Rules Impulse
 	if (self.impulse == 253)
-		DisplayRules();
+		DisplayRules ();
 
 	self.impulse = 0;
 };
@@ -1757,7 +1461,6 @@ W_WeaponFrame
 Called every frame so impulse events can be handled as well as possible
 ============
 */
-
 void() W_WeaponFrame =
 {		
 	if (time < self.attack_finished)
@@ -1768,24 +1471,23 @@ void() W_WeaponFrame =
 		ID_CheckTarget ();
 	
 	//POX - Don't swap nailgun skins if player chascam is active!
-	if ((self.weapon == IT_SUPER_NAILGUN) && (self.st_nailgun < time) && (!self.aflag))
+	if ((self.weapon == IT_SUPER_NAILGUN) && (self.st_nailgun < time)
+		&& (!self.aflag))
 		self.weaponmodel = "progs/v_nailg.mdl"; // cool off nailgun barrels
-	
+
 // + POX - only check these if necessary (thanks to URQW patch)
-// 1998-08-14 Constantly checking all impulses fix by Perged
+	// 1998-08-14 Constantly checking all impulses fix by Perged
 	if (self.impulse == SECOND_TRIGGER)
 		W_SecondTrigger ();
 	else if (self.impulse)
 	    ImpulseCommands ();
 // - POX
-		
-// check for attack
-	if (self.button0)
-	{
-		
-		if ((self.weapon == IT_BONESAW) || (self.currentammo > 0))//POX - v1.3
+
+	// check for attack
+	if (self.button0) {
+		if ((self.weapon == IT_BONESAW) || (self.currentammo > 0)) //POX - v1.3
 			SuperDamageSound ();
-		
+
 		W_Attack ();
 	}
 };
@@ -1799,10 +1501,8 @@ Plays sound if needed
 */
 void() SuperDamageSound =
 {
-	if (self.super_damage_finished > time)
-	{
-		if (self.super_sound < time)
-		{
+	if (self.super_damage_finished > time) {
+		if (self.super_sound < time) {
 			self.super_sound = time + 1;
 			sound (self, CHAN_AUTO, "items/damage3.wav", 1, ATTN_NORM);
 		}
