@@ -10,7 +10,6 @@
 //
 // system globals
 //
-entity		self;
 entity		other;
 entity		world;
 float		time;
@@ -80,7 +79,7 @@ void()		SetNewParms;			// called when a client first connects to
 									// a server. sets parms so they can be
 									// saved off for restarts
 
-void()		SetChangeParms;			// call to set parms for self so they can
+void()		SetChangeParms;			// call to set parms for @self so they can
 									// be saved for a level transition
 
 
@@ -538,15 +537,15 @@ float(float yaw, float dist) walkmove	= #32;	// returns TRUE or FALSE
 float() droptofloor= #34;	// TRUE if landed on floor
 void(float style, string value) lightstyle = #35;
 // #39 was removed
-float(entity e) checkbottom			= #40;		// true if self is on ground
+float(entity e) checkbottom			= #40;		// true if @self is on ground
 float(vector v) pointcontents		= #41;		// returns a CONTENT_*
 // #42 was removed
 vector(entity e, float speed) aim = #44;		// returns the shooting vector
 void(string s) localcmd = #46;					// put string into local que
 entity(entity e) nextent = #47;					// for looping through all ents
 // #48 was removed
-void() ChangeYaw = #49;						// turn towards self.ideal_yaw
-											// at self.yaw_speed
+void() ChangeYaw = #49;						// turn towards @self.ideal_yaw
+											// at @self.yaw_speed
 // #50 was removed
 
 //

@@ -78,70 +78,70 @@ PLAYER
 void() player_run;
 void() player_stand1 = [$axstnd1, player_stand1]
 {
-	self.weaponframe = 0;
-	if (self.velocity_x || self.velocity_y) {
-		self.walkframe = 0;
+	@self.weaponframe = 0;
+	if (@self.velocity_x || @self.velocity_y) {
+		@self.walkframe = 0;
 		player_run ();
 		return;
 	}
 
-	if (self.weapon == IT_AXE) {
-		if (self.walkframe >= 12)
-			self.walkframe = 0;
-		self.frame = $axstnd1 + self.walkframe;
+	if (@self.weapon == IT_AXE) {
+		if (@self.walkframe >= 12)
+			@self.walkframe = 0;
+		@self.frame = $axstnd1 + @self.walkframe;
 	} else {
-		if (self.walkframe >= 5)
-			self.walkframe = 0;
-		self.frame = $stand1 + self.walkframe;
+		if (@self.walkframe >= 5)
+			@self.walkframe = 0;
+		@self.frame = $stand1 + @self.walkframe;
 	}
-	self.walkframe++;
+	@self.walkframe++;
 };
 
 void() player_run = [$rockrun1, player_run]
 {
-	self.weaponframe = 0;
-	if (!self.velocity_x && !self.velocity_y) {
-		self.walkframe = 0;
+	@self.weaponframe = 0;
+	if (!@self.velocity_x && !@self.velocity_y) {
+		@self.walkframe = 0;
 		player_stand1 ();
 		return;
 	}
 
-	if (self.weapon == IT_AXE) {
-		if (self.walkframe == 6)
-			self.walkframe = 0;
-		self.frame = $axrun1 + self.walkframe;
+	if (@self.weapon == IT_AXE) {
+		if (@self.walkframe == 6)
+			@self.walkframe = 0;
+		@self.frame = $axrun1 + @self.walkframe;
 	} else {
-		if (self.walkframe == 6)
-			self.walkframe = 0;
-		self.frame = self.frame + self.walkframe;
+		if (@self.walkframe == 6)
+			@self.walkframe = 0;
+		@self.frame = @self.frame + @self.walkframe;
 	}
 
 	// footstep sounds	
-	self.spawnsilent += vlen (self.origin - self.old_velocity);
-	self.old_velocity = self.origin;
+	@self.spawnsilent += vlen (@self.origin - @self.old_velocity);
+	@self.old_velocity = @self.origin;
       
-	if (self.waterlevel < 3 && self.classname == "player") { // no footsteps underwater or for observer
-		if (self.spawnsilent > 95) {
+	if (@self.waterlevel < 3 && @self.classname == "player") { // no footsteps underwater or for observer
+		if (@self.spawnsilent > 95) {
 			local float	r;
 
-			if (self.spawnsilent > 190)
-				self.spawnsilent = 0;
+			if (@self.spawnsilent > 190)
+				@self.spawnsilent = 0;
 			else
-				self.spawnsilent = 0.5 * (self.spawnsilent - 95);
+				@self.spawnsilent = 0.5 * (@self.spawnsilent - 95);
 
 			r = random ();
 
-			if (self.waterlevel) {
+			if (@self.waterlevel) {
 				if (r < 0.25)
-					sound (self, CHAN_AUTO, "misc/water1.wav", 1, ATTN_NORM);
+					sound (@self, CHAN_AUTO, "misc/water1.wav", 1, ATTN_NORM);
 				else if (r < 0.5)
-					sound (self, CHAN_AUTO, "misc/water2.wav", 1, ATTN_NORM);
+					sound (@self, CHAN_AUTO, "misc/water2.wav", 1, ATTN_NORM);
 				else if (r < 0.75)
-					sound (self, CHAN_AUTO, "misc/owater2.wav", 0.75, ATTN_NORM);
-			} else if (self.flags & FL_ONGROUND) {
+					sound (@self, CHAN_AUTO, "misc/owater2.wav", 0.75, ATTN_NORM);
+			} else if (@self.flags & FL_ONGROUND) {
 				local float speed, vol;
 
-				speed = vlen (self.velocity);
+				speed = vlen (@self.velocity);
 				vol = speed * 0.002; // Scale footstep volume by speed
 				if (vol > 1)
 					vol = 1;
@@ -149,244 +149,244 @@ void() player_run = [$rockrun1, player_run]
 					return;	// don't make a sound
 
 				if (r < 0.25)
-					sound (self, CHAN_AUTO, "misc/foot1.wav", vol, ATTN_NORM);
+					sound (@self, CHAN_AUTO, "misc/foot1.wav", vol, ATTN_NORM);
 				else if (r < 0.5)
-					sound (self, CHAN_AUTO, "misc/foot2.wav", vol, ATTN_NORM);
+					sound (@self, CHAN_AUTO, "misc/foot2.wav", vol, ATTN_NORM);
 				else if (r < 0.75)
-					sound (self, CHAN_AUTO, "misc/foot3.wav", vol, ATTN_NORM);
+					sound (@self, CHAN_AUTO, "misc/foot3.wav", vol, ATTN_NORM);
 				else
-					sound (self, CHAN_AUTO, "misc/foot4.wav", vol, ATTN_NORM);
+					sound (@self, CHAN_AUTO, "misc/foot4.wav", vol, ATTN_NORM);
 			}
 		}
 	}
 
-	self.walkframe++;
+	@self.walkframe++;
 };
 
 void () muzzleflash =
 {
 	WriteByte (MSG_MULTICAST, SVC_MUZZLEFLASH);
-	WriteEntity (MSG_MULTICAST, self);
-	multicast (self.origin, MULTICAST_PVS);
+	WriteEntity (MSG_MULTICAST, @self);
+	multicast (@self.origin, MULTICAST_PVS);
 };
 
 // POX - used for tShot and ComboGun primary triggers
 void() player_shot1 = [$shotatt1, player_shot2]
 {
-	self.weaponframe = 1;
+	@self.weaponframe = 1;
 	muzzleflash ();
 };
 
-void() player_shot2 = [$shotatt2, player_shot3] {self.weaponframe = 2;};
-void() player_shot3 = [$shotatt3, player_shot4] {self.weaponframe = 3;};
-void() player_shot4 = [$shotatt4, player_shot5] {self.weaponframe = 4;};
-void() player_shot5 = [$shotatt5, player_shot6] {self.weaponframe = 5;};
-void() player_shot6 = [$shotatt6, player_run]	{self.weaponframe = 6;};
+void() player_shot2 = [$shotatt2, player_shot3] {@self.weaponframe = 2;};
+void() player_shot3 = [$shotatt3, player_shot4] {@self.weaponframe = 3;};
+void() player_shot4 = [$shotatt4, player_shot5] {@self.weaponframe = 4;};
+void() player_shot5 = [$shotatt5, player_shot6] {@self.weaponframe = 5;};
+void() player_shot6 = [$shotatt6, player_run]	{@self.weaponframe = 6;};
 
 // POX - New Frame Macro For tShot 3 barrel fire
-void() player_tshot1 = [$shotatt1, player_tshot2]	{self.weaponframe = 1; muzzleflash();};
-void() player_tshot2 = [$shotatt2, player_tshot3]	{self.weaponframe = 16;}; // triple flare frame
-void() player_tshot3 = [$shotatt3, player_tshot4]	{self.weaponframe = 3;};
-void() player_tshot4 = [$shotatt4, player_tshot5]	{self.weaponframe = 4;};
-void() player_tshot5 = [$shotatt5, player_tshot6]	{self.weaponframe = 5;};
-void() player_tshot6 = [$shotatt6, player_run]		{self.weaponframe = 6;};
+void() player_tshot1 = [$shotatt1, player_tshot2]	{@self.weaponframe = 1; muzzleflash();};
+void() player_tshot2 = [$shotatt2, player_tshot3]	{@self.weaponframe = 16;}; // triple flare frame
+void() player_tshot3 = [$shotatt3, player_tshot4]	{@self.weaponframe = 3;};
+void() player_tshot4 = [$shotatt4, player_tshot5]	{@self.weaponframe = 4;};
+void() player_tshot5 = [$shotatt5, player_tshot6]	{@self.weaponframe = 5;};
+void() player_tshot6 = [$shotatt6, player_run]		{@self.weaponframe = 6;};
 
 // POX - New Frame Macro For tShot 3 barrel prime
-void() player_reshot1 =	[$shotatt1, player_reshot2]	{self.weaponframe = 7;};
-void() player_reshot2 =	[$shotatt3, player_reshot3] {self.weaponframe = 8;};
-void() player_reshot3 =	[$shotatt4, player_reshot4] {self.weaponframe = 9;};
-void() player_reshot4 =	[$shotatt5, player_reshot5] {self.weaponframe = 10;};
-void() player_reshot5 =	[$shotatt6, player_reshot6] {self.weaponframe = 11;};
-void() player_reshot6 =	[$shotatt5, player_reshot7] {self.weaponframe = 12;};
-void() player_reshot7 =	[$shotatt4, player_reshot8] {self.weaponframe = 13;};
-void() player_reshot8 =	[$shotatt3, player_reshot9] {self.weaponframe = 14;};
-void() player_reshot9 =	[$shotatt1, player_run]		{self.weaponframe = 15;};
+void() player_reshot1 =	[$shotatt1, player_reshot2]	{@self.weaponframe = 7;};
+void() player_reshot2 =	[$shotatt3, player_reshot3] {@self.weaponframe = 8;};
+void() player_reshot3 =	[$shotatt4, player_reshot4] {@self.weaponframe = 9;};
+void() player_reshot4 =	[$shotatt5, player_reshot5] {@self.weaponframe = 10;};
+void() player_reshot5 =	[$shotatt6, player_reshot6] {@self.weaponframe = 11;};
+void() player_reshot6 =	[$shotatt5, player_reshot7] {@self.weaponframe = 12;};
+void() player_reshot7 =	[$shotatt4, player_reshot8] {@self.weaponframe = 13;};
+void() player_reshot8 =	[$shotatt3, player_reshot9] {@self.weaponframe = 14;};
+void() player_reshot9 =	[$shotatt1, player_run]		{@self.weaponframe = 15;};
 
 // POX - New Frame Macro For ComboGun Second Trigger (Impact Grenades)
-void() player_gshot1 = [$shotatt1, player_gshot2]	{self.weaponframe = 2; muzzleflash();};
-void() player_gshot2 = [$shotatt2, player_gshot3]	{self.weaponframe = 3;};
-void() player_gshot3 = [$shotatt3, player_gshot4]	{self.weaponframe = 4;};
-void() player_gshot4 = [$shotatt4, player_gshot5]	{self.weaponframe = 5;};
-void() player_gshot5 = [$shotatt5, player_run]		{self.weaponframe = 6;};
+void() player_gshot1 = [$shotatt1, player_gshot2]	{@self.weaponframe = 2; muzzleflash();};
+void() player_gshot2 = [$shotatt2, player_gshot3]	{@self.weaponframe = 3;};
+void() player_gshot3 = [$shotatt3, player_gshot4]	{@self.weaponframe = 4;};
+void() player_gshot4 = [$shotatt4, player_gshot5]	{@self.weaponframe = 5;};
+void() player_gshot5 = [$shotatt5, player_run]		{@self.weaponframe = 6;};
 
 // POX - New Frame Macro For Nailgun Second Trigger (Shrapnel Bomb)
 void() player_shrap1 = [$nailatt1, player_shrap2]	{muzzleflash ();};
 void() player_shrap2 = [$nailatt2, player_run]		{};
 
-void() player_axe1 = [$axatt1, player_axe2]	{self.weaponframe=1;};
-void() player_axe2 = [$axatt2, player_axe3]	{self.weaponframe=2;};
-void() player_axe3 = [$axatt3, player_axe4]	{self.weaponframe=3;W_FireAxe();};
-void() player_axe4 = [$axatt4, player_run]	{self.weaponframe=4;};
+void() player_axe1 = [$axatt1, player_axe2]	{@self.weaponframe=1;};
+void() player_axe2 = [$axatt2, player_axe3]	{@self.weaponframe=2;};
+void() player_axe3 = [$axatt3, player_axe4]	{@self.weaponframe=3;W_FireAxe();};
+void() player_axe4 = [$axatt4, player_run]	{@self.weaponframe=4;};
 
-void() player_axeb1 = [$axattb1, player_axeb2]	{self.weaponframe=5;};
-void() player_axeb2 = [$axattb2, player_axeb3]	{self.weaponframe=6;};
-void() player_axeb3 = [$axattb3, player_axeb4]	{self.weaponframe=7;W_FireAxe();};
-void() player_axeb4 = [$axattb4, player_run]	{self.weaponframe=8;};
+void() player_axeb1 = [$axattb1, player_axeb2]	{@self.weaponframe=5;};
+void() player_axeb2 = [$axattb2, player_axeb3]	{@self.weaponframe=6;};
+void() player_axeb3 = [$axattb3, player_axeb4]	{@self.weaponframe=7;W_FireAxe();};
+void() player_axeb4 = [$axattb4, player_run]	{@self.weaponframe=8;};
 
-void() player_axec1 = [$axattc1, player_axec2]	{self.weaponframe=1;};
-void() player_axec2 = [$axattc2, player_axec3]	{self.weaponframe=2;};
-void() player_axec3 = [$axattc3, player_axec4]	{self.weaponframe=3;W_FireAxe();};
-void() player_axec4 = [$axattc4, player_run]	{self.weaponframe=4;};
+void() player_axec1 = [$axattc1, player_axec2]	{@self.weaponframe=1;};
+void() player_axec2 = [$axattc2, player_axec3]	{@self.weaponframe=2;};
+void() player_axec3 = [$axattc3, player_axec4]	{@self.weaponframe=3;W_FireAxe();};
+void() player_axec4 = [$axattc4, player_run]	{@self.weaponframe=4;};
 
-void() player_axed1 = [$axattd1, player_axed2]	{self.weaponframe=5;};
-void() player_axed2 = [$axattd2, player_axed3]	{self.weaponframe=6;};
-void() player_axed3 = [$axattd3, player_axed4]	{self.weaponframe=7;W_FireAxe();};
-void() player_axed4 = [$axattd4, player_run]	{self.weaponframe=8;};
+void() player_axed1 = [$axattd1, player_axed2]	{@self.weaponframe=5;};
+void() player_axed2 = [$axattd2, player_axed3]	{@self.weaponframe=6;};
+void() player_axed3 = [$axattd3, player_axed4]	{@self.weaponframe=7;W_FireAxe();};
+void() player_axed4 = [$axattd4, player_run]	{@self.weaponframe=8;};
 
 // NailGun animation
 void() player_nail1 = [$nailatt1, player_nail2] 
 {	
-	if (self.st_nailgun > time)
+	if (@self.st_nailgun > time)
 		return;
 
-	if (self.ammo_nails < 1) {
-		sound (self, CHAN_WEAPON, "weapons/mfire1.wav", 1, ATTN_NORM);
-		self.st_nailgun = time + 0.4;
+	if (@self.ammo_nails < 1) {
+		sound (@self, CHAN_WEAPON, "weapons/mfire1.wav", 1, ATTN_NORM);
+		@self.st_nailgun = time + 0.4;
 		player_run ();
 		return;
 	}
 
 	muzzleflash ();
 
-	if (!self.button0) {
+	if (!@self.button0) {
 		player_run ();
 		return;
 	}
 
-	if (++self.weaponframe == 9)
-		self.weaponframe = 1;
+	if (++@self.weaponframe == 9)
+		@self.weaponframe = 1;
 
 	SuperDamageSound ();
 	W_FireNails (3);
 
-	if (self.flags & FL_ONGROUND)
-		self.velocity += v_forward * -20;
+	if (@self.flags & FL_ONGROUND)
+		@self.velocity += v_forward * -20;
 		
-	self.st_nailgun = time + 0.1;
+	@self.st_nailgun = time + 0.1;
 };
 
 void() player_nail2 = [$nailatt2, player_nail1]
 {
-	if (self.st_nailgun > time)
+	if (@self.st_nailgun > time)
 		return;
 
-	if (self.ammo_nails < 1) {	
-		sound (self, CHAN_WEAPON, "weapons/mfire1.wav", 1, ATTN_NORM);
-		self.st_nailgun = time + 0.4;
+	if (@self.ammo_nails < 1) {	
+		sound (@self, CHAN_WEAPON, "weapons/mfire1.wav", 1, ATTN_NORM);
+		@self.st_nailgun = time + 0.4;
 		player_run ();
 		return;
 	}
 
 	muzzleflash ();
-	if (!self.button0) {
+	if (!@self.button0) {
 		player_run ();
 		return;
 	}
 
-	if (++self.weaponframe == 9)
-		self.weaponframe = 1;
+	if (++@self.weaponframe == 9)
+		@self.weaponframe = 1;
 
 	SuperDamageSound();
 	W_FireNails (-3);
 		
-	if (self.flags & FL_ONGROUND)
-		self.velocity += v_forward * -20;
+	if (@self.flags & FL_ONGROUND)
+		@self.velocity += v_forward * -20;
 		
-	self.st_nailgun = time + 0.1;
+	@self.st_nailgun = time + 0.1;
 };
 
 //============================================================================
 // POX - PlasmaGun animation - In sync with Paroxysm v1.1
 void() player_plasma1	=[$nailatt1, player_plasma2  ]
 {	
-	if (self.st_plasma > time)
+	if (@self.st_plasma > time)
 		return;
 
-	if (self.ammo_cells < 1) {	
-		sound (self, CHAN_WEAPON, "weapons/mfire2.wav", 1, ATTN_NORM);
+	if (@self.ammo_cells < 1) {	
+		sound (@self, CHAN_WEAPON, "weapons/mfire2.wav", 1, ATTN_NORM);
 		player_run ();
-		self.st_plasma = time + 0.4;
+		@self.st_plasma = time + 0.4;
 		return;
 	}
 
 	muzzleflash ();
 
-	if (!self.button0) {
+	if (!@self.button0) {
 		player_run ();
 		return;
 	}
 		
-	self.weaponframe = 1;
-	self.LorR = 1;
+	@self.weaponframe = 1;
+	@self.LorR = 1;
 
 	SuperDamageSound ();
 	W_FirePlasma (6);
 
-	if (self.flags & FL_ONGROUND)
-		self.velocity += v_forward * -20;
+	if (@self.flags & FL_ONGROUND)
+		@self.velocity += v_forward * -20;
 
-	self.st_plasma = time + 0.1;
+	@self.st_plasma = time + 0.1;
 };
 
 void() player_plasma2	=[$nailatt2, player_plasma1  ]
 {	
-	if (self.st_plasma > time)
+	if (@self.st_plasma > time)
 		return;
 
-	if (self.ammo_cells < 1) {	
-		sound (self, CHAN_WEAPON, "weapons/mfire2.wav", 1, ATTN_NORM);
+	if (@self.ammo_cells < 1) {	
+		sound (@self, CHAN_WEAPON, "weapons/mfire2.wav", 1, ATTN_NORM);
 		player_run ();
-		self.st_plasma = time + 0.4;
+		@self.st_plasma = time + 0.4;
 		return;
 	}
 
 	muzzleflash ();
 
-	if (!self.button0) {
+	if (!@self.button0) {
 		player_run ();
 		return;
 	}
 
-	self.weaponframe = 2;
-	self.LorR = 0;
+	@self.weaponframe = 2;
+	@self.LorR = 0;
 
 	SuperDamageSound();
 	W_FirePlasma (-7);
 
-	if (self.flags & FL_ONGROUND)
-		self.velocity += v_forward * -20;
+	if (@self.flags & FL_ONGROUND)
+		@self.velocity += v_forward * -20;
 
-	self.st_plasma = time + 0.1;
+	@self.st_plasma = time + 0.1;
 };
 
 //============================================================================
 // POX - MegaPlasma Burst
-void() player_mplasma1	 =[$rockatt1, player_mplasma2  ] {self.weaponframe=0;};
+void() player_mplasma1	 =[$rockatt1, player_mplasma2  ] {@self.weaponframe=0;};
 void() player_mplasma2	 =[$rockatt2, player_mplasma3  ] {};
 void() player_mplasma3	 =[$rockatt3, player_run  ] {};
 
 // POX - Grenadelauncher Animation
-void() player_grenade1	 =[$rockatt1, player_grenade2  ] {self.weaponframe=1;muzzleflash();};
-void() player_grenade2	 =[$rockatt2, player_grenade3  ] {self.weaponframe=2;};
-void() player_grenade3	 =[$rockatt3, player_grenade4  ] {self.weaponframe=3;};
-void() player_grenade4	 =[$rockatt4, player_grenade5  ] {self.weaponframe=4;};
-void() player_grenade5	 =[$rockatt5, player_grenade6  ] {self.weaponframe=5;};
-void() player_grenade6	 =[$rockatt6, player_run  ] {self.weaponframe=6;};
+void() player_grenade1	 =[$rockatt1, player_grenade2  ] {@self.weaponframe=1;muzzleflash();};
+void() player_grenade2	 =[$rockatt2, player_grenade3  ] {@self.weaponframe=2;};
+void() player_grenade3	 =[$rockatt3, player_grenade4  ] {@self.weaponframe=3;};
+void() player_grenade4	 =[$rockatt4, player_grenade5  ] {@self.weaponframe=4;};
+void() player_grenade5	 =[$rockatt5, player_grenade6  ] {@self.weaponframe=5;};
+void() player_grenade6	 =[$rockatt6, player_run  ] {@self.weaponframe=6;};
 
 // POX - Annihilator firing sequence
 void() player_rocket1 = [$rockatt1, player_rocket2]
 {
 
-	self.weaponframe = 1;
+	@self.weaponframe = 1;
 	W_FireRocket ('0 0 16');
 
 	// sound is timed for double shot (two single shot sounds had inconsistant results)
-	sound (self, CHAN_WEAPON, "weapons/rhino.wav", 1, ATTN_NORM);
+	sound (@self, CHAN_WEAPON, "weapons/rhino.wav", 1, ATTN_NORM);
 	
-	if (self.flags & FL_ONGROUND)
-		self.velocity = v_forward * -25;
+	if (@self.flags & FL_ONGROUND)
+		@self.velocity = v_forward * -25;
 
-	msg_entity = self;
+	msg_entity = @self;
 
 	WriteByte (MSG_ONE, SVC_BIGKICK);
 
@@ -395,19 +395,19 @@ void() player_rocket1 = [$rockatt1, player_rocket2]
 
 void() player_rocket2 = [$rockatt2, player_rocket3]
 {
-	self.weaponframe = 2;
+	@self.weaponframe = 2;
 	W_FireRocket('0 0 24');
 };
 
-void() player_rocket3 = [$rockatt3, player_run ]	{self.weaponframe=3;};
+void() player_rocket3 = [$rockatt3, player_run ]	{@self.weaponframe=3;};
 
 // POX - Annihilator Reload sequence
-void() player_rocketload1 = [$rockatt1, player_rocketload2] {self.weaponframe = 4;};
-void() player_rocketload2 = [$rockatt3, player_rocketload3] {self.weaponframe = 5;};
-void() player_rocketload3 = [$rockatt4, player_rocketload4] {self.weaponframe = 6;};
-void() player_rocketload4 = [$rockatt5, player_rocketload5] {self.weaponframe = 7;};
-void() player_rocketload5 = [$rockatt6, player_rocketload6] {self.weaponframe = 8;};
-void() player_rocketload6 = [$rockatt4, player_run]			{self.weaponframe = 9;};
+void() player_rocketload1 = [$rockatt1, player_rocketload2] {@self.weaponframe = 4;};
+void() player_rocketload2 = [$rockatt3, player_rocketload3] {@self.weaponframe = 5;};
+void() player_rocketload3 = [$rockatt4, player_rocketload4] {@self.weaponframe = 6;};
+void() player_rocketload4 = [$rockatt5, player_rocketload5] {@self.weaponframe = 7;};
+void() player_rocketload5 = [$rockatt6, player_rocketload6] {@self.weaponframe = 8;};
+void() player_rocketload6 = [$rockatt4, player_run]			{@self.weaponframe = 9;};
 
 void (float num_bubbles) DeathBubbles;
 
@@ -415,85 +415,85 @@ void() PainSound =
 {
 	local float		rs = random ();
 
-	if (self.health < 0)
+	if (@self.health < 0)
 		return;
 
 	if (damage_attacker.classname == "teledeath") {
-		sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
+		sound (@self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
 		return;
 	}
 
 	// water pain sounds
-	if (self.watertype == CONTENT_WATER && self.waterlevel == 3) {
+	if (@self.watertype == CONTENT_WATER && @self.waterlevel == 3) {
 		DeathBubbles (1);
 
 		if (rs > 0.5)
-			sound (self, CHAN_VOICE, "player/drown1.wav", 1, ATTN_NORM);
+			sound (@self, CHAN_VOICE, "player/drown1.wav", 1, ATTN_NORM);
 		else
-			sound (self, CHAN_VOICE, "player/drown2.wav", 1, ATTN_NORM);
+			sound (@self, CHAN_VOICE, "player/drown2.wav", 1, ATTN_NORM);
 		return;
 	}
 
-	if (self.watertype == CONTENT_SLIME) {	// slime pain sounds
+	if (@self.watertype == CONTENT_SLIME) {	// slime pain sounds
 		// FIXME: put in some steam here
 		if (rs > 0.5)
-			sound (self, CHAN_VOICE, "player/lburn1.wav", 1, ATTN_NORM);
+			sound (@self, CHAN_VOICE, "player/lburn1.wav", 1, ATTN_NORM);
 		else
-			sound (self, CHAN_VOICE, "player/lburn2.wav", 1, ATTN_NORM);
+			sound (@self, CHAN_VOICE, "player/lburn2.wav", 1, ATTN_NORM);
 		return;
 	}
 
-	if (self.watertype == CONTENT_LAVA) {
+	if (@self.watertype == CONTENT_LAVA) {
 		if (rs > 0.5)
-			sound (self, CHAN_VOICE, "player/lburn1.wav", 1, ATTN_NORM);
+			sound (@self, CHAN_VOICE, "player/lburn1.wav", 1, ATTN_NORM);
 		else
-			sound (self, CHAN_VOICE, "player/lburn2.wav", 1, ATTN_NORM);
+			sound (@self, CHAN_VOICE, "player/lburn2.wav", 1, ATTN_NORM);
 		return;
 	}
 
-	if (self.pain_finished > time) {
-		self.axhitme = 0;
+	if (@self.pain_finished > time) {
+		@self.axhitme = 0;
 		return;
 	}
 
-	self.pain_finished = time + 0.5;
+	@self.pain_finished = time + 0.5;
 
 	// don't make multiple pain sounds right after each other
 
-	if (self.axhitme == 1) {	// axe pain sound
-		self.axhitme = 0;
-		sound (self, CHAN_VOICE, "player/axhit1.wav", 1, ATTN_NORM);
+	if (@self.axhitme == 1) {	// axe pain sound
+		@self.axhitme = 0;
+		sound (@self, CHAN_VOICE, "player/axhit1.wav", 1, ATTN_NORM);
 		return;
 	}
 	
 	rs = rint ((random () * 5) + 1);
-	self.noise = "";
+	@self.noise = "";
 
 	if (rs == 1)
-		self.noise = "player/pain1.wav";
+		@self.noise = "player/pain1.wav";
 	else if (rs == 2)
-		self.noise = "player/pain2.wav";
+		@self.noise = "player/pain2.wav";
 	else if (rs == 3)
-		self.noise = "player/pain3.wav";
+		@self.noise = "player/pain3.wav";
 	else if (rs == 4)
-		self.noise = "player/pain4.wav";
+		@self.noise = "player/pain4.wav";
 	else if (rs == 5)
-		self.noise = "player/pain5.wav";
+		@self.noise = "player/pain5.wav";
 	else
-		self.noise = "player/pain6.wav";
+		@self.noise = "player/pain6.wav";
 
-	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+	sound (@self, CHAN_VOICE, @self.noise, 1, ATTN_NORM);
 	return;
 };
 
-void() player_pain1 = [$pain1, player_pain2]	{PainSound (); self.weaponframe = 0;};
+void() player_pain1 = [$pain1, player_pain2]	{PainSound (); @self.weaponframe = 0;};
 void() player_pain2 = [$pain2, player_pain3]	{};
 void() player_pain3 = [$pain3, player_pain4]	{};
 void() player_pain4 = [$pain4, player_pain5]	{};
 void() player_pain5 = [$pain5, player_pain6]	{};
 void() player_pain6 = [$pain6, player_run]		{};
 
-void() player_axpain1 =	[$axpain1, player_axpain2]	{PainSound (); self.weaponframe = 0;};
+void() player_axpain1 =	[$axpain1, player_axpain2]	{PainSound (); @self.weaponframe = 0;};
 void() player_axpain2 =	[$axpain2, player_axpain3]	{};
 void() player_axpain3 =	[$axpain3, player_axpain4]	{};
 void() player_axpain4 =	[$axpain4, player_axpain5]	{};
@@ -502,13 +502,13 @@ void() player_axpain6 =	[$axpain6, player_run]		{};
 
 void() player_pain =
 {
-	if (self.weaponframe)
+	if (@self.weaponframe)
 		return;
 
-	if (self.invisible_finished > time)
+	if (@self.invisible_finished > time)
 		return;		// eyes don't have pain frames
 
-	if (self.weapon == IT_AXE)
+	if (@self.weapon == IT_AXE)
 		player_axpain1 ();
 	else
 		player_pain1 ();
@@ -525,13 +525,13 @@ void() DeathBubblesSpawn =
 {
 	local entity	bubble;
 
-	if (self.owner.waterlevel != 3)
+	if (@self.owner.waterlevel != 3)
 		return;
 
 	bubble = spawn ();
 
 	setmodel (bubble, "progs/s_bubble.spr");
-	setorigin (bubble, self.owner.origin + '0 0 24');
+	setorigin (bubble, @self.owner.origin + '0 0 24');
 	setsize (bubble, '-8 -8 -8', '8 8 8');
 
 	bubble.movetype = MOVETYPE_NOCLIP;
@@ -545,11 +545,11 @@ void() DeathBubblesSpawn =
 	bubble.nextthink = time + 0.5;
 	bubble.think = bubble_bob;
 
-	self.think = DeathBubblesSpawn;
-	self.nextthink = time + 0.1;
+	@self.think = DeathBubblesSpawn;
+	@self.nextthink = time + 0.1;
 
-	if (++self.air_finished >= self.bubble_count)
-		remove (self);
+	if (++@self.air_finished >= @self.bubble_count)
+		remove (@self);
 };
 
 void (float num_bubbles) DeathBubbles =
@@ -557,9 +557,9 @@ void (float num_bubbles) DeathBubbles =
 	local entity	bubble_spawner;
 	
 	bubble_spawner = spawn ();
-	setorigin (bubble_spawner, self.origin);
+	setorigin (bubble_spawner, @self.origin);
 
-	bubble_spawner.owner = self;
+	bubble_spawner.owner = @self;
 
 	bubble_spawner.air_finished = 0;
 	bubble_spawner.bubble_count = num_bubbles;
@@ -576,31 +576,31 @@ void() DeathSound =
 {
 	local float		rs;
 
-	if (self.waterlevel == 3) {	// water death sounds
+	if (@self.waterlevel == 3) {	// water death sounds
 		DeathBubbles (5);
-		sound (self, CHAN_VOICE, "player/h2odeath.wav", 1, ATTN_NONE);
+		sound (@self, CHAN_VOICE, "player/h2odeath.wav", 1, ATTN_NONE);
 		return;
 	}
 	
 	rs = rint ((random() * 4) + 1);
 	if (rs == 1)
-		self.noise = "player/death1.wav";
+		@self.noise = "player/death1.wav";
 	if (rs == 2)
-		self.noise = "player/death2.wav";
+		@self.noise = "player/death2.wav";
 	if (rs == 3)
-		self.noise = "player/death3.wav";
+		@self.noise = "player/death3.wav";
 	if (rs == 4)
-		self.noise = "player/death4.wav";
+		@self.noise = "player/death4.wav";
 	if (rs == 5)
-		self.noise = "player/death5.wav";
-	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NONE);
+		@self.noise = "player/death5.wav";
+	sound (@self, CHAN_VOICE, @self.noise, 1, ATTN_NONE);
 	return;
 };
 
 void() PlayerDead =
 {
-	self.nextthink = -1;	// allow respawn after a certain time
-	self.deadflag = DEAD_DEAD;
+	@self.nextthink = -1;	// allow respawn after a certain time
+	@self.deadflag = DEAD_DEAD;
 };
 
 vector(float dm) VelocityForDamage =
@@ -609,7 +609,7 @@ vector(float dm) VelocityForDamage =
 
 	if (vlen (damage_inflictor.velocity) > 0) {
 		v = 0.5 * damage_inflictor.velocity;
-		v += 25 * normalize (self.origin - damage_inflictor.origin);
+		v += 25 * normalize (@self.origin - damage_inflictor.origin);
 		v_x += 200 * crandom ();
 		v_y += 200 * crandom ();
 		v_z = 100 + 240 * random();
@@ -643,14 +643,14 @@ void (string gibname, float dm) ThrowGib =
 	local entity	new;
 
 	new = spawn ();
-	new.origin = self.origin;
+	new.origin = @self.origin;
 	setmodel (new, gibname);
 	setsize (new, '0 0 0', '0 0 0');
 
 	// wind tunnels
 	new.solid = SOLID_TRIGGER;
 
-	if (self.waterlevel > 0) {	// make gibs float in water
+	if (@self.waterlevel > 0) {	// make gibs float in water
 		new.classname = "gib";
 		new.movetype = MOVETYPE_FLY;
 		new.velocity = '100 3 15';
@@ -677,63 +677,63 @@ void (string gibname, float dm) ThrowGib =
 
 void (string gibname, float dm) ThrowHead =
 {
-	setmodel (self, gibname);
-	self.frame = 0;
-	self.takedamage = DAMAGE_NO;
+	setmodel (@self, gibname);
+	@self.frame = 0;
+	@self.takedamage = DAMAGE_NO;
 
 	// wind tunnels
-	self.solid = SOLID_TRIGGER;
+	@self.solid = SOLID_TRIGGER;
 
-	if (self.waterlevel > 0) {	// float 'em
-		self.movetype = MOVETYPE_FLY;
+	if (@self.waterlevel > 0) {	// float 'em
+		@self.movetype = MOVETYPE_FLY;
 
-		self.velocity = '100 3 15';
+		@self.velocity = '100 3 15';
 
-		self.think = bubble_bob;
-		self.nextthink = time + 0.5;
-		self.cnt = 0;
+		@self.think = bubble_bob;
+		@self.nextthink = time + 0.5;
+		@self.cnt = 0;
 	} else {
-		self.movetype = MOVETYPE_BOUNCE;
+		@self.movetype = MOVETYPE_BOUNCE;
 
-		self.velocity = VelocityForDamage (dm);
-		self.avelocity = crandom () * '0 600 0';
+		@self.velocity = VelocityForDamage (dm);
+		@self.avelocity = crandom () * '0 600 0';
 
-		self.nextthink = -1;
+		@self.nextthink = -1;
 	}
-	self.view_ofs = '0 0 8';
-	setsize (self, '-16 -16 0', '16 16 56');
-	self.origin_z -= 24;
+	@self.view_ofs = '0 0 8';
+	setsize (@self, '-16 -16 0', '16 16 56');
+	@self.origin_z -= 24;
 
-	self.flags &= ~FL_ONGROUND;
+	@self.flags &= ~FL_ONGROUND;
 };
 
 void() GibPlayer =
 {
 	// make a nice gib in Gib mode
 	if (deathmatch & DM_GIB)
-		self.health -= 40;
+		@self.health -= 40;
 
-	ThrowHead ("progs/h_player.mdl", self.health);
-	ThrowGib ("progs/gib1.mdl", self.health);
-	ThrowGib ("progs/gib2.mdl", self.health);
-	ThrowGib ("progs/gib3.mdl", self.health);
+	ThrowHead ("progs/h_player.mdl", @self.health);
+	ThrowGib ("progs/gib1.mdl", @self.health);
+	ThrowGib ("progs/gib2.mdl", @self.health);
+	ThrowGib ("progs/gib3.mdl", @self.health);
 
-	self.deadflag = DEAD_DEAD;
+	@self.deadflag = DEAD_DEAD;
 
 	if (damage_attacker.classname == "teledeath") {
-		sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
+		sound (@self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
 		return;
 	}
 
 	if (damage_attacker.classname == "teledeath2") {
-		sound (self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
+		sound (@self, CHAN_VOICE, "player/teledth1.wav", 1, ATTN_NONE);
 		return;
 	}
 
 	if (random () < 0.5)
-		sound (self, CHAN_VOICE, "player/gib.wav", 1, ATTN_NONE);
+		sound (@self, CHAN_VOICE, "player/gib.wav", 1, ATTN_NONE);
 	else
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NONE);
+		sound (@self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NONE);
 };
 
 void() PlayerDie =
@@ -741,14 +741,14 @@ void() PlayerDie =
 	local float		i;
 	local string	s;
 
-	self.items &= ~IT_INVISIBILITY;
+	@self.items &= ~IT_INVISIBILITY;
 
 	if (stof (infokey (world, "dq"))) {	// drop quad?
-		if (self.super_damage_finished > 0) {
-			DropQuad (self.super_damage_finished - time);
-			s = self.netname
+		if (@self.super_damage_finished > 0) {
+			DropQuad (@self.super_damage_finished - time);
+			s = @self.netname
 				+ " lost a Quad with "
-				+ ftos (rint (self.super_damage_finished - time))
+				+ ftos (rint (@self.super_damage_finished - time))
 				+ " seconds remaining!\n";
 
 			BPRINT (PRINT_MEDIUM, s);
@@ -756,41 +756,41 @@ void() PlayerDie =
 	}
 
 	if (stof (infokey (world, "dc"))) {
-		if (self.invisible_finished > 0) {
-			DropRing (self.invisible_finished - time);
-			s = self.netname
+		if (@self.invisible_finished > 0) {
+			DropRing (@self.invisible_finished - time);
+			s = @self.netname
 				+ " lost a Cloaking Device with "
-				+ ftos (rint (self.invisible_finished - time))
+				+ ftos (rint (@self.invisible_finished - time))
 				+ " seconds remaining!\n";
 			BPRINT (PRINT_LOW, s);
 		}
 	}
 
-	self.invisible_finished = 0;	// don't die as eyes
-	self.invincible_finished = 0;
-	self.super_damage_finished = 0;
-	self.radsuit_finished = 0;
-	self.modelindex = modelindex_player;	// don't use eyes
+	@self.invisible_finished = 0;	// don't die as eyes
+	@self.invincible_finished = 0;
+	@self.super_damage_finished = 0;
+	@self.radsuit_finished = 0;
+	@self.modelindex = modelindex_player;	// don't use eyes
 
 	// + POX - moved below gib check (no packs when gibbed!)
 	//DropBackpack();
 
 	// + POX v1.11 - clear the target print so it doesn't obscure the scoreboard
-	if (self.target_id_toggle)
-		centerprint (self, "");
+	if (@self.target_id_toggle)
+		centerprint (@self, "");
 
-	self.weaponmodel = "";
-	self.view_ofs = '0 0 -8';
-	self.deadflag = DEAD_DYING;
-	self.solid = SOLID_NOT;
-	self.flags &= ~FL_ONGROUND;
-	self.movetype = MOVETYPE_TOSS;
+	@self.weaponmodel = "";
+	@self.view_ofs = '0 0 -8';
+	@self.deadflag = DEAD_DYING;
+	@self.solid = SOLID_NOT;
+	@self.flags &= ~FL_ONGROUND;
+	@self.movetype = MOVETYPE_TOSS;
 
-	if (self.velocity_z < 10)
-		self.velocity_z = self.velocity_z + random () * 300;
+	if (@self.velocity_z < 10)
+		@self.velocity_z = @self.velocity_z + random () * 300;
 	
 	// + POX check for gib mode as well as regular gib
-	if (self.health < -40 || (deathmatch & DM_GIB)) {		
+	if (@self.health < -40 || (deathmatch & DM_GIB)) {		
 		GibPlayer ();
 		return;
 	}
@@ -799,10 +799,10 @@ void() PlayerDie =
 	
 	DeathSound ();
 	
-	self.angles_x = 0;
-	self.angles_z = 0;
+	@self.angles_x = 0;
+	@self.angles_z = 0;
 	
-	if (self.weapon == IT_AXE) {
+	if (@self.weapon == IT_AXE) {
 		player_die_ax1 ();
 		return;
 	}
@@ -828,14 +828,14 @@ void() PlayerDie =
 
 void() set_suicide_frame =
 {	// used by kill command and diconnect command
-	if (self.model != "progs/player.mdl")
+	if (@self.model != "progs/player.mdl")
 		return; // allready gibbed
 
-	self.frame = $deatha11;
-	self.solid = SOLID_NOT;
-	self.movetype = MOVETYPE_TOSS;
-	self.deadflag = DEAD_DEAD;
-	self.nextthink = -1;
+	@self.frame = $deatha11;
+	@self.solid = SOLID_NOT;
+	@self.movetype = MOVETYPE_TOSS;
+	@self.deadflag = DEAD_DEAD;
+	@self.nextthink = -1;
 };
 
 void() player_diea1	=	[$deatha1, player_diea2]	{};

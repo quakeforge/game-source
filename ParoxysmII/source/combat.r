@@ -23,7 +23,7 @@ float (entity targ, entity inflictor) CanDamage =
 {
 	// bmodels need special checking because their origin is 0,0,0
 	if (targ.movetype == MOVETYPE_PUSH) {
-		traceline (inflictor.origin, 0.5 * (targ.absmin + targ.absmax), TRUE, self);
+		traceline (inflictor.origin, 0.5 * (targ.absmin + targ.absmax), TRUE, @self);
 
 		if (trace_fraction == 1)
 			return TRUE;
@@ -34,24 +34,24 @@ float (entity targ, entity inflictor) CanDamage =
 		return FALSE;
 	}
 	
-	traceline (inflictor.origin, targ.origin, TRUE, self);
+	traceline (inflictor.origin, targ.origin, TRUE, @self);
 
 	if (trace_fraction == 1)
 		return TRUE;
 
-	traceline (inflictor.origin, targ.origin + '15 15 0', TRUE, self);
+	traceline (inflictor.origin, targ.origin + '15 15 0', TRUE, @self);
 	if (trace_fraction == 1)
 		return TRUE;
 
-	traceline (inflictor.origin, targ.origin + '-15 -15 0', TRUE, self);
+	traceline (inflictor.origin, targ.origin + '-15 -15 0', TRUE, @self);
 	if (trace_fraction == 1)
 		return TRUE;
 
-	traceline (inflictor.origin, targ.origin + '-15 15 0', TRUE, self);
+	traceline (inflictor.origin, targ.origin + '-15 15 0', TRUE, @self);
 	if (trace_fraction == 1)
 		return TRUE;
 
-	traceline (inflictor.origin, targ.origin + '15 -15 0', TRUE, self);
+	traceline (inflictor.origin, targ.origin + '15 -15 0', TRUE, @self);
 	if (trace_fraction == 1)
 		return TRUE;
 
@@ -65,38 +65,38 @@ Killed
 */
 void (entity targ, entity attacker) Killed =
 {
-	local entity	oself = self;
+	local entity	oself = @self;
 
-	self = targ;
+	@self = targ;
 	
-	if (self.health < -99)
-		self.health = -99;		// don't let sbar get funky
+	if (@self.health < -99)
+		@self.health = -99;		// don't let sbar get funky
 
-	if (self.movetype == MOVETYPE_PUSH || self.movetype == MOVETYPE_NONE) {	// doors, triggers, etc
-		self.th_die ();
-		self = oself;
+	if (@self.movetype == MOVETYPE_PUSH || @self.movetype == MOVETYPE_NONE) {	// doors, triggers, etc
+		@self.th_die ();
+		@self = oself;
 		return;
 	}
 
-	self.enemy = attacker;
+	@self.enemy = attacker;
 
 	// bump the monster counter
-	if (self.flags & FL_MONSTER) {
+	if (@self.flags & FL_MONSTER) {
 		killed_monsters++;
 		WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
 	}
-	ClientObituary (self, attacker);
+	ClientObituary (@self, attacker);
 	
-	self.takedamage = DAMAGE_NO;
-	self.touch = NIL;
-	self.effects = 0;
+	@self.takedamage = DAMAGE_NO;
+	@self.touch = NIL;
+	@self.effects = 0;
 
 /*SERVER
 	monster_death_use();
 */
-	self.th_die ();
+	@self.th_die ();
 	
-	self = oself;
+	@self = oself;
 };
 
 
@@ -131,9 +131,9 @@ void (entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	if (targ.flags & FL_GODMODE)
 		return;
 
-	if (targ.invincible_finished >= time && self.invincible_sound < time) {
+	if (targ.invincible_finished >= time && @self.invincible_sound < time) {
 		sound (targ, CHAN_ITEM, "items/protect3.wav", 1, ATTN_NORM);
-		self.invincible_sound = time + 2;
+		@self.invincible_sound = time + 2;
 		return;
 	}
 
@@ -179,7 +179,7 @@ void (entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 		dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;
 		dir = normalize (dir);
 
-		if ((damage < 60)	// player-player damage (not self-inflicted)
+		if ((damage < 60)	// player-player damage (not @self-inflicted)
 				&& (attacker.classname == "player")
 				&& (targ.classname == "player")
 				&& (attacker != targ)) 
@@ -193,7 +193,7 @@ void (entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	}
 
 	// team play damage avoidance
-	//ZOID 12-13-96: self.team doesn't work in QW.	Use keys
+	//ZOID 12-13-96: @self.team doesn't work in QW.	Use keys
 	attackerteam = infokey (attacker, "team");
 	targteam = infokey (targ, "team");
 
@@ -211,28 +211,28 @@ void (entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	}
 
 	// react to the damage
-	oldself = self;
-	self = targ;
+	oldself = @self;
+	@self = targ;
 
 #if 0
-	if ((self.flags & FL_MONSTER) && attacker != world) { // get mad unless of the same class (except for soldiers)
-		if (self != attacker && attacker != self.enemy) {
-			if ((self.classname != attacker.classname)
-					|| (self.classname == "monster_army" )) {
-				if (self.enemy.classname == "player")
-					self.oldenemy = self.enemy;
+	if ((@self.flags & FL_MONSTER) && attacker != world) { // get mad unless of the same class (except for soldiers)
+		if (@self != attacker && attacker != @self.enemy) {
+			if ((@self.classname != attacker.classname)
+					|| (@self.classname == "monster_army" )) {
+				if (@self.enemy.classname == "player")
+					@self.oldenemy = @self.enemy;
 
-				self.enemy = attacker;
+				@self.enemy = attacker;
 				FoundTarget ();
 			}
 		}
 	}
 #endif
 
-	if (self.th_pain)
-		self.th_pain ();
+	if (@self.th_pain)
+		@self.th_pain ();
 
-	self = oldself;
+	@self = oldself;
 };
 
 /*

@@ -15,11 +15,11 @@ Feel free to use this code in anyway.
 .float spark_freq; // To avoid 'not a feild' server errors
 void() e_spark =
 {
-	remove (self);
+	remove (@self);
 };
 void() a_drip =
 {
-	remove (self);
+	remove (@self);
 };
 
 /*
@@ -64,44 +64,44 @@ void() play_sound;
 void() sound_wait =
 {	
 	// hang around until next use
-	self.nextthink = time + 60*10;
-	self.think = sound_wait;
+	@self.nextthink = time + 60*10;
+	@self.think = sound_wait;
 };
 void() stop_sound =
 {
 	// if sound is set to toggle, silence it and set use to play
-	if (self.spawnflags & TOGGLE_SND)
+	if (@self.spawnflags & TOGGLE_SND)
 	{
-		sound (self, CHAN_VOICE, "misc/null.wav", 0, self.snd_attn);
-		self.use = play_sound;
+		sound (@self, CHAN_VOICE, "misc/null.wav", 0, @self.snd_attn);
+		@self.use = play_sound;
 		sound_wait();
 	}
 	
 	// sound doesn't toggle so kill it
 	else
 	{
-		sound (self, CHAN_VOICE, "misc/null.wav", 0, self.snd_attn);
-		remove (self);
+		sound (@self, CHAN_VOICE, "misc/null.wav", 0, @self.snd_attn);
+		remove (@self);
 	}
 };
 void() play_sound = 
 {
 	//infinite repeat
-	if (self.snd_rep == -2)
+	if (@self.snd_rep == -2)
 	{
-		sound (self, CHAN_VOICE, self.the_snd, self.snd_volume, self.snd_attn);
+		sound (@self, CHAN_VOICE, @self.the_snd, @self.snd_volume, @self.snd_attn);
 		sound_think();
 	}
 	
 	// sound is done
-	else if (self.snd_rep == 0)
-		remove (self);
+	else if (@self.snd_rep == 0)
+		remove (@self);
 	
 	// play the sound and reduce repititions by 1
-	if (self.snd_rep >= 1) 
+	if (@self.snd_rep >= 1) 
 	{
-		sound (self, CHAN_VOICE, self.the_snd, self.snd_volume, self.snd_attn);
-		self.snd_rep = self.snd_rep - 1;
+		sound (@self, CHAN_VOICE, @self.the_snd, @self.snd_volume, @self.snd_attn);
+		@self.snd_rep = @self.snd_rep - 1;
 		sound_think();
 	}
 	
@@ -109,43 +109,43 @@ void() play_sound =
 void() sound_think =
 {	
 	// if sound is toggled, set next use to stop
-	if (self.spawnflags & TOGGLE_SND)
-		self.use = stop_sound;
+	if (@self.spawnflags & TOGGLE_SND)
+		@self.use = stop_sound;
 	
 	// determine user-defined loop time then play the sound
-	self.nextthink = time + (random()*self.snd_rand) + self.snd_loop;
-	self.think = play_sound;
+	@self.nextthink = time + (random()*@self.snd_rand) + @self.snd_loop;
+	@self.think = play_sound;
 };
 void() cust_sound =
 {	
-	precache_sound (self.the_snd);
+	precache_sound (@self.the_snd);
 	precache_sound ("misc/null.wav");
 	
 	//default attenuation to NORM if not specified
-	if(!self.snd_attn)
-		self.snd_attn = 2;
+	if(!@self.snd_attn)
+		@self.snd_attn = 2;
 	
-	self.snd_attn = self.snd_attn - 1;// needed so the default to NORM works (since 0 = NONE)
+	@self.snd_attn = @self.snd_attn - 1;// needed so the default to NORM works (since 0 = NONE)
 	
 	//default volume to one if not specified
-	if(self.snd_volume <= 0)
-		self.snd_volume = 1;
+	if(@self.snd_volume <= 0)
+		@self.snd_volume = 1;
 	
 	// start sound if not triggered
-	if (!self.targetname)	
+	if (!@self.targetname)	
 		play_sound();
 	
 	// start sound if initially on, set use to stop_sound
-	if (self.strt_onoff == 0)
+	if (@self.strt_onoff == 0)
 	{	
-		self.use = stop_sound;
+		@self.use = stop_sound;
 		play_sound();
 	}
 		
 	// start sound when triggered
-	if (self.strt_onoff == 1)
+	if (@self.strt_onoff == 1)
 	{
-		self.use = play_sound;
+		@self.use = play_sound;
 	}
 	
 };
@@ -159,33 +159,33 @@ void() cust_sound =
 //CoolEdit 1.5 (for Windows) is the only editor that can create these looping wavs (to my knowledge)
 void() ambientsound_go =
 {
-	ambientsound (self.origin, self.the_snd, self.snd_volume, self.snd_attn);
+	ambientsound (@self.origin, @self.the_snd, @self.snd_volume, @self.snd_attn);
 };
 void() ambient_sound =
 {
-	precache_sound (self.the_snd);
+	precache_sound (@self.the_snd);
 	
 	//default volume to one if not specified
-	if(self.snd_volume <= 0)
-		self.snd_volume = 1;
+	if(@self.snd_volume <= 0)
+		@self.snd_volume = 1;
 	
 	//default attenuation to NORM if not specified
-	if(!self.snd_attn)
-		self.snd_attn = 2;
+	if(!@self.snd_attn)
+		@self.snd_attn = 2;
 	
-	self.snd_attn = self.snd_attn - 1;// needed so the default to NORM works (since 0 = NONE)
+	@self.snd_attn = @self.snd_attn - 1;// needed so the default to NORM works (since 0 = NONE)
 	
 	//start right away if not triggered
-	if(!self.targetname)
+	if(!@self.targetname)
 	{
 	//Needs to start on the second frame since that's when entities not called in world_spawn are created
-		self.nextthink = time + 0.1; 
-		self.think = ambientsound_go;
+		@self.nextthink = time + 0.1; 
+		@self.think = ambientsound_go;
 	}
 	
 	//wait for trigger
 	else
-		self.use = ambientsound_go;
+		@self.use = ambientsound_go;
 };
 /*
 colour_light is a small hack to try and simulate coloured lighting.
@@ -214,14 +214,14 @@ void() colourlight_off =
 	
 	//turn it off and reset		
 	stuffcmd (other, "v_cshift 0 0 0 0\n");
-	self.use = colourlight_wait;
-	self.touch = SUB_Null;
+	@self.use = colourlight_wait;
+	@self.touch = SUB_Null;
 	
 };
 void() colourlight_toggle =
 {
 	//called after light is triggered a second time
-	self.touch = colourlight_off;
+	@self.touch = colourlight_off;
 };
 	
 void() colourlight_use =
@@ -233,21 +233,21 @@ void() colourlight_use =
 	if(other.cshift_finished > time)
 		return;
 	
-	stuffcmd (other, self.colourvalue);
+	stuffcmd (other, @self.colourvalue);
 	
 	//POX v1.2 - better clearing of v_cshift (in PostThink)
 	other.cshift_off = FALSE;
 	other.cshift_finished = time + 0.1; //check every frame
 	
 	//if targetted, alow it to be shut down
-	if(self.targetname)
-		self.use = colourlight_toggle;
+	if(@self.targetname)
+		@self.use = colourlight_toggle;
 	
 };
 void() colourlight_wait =
 {
 	//activated by a trigger so wait for touch
-	self.touch = colourlight_use;
+	@self.touch = colourlight_use;
 };
 void() colour_light =
 {		
@@ -256,11 +256,11 @@ void() colour_light =
 	//Can be made active by use of a targetname
 	//Must be triggered by touch
 	
-	if(!self.targetname || !(self.spawnflags & CLSTART_OFF)) {
-		self.touch = colourlight_use;
+	if(!@self.targetname || !(@self.spawnflags & CLSTART_OFF)) {
+		@self.touch = colourlight_use;
 	} else {
-		self.use = colourlight_wait;
-		self.touch = SUB_Null;
+		@self.use = colourlight_wait;
+		@self.touch = SUB_Null;
 	}
 };
 /*
@@ -277,20 +277,20 @@ void() particle_stream =
 	precache_sound("ambience/regen1.wav");
 	precache_model ("progs/stream.mdl");
 	
-	self.angles = '0 0 0';
-	self.solid = SOLID_NOT;
-	self.movetype = MOVETYPE_NONE;
-	setmodel(self, "progs/stream.mdl");
+	@self.angles = '0 0 0';
+	@self.solid = SOLID_NOT;
+	@self.movetype = MOVETYPE_NONE;
+	setmodel(@self, "progs/stream.mdl");
 	
 	//POX v1.2 - just in case
-	if(self.clr > 2 || self.clr < 0)
-		self.clr = 0;
+	if(@self.clr > 2 || @self.clr < 0)
+		@self.clr = 0;
 	
-	self.skin = self.clr;
+	@self.skin = @self.clr;
 	
 	//POX v1.2 Fixed sound orign (makestatic messed it up?)
 	regen_ambientsound ();
-	makestatic (self);
+	makestatic (@self);
 	
 };
 /*
@@ -301,52 +301,52 @@ Try to use rectangular objects, since entites use bounding box collision detecti
 */
 void() bsp_explode =
 {
-	self.takedamage = DAMAGE_NO;
-	self.trigger_field.classname = "explo_box";
+	@self.takedamage = DAMAGE_NO;
+	@self.trigger_field.classname = "explo_box";
 	
-	// did say self.owner
-	T_RadiusDamage (self.trigger_field, self.trigger_field, self.dmg, world, "");
-	sound (self.trigger_field, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
+	// did say @self.owner
+	T_RadiusDamage (@self.trigger_field, @self.trigger_field, @self.dmg, world, "");
+	sound (@self.trigger_field, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	
 	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
 	WriteByte (MSG_MULTICAST, TE_EXPLOSION);
-	WriteCoord (MSG_MULTICAST, self.trigger_field.origin_x);
-	WriteCoord (MSG_MULTICAST, self.trigger_field.origin_y);
-	WriteCoord (MSG_MULTICAST, self.trigger_field.origin_z);
-	multicast (self.origin, MULTICAST_PHS);
+	WriteCoord (MSG_MULTICAST, @self.trigger_field.origin_x);
+	WriteCoord (MSG_MULTICAST, @self.trigger_field.origin_y);
+	WriteCoord (MSG_MULTICAST, @self.trigger_field.origin_z);
+	multicast (@self.origin, MULTICAST_PHS);
 
-	remove (self);
-	remove (self.trigger_field);
+	remove (@self);
+	remove (@self.trigger_field);
 };
 
 void() misc_explobsp =
 {
 	local entity spot;
 	
-	self.solid = SOLID_BBOX;
-	self.movetype = MOVETYPE_NONE;
+	@self.solid = SOLID_BBOX;
+	@self.movetype = MOVETYPE_NONE;
 	
-	setmodel (self, self.model);
-	setsize( self, self.mins, self.maxs );
+	setmodel (@self, @self.model);
+	setsize( @self, @self.mins, @self.maxs );
 	precache_sound ("weapons/r_exp3.wav");
 	
-	if (!self.health)
-		self.health = 20;
+	if (!@self.health)
+		@self.health = 20;
 	
-	if (!self.dmg)
-		self.dmg = 160;
+	if (!@self.dmg)
+		@self.dmg = 160;
 	
-	self.th_die = bsp_explode;
-	self.takedamage = DAMAGE_AIM;
-	self.nobleed = TRUE;
+	@self.th_die = bsp_explode;
+	@self.takedamage = DAMAGE_AIM;
+	@self.nobleed = TRUE;
 	
 	//POX 1.2 - HACK!
 	//put a null entity at the center of the model to hold the explosion position
 	spot = spawn(); 
 	setmodel (spot, string_null);
-	spot.origin_x = self.absmin_x + (self.size_x * 0.5);
-	spot.origin_y = self.absmin_y + (self.size_y * 0.5);
-	spot.origin_z = self.absmin_z + (self.size_z * 0.5);
+	spot.origin_x = @self.absmin_x + (@self.size_x * 0.5);
+	spot.origin_y = @self.absmin_y + (@self.size_y * 0.5);
+	spot.origin_z = @self.absmin_z + (@self.size_z * 0.5);
 	setsize (spot, '0 0 0', '0 0 0');
-	self.trigger_field = spot;
+	@self.trigger_field = spot;
 };

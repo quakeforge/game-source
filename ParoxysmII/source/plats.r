@@ -20,22 +20,22 @@ void() plat_spawn_inside_trigger =
 	trigger.touch = plat_center_touch;
 	trigger.movetype = MOVETYPE_NONE;
 	trigger.solid = SOLID_TRIGGER;
-	trigger.enemy = self;
+	trigger.enemy = @self;
 	
-	tmin = self.mins + '25 25 0';
-	tmax = self.maxs - '25 25 -8';
-	tmin_z = tmax_z - (self.pos1_z - self.pos2_z + 8);
-	if (self.spawnflags & PLAT_LOW_TRIGGER)
+	tmin = @self.mins + '25 25 0';
+	tmax = @self.maxs - '25 25 -8';
+	tmin_z = tmax_z - (@self.pos1_z - @self.pos2_z + 8);
+	if (@self.spawnflags & PLAT_LOW_TRIGGER)
 		tmax_z = tmin_z + 8;
 	
-	if (self.size_x <= 50)
+	if (@self.size_x <= 50)
 	{
-		tmin_x = (self.mins_x + self.maxs_x) / 2;
+		tmin_x = (@self.mins_x + @self.maxs_x) / 2;
 		tmax_x = tmin_x + 1;
 	}
-	if (self.size_y <= 50)
+	if (@self.size_y <= 50)
 	{
-		tmin_y = (self.mins_y + self.maxs_y) / 2;
+		tmin_y = (@self.mins_y + @self.maxs_y) / 2;
 		tmax_y = tmin_y + 1;
 	}
 	
@@ -43,27 +43,27 @@ void() plat_spawn_inside_trigger =
 };
 void() plat_hit_top =
 {
-	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-	self.state = STATE_TOP;
-	self.think = plat_go_down;
-	self.nextthink = self.ltime + 3;
+	sound (@self, CHAN_NO_PHS_ADD+CHAN_VOICE, @self.noise1, 1, ATTN_NORM);
+	@self.state = STATE_TOP;
+	@self.think = plat_go_down;
+	@self.nextthink = @self.ltime + 3;
 };
 void() plat_hit_bottom =
 {
-	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-	self.state = STATE_BOTTOM;
+	sound (@self, CHAN_NO_PHS_ADD+CHAN_VOICE, @self.noise1, 1, ATTN_NORM);
+	@self.state = STATE_BOTTOM;
 };
 void() plat_go_down =
 {
-	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
-	self.state = STATE_DOWN;
-	SUB_CalcMove (self.pos2, self.speed, plat_hit_bottom);
+	sound (@self, CHAN_VOICE, @self.noise, 1, ATTN_NORM);
+	@self.state = STATE_DOWN;
+	SUB_CalcMove (@self.pos2, @self.speed, plat_hit_bottom);
 };
 void() plat_go_up =
 {
-	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
-	self.state = STATE_UP;
-	SUB_CalcMove (self.pos1, self.speed, plat_hit_top);
+	sound (@self, CHAN_VOICE, @self.noise, 1, ATTN_NORM);
+	@self.state = STATE_UP;
+	SUB_CalcMove (@self.pos1, @self.speed, plat_hit_top);
 };
 void() plat_center_touch =
 {
@@ -72,11 +72,11 @@ void() plat_center_touch =
 		
 	if (other.health <= 0)
 		return;
-	self = self.enemy;
-	if (self.state == STATE_BOTTOM)
+	@self = @self.enemy;
+	if (@self.state == STATE_BOTTOM)
 		plat_go_up ();
-	else if (self.state == STATE_TOP)
-		self.nextthink = self.ltime + 1;	// delay going down
+	else if (@self.state == STATE_TOP)
+		@self.nextthink = @self.ltime + 1;	// delay going down
 };
 void() plat_outside_touch =
 {
@@ -86,13 +86,13 @@ void() plat_outside_touch =
 		return;
 		
 //dprint ("plat_outside_touch\n");
-	self = self.enemy;
-	if (self.state == STATE_TOP)
+	@self = @self.enemy;
+	if (@self.state == STATE_TOP)
 		plat_go_down ();
 };
 void() plat_trigger_use =
 {
-	if (self.think)
+	if (@self.think)
 		return;		// allready activated
 	plat_go_down();
 };
@@ -100,19 +100,19 @@ void() plat_crush =
 {
 //dprint ("plat_crush\n");
 	other.deathtype = "squish";
-	T_Damage (other, self, self, 1);
+	T_Damage (other, @self, @self, 1);
 	
-	if (self.state == STATE_UP)
+	if (@self.state == STATE_UP)
 		plat_go_down ();
-	else if (self.state == STATE_DOWN)
+	else if (@self.state == STATE_DOWN)
 		plat_go_up ();
 	else
-		objerror ("plat_crush: bad self.state\n");
+		objerror ("plat_crush: bad @self.state\n");
 };
 void() plat_use =
 {
-	self.use = SUB_Null;
-	if (self.state != STATE_UP)
+	@self.use = SUB_Null;
+	if (@self.state != STATE_UP)
 		objerror ("plat_use: not in up state");
 	plat_go_down();
 };
@@ -127,79 +127,79 @@ Set "sounds" to one of the following:
 */
 void() func_plat =
 {
-	if (!self.t_length)
-		self.t_length = 80;
-	if (!self.t_width)
-		self.t_width = 10;
-	if (self.sounds == 0)
-		self.sounds = 3;// + POX - changed from 2
+	if (!@self.t_length)
+		@self.t_length = 80;
+	if (!@self.t_width)
+		@self.t_width = 10;
+	if (@self.sounds == 0)
+		@self.sounds = 3;// + POX - changed from 2
 // FIX THIS TO LOAD A GENERIC PLAT SOUND
-	if (self.sounds == 1)
+	if (@self.sounds == 1)
 	{
 		precache_sound ("plats/plat1.wav");
 		precache_sound ("plats/plat2.wav");
-		self.noise = "plats/plat1.wav";
-		self.noise1 = "plats/plat2.wav";
+		@self.noise = "plats/plat1.wav";
+		@self.noise1 = "plats/plat2.wav";
 	}
-	if (self.sounds == 2)
+	if (@self.sounds == 2)
 	{
 		precache_sound ("plats/medplat1.wav");
 		precache_sound ("plats/medplat2.wav");
-		self.noise = "plats/medplat1.wav";
-		self.noise1 = "plats/medplat2.wav";
+		@self.noise = "plats/medplat1.wav";
+		@self.noise1 = "plats/medplat2.wav";
 	}
 // + POX - more sounds
-	if (self.sounds == 3)
+	if (@self.sounds == 3)
 	{
 		precache_sound ("doors/hydro1.wav");
 		precache_sound ("doors/hydro2.wav");
-		self.noise = "doors/hydro1.wav";
-		self.noise1 = "doors/hydro2.wav";
+		@self.noise = "doors/hydro1.wav";
+		@self.noise1 = "doors/hydro2.wav";
 	}
-	if (self.sounds == 4)
+	if (@self.sounds == 4)
 	{
 		precache_sound ("doors/stndr1.wav");
 		precache_sound ("doors/stndr2.wav");
-		self.noise = "doors/stndr1.wav";
-		self.noise1 = "doors/stndr2.wav";
+		@self.noise = "doors/stndr1.wav";
+		@self.noise1 = "doors/stndr2.wav";
 	}
-	if (self.sounds == 5)
+	if (@self.sounds == 5)
 	{
 		precache_sound ("doors/ddoor1.wav");
 		precache_sound ("doors/ddoor2.wav");
-		self.noise = "doors/ddoor2.wav";
-		self.noise1 = "doors/ddoor1.wav";
+		@self.noise = "doors/ddoor2.wav";
+		@self.noise1 = "doors/ddoor1.wav";
 	}
 // - POX
-	self.mangle = self.angles;
-	self.angles = '0 0 0';
-	self.classname = "plat";
-	self.solid = SOLID_BSP;
-	self.movetype = MOVETYPE_PUSH;
-	setorigin (self, self.origin);	
-	setmodel (self, self.model);
-	setsize (self, self.mins , self.maxs);
-	self.blocked = plat_crush;
-	if (!self.speed)
-		self.speed = 150;
+	@self.mangle = @self.angles;
+	@self.angles = '0 0 0';
+	@self.classname = "plat";
+	@self.solid = SOLID_BSP;
+	@self.movetype = MOVETYPE_PUSH;
+	setorigin (@self, @self.origin);	
+	setmodel (@self, @self.model);
+	setsize (@self, @self.mins , @self.maxs);
+	@self.blocked = plat_crush;
+	if (!@self.speed)
+		@self.speed = 150;
 // pos1 is the top position, pos2 is the bottom
-	self.pos1 = self.origin;
-	self.pos2 = self.origin;
-	if (self.height)
-		self.pos2_z = self.origin_z - self.height;
+	@self.pos1 = @self.origin;
+	@self.pos2 = @self.origin;
+	if (@self.height)
+		@self.pos2_z = @self.origin_z - @self.height;
 	else
-		self.pos2_z = self.origin_z - self.size_z + 8;
-	self.use = plat_trigger_use;
+		@self.pos2_z = @self.origin_z - @self.size_z + 8;
+	@self.use = plat_trigger_use;
 	plat_spawn_inside_trigger ();	// the "start moving" trigger	
-	if (self.targetname)
+	if (@self.targetname)
 	{
-		self.state = STATE_UP;
-		self.use = plat_use;
+		@self.state = STATE_UP;
+		@self.use = plat_use;
 	}
 	else
 	{
-		setorigin (self, self.pos2);
-		self.state = STATE_BOTTOM;
+		setorigin (@self, @self.pos2);
+		@self.state = STATE_BOTTOM;
 	}
 };
 //============================================================================
@@ -207,54 +207,54 @@ void() train_next;
 void() func_train_find;
 void() train_blocked =
 {
-	if (time < self.attack_finished)
+	if (time < @self.attack_finished)
 		return;
-	self.attack_finished = time + 0.5;
+	@self.attack_finished = time + 0.5;
 	other.deathtype = "squish";
-	T_Damage (other, self, self, self.dmg);
+	T_Damage (other, @self, @self, @self.dmg);
 };
 void() train_use =
 {
-	if (self.think != func_train_find)
+	if (@self.think != func_train_find)
 		return;		// already activated
 	train_next();
 };
 void() train_wait =
 {
-	if (self.wait)
+	if (@self.wait)
 	{
-		self.nextthink = self.ltime + self.wait;
-		sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise, 1, ATTN_NORM);
+		@self.nextthink = @self.ltime + @self.wait;
+		sound (@self, CHAN_NO_PHS_ADD+CHAN_VOICE, @self.noise, 1, ATTN_NORM);
 	}
 	else
-		self.nextthink = self.ltime + 0.1;
+		@self.nextthink = @self.ltime + 0.1;
 	
-	self.think = train_next;
+	@self.think = train_next;
 };
 void() train_next =
 {
 	local entity	targ;
-	targ = find (world, targetname, self.target);
-	self.target = targ.target;
-	if (!self.target)
+	targ = find (world, targetname, @self.target);
+	@self.target = targ.target;
+	if (!@self.target)
 		objerror ("train_next: no next target");
 	if (targ.wait)
-		self.wait = targ.wait;
+		@self.wait = targ.wait;
 	else
-		self.wait = 0;
-	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-	SUB_CalcMove (targ.origin - self.mins, self.speed, train_wait);
+		@self.wait = 0;
+	sound (@self, CHAN_VOICE, @self.noise1, 1, ATTN_NORM);
+	SUB_CalcMove (targ.origin - @self.mins, @self.speed, train_wait);
 };
 void() func_train_find =
 {
 	local entity	targ;
-	targ = find (world, targetname, self.target);
-	self.target = targ.target;
-	setorigin (self, targ.origin - self.mins);
-	if (!self.targetname)
+	targ = find (world, targetname, @self.target);
+	@self.target = targ.target;
+	setorigin (@self, targ.origin - @self.mins);
+	if (!@self.targetname)
 	{	// not triggered, so start immediately
-		self.nextthink = self.ltime + 0.1;
-		self.think = train_next;
+		@self.nextthink = @self.ltime + 0.1;
+		@self.think = train_next;
 	}
 };
 /*QUAKED func_train (0 .5 .8) ?
@@ -269,65 +269,65 @@ sounds
 */
 void() func_train =
 {	
-	if (!self.speed)
-		self.speed = 100;
-	if (!self.target)
+	if (!@self.speed)
+		@self.speed = 100;
+	if (!@self.target)
 		objerror ("func_train without a target");
-	if (!self.dmg)
-		self.dmg = 2;
-	if (self.sounds == 0)
+	if (!@self.dmg)
+		@self.dmg = 2;
+	if (@self.sounds == 0)
 	{
-		self.noise = ("misc/null.wav");
+		@self.noise = ("misc/null.wav");
 		precache_sound ("misc/null.wav");
-		self.noise1 = ("misc/null.wav");
+		@self.noise1 = ("misc/null.wav");
 		precache_sound ("misc/null.wav");
 	}
-	if (self.sounds == 1)
+	if (@self.sounds == 1)
 	{
-		self.noise = ("plats/train2.wav");
+		@self.noise = ("plats/train2.wav");
 		precache_sound ("plats/train2.wav");
-		self.noise1 = ("plats/train1.wav");
+		@self.noise1 = ("plats/train1.wav");
 		precache_sound ("plats/train1.wav");
 	}
-	self.cnt = 1;
-	self.solid = SOLID_BSP;
-	self.movetype = MOVETYPE_PUSH;
-	self.blocked = train_blocked;
-	self.use = train_use;
-	self.classname = "train";
-	setmodel (self, self.model);
-	setsize (self, self.mins , self.maxs);
-	setorigin (self, self.origin);
+	@self.cnt = 1;
+	@self.solid = SOLID_BSP;
+	@self.movetype = MOVETYPE_PUSH;
+	@self.blocked = train_blocked;
+	@self.use = train_use;
+	@self.classname = "train";
+	setmodel (@self, @self.model);
+	setsize (@self, @self.mins , @self.maxs);
+	setorigin (@self, @self.origin);
 // start trains on the second frame, to make sure their targets have had
 // a chance to spawn
-	self.nextthink = self.ltime + 0.1;
-	self.think = func_train_find;
+	@self.nextthink = @self.ltime + 0.1;
+	@self.think = func_train_find;
 };
 /*QUAKED misc_teleporttrain (0 .5 .8) (-8 -8 -8) (8 8 8)
 This is used for the final bos
 */
 void() misc_teleporttrain =
 {	
-	if (!self.speed)
-		self.speed = 100;
-	if (!self.target)
+	if (!@self.speed)
+		@self.speed = 100;
+	if (!@self.target)
 		objerror ("func_train without a target");
-	self.cnt = 1;
-	self.solid = SOLID_NOT;
-	self.movetype = MOVETYPE_PUSH;
-	self.blocked = train_blocked;
-	self.use = train_use;
-	self.avelocity = '100 200 300';
-	self.noise = ("misc/null.wav");
+	@self.cnt = 1;
+	@self.solid = SOLID_NOT;
+	@self.movetype = MOVETYPE_PUSH;
+	@self.blocked = train_blocked;
+	@self.use = train_use;
+	@self.avelocity = '100 200 300';
+	@self.noise = ("misc/null.wav");
 	precache_sound ("misc/null.wav");
-	self.noise1 = ("misc/null.wav");
+	@self.noise1 = ("misc/null.wav");
 	precache_sound ("misc/null.wav");
 	precache_model2 ("progs/teleport.mdl");
-	setmodel (self, "progs/teleport.mdl");
-	setsize (self, self.mins , self.maxs);
-	setorigin (self, self.origin);
+	setmodel (@self, "progs/teleport.mdl");
+	setsize (@self, @self.mins , @self.maxs);
+	setorigin (@self, @self.origin);
 // start trains on the second frame, to make sure their targets have had
 // a chance to spawn
-	self.nextthink = self.ltime + 0.1;
-	self.think = func_train_find;
+	@self.nextthink = @self.ltime + 0.1;
+	@self.think = func_train_find;
 };

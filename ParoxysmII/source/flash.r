@@ -5,24 +5,24 @@
 /*
 POX - Flashlight code from the Flashlight Tutorial at the Inside3D website <http://www.inside3d.com>
 Created by ShockMan eMail: shockman@brutality.com
-Added an entity attribute to the spawn function for bot support (since self is only the bot at respwan)
+Added an entity attribute to the spawn function for bot support (since @self is only the bot at respwan)
 */
 void() flash_update =
 {
 	// The Player is dead so turn the Flashlight off
-	if (self.owner.deadflag != DEAD_NO)
-		self.effects = 0;
+	if (@self.owner.deadflag != DEAD_NO)
+		@self.effects = 0;
 	// The Player is alive so turn On the Flashlight
 	else				    
-		self.effects = EF_DIMLIGHT;  
+		@self.effects = EF_DIMLIGHT;  
 	// Find out which direction player facing
-	makevectors (self.owner.v_angle);
+	makevectors (@self.owner.v_angle);
 	// Check if there is any things infront of the flashlight
-	traceline (self.owner.origin , (self.owner.origin+(v_forward * 500)) , FALSE , self);
+	traceline (@self.owner.origin , (@self.owner.origin+(v_forward * 500)) , FALSE , @self);
 	// Set the Flashlight's position
-	setorigin (self, trace_endpos+(v_forward * -5));
+	setorigin (@self, trace_endpos+(v_forward * -5));
 	// Repeat it in 0.02 seconds...
-	self.nextthink = time + 0.02;
+	@self.nextthink = time + 0.02;
 };
 void(entity me) flash_on =
 {
@@ -48,8 +48,8 @@ void(entity me) flash_on =
 	myflash.effects = EF_DIMLIGHT;
 	
 	// Set Start Position
-	makevectors (self.v_angle);
-	traceline (self.origin , (self.origin+(v_forward * 500)) , FALSE , self);
+	makevectors (@self.v_angle);
+	traceline (@self.origin , (@self.origin+(v_forward * 500)) , FALSE , @self);
 	setorigin (myflash, trace_endpos);
 	// Start Flashlight Update
 	myflash.think = flash_update;
@@ -61,18 +61,18 @@ void(entity me) flash_on =
 void () flash_toggle =
 {
 	// If Off, Turn On
-	if (self.flash_flag == FALSE)
+	if (@self.flash_flag == FALSE)
 	{	
-		self.flash_flag = TRUE;
+		@self.flash_flag = TRUE;
 		flash_on();
 	}
 	// If On, Turn Off
 	else
 	{
-		self.flash_flag = FALSE;
+		@self.flash_flag = FALSE;
 		W_SetCurrentAmmo ();
-		self.flash.think = SUB_Remove;
-		self.flash.nextthink = time + 0.1;
+		@self.flash.think = SUB_Remove;
+		@self.flash.nextthink = time + 0.1;
 	}
 };
 

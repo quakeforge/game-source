@@ -34,7 +34,7 @@ Use mangle instead of angle, so you can set pitch or roll as well as yaw.  'pitc
 */
 void() info_intermission =
 {
-	self.angles = self.mangle;	// so C can get at it
+	@self.angles = @self.mangle;	// so C can get at it
 };
 
 //POX v1.2
@@ -45,7 +45,7 @@ void() SetChangeParms =
 	//POX v1.1 - fresh start for everyone on changelevel
 	
 	//POX v1.2 - parms are used to store the Taget ID toggle, and to prevent running autoexec.cfg more than once per session
-	parm1 = self.target_id_toggle;
+	parm1 = @self.target_id_toggle;
 	parm2 = TRUE;
 };
 
@@ -58,15 +58,15 @@ void() DecodeLevelParms =
 {
 	localcmd ("serverinfo playerfly 1");
 	//POX v1.2 - parms are used to store the Taget ID toggle, and to prevent running autoexec.cfg more than once per session
-	if(!self.target_id_toggle && !self.target_id_temp)
-		self.target_id_toggle = parm1;
+	if(!@self.target_id_toggle && !@self.target_id_temp)
+		@self.target_id_toggle = parm1;
 	
-	self.configed = parm2;
+	@self.configed = parm2;
 	
 	//POX v1.2 - run autoexec.cfg ONCE when first joining server only!
-	if (!self.configed) {
-		self.configed = TRUE;
-		stuffcmd(self, "exec autoexec.cfg\n");
+	if (!@self.configed) {
+		@self.configed = TRUE;
+		stuffcmd(@self, "exec autoexec.cfg\n");
 	}
 };
 /*
@@ -129,7 +129,7 @@ void() IntermissionThink =
 	if (time < intermission_exittime)
 		return;
 
-	if (!self.button0 && !self.button1 && !self.button2)
+	if (!@self.button0 && !@self.button1 && !@self.button2)
 		return;
 	
 	GotoNextMap ();
@@ -182,19 +182,19 @@ void() changelevel_touch =
 //	if ((cvar("noexit") == 1) || ((cvar("noexit") == 2) && (mapname != "start")))
 	if ((cvar("samelevel") == 2) || ((cvar("samelevel") == 3) && (mapname != "start")))
 	{
-		T_Damage (other, self, self, 50000);
+		T_Damage (other, @self, @self, 50000);
 		return;
 	}
 	BPRINT (PRINT_HIGH, other.netname);
 	BPRINT (PRINT_HIGH," exited the level\n");
 	
-	nextmap = self.map;
+	nextmap = @self.map;
 	SUB_UseTargets ();
-	self.touch = SUB_Null;
+	@self.touch = SUB_Null;
 // we can't move people right now, because touch functions are called
 // in the middle of C movement code, so set a think time to do it
-	self.think = execute_changelevel;
-	self.nextthink = time + 0.1;
+	@self.think = execute_changelevel;
+	@self.nextthink = time + 0.1;
 };
 
 /*QUAKED trigger_changelevel (0.5 0.5 0.5) ? NO_INTERMISSION
@@ -202,11 +202,11 @@ When the player touches this, he gets sent to the map listed in the "map" variab
 */
 void() trigger_changelevel =
 {
-	if (!self.map)
+	if (!@self.map)
 		objerror ("chagnelevel trigger doesn't have map");
 	
 	InitTrigger ();
-	self.touch = changelevel_touch;
+	@self.touch = changelevel_touch;
 };
 /*
 =============================================================================
@@ -219,7 +219,7 @@ void() set_suicide_frame;
 void() respawn =
 {
 	// make a copy of the dead body for appearances sake
-	CopyToBodyQue (self);
+	CopyToBodyQue (@self);
 	// set default spawn parms
 	//SetNewParms (); //POX v1.12
 	// respawn		
@@ -237,31 +237,31 @@ void() NextLevel; //POX v1.12
 void() ClientKill =
 {	
 	//POX v1.12 - don't let LMS observers suicide!
-	if (self.classname == "LMSobserver") {
-		sprint (self, PRINT_HIGH, "Observers can't suicide!\n");
+	if (@self.classname == "LMSobserver") {
+		sprint (@self, PRINT_HIGH, "Observers can't suicide!\n");
 		return;
 	}
 	
-	BPRINT (PRINT_MEDIUM, self.netname);
+	BPRINT (PRINT_MEDIUM, @self.netname);
 	BPRINT (PRINT_MEDIUM, " suicides\n");
 	set_suicide_frame ();
-	self.modelindex = modelindex_player;
-	LOGFRAG (self, self);
-	self.frags -= 2;	// extra penalty
+	@self.modelindex = modelindex_player;
+	LOGFRAG (@self, @self);
+	@self.frags -= 2;	// extra penalty
 	
 	//POX v1.12 - forgot about stink'n suicides
-	if ((deathmatch & DM_LMS) && (self.LMS_registered)) {
-		if (self.frags <= 0) {
+	if ((deathmatch & DM_LMS) && (@self.LMS_registered)) {
+		if (@self.frags <= 0) {
 			lms_plrcount = lms_plrcount - 1;
 			
-			self.frags = 0;
-			self.LMS_registered = 0;
-			self.LMS_observer = 2;
+			@self.frags = 0;
+			@self.LMS_registered = 0;
+			@self.LMS_observer = 2;
 			
-			BPRINT(PRINT_HIGH, self.netname);
+			BPRINT(PRINT_HIGH, @self.netname);
 			BPRINT(PRINT_HIGH, " is eliminated!\n");
 			
-			sound (self, CHAN_BODY, "nar/n_elim.wav", 1, ATTN_NONE);
+			sound (@self, CHAN_BODY, "nar/n_elim.wav", 1, ATTN_NONE);
 	
 			if (lms_plrcount <= 1) //1 player left so end the game 
 				NextLevel ();
@@ -411,84 +411,84 @@ void() PutClientInServer =
 	local entity	spot;
 	
 	// remove items
-	self.items &= ~(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD);
+	@self.items &= ~(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD);
 	
-	if (deathmatch & DM_LMS && self.LMS_observer) {
+	if (deathmatch & DM_LMS && @self.LMS_observer) {
 		SpawnObserver ();
 		return;
 	}
 	
-	self.classname = "player";
-	self.health = 100;
-	self.takedamage = DAMAGE_AIM;
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_WALK;
-	self.show_hostile = 0;
-	self.max_health = 100;
-	self.flags = FL_CLIENT;
-	self.air_finished = time + 12;
-	self.dmg = 2;			// initial water damage
-	self.super_damage_finished = 0;
-	self.radsuit_finished = 0;
-	self.invisible_finished = 0;
-	self.invincible_finished = 0;
-	self.effects = 0;
-	self.invincible_time = 0;
+	@self.classname = "player";
+	@self.health = 100;
+	@self.takedamage = DAMAGE_AIM;
+	@self.solid = SOLID_SLIDEBOX;
+	@self.movetype = MOVETYPE_WALK;
+	@self.show_hostile = 0;
+	@self.max_health = 100;
+	@self.flags = FL_CLIENT;
+	@self.air_finished = time + 12;
+	@self.dmg = 2;			// initial water damage
+	@self.super_damage_finished = 0;
+	@self.radsuit_finished = 0;
+	@self.invisible_finished = 0;
+	@self.invincible_finished = 0;
+	@self.effects = 0;
+	@self.invincible_time = 0;
 	
 	// Give player some stuff
-	self.items = IT_AXE | IT_TSHOT;
-	self.ammo_shells = 25;
-	self.ammo_nails = 0;
-	self.ammo_rockets = 0;
-	self.ammo_cells = 0;	
-	self.weapon = IT_TSHOT;
+	@self.items = IT_AXE | IT_TSHOT;
+	@self.ammo_shells = 25;
+	@self.ammo_nails = 0;
+	@self.ammo_rockets = 0;
+	@self.ammo_cells = 0;	
+	@self.weapon = IT_TSHOT;
 	
 	// Give player 50 points of blue armor
-	self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
-	self.items |= IT_ARMOR1;
-	self.armorvalue = 50;
-	self.armortype = 0.9;
+	@self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+	@self.items |= IT_ARMOR1;
+	@self.armorvalue = 50;
+	@self.armortype = 0.9;
 
 	DecodeLevelParms (); // exec autoconfig if needed, restore Target ID value
 	
 	W_SetCurrentAmmo ();
-	self.attack_finished = time;
-	self.th_pain = player_pain;
-	self.th_die = PlayerDie;
+	@self.attack_finished = time;
+	@self.th_pain = player_pain;
+	@self.th_die = PlayerDie;
 	
-	self.deadflag = DEAD_NO;
+	@self.deadflag = DEAD_NO;
 
 	// paustime is set by teleporters to keep the player from moving a while
-	self.pausetime = 0;
+	@self.pausetime = 0;
 	
 	// reset reload_rocket after death
-	self.reload_rocket = 0;
+	@self.reload_rocket = 0;
 
 	// reset T-Shot after death
-	self.prime_tshot = FALSE;
+	@self.prime_tshot = FALSE;
 
 	spot = SelectSpawnPoint ();
-	self.origin = spot.origin + '0 0 1';
-	self.angles = spot.angles;
-	self.fixangle = TRUE;		// turn this way immediately
+	@self.origin = spot.origin + '0 0 1';
+	@self.angles = spot.angles;
+	@self.fixangle = TRUE;		// turn this way immediately
 	
 	// oh, this is a hack!
-	setmodel (self, "progs/eyes.mdl");
-	modelindex_eyes = self.modelindex;
-	setmodel (self, "progs/player.mdl");
-	modelindex_player = self.modelindex;
-	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+	setmodel (@self, "progs/eyes.mdl");
+	modelindex_eyes = @self.modelindex;
+	setmodel (@self, "progs/player.mdl");
+	modelindex_player = @self.modelindex;
+	setsize (@self, VEC_HULL_MIN, VEC_HULL_MAX);
 	
-	self.view_ofs = '0 0 22';
+	@self.view_ofs = '0 0 22';
 
 // Mod - Xian (May.20.97)
 // Bug where player would have velocity from their last kill
-	self.velocity = '0 0 0';
+	@self.velocity = '0 0 0';
 	player_stand1 ();
 	
-	makevectors (self.angles);
-	spawn_tfog (self.origin + v_forward * 20);
-	spawn_tdeath (self.origin, self);
+	makevectors (@self.angles);
+	spawn_tfog (@self.origin + v_forward * 20);
+	spawn_tdeath (@self.origin, @self);
 
 	// Set Rocket Jump Modifiers
 	if (stof (infokey (world, "rj"))) {
@@ -501,65 +501,65 @@ void() PutClientInServer =
 	New deathmatch modes
 */
 	// Last Man Standing
-	if ((deathmatch & DM_LMS) && !self.LMS_registered) {
+	if ((deathmatch & DM_LMS) && !@self.LMS_registered) {
 		if (!fraglimit_LMS)
-			self.frags = 5;
+			@self.frags = 5;
 		else
-			self.frags = fraglimit_LMS;
+			@self.frags = fraglimit_LMS;
 		
-		self.LMS_registered = TRUE;
+		@self.LMS_registered = TRUE;
 		lms_plrcount++;
 	}
 
 	// Dark Mode - more stuff in Player_PostThink - doesn't work here (?)
 	if (deathmatch & DM_DARK)
-		flash_on (self);
+		flash_on (@self);
 	
 	// just in case a player dies in a colour_light field
-//	stuffcmd (self, "v_cshift 1 1 1 0\n");
+//	stuffcmd (@self, "v_cshift 1 1 1 0\n");
 	
 	// Free For All mode
 	if (deathmatch & DM_FFA) {	
-		self.ammo_nails = 200;
-		self.ammo_shells = 200;
-		self.ammo_rockets = 100;
-		self.ammo_cells = 200;
-		self.items |= IT_PLASMAGUN;
-		self.items |= IT_SUPER_NAILGUN;
-		self.items |= IT_COMBOGUN;
-		self.items |= IT_ROCKET_LAUNCHER;
-		self.items |= IT_GRENADE_LAUNCHER;
+		@self.ammo_nails = 200;
+		@self.ammo_shells = 200;
+		@self.ammo_rockets = 100;
+		@self.ammo_cells = 200;
+		@self.items |= IT_PLASMAGUN;
+		@self.items |= IT_SUPER_NAILGUN;
+		@self.items |= IT_COMBOGUN;
+		@self.items |= IT_ROCKET_LAUNCHER;
+		@self.items |= IT_GRENADE_LAUNCHER;
 		
-		self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
-		self.items |= IT_ARMOR3;
+		@self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+		@self.items |= IT_ARMOR3;
 
-		self.armorvalue = 250;
-		self.armortype = 0.9;
-		self.health = 200;
-		self.items |= IT_INVULNERABILITY;
-		self.invincible_time = 1;
-		self.invincible_finished = time + 3;
+		@self.armorvalue = 250;
+		@self.armortype = 0.9;
+		@self.health = 200;
+		@self.items |= IT_INVULNERABILITY;
+		@self.invincible_time = 1;
+		@self.invincible_finished = time + 3;
 		
-		self.weapon = IT_ROCKET_LAUNCHER;
-		self.currentammo = self.ammo_rockets;
-		self.weaponmodel = "progs/v_rhino.mdl";
-		self.weaponframe = 0;
-		self.items |= IT_ROCKETS;
+		@self.weapon = IT_ROCKET_LAUNCHER;
+		@self.currentammo = @self.ammo_rockets;
+		@self.weaponmodel = "progs/v_rhino.mdl";
+		@self.weaponframe = 0;
+		@self.items |= IT_ROCKETS;
 		
-		self.max_health = 200;
-		sound (self, CHAN_AUTO, "items/protect.wav", 1, ATTN_NORM);
-		stuffcmd (self, "bf\n");
+		@self.max_health = 200;
+		sound (@self, CHAN_AUTO, "items/protect.wav", 1, ATTN_NORM);
+		stuffcmd (@self, "bf\n");
 	}
 	
 	// + POX - Predator mode
 	if (deathmatch & DM_PREDATOR) {	
 
-		sound (self, CHAN_AUTO, "items/inv1.wav", 1, ATTN_NORM);
-		stuffcmd (self, "bf\n");
+		sound (@self, CHAN_AUTO, "items/inv1.wav", 1, ATTN_NORM);
+		stuffcmd (@self, "bf\n");
 
-		self.items |= IT_INVISIBILITY;
-		self.invisible_time = 1;
-		self.invisible_finished = time + 9999999999;
+		@self.items |= IT_INVISIBILITY;
+		@self.invisible_time = 1;
+		@self.invisible_finished = time + 9999999999;
 	}
 };
 
@@ -666,7 +666,7 @@ void() CheckRules =
 	if (timelimit && time >= timelimit)
 		NextLevel ();
 	
-	if (fraglimit && self.frags >= fraglimit)
+	if (fraglimit && @self.frags >= fraglimit)
 		NextLevel ();
 };
 
@@ -675,87 +675,87 @@ void() PlayerDeathThink =
 {
 	local float		forward;
 
-	if ((self.flags & FL_ONGROUND)) {
-		forward = vlen (self.velocity);
+	if ((@self.flags & FL_ONGROUND)) {
+		forward = vlen (@self.velocity);
 		forward -= 20;
 		if (forward <= 0)
-			self.velocity = '0 0 0';
+			@self.velocity = '0 0 0';
 		else	
-			self.velocity = forward * normalize (self.velocity);
+			@self.velocity = forward * normalize (@self.velocity);
 	}
 
 	// wait for all buttons released
-	if (self.deadflag == DEAD_DEAD) {
-		if (self.button2 || self.button1 || self.button0)
+	if (@self.deadflag == DEAD_DEAD) {
+		if (@self.button2 || @self.button1 || @self.button0)
 			return;
 
-		self.deadflag = DEAD_RESPAWNABLE;
+		@self.deadflag = DEAD_RESPAWNABLE;
 		return;
 	}
 
 	// don't let players lay around as dead guys during a Last Man Standing game
 	if (deathmatch & DM_LMS) {
-		if (!(self.button2 || self.button1 || self.button0))
+		if (!(@self.button2 || @self.button1 || @self.button0))
 			return;
 
-		stuffcmd (self, "wait;wait;wait;wait;wait;wait\n");
+		stuffcmd (@self, "wait;wait;wait;wait;wait;wait\n");
 	}
 
 	// wait for any button down
-	if (!(self.button2 || self.button1 || self.button0))
+	if (!(@self.button2 || @self.button1 || @self.button0))
 		return;
 
-	self.button0 = self.button1 = self.button2 = 0;
+	@self.button0 = @self.button1 = @self.button2 = 0;
 	respawn ();
 };
 
 
 void() PlayerJump =
 {
-	if (self.flags & FL_WATERJUMP)
+	if (@self.flags & FL_WATERJUMP)
 		return;
 		
 // + POX - Removed (new water sounds handled in WaterMove)
 #if 0
-	if (self.waterlevel >= 2) {	// play swimming sound
-		if (self.swim_flag < time) {
-			self.swim_flag = time + 1;
+	if (@self.waterlevel >= 2) {	// play swimming sound
+		if (@self.swim_flag < time) {
+			@self.swim_flag = time + 1;
 			if (random() < 0.5)
-				sound (self, CHAN_BODY, "misc/water1.wav", 1, ATTN_NORM);
+				sound (@self, CHAN_BODY, "misc/water1.wav", 1, ATTN_NORM);
 			else
-				sound (self, CHAN_BODY, "misc/water2.wav", 1, ATTN_NORM);
+				sound (@self, CHAN_BODY, "misc/water2.wav", 1, ATTN_NORM);
 		}
 		return;
 	}
 #endif
 
 // + POX - velocities changed in fluids
-	if (self.waterlevel >= 2) {
-		switch (self.watertype) {
+	if (@self.waterlevel >= 2) {
+		switch (@self.watertype) {
 			case CONTENT_WATER:
-				self.velocity_z = 100;
+				@self.velocity_z = 100;
 				break;
 			case CONTENT_SLIME:
-				self.velocity_z = 80;
+				@self.velocity_z = 80;
 				break;
 			default:
-				self.velocity_z = 50;
+				@self.velocity_z = 50;
 		}
 		return;
 	}
 // - POX 
 
-	if (!(self.flags & FL_ONGROUND))
+	if (!(@self.flags & FL_ONGROUND))
 		return;
 
-	if (!(self.flags & FL_JUMPRELEASED) )
+	if (!(@self.flags & FL_JUMPRELEASED) )
 		return;		// don't pogo stick
 
-	self.flags -= FL_JUMPRELEASED;
-	self.button2 = 0;
+	@self.flags -= FL_JUMPRELEASED;
+	@self.button2 = 0;
 
 	// player jumping sound
-	sound (self, CHAN_VOICE, "player/plyrjmp8.wav", 1, ATTN_NORM);
+	sound (@self, CHAN_VOICE, "player/plyrjmp8.wav", 1, ATTN_NORM);
 };
 
 /*
@@ -766,124 +766,124 @@ WaterMove
 .float	dmgtime;
 void() WaterMove =
 {
-//	dprint (ftos(self.waterlevel));
-	if (self.movetype == MOVETYPE_NOCLIP)
+//	dprint (ftos(@self.waterlevel));
+	if (@self.movetype == MOVETYPE_NOCLIP)
 		return;
-	if (self.health < 0)
+	if (@self.health < 0)
 		return;
-	if (self.waterlevel != 3) {
-		if (self.air_finished < time)
-			sound (self, CHAN_VOICE, "player/gasp2.wav", 1, ATTN_NORM);
-		else if (self.air_finished < time + 9)
-			sound (self, CHAN_VOICE, "player/gasp1.wav", 1, ATTN_NORM);
-		self.air_finished = time + 12;
-		self.dmg = 2;
-	} else if (self.air_finished < time) {	// drown!
-		if (self.pain_finished < time) {
-			self.dmg += 2;
+	if (@self.waterlevel != 3) {
+		if (@self.air_finished < time)
+			sound (@self, CHAN_VOICE, "player/gasp2.wav", 1, ATTN_NORM);
+		else if (@self.air_finished < time + 9)
+			sound (@self, CHAN_VOICE, "player/gasp1.wav", 1, ATTN_NORM);
+		@self.air_finished = time + 12;
+		@self.dmg = 2;
+	} else if (@self.air_finished < time) {	// drown!
+		if (@self.pain_finished < time) {
+			@self.dmg += 2;
 
-			if (self.dmg > 15)
-				self.dmg = 10;
+			if (@self.dmg > 15)
+				@self.dmg = 10;
 
-			T_Damage (self, world, world, self.dmg);
-			self.pain_finished = time + 1;
+			T_Damage (@self, world, world, @self.dmg);
+			@self.pain_finished = time + 1;
 		}
 	}
 
-	if (!self.waterlevel) {
-		if (self.flags & FL_INWATER) {	// play leave water sound
-			sound (self, CHAN_BODY, "misc/outwater.wav", 1, ATTN_NORM);
-			self.flags = self.flags - FL_INWATER;
+	if (!@self.waterlevel) {
+		if (@self.flags & FL_INWATER) {	// play leave water sound
+			sound (@self, CHAN_BODY, "misc/outwater.wav", 1, ATTN_NORM);
+			@self.flags = @self.flags - FL_INWATER;
 			
 			//POX v1.2 - fixed rare cases of underwater sound not cancelling out
-			if (self.outwsound == 1) {
-				sound (self, CHAN_BODY, "misc/owater2.wav", 0.5, ATTN_NORM);
-				self.outwsound = 0;
-				self.inwsound = 1;
-				self.uwmuffle = time;
+			if (@self.outwsound == 1) {
+				sound (@self, CHAN_BODY, "misc/owater2.wav", 0.5, ATTN_NORM);
+				@self.outwsound = 0;
+				@self.inwsound = 1;
+				@self.uwmuffle = time;
 			}
 		}
 		return;
 	}
 
-	switch (self.watertype) {
+	switch (@self.watertype) {
 		case CONTENT_LAVA:	// do damage
-			if (self.dmgtime < time) {
-				if (self.radsuit_finished > time)
-					self.dmgtime = time + 1;
+			if (@self.dmgtime < time) {
+				if (@self.radsuit_finished > time)
+					@self.dmgtime = time + 1;
 				else
-					self.dmgtime = time + 0.2;
+					@self.dmgtime = time + 0.2;
 
-				T_Damage (self, world, world, 10*self.waterlevel);
+				T_Damage (@self, world, world, 10*@self.waterlevel);
 			}
 			break;
 		case CONTENT_SLIME:	// do damage
-			if (self.dmgtime < time && self.radsuit_finished < time) {
-				self.dmgtime = time + 1;
-				T_Damage (self, world, world, 4*self.waterlevel);
+			if (@self.dmgtime < time && @self.radsuit_finished < time) {
+				@self.dmgtime = time + 1;
+				T_Damage (@self, world, world, 4*@self.waterlevel);
 			}
 			break;
 		default:
 			break;
 	}
 	
-	if (!(self.flags & FL_INWATER)) {	// player enter water sound
-		switch (self.watertype) {
+	if (!(@self.flags & FL_INWATER)) {	// player enter water sound
+		switch (@self.watertype) {
 			case CONTENT_LAVA:
-				sound (self, CHAN_BODY, "player/inlava.wav", 1, ATTN_NORM);
+				sound (@self, CHAN_BODY, "player/inlava.wav", 1, ATTN_NORM);
 			case CONTENT_SLIME:
-				sound (self, CHAN_BODY, "player/slimbrn2.wav", 1, ATTN_NORM);
+				sound (@self, CHAN_BODY, "player/slimbrn2.wav", 1, ATTN_NORM);
 			case CONTENT_WATER:
-				sound (self, CHAN_VOICE, "player/inh2o.wav", 1, ATTN_NORM);
+				sound (@self, CHAN_VOICE, "player/inh2o.wav", 1, ATTN_NORM);
 			default:
-				self.flags |= FL_INWATER;
-				self.dmgtime = 0;
+				@self.flags |= FL_INWATER;
+				@self.dmgtime = 0;
 		}
 	}	
 
 // + POX - New water movement sounds
-if (self.waterlevel >= 3)
+if (@self.waterlevel >= 3)
 	{
-		self.onwsound = time;
-		self.outwsound = 1;
+		@self.onwsound = time;
+		@self.outwsound = 1;
 	
-		if (self.inwsound == 1)
+		if (@self.inwsound == 1)
 		{
-			sound (self, CHAN_VOICE, "misc/inh2ob.wav", 1, ATTN_NORM);
-			self.inwsound = 0;
+			sound (@self, CHAN_VOICE, "misc/inh2ob.wav", 1, ATTN_NORM);
+			@self.inwsound = 0;
 		}
 	
-		if (self.uwmuffle < time)
+		if (@self.uwmuffle < time)
 		{
-			sound (self, CHAN_BODY, "misc/uwater.wav", 1, ATTN_STATIC);
-			self.uwmuffle = time + 3.58;
+			sound (@self, CHAN_BODY, "misc/uwater.wav", 1, ATTN_STATIC);
+			@self.uwmuffle = time + 3.58;
 		}
 	}
 	
-	if (self.waterlevel == 2)
+	if (@self.waterlevel == 2)
 	{	
-		if (self.outwsound == 1)
+		if (@self.outwsound == 1)
 		{
-			sound (self, CHAN_BODY, "misc/owater2.wav", 1, ATTN_NORM);
-			self.outwsound = 0;
-			self.inwsound = 1;
-			//self.onwsound = time + 1.9;
+			sound (@self, CHAN_BODY, "misc/owater2.wav", 1, ATTN_NORM);
+			@self.outwsound = 0;
+			@self.inwsound = 1;
+			//@self.onwsound = time + 1.9;
 		}
 		
 		//POXnote
 		//CheckWaterJump (); Not used in QW?
 		
-		self.uwmuffle = time;
+		@self.uwmuffle = time;
 		
 		/* POX - now done in footstep routine
-		if (self.onwsound < time)
+		if (@self.onwsound < time)
 		{	
 			if (random() < 0.5)
-				sound (self, CHAN_BODY, "misc/water2.wav", 1, ATTN_NORM);
+				sound (@self, CHAN_BODY, "misc/water2.wav", 1, ATTN_NORM);
 			else
-				sound (self, CHAN_BODY, "misc/water1.wav", 1, ATTN_NORM);
+				sound (@self, CHAN_BODY, "misc/water1.wav", 1, ATTN_NORM);
 			
-			self.onwsound = time + random()*2;
+			@self.onwsound = time + random()*2;
 		}
 		*/
 	}
@@ -893,25 +893,25 @@ void() CheckWaterJump =
 {
 	local vector start, end;
 // check for a jump-out-of-water
-	makevectors (self.angles);
-	start = self.origin;
+	makevectors (@self.angles);
+	start = @self.origin;
 	start_z = start_z + 8; 
 	v_forward_z = 0;
 	normalize(v_forward);
 	end = start + v_forward*24;
-	traceline (start, end, TRUE, self);
+	traceline (start, end, TRUE, @self);
 	if (trace_fraction < 1)
 	{	// solid at waist
-		start_z = start_z + self.maxs_z - 8;
+		start_z = start_z + @self.maxs_z - 8;
 		end = start + v_forward*24;
-		self.movedir = trace_plane_normal * -50;
-		traceline (start, end, TRUE, self);
+		@self.movedir = trace_plane_normal * -50;
+		traceline (start, end, TRUE, @self);
 		if (trace_fraction == 1)
 		{	// open at eye level
-			self.flags = self.flags | FL_WATERJUMP;
-			self.velocity_z = 225;
-			self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
-			self.teleport_time = time + 2;	// safety net
+			@self.flags = @self.flags | FL_WATERJUMP;
+			@self.velocity_z = 225;
+			@self.flags = @self.flags - (@self.flags & FL_JUMPRELEASED);
+			@self.teleport_time = time + 2;	// safety net
 			return;
 		}
 	}
@@ -929,17 +929,17 @@ void() PlayerPreThink =
 		IntermissionThink ();	// otherwise a button could be missed between
 		return;					// the think tics
 	}
-	if (self.view_ofs == '0 0 0')
+	if (@self.view_ofs == '0 0 0')
 		return;		// intermission or finale
-	makevectors (self.v_angle);		// is this still used
-    self.deathtype = "";
+	makevectors (@self.v_angle);		// is this still used
+    @self.deathtype = "";
 	
 	CheckRules ();
 	
 	// + POX - for LMS observer - POX 1.2 moved above WaterMove();
-	if (deathmatch & DM_LMS && self.LMS_observer)
+	if (deathmatch & DM_LMS && @self.LMS_observer)
 	{	
-		if (self.deadflag >= DEAD_DEAD)
+		if (@self.deadflag >= DEAD_DEAD)
 		{
 			PlayerDeathThink ();
 			return;
@@ -949,35 +949,35 @@ void() PlayerPreThink =
 	// - POX
 	WaterMove ();
 /*
-	if (self.waterlevel == 2)
+	if (@self.waterlevel == 2)
 		CheckWaterJump ();
 */
-	if (self.deadflag >= DEAD_DEAD)
+	if (@self.deadflag >= DEAD_DEAD)
 	{
 		PlayerDeathThink ();
 		return;
 	}
 	
-	if (self.deadflag == DEAD_DYING)
+	if (@self.deadflag == DEAD_DYING)
 		return; // dying, so do nothing
 	
-	if (self.button2)
+	if (@self.button2)
 	{
 		PlayerJump ();
 	}
 	else
-		self.flags = self.flags | FL_JUMPRELEASED;
+		@self.flags = @self.flags | FL_JUMPRELEASED;
 // teleporters can force a non-moving pause time	
-	if (time < self.pausetime)
-		self.velocity = '0 0 0';
+	if (time < @self.pausetime)
+		@self.velocity = '0 0 0';
 	
 	// POX
 	if (deathmatch & DM_AUTOSWITCH)
 	{
 	
-		if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE)
+		if(time > @self.attack_finished && @self.currentammo == 0 && @self.weapon != IT_AXE)
 		{
-			self.weapon = W_BestWeapon ();
+			@self.weapon = W_BestWeapon ();
 			W_SetCurrentAmmo ();
 		}
 	}
@@ -991,165 +991,165 @@ Check for turning off powerups
 */
 void() CheckPowerups =
 {
-	if (self.health <= 0)
+	if (@self.health <= 0)
 		return;
 // + POX - Rot armour down to 150 (max 250)
-	if (self.armorvalue > 150 && self.armor_rot < time) {
-		self.armorvalue = self.armorvalue - 1;
-		self.armor_rot = time + 1;
+	if (@self.armorvalue > 150 && @self.armor_rot < time) {
+		@self.armorvalue = @self.armorvalue - 1;
+		@self.armor_rot = time + 1;
 	
 		// change armour to Yellow
-		if (self.armorvalue == 150) {
-			self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
-			self.items |= IT_ARMOR2;
+		if (@self.armorvalue == 150) {
+			@self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+			@self.items |= IT_ARMOR2;
 		}
 	}
 // - POX
 // invisibility
-	if (self.invisible_finished)
+	if (@self.invisible_finished)
 	{
 // sound and screen flash when items starts to run out
-		if (self.invisible_sound < time)
+		if (@self.invisible_sound < time)
 		{
-			sound (self, CHAN_AUTO, "items/inv3.wav", 0.5, ATTN_IDLE);
-			self.invisible_sound = time + ((random() * 3) + 1);
+			sound (@self, CHAN_AUTO, "items/inv3.wav", 0.5, ATTN_IDLE);
+			@self.invisible_sound = time + ((random() * 3) + 1);
 		}
-		if (self.invisible_finished < time + 3)
+		if (@self.invisible_finished < time + 3)
 		{
-			if (self.invisible_time == 1)
+			if (@self.invisible_time == 1)
 			{
-				sprint (self, PRINT_HIGH, "Cloak is failing...\n");
-				stuffcmd (self, "bf\n");
-				sound (self, CHAN_AUTO, "items/inv2.wav", 1, ATTN_NORM);
-				self.invisible_time = time + 1;
+				sprint (@self, PRINT_HIGH, "Cloak is failing...\n");
+				stuffcmd (@self, "bf\n");
+				sound (@self, CHAN_AUTO, "items/inv2.wav", 1, ATTN_NORM);
+				@self.invisible_time = time + 1;
 			}
 			
-			if (self.invisible_time < time)
+			if (@self.invisible_time < time)
 			{
-				self.invisible_time = time + 1;
-				stuffcmd (self, "bf\n");
+				@self.invisible_time = time + 1;
+				stuffcmd (@self, "bf\n");
 			}
 		}
-		if (self.invisible_finished < time)
+		if (@self.invisible_finished < time)
 		{	// just stopped
-			self.items -= IT_INVISIBILITY;
-			self.invisible_finished = 0;
-			self.invisible_time = 0;
+			@self.items -= IT_INVISIBILITY;
+			@self.invisible_finished = 0;
+			@self.invisible_time = 0;
 		}
 		
 	// use the eyes
-		self.frame = 0;
-		self.modelindex = modelindex_eyes;
+		@self.frame = 0;
+		@self.modelindex = modelindex_eyes;
 	}
 	else
-		self.modelindex = modelindex_player;	// don't use eyes
+		@self.modelindex = modelindex_player;	// don't use eyes
 // invincibility
-	if (self.invincible_finished)
+	if (@self.invincible_finished)
 	{
 // sound and screen flash when items starts to run out
-		if (self.invincible_finished < time + 3)
+		if (@self.invincible_finished < time + 3)
 		{
-			if (self.invincible_time == 1)
+			if (@self.invincible_time == 1)
 			{
-				sprint (self, PRINT_HIGH, "MegaShields are almost burned out...\n");
-				stuffcmd (self, "bf\n");
-				sound (self, CHAN_AUTO, "items/protect2.wav", 1, ATTN_NORM);
-				self.invincible_time = time + 1;
+				sprint (@self, PRINT_HIGH, "MegaShields are almost burned out...\n");
+				stuffcmd (@self, "bf\n");
+				sound (@self, CHAN_AUTO, "items/protect2.wav", 1, ATTN_NORM);
+				@self.invincible_time = time + 1;
 			}
 			
-			if (self.invincible_time < time)
+			if (@self.invincible_time < time)
 			{
-				self.invincible_time = time + 1;
-				stuffcmd (self, "bf\n");
+				@self.invincible_time = time + 1;
+				stuffcmd (@self, "bf\n");
 			}
 		}
 		
-		if (self.invincible_finished < time)
+		if (@self.invincible_finished < time)
 		{	// just stopped
-			self.items -= IT_INVULNERABILITY;
-			self.invincible_time = 0;
-			self.invincible_finished = 0;
+			@self.items -= IT_INVULNERABILITY;
+			@self.invincible_time = 0;
+			@self.invincible_finished = 0;
 		}
 		// + POX - ignore light effects in Dark Mode
-		if (self.invincible_finished > time && !(deathmatch & DM_DARK))
+		if (@self.invincible_finished > time && !(deathmatch & DM_DARK))
 		{
-			self.effects = self.effects | EF_DIMLIGHT;
-			self.effects = self.effects | EF_RED;
+			@self.effects = @self.effects | EF_DIMLIGHT;
+			@self.effects = @self.effects | EF_RED;
 		}
 		else
 		{
-			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
-			self.effects = self.effects - (self.effects & EF_RED);
+			@self.effects = @self.effects - (@self.effects & EF_DIMLIGHT);
+			@self.effects = @self.effects - (@self.effects & EF_RED);
 		}
 	}
 // super damage
-	if (self.super_damage_finished)
+	if (@self.super_damage_finished)
 	{
 // sound and screen flash when items starts to run out
-		if (self.super_damage_finished < time + 3)
+		if (@self.super_damage_finished < time + 3)
 		{
-			if (self.super_time == 1)
+			if (@self.super_time == 1)
 			{
 				//if (deathmatch == 4)
-				//	sprint (self, PRINT_HIGH, "OctaPower is wearing off\n");
+				//	sprint (@self, PRINT_HIGH, "OctaPower is wearing off\n");
 				//else
-					sprint (self, PRINT_HIGH, "Quad Damage is wearing off\n");
-				stuffcmd (self, "bf\n");
-				sound (self, CHAN_AUTO, "items/damage2.wav", 1, ATTN_NORM);
-				self.super_time = time + 1;
+					sprint (@self, PRINT_HIGH, "Quad Damage is wearing off\n");
+				stuffcmd (@self, "bf\n");
+				sound (@self, CHAN_AUTO, "items/damage2.wav", 1, ATTN_NORM);
+				@self.super_time = time + 1;
 			}	  
 			
-			if (self.super_time < time)
+			if (@self.super_time < time)
 			{
-				self.super_time = time + 1;
-				stuffcmd (self, "bf\n");
+				@self.super_time = time + 1;
+				stuffcmd (@self, "bf\n");
 			}
 		}
-		if (self.super_damage_finished < time)
+		if (@self.super_damage_finished < time)
 		{	// just stopped
-			self.items &= ~IT_QUAD;
+			@self.items &= ~IT_QUAD;
 			/*if (deathmatch == 4)
 			{
-				self.ammo_cells = 255;
-				self.armorvalue = 1;
-				self.armortype = 0.8;
-				self.health = 100;
+				@self.ammo_cells = 255;
+				@self.armorvalue = 1;
+				@self.armortype = 0.8;
+				@self.health = 100;
 			}*/
-			self.super_damage_finished = 0;
-			self.super_time = 0;
+			@self.super_damage_finished = 0;
+			@self.super_time = 0;
 		}
 
-		if (self.super_damage_finished > time) {
-			self.effects |= EF_DIMLIGHT;
-			self.effects |= EF_BLUE;
+		if (@self.super_damage_finished > time) {
+			@self.effects |= EF_DIMLIGHT;
+			@self.effects |= EF_BLUE;
 		} else {
-			self.effects &= ~EF_DIMLIGHT;
-			self.effects &= ~EF_BLUE;
+			@self.effects &= ~EF_DIMLIGHT;
+			@self.effects &= ~EF_BLUE;
 		}
 	}	
 
 	// suit 
-	if (self.radsuit_finished) {
-		self.air_finished = time + 12;		// don't drown
+	if (@self.radsuit_finished) {
+		@self.air_finished = time + 12;		// don't drown
 
-		if (self.radsuit_finished < time + 3) { // sound and flash when running out
-			if (self.rad_time == 1) {
-				sprint (self, PRINT_HIGH, "Air supply in Biosuit expiring\n");
-				stuffcmd (self, "bf\n");
-				sound (self, CHAN_AUTO, "items/suit2.wav", 1, ATTN_NORM);
-				self.rad_time = time + 1;
+		if (@self.radsuit_finished < time + 3) { // sound and flash when running out
+			if (@self.rad_time == 1) {
+				sprint (@self, PRINT_HIGH, "Air supply in Biosuit expiring\n");
+				stuffcmd (@self, "bf\n");
+				sound (@self, CHAN_AUTO, "items/suit2.wav", 1, ATTN_NORM);
+				@self.rad_time = time + 1;
 			}
 
-			if (self.rad_time < time) {
-				self.rad_time = time + 1;
-				stuffcmd (self, "bf\n");
+			if (@self.rad_time < time) {
+				@self.rad_time = time + 1;
+				stuffcmd (@self, "bf\n");
 			}
 		}
 
-		if (self.radsuit_finished < time) {	// just stopped
-			self.items &= ~IT_SUIT;
-			self.rad_time = 0;
-			self.radsuit_finished = 0;
+		if (@self.radsuit_finished < time) {	// just stopped
+			@self.items &= ~IT_SUIT;
+			@self.rad_time = 0;
+			@self.radsuit_finished = 0;
 		}
 	}	
 };
@@ -1162,25 +1162,25 @@ void () PlayerRegen =
 	local float		type, bit;
 	local string	snd;
 	
-	if (self.armorvalue >= self.armregen) {
-		self.regen_finished = time;
+	if (@self.armorvalue >= @self.armregen) {
+		@self.regen_finished = time;
 		return; // already have max armour that station can give
 	}
 
-	self.armorvalue += 3;
+	@self.armorvalue += 3;
 	
 	// Cap armour
-	if (self.armorvalue > self.armregen)
-		self.armorvalue = self.armregen;
-	if (self.armorvalue > 150) {	// Equivalent to Red (level 3) Armour
+	if (@self.armorvalue > @self.armregen)
+		@self.armorvalue = @self.armregen;
+	if (@self.armorvalue > 150) {	// Equivalent to Red (level 3) Armour
 		type = 0.8;
 		snd = "items/shield3.wav";
 		bit = IT_ARMOR3;
-	} else if (self.armorvalue > 50) { // Equivlent to Yellow (level 2) Armour
+	} else if (@self.armorvalue > 50) { // Equivlent to Yellow (level 2) Armour
 		type = 0.8;
 		snd = "items/shield2.wav";
 		bit = IT_ARMOR2;
-	} else if (self.armorvalue > 1) {	// Equivlent to Blue (level 1) Armour
+	} else if (@self.armorvalue > 1) {	// Equivlent to Blue (level 1) Armour
 		type = 0.8;
 		snd = "items/shield1.wav";
 		bit = IT_ARMOR1;
@@ -1191,13 +1191,13 @@ void () PlayerRegen =
 	}
 	
 	// set armour type
-	self.armortype = type;
-	self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
-	self.items |= bit;
-	sound (self, CHAN_AUTO, snd, 1, ATTN_NORM);
+	@self.armortype = type;
+	@self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+	@self.items |= bit;
+	sound (@self, CHAN_AUTO, snd, 1, ATTN_NORM);
 	
 	//POX - 1.01b - Don't allow armour to rot while recharging
-	self.armor_rot = time + 5;
+	@self.armor_rot = time + 5;
 };
 
 /*
@@ -1210,53 +1210,53 @@ void () PlayerPostThink =
 {
 	//POX v1.2 - clear overrun v_cshifts!
 	if (time < 1.5) 
-		stuffcmd (self, "bf\n");
+		stuffcmd (@self, "bf\n");
 
 	//POX v1.2 - cshift auto reset for colour_light
-	if (self.cshift_finished < time) {
-		if (!self.cshift_off) {
-			stuffcmd (self, "v_cshift 0 0 0 0\n");
-			self.cshift_off = TRUE;
+	if (@self.cshift_finished < time) {
+		if (!@self.cshift_off) {
+			stuffcmd (@self, "v_cshift 0 0 0 0\n");
+			@self.cshift_off = TRUE;
 		}
 	}
 
-	if (self.view_ofs == '0 0 0')
+	if (@self.view_ofs == '0 0 0')
 		return;		// intermission or finale
 	
-	if (self.deadflag)
+	if (@self.deadflag)
 		return;
 	
 	//+POX TESTING
 	//local string howmanyplayers;
 	//howmanyplayers = ftos(lms_plrcount);
-	//sprint (self, PRINT_HIGH, howmanyplayers);
+	//sprint (@self, PRINT_HIGH, howmanyplayers);
 	//-POX TESTING
 	
 	// + POX - for LMS observer
-	if (deathmatch & DM_LMS && self.LMS_observer) {
+	if (deathmatch & DM_LMS && @self.LMS_observer) {
 		ObserverThink ();
 		return;
 	}
 	// - POX
 
 	// check to see if player landed and play landing sound 
-	if ((self.jump_flag < -300) && (self.flags & FL_ONGROUND)) {
-		if (self.jump_flag < -650) {
+	if ((@self.jump_flag < -300) && (@self.flags & FL_ONGROUND)) {
+		if (@self.jump_flag < -650) {
 			local float	d;
 
-			self.deathtype = "falling";
+			@self.deathtype = "falling";
 			
-			d = (self.jump_flag + 625) * -0.1;	// scale damage by fall height
-			T_Damage (self, world, world, d); 
-			sound (self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
+			d = (@self.jump_flag + 625) * -0.1;	// scale damage by fall height
+			T_Damage (@self, world, world, d); 
+			sound (@self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
 		} else {
-			sound (self, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);
+			sound (@self, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);
 		}
 	}
-	self.jump_flag = self.velocity_z;
+	@self.jump_flag = @self.velocity_z;
 
 	//POX v1.2 - better regen touch handling
-	if (self.regen_finished > time)
+	if (@self.regen_finished > time)
 		PlayerRegen ();
 	
 	CheckPowerups ();
@@ -1273,36 +1273,36 @@ void() ClientConnect =
 // + POX - I hard coded some environmental changes to prevent tampering....
 // NOTE: autoexec.cfg is called at DecodeLevelParms (QW ignores it when called from quake.rc - which is also ignored)
 // POX v1.12 added 'fov 90' (mostly for lms_observer additions)
-	stuffcmd (self, "alias rules impulse 253;alias secondtrigger impulse 15;alias idtarget impulse 16;alias gllight impulse 17;wait;fov 90;v_idlescale 0.54;v_ipitch_cycle 3.5;v_ipitch_level 0.4;v_iroll_level 0.1;v_iyaw_level 0;v_kickpitch 0.8;v_kickroll 0.8;scr_conspeed 900;cl_bobcycle 0.8;cl_bobup 0;cl_bob 0.015\n");
+	stuffcmd (@self, "alias rules impulse 253;alias secondtrigger impulse 15;alias idtarget impulse 16;alias gllight impulse 17;wait;fov 90;v_idlescale 0.54;v_ipitch_cycle 3.5;v_ipitch_level 0.4;v_iroll_level 0.1;v_iyaw_level 0;v_kickpitch 0.8;v_kickroll 0.8;scr_conspeed 900;cl_bobcycle 0.8;cl_bobup 0;cl_bob 0.015\n");
 // - POX
 
 	// + POX LMS late joiners get booted to spectate
 	if (!(deathmatch & DM_LMS)) {
-		BPRINT (PRINT_HIGH, self.netname);
+		BPRINT (PRINT_HIGH, @self.netname);
 		BPRINT (PRINT_HIGH, " entered the game\n");
-		centerprint (self, "Paroxysm II v1.2.0\n");
+		centerprint (@self, "Paroxysm II v1.2.0\n");
 	} else if (time < 40) { // Allow entrants for up to 40 secs after changelevel
-		BPRINT (PRINT_HIGH, self.netname);
+		BPRINT (PRINT_HIGH, @self.netname);
 		BPRINT (PRINT_HIGH, " entered the game\n");
 			
 		if (!lms_plrcount)
-			centerprint(self, "Paroxysm II v1.2.0\nLast Man Standing Rules Apply.\n\nWaiting for players...");
+			centerprint(@self, "Paroxysm II v1.2.0\nLast Man Standing Rules Apply.\n\nWaiting for players...");
 		else
-			centerprint(self, "Paroxysm II v1.2.0\nLast Man Standing Rules Apply.");
+			centerprint(@self, "Paroxysm II v1.2.0\nLast Man Standing Rules Apply.");
 	} else {	//After 40 secs, If there are two or more players, go into observer mode
 		if (!lms_plrcount) {	//First player arrived, let him wait around
-			BPRINT (PRINT_HIGH, self.netname);
+			BPRINT (PRINT_HIGH, @self.netname);
 			BPRINT (PRINT_HIGH, " entered the game\n");
-			centerprint(self, "Paroxysm II v1.2.0\nLast Man Standing Rules Apply.\n\nWaiting for players...");
+			centerprint(@self, "Paroxysm II v1.2.0\nLast Man Standing Rules Apply.\n\nWaiting for players...");
 		} else if (lms_plrcount == 1) { // second player arrived, so go to the next map (for a fair start)
-			BPRINT (PRINT_HIGH, self.netname);
+			BPRINT (PRINT_HIGH, @self.netname);
 			BPRINT (PRINT_HIGH, " entered the game\n");
 			NextLevel ();	
 		} else {	// LMS Game allready started so boot to observe
-			BPRINT (PRINT_HIGH, self.netname);
+			BPRINT (PRINT_HIGH, @self.netname);
 			BPRINT (PRINT_HIGH, " entered the game late!");
 			//LMS reconnect as spectator
-			self.LMS_observer = 1;
+			@self.LMS_observer = 1;
 		}
 		
 	}
@@ -1320,13 +1320,13 @@ called when a player disconnects from a server
 void() ClientDisconnect =
 {
 	// let everyone else know
-	BPRINT (PRINT_HIGH, self.netname);
+	BPRINT (PRINT_HIGH, @self.netname);
 	BPRINT (PRINT_HIGH, " left the game with ");
-	BPRINT (PRINT_HIGH, ftos (self.frags));
+	BPRINT (PRINT_HIGH, ftos (@self.frags));
 	BPRINT (PRINT_HIGH, " frags\n");
-	sound (self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NONE);
+	sound (@self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NONE);
 // + POX
-	if ((deathmatch & DM_LMS) && (self.LMS_registered))
+	if ((deathmatch & DM_LMS) && (@self.LMS_registered))
 	{
 		lms_plrcount = lms_plrcount - 1;
 		
@@ -1467,7 +1467,7 @@ void(entity targ, entity attacker) ClientObituary =
 		}
 
 		if (attacker.classname == "player") {
-			if (targ == attacker) { 	// killed self (dumbass!)
+			if (targ == attacker) { 	// killed @self (dumbass!)
 				LOGFRAG (attacker, attacker);
 				
 				if (!(deathmatch & DM_LMS))
@@ -1629,7 +1629,7 @@ void(entity targ, entity attacker) ClientObituary =
 			LOGFRAG (targ, targ);
 
 			if (!(deathmatch & DM_LMS)) //POX 1.2 - do regular obituary taunts in LMS mode
-				targ.frags = targ.frags - 1;		// killed self
+				targ.frags = targ.frags - 1;		// killed @self
 
 			if (attacker.classname == "explo_box" || attacker.classname == "explo_bsp")	{
 				deathstring = " blew up\n";

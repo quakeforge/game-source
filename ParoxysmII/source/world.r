@@ -180,7 +180,7 @@ void() worldspawn =
 #endif
 
 	// custom map attributes
-	if (self.model == "maps/e1m8.bsp")
+	if (@self.model == "maps/e1m8.bsp")
 		cvar_set ("sv_gravity", "100");
 	else
 		cvar_set ("sv_gravity", "790");

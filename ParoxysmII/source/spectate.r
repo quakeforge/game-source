@@ -21,9 +21,9 @@ called when a spectator connects to a server
 void() SpectatorConnect =
 {
 	bprint (PRINT_MEDIUM, "Spectator ");
-	bprint (PRINT_MEDIUM, self.netname);
+	bprint (PRINT_MEDIUM, @self.netname);
 	bprint (PRINT_MEDIUM, " entered the game\n");
-	self.goalentity = world; // used for impulse 1 below
+	@self.goalentity = world; // used for impulse 1 below
 };
 /*
 ===========
@@ -34,7 +34,7 @@ called when a spectator disconnects from a server
 void() SpectatorDisconnect =
 {
 	bprint (PRINT_MEDIUM, "Spectator ");
-	bprint (PRINT_MEDIUM, self.netname);
+	bprint (PRINT_MEDIUM, @self.netname);
 	bprint (PRINT_MEDIUM, " left the game\n");
 };
 /*
@@ -45,20 +45,20 @@ Called by SpectatorThink if the spectator entered an impulse
 */
 void() SpectatorImpulseCommand =
 {
-	if (self.impulse == 1) {
+	if (@self.impulse == 1) {
 		// teleport the spectator to the next spawn point
 		// note that if the spectator is tracking, this doesn't do
 		// much
-		self.goalentity = find(self.goalentity, classname, "info_player_deathmatch");
-		if (self.goalentity == world)
-			self.goalentity = find(self.goalentity, classname, "info_player_deathmatch");
-		if (self.goalentity != world) {
-			setorigin(self, self.goalentity.origin);
-			self.angles = self.goalentity.angles;
-			self.fixangle = TRUE;		// turn this way immediately
+		@self.goalentity = find(@self.goalentity, classname, "info_player_deathmatch");
+		if (@self.goalentity == world)
+			@self.goalentity = find(@self.goalentity, classname, "info_player_deathmatch");
+		if (@self.goalentity != world) {
+			setorigin(@self, @self.goalentity.origin);
+			@self.angles = @self.goalentity.angles;
+			@self.fixangle = TRUE;		// turn this way immediately
 		}
 	}
-	self.impulse = 0;
+	@self.impulse = 0;
 };
 /*
 ================
@@ -68,8 +68,8 @@ Called every frame after physics are run
 */
 void() SpectatorThink =
 {
-	// self.origin, etc contains spectator position, so you could
+	// @self.origin, etc contains spectator position, so you could
 	// do some neat stuff here
-	if (self.impulse)
+	if (@self.impulse)
 		SpectatorImpulseCommand();
 };
