@@ -170,7 +170,7 @@ void() launch_megaplasma =
 	newmis.movetype = MOVETYPE_FLYMISSILE;
 	newmis.solid = SOLID_BBOX;
 	newmis.classname = "megaplasma";
-	newmis.effects = newmis.effects | EF_BRIGHTFIELD | EF_BRIGHTLIGHT;
+	newmis.effects |= EF_BRIGHTFIELD | EF_BRIGHTLIGHT;
 
 // set speed
 	dir = aim ( self, 1000 );
@@ -420,7 +420,7 @@ void() MineArm =
 		self.takedamage = DAMAGE_YES;
    		self.skin = 1;
    		self.classname = "minearmed";
-   		self.effects = self.effects | EF_MUZZLEFLASH;
+   		self.effects |= EF_MUZZLEFLASH;
    	}
 
 	if ((time > self.delay) || (self.spawnmaster.no_obj == TRUE))
@@ -892,8 +892,8 @@ void() W_SecondTrigger =
 		// check for rockets
 		if (self.ammo_rockets < 1)
 		{	
-			self.items = self.items - ( self.items & (IT_SHELLS) );
-			self.items = self.items | IT_ROCKETS;
+			self.items &= ~(IT_SHELLS) );
+			self.items |= IT_ROCKETS;
 			self.currentammo = self.ammo_rockets;
 			self.which_ammo = 1;
 			sound (self, CHAN_AUTO, "weapons/mfire1.wav", 1, ATTN_NORM);
@@ -903,8 +903,8 @@ void() W_SecondTrigger =
 		
 		if (self.st_pball < time)
 		{
-			self.items = self.items - ( self.items & (IT_SHELLS) );
-			self.items = self.items | IT_ROCKETS;
+			self.items &= ~(IT_SHELLS) );
+			self.items |= IT_ROCKETS;
 			self.currentammo = self.ammo_rockets;
 			self.which_ammo = 1;
 			player_gshot1();

@@ -429,7 +429,7 @@ local vector	org;
 			stuffcmd (other, "tele_zoom\n");
 	
 	}
-	other.flags = other.flags - other.flags & FL_ONGROUND;
+	other.flags &= ~FL_ONGROUND;
 };
 
 /*QUAKED info_teleport_destination (.5 .5 .5) (-8 -8 -8) (8 8 32)

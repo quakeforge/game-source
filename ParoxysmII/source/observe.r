@@ -45,7 +45,7 @@ void (string destination) ObserverTeleportTouch =
 	if (@self.flags & FL_ONGROUND)
 		@self.flags = @self.flags - FL_ONGROUND;
 	@self.velocity = v_forward * 300;
-	@self.flags = @self.flags - @self.flags & FL_ONGROUND;
+	@self.flags &= ~FL_ONGROUND;
 };
 /*------------------
 ObserverImpulses

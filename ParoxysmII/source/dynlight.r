@@ -27,16 +27,16 @@ void() start_dynlight =
 //POX v1.1 - changed this for QW support
 //No EF_BRIGHTFIELD in QW - defaults to EF_DIMLIGHT
 	if (@self.dynlight_style == 2)
-		@self.effects = @self.effects | EF_BRIGHTLIGHT;
+		@self.effects |= EF_BRIGHTLIGHT;
 	
 	else if (@self.dynlight_style == 4)
-		@self.effects = @self.effects | EF_BLUE;
+		@self.effects |= EF_BLUE;
 	
 	else if (@self.dynlight_style == 5)
-		@self.effects = @self.effects | EF_RED;
+		@self.effects |= EF_RED;
 	
 	else
-		@self.effects = @self.effects | EF_DIMLIGHT;
+		@self.effects |= EF_DIMLIGHT;
 	
 	
 	dynlight_next();

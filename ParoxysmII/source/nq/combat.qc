@@ -138,7 +138,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	{
 		save = targ.armorvalue;
 		targ.armortype = 0;	// lost all armor
-		targ.items = targ.items - (targ.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3));
+		targ.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3));
 	}
 	
 	targ.armorvalue = targ.armorvalue - save;
@@ -147,19 +147,19 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	if (targ.armorvalue > 150)
 	{
 		targ.armortype = 0.8;	//Red Armour	
-		targ.items = targ.items - (targ.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
+		targ.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
 	}
 	
 	else if (targ.armorvalue > 50)
 	{
 		targ.armortype = 0.8;	//Yellow Armour
-		targ.items = targ.items - (targ.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR2;
+		targ.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR2;
 	}
 	
 	else if (targ.armorvalue > 1)
 	{
 		targ.armortype = 0.8;	//Blue Armour
-		targ.items = targ.items - (targ.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR1;
+		targ.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR1;
 	}
 	
 	take = ceil(damage-save);

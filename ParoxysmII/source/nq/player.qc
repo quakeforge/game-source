@@ -178,7 +178,7 @@ void()	player_run =[0,	player_run	]
 /*
 //used for PulseGun fire
 void()	player_pulse1 =	[$shotatt1, player_pulse2	] {self.weaponframe=1;
-self.effects = self.effects | EF_MUZZLEFLASH;};
+self.effects |= EF_MUZZLEFLASH;};
 void()	player_pulse2 =	[$shotatt2, player_pulse3	] {self.weaponframe=2;};
 void()	player_pulse3 =	[$shotatt3, player_pulse4	] {self.weaponframe=3;};
 void()	player_pulse4 =	[$shotatt4, player_pulse5	] {self.weaponframe=4;};
@@ -196,7 +196,7 @@ void()	player_pflex6 =	[$shotatt5, player_run	] {self.weaponframe=11;};
 
 //used for t-sht and combo gun
 void()	player_shot1 =	[15, player_shot2	] {self.weaponframe=1;
-self.effects = self.effects | EF_MUZZLEFLASH;};
+self.effects |= EF_MUZZLEFLASH;};
 void()	player_shot2 =	[16, player_shot3	] {self.weaponframe=2;};
 void()	player_shot3 =	[17, player_shot4	] {self.weaponframe=3;};
 void()	player_shot4 =	[18, player_shot5	] {self.weaponframe=4;};
@@ -205,7 +205,7 @@ void()	player_shot6 =	[19, player_run	] {self.weaponframe=6;};
 	
 // New Frame Macro For T-Shot 3 barrel fire
 void()	player_tshot1 =	[15, player_tshot2	] {self.weaponframe=1;
-self.effects = self.effects | EF_MUZZLEFLASH;};
+self.effects |= EF_MUZZLEFLASH;};
 void()	player_tshot2 =	[16, player_tshot3	] {self.weaponframe=16;};//triple flare frame
 void()	player_tshot3 =	[17, player_tshot4	] {self.weaponframe=3;};
 void()	player_tshot4 =	[18, player_tshot5	] {self.weaponframe=4;};
@@ -228,7 +228,7 @@ void()	player_reshot9 =	[15, player_run	] {self.weaponframe=15;};
 
 // New Frame Macro For SuperShotgun Second Trigger (Impact Grenades)
 void()	player_gshot1 =	[15, player_gshot2	] {self.weaponframe=2;
-self.effects = self.effects | EF_MUZZLEFLASH;};
+self.effects |= EF_MUZZLEFLASH;};
 void()	player_gshot2 =	[16, player_gshot3	] {self.weaponframe=3;};
 void()	player_gshot3 =	[17, player_gshot4	] {self.weaponframe=4;};
 void()	player_gshot4 =	[18, player_gshot5	] {self.weaponframe=5;};
@@ -237,7 +237,7 @@ void()	player_gshot5 =	[19, player_run	] {self.weaponframe=6;};
 
 // New Frame Macro For Nailgun Second Trigger (Shrapnel Bomb)
 void()	player_shrap1 =	[15, player_shrap2	] {
-self.effects = self.effects | EF_MUZZLEFLASH;};
+self.effects |= EF_MUZZLEFLASH;};
 void()	player_shrap2 =	[16, player_run	] {};
 // End Nailgun Second Trigger Macro
 
@@ -345,7 +345,7 @@ void() player_nail1   =[15, player_nail2  ]
 		}
 	else
 	{
-		self.effects = self.effects | EF_MUZZLEFLASH;
+		self.effects |= EF_MUZZLEFLASH;
 
 		if (!self.button0)
 			{player_run ();return;}
@@ -375,7 +375,7 @@ void() player_nail2   =[16, player_nail1  ]
 	else
 	{
 	
-		self.effects = self.effects | EF_MUZZLEFLASH;
+		self.effects |= EF_MUZZLEFLASH;
 
 		if (!self.button0)
 			{player_run ();return;}
@@ -410,7 +410,7 @@ void() player_plasma1   =[15, player_plasma2  ]
 	}
 	else
 	{
-		self.effects = self.effects | EF_MUZZLEFLASH;
+		self.effects |= EF_MUZZLEFLASH;
 		
 		if (!self.button0)
 			{player_run ();return;}
@@ -447,7 +447,7 @@ void() player_plasma2   =[16, player_plasma1  ]
 	else
 	{
 		
-		self.effects = self.effects | EF_MUZZLEFLASH;
+		self.effects |= EF_MUZZLEFLASH;
 		
 		if (!self.button0)
 			{player_run ();return;}
@@ -471,7 +471,7 @@ void() player_plasma2   =[16, player_plasma1  ]
 //Had to seperate Grenade Macro from Anihilator
 //to make room for new rhino animations
 void() player_grenade1   =[15, player_grenade2  ] {self.weaponframe=1;
-self.effects = self.effects | EF_MUZZLEFLASH;};
+self.effects |= EF_MUZZLEFLASH;};
 void() player_grenade2   =[16, player_grenade3  ] {self.weaponframe=2;};
 void() player_grenade3   =[17, player_grenade4  ] {self.weaponframe=3;};
 void() player_grenade4   =[18, player_grenade5  ] {self.weaponframe=4;};
@@ -494,7 +494,7 @@ sound (self, CHAN_WEAPON, "weapons/rhino.wav", 1, ATTN_NORM);
 		self.velocity = v_forward* -25;
 
 self.punchangle_x = -3;
-self.effects = self.effects | EF_MUZZLEFLASH;};
+self.effects |= EF_MUZZLEFLASH;};
 void() player_rocket2   =[15, player_rocket3  ] {self.weaponframe=2;
 W_FireRocket('0 0 24');};
 void() player_rocket3   =[16, player_run  ] {self.weaponframe=3;};
@@ -813,7 +813,7 @@ void(string gibname, float dm) ThrowHead =
 	setsize (self, '-16 -16 0', '16 16 56');
 	self.velocity = VelocityForDamage (dm);
 	self.origin_z = self.origin_z - 24;
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
+	self.flags &= ~FL_ONGROUND);
 	self.avelocity = crandom() * '0 600 0';
 };
 
@@ -915,7 +915,7 @@ void() PlayerDie =
 {
 	local	float	i;
 	
-	//self.items = self.items - (self.items & IT_INVISIBILITY);
+	//self.items &= ~IT_INVISIBILITY);
 	self.invisible_finished = 0;	// don't die as eyes
 	self.invincible_finished = 0;
 	self.super_damage_finished = 0;
@@ -937,7 +937,7 @@ void() PlayerDie =
 	self.view_ofs = '0 0 -8';
 	self.deadflag = DEAD_DYING;
 	self.solid = SOLID_NOT;
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
+	self.flags &= ~FL_ONGROUND);
 	self.movetype = MOVETYPE_TOSS;
 	if (self.velocity_z < 10)
 		self.velocity_z = self.velocity_z + random()*300;

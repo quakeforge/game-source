@@ -898,9 +898,9 @@ void() CheckWaterJump =
 		traceline (start, end, TRUE, @self);
 		if (trace_fraction == 1)
 		{	// open at eye level
-			@self.flags = @self.flags | FL_WATERJUMP;
+			@self.flags |= FL_WATERJUMP;
 			@self.velocity_z = 225;
-			@self.flags = @self.flags - (@self.flags & FL_JUMPRELEASED);
+			@self.flags &= ~FL_JUMPRELEASED;
 			@self.teleport_time = time + 2;	// safety net
 			return;
 		}
@@ -956,7 +956,7 @@ void() PlayerPreThink =
 		PlayerJump ();
 	}
 	else
-		@self.flags = @self.flags | FL_JUMPRELEASED;
+		@self.flags |= FL_JUMPRELEASED;
 // teleporters can force a non-moving pause time	
 	if (time < @self.pausetime)
 		@self.velocity = '0 0 0';
@@ -1063,13 +1063,13 @@ void() CheckPowerups =
 		// + POX - ignore light effects in Dark Mode
 		if (@self.invincible_finished > time && !(deathmatch & DM_DARK))
 		{
-			@self.effects = @self.effects | EF_DIMLIGHT;
-			@self.effects = @self.effects | EF_RED;
+			@self.effects |= EF_DIMLIGHT;
+			@self.effects |= EF_RED;
 		}
 		else
 		{
-			@self.effects = @self.effects - (@self.effects & EF_DIMLIGHT);
-			@self.effects = @self.effects - (@self.effects & EF_RED);
+			@self.effects &= ~EF_DIMLIGHT;
+			@self.effects &= ~EF_RED;
 		}
 	}
 // super damage

@@ -18,7 +18,7 @@ void() SUB_regen =
 	}
 	
 	if (self.classname == "item_artifact_super_damage" || self.classname == "item_artifact_invulnerability" || self.classname == "item_artifact_invisibility")
-		self.effects = self.effects | EF_DIMLIGHT;
+		self.effects |= EF_DIMLIGHT;
 };
 
 
@@ -199,7 +199,7 @@ void() health_touch =
 	// Megahealth = rot down the player's super health
 	if (self.healtype == 2)
 	{
-		other.items = other.items | IT_SUPERHEALTH;
+		other.items |= IT_SUPERHEALTH;
 		self.nextthink = time + 5;
 		self.think = item_megahealth_rot;
 		self.owner = other;
@@ -231,7 +231,7 @@ void() item_megahealth_rot =
 
 // it is possible for a player to die and respawn between rots, so don't
 // just blindly subtract the flag off
-	other.items = other.items - (other.items & IT_SUPERHEALTH);
+	other.items &= ~IT_SUPERHEALTH);
 	
 	if (deathmatch >= 1)	// deathmatch 2 is silly old rules
 	{
@@ -391,7 +391,7 @@ void() weapon_touch =
 
 // change to the weapon
 	old = other.items;
-	other.items = other.items | new;
+	other.items |= new;
 	
 	stemp = self;
 	self = other;
@@ -859,7 +859,7 @@ local float		best;
 
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
-	other.items = other.items | self.items;
+	other.items |= self.items;
 
 	if (!coop)
 	{	
@@ -1019,12 +1019,12 @@ local float		best;
 	sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	self.solid = SOLID_NOT;
-	other.items = other.items | self.items;
+	other.items |= self.items;
 	self.model = string_null;
 	
 	if (self.classname == "item_artifact_super_damage")
 	{
-		self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+		self.effects &= ~EF_DIMLIGHT);
 		self.quadcore.mdl = self.quadcore.model;
 		self.quadcore.model = string_null;
 		
@@ -1041,7 +1041,7 @@ local float		best;
 	
 	if (self.classname == "item_artifact_invulnerability")
 	{
-		self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+		self.effects &= ~EF_DIMLIGHT);
 		other.invincible_time = 1;
 		other.invincible_finished = time + 30;
 	}
@@ -1050,7 +1050,7 @@ local float		best;
 	{		
 		other.invisible_time = 1;
 		other.invisible_finished = time + 30;
-		self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+		self.effects &= ~EF_DIMLIGHT);
 	}
 
 
@@ -1077,7 +1077,7 @@ void() item_artifact_invulnerability =
 	self.netname = "MegaShields";
 	self.items = IT_INVULNERABILITY;
 	
-	self.effects = self.effects | EF_DIMLIGHT;
+	self.effects |= EF_DIMLIGHT;
 	
 	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
@@ -1124,7 +1124,7 @@ void() item_artifact_invisibility =
 	self.netname = "Cloaking Device";
 	self.items = IT_INVISIBILITY;
 	
-	self.effects = self.effects | EF_DIMLIGHT;
+	self.effects |= EF_DIMLIGHT;
 	
 	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
@@ -1177,7 +1177,7 @@ void() item_artifact_super_damage =
 	self.items = IT_QUAD;
 	setsize (self, '-16 -16 -24', '16 16 32');
 	
-	self.effects = self.effects | EF_DIMLIGHT;
+	self.effects |= EF_DIMLIGHT;
 	
 	Spawn_QuadCore ();
 	
@@ -1234,7 +1234,7 @@ void() BackpackTouch =
 	if (!new)
 		new = other.weapon;
 	old = other.items;
-	other.items = other.items | new;
+	other.items |= new;
 	
 	bound_other_ammo ();
 

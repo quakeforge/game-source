@@ -417,8 +417,7 @@ void() PutClientInServer =
 	self.movetype = MOVETYPE_WALK;
 	
 	//POX v1.2 - remove items
-	self.items = self.items - (self.items & 
-	(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD) );
+	self.items &= ~(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD) );
 	
 	self.show_hostile = 0;
 	self.max_health = 100;
@@ -442,7 +441,7 @@ void() PutClientInServer =
 	self.weapon = IT_TSHOT;
 		
 // POX v1.1 - spawn with 50 armour points
-	self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR1;
+	self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR1;
 	self.armorvalue = 50;
 	self.armortype = 0.9;
 	
@@ -490,7 +489,7 @@ void() PutClientInServer =
 		sound (self, CHAN_AUTO, "items/inv1.wav", 1, ATTN_NORM);
 		stuffcmd (self, "bf\n");
 		
-		self.items = self.items | IT_INVISIBILITY;
+		self.items |= IT_INVISIBILITY;
 		self.invisible_time = 1;
 		self.invisible_finished = time + 9999999999;
 	}
@@ -587,17 +586,17 @@ void() PutClientInServer =
 		self.ammo_shells = 200;
 		self.ammo_rockets = 100;
 		self.ammo_cells = 200;
-		self.items = self.items | IT_PLASMAGUN;
-		self.items = self.items | IT_SUPER_NAILGUN;
-		self.items = self.items | IT_COMBOGUN;
-		self.items = self.items | IT_ROCKET_LAUNCHER;
-		self.items = self.items | IT_GRENADE_LAUNCHER;
+		self.items |= IT_PLASMAGUN;
+		self.items |= IT_SUPER_NAILGUN;
+		self.items |= IT_COMBOGUN;
+		self.items |= IT_ROCKET_LAUNCHER;
+		self.items |= IT_GRENADE_LAUNCHER;
 		
-		self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
+		self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR3;
 		self.armorvalue = 250;
 		self.armortype = 0.9;
 		self.health = 200;
-		self.items = self.items | IT_INVULNERABILITY;
+		self.items |= IT_INVULNERABILITY;
 		self.invincible_time = 1;
 		self.invincible_finished = time + 3;
 		
@@ -605,7 +604,7 @@ void() PutClientInServer =
 		self.currentammo = self.ammo_rockets;
 		self.weaponmodel = "progs/v_rhino.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_ROCKETS;
+		self.items |= IT_ROCKETS;
 		
 		self.max_health = 200;
 		sound (self, CHAN_AUTO, "items/protect.wav", 1, ATTN_NORM);
@@ -697,17 +696,17 @@ void() NextLevel =
 		else if (!(serverflags & 1))
 		{
 			mapname = "e1m1";
-			serverflags = serverflags | 1;
+			serverflags |= 1;
 		}
 		else if (!(serverflags & 2))
 		{
 			mapname = "e2m1";
-			serverflags = serverflags | 2;
+			serverflags |= 2;
 		}
 		else if (!(serverflags & 4))
 		{
 			mapname = "e3m1";
-			serverflags = serverflags | 4;
+			serverflags |= 4;
 		}
 		else if (!(serverflags & 8))
 		{
@@ -844,7 +843,7 @@ void() PlayerJump =
 	if ( !(self.flags & FL_JUMPRELEASED) )
 		return;		// don't pogo stick
 
-	self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+	self.flags &= ~FL_JUMPRELEASED);
 
 	self.flags = self.flags - FL_ONGROUND;	// don't stairwalk
 	
@@ -1021,9 +1020,9 @@ void() CheckWaterJump =
 		traceline (start, end, TRUE, self);
 		if (trace_fraction == 1)
 		{	// open at eye level
-			self.flags = self.flags | FL_WATERJUMP;
+			self.flags |= FL_WATERJUMP;
 			self.velocity_z = 225;
-			self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+			self.flags &= ~FL_JUMPRELEASED);
 			self.teleport_time = time + 2;	// safety net
 			return;
 		}
@@ -1082,7 +1081,7 @@ void() PlayerPreThink =
 		PlayerJump ();
 	}
 	else
-		self.flags = self.flags | FL_JUMPRELEASED;
+		self.flags |= FL_JUMPRELEASED;
 
 // teleporters can force a non-moving pause time	
 	if (time < self.pausetime)
@@ -1123,7 +1122,7 @@ void() CheckPowerups =
 		
 	//POX v1.1 - change armour to Yellow
 	if (self.armorvalue == 150)
-		self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR2;
+		self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR2;
 	}
 
 // invisibility
@@ -1202,9 +1201,9 @@ void() CheckPowerups =
 		if (!(deathmatch & DM_DARK))
 		{
 			if (self.invincible_finished > time)
-				self.effects = self.effects | EF_DIMLIGHT;
+				self.effects |= EF_DIMLIGHT;
 			else
-				self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+				self.effects &= ~EF_DIMLIGHT);
 		}
 	}
 
@@ -1242,9 +1241,9 @@ void() CheckPowerups =
 		if (!(deathmatch & DM_DARK))
 		{
 			if (self.super_damage_finished > time)
-				self.effects = self.effects | EF_DIMLIGHT;
+				self.effects |= EF_DIMLIGHT;
 			else
-				self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+				self.effects &= ~EF_DIMLIGHT);
 		}
 	}	
 

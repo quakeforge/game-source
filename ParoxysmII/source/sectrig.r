@@ -136,7 +136,7 @@ void() launch_megaplasma =
 	newmis.movetype = MOVETYPE_FLYMISSILE;
 	newmis.solid = SOLID_BBOX;
 	newmis.classname = "megaplasma";
-	newmis.effects = newmis.effects | EF_BLUE;
+	newmis.effects |= EF_BLUE;
 
 	// set speed
 	dir = aim ( @self, 1000 );
