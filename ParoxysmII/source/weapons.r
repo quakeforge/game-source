@@ -149,8 +149,6 @@ void(vector org, float damage) SpawnBlood =
 {
 	local float	type, count;
 
-	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-
 	if (trace_ent.nobleed) {
 		type = TE_GUNSHOT;
 		count = 5.0;
