@@ -24,8 +24,6 @@ void () im_alive = [ 0, (self.th_run), 0.2 ]
 	self.movetype = MOVETYPE_STEP;
 	self.takedamage = DAMAGE_AIM;
 
-	self.frags = 1;
-
 	if (mapname != "end")	
 		self.origin = self.oldorigin;
 	
@@ -47,6 +45,7 @@ void () im_alive = [ 0, (self.th_run), 0.2 ]
 			self.flags = self.flags + FL_SWIM;
 			break;
 		case "monster_wizard":
+			setsize (self, '-16 -16 -24', '16 16 40');
 			self.flags = self.flags + FL_FLY;
 			break;
 		default:
