@@ -65,6 +65,7 @@ void() CL_KeyMove = // CL_BaseMove + CL_AdjustAngles
 {
 	local float anglespeed;
 	local vector view;
+
 	if (self.keys != self.oldkeys) {
 		self.movevect = '0 0 0';
 		self.movevect_y = self.movevect_y + (350 * CL_KeyState(KEY_MOVERIGHT)); 
@@ -136,7 +137,7 @@ void() SV_UserFriction =
 	local vector vel, start, stop;
 	local float sped, friction, newspeed;
 
-      vel = self.velocity;
+	vel = self.velocity;
 	vel_z =0;
 	sped = vlen(vel);
 	vel = self.velocity;
@@ -156,8 +157,8 @@ void() SV_UserFriction =
 	if (trace_fraction == 1)
 		friction = sv_friction * 2; // 2 is default edgefriction, removed for QW compatability
 	else
-                friction = sv_friction;
-     if (sped < sv_stopspeed)
+		friction = sv_friction;
+	if (sped < sv_stopspeed)
 		newspeed = sped - real_frametime * sv_stopspeed * friction;
 	else
 		newspeed = sped - real_frametime * sped * friction;
@@ -169,6 +170,7 @@ void() SV_UserFriction =
 	self.velocity_y = vel_y * newspeed;
 	self.velocity_x = vel_x * newspeed;
 };
+
 void() SV_WaterJump =
 {
 	if (time > self.teleport_time || !self.waterlevel) {
@@ -182,6 +184,7 @@ void() SV_WaterJump =
 void() DropPunchAngle =
 {
 	local float len;
+
 	len = vlen(self.punchangle);
 	self.punchangle = normalize(self.punchangle);
 	len = len - 10 * real_frametime;
@@ -189,7 +192,6 @@ void() DropPunchAngle =
 		len = 0;
 	self.punchangle = self.punchangle * len;
 };
-
 
 void(vector wishvel) SV_AirAccelerate =
 {
@@ -227,10 +229,12 @@ void(vector wishvel) SV_Accelerate =
 	
 	self.velocity = self.velocity + accelspeed * wishvel;	
 };
+
 void() SV_WaterMove =
 {
 	local vector wishvel;
 	local float wishspeed, addspeed, cspeed, newspeed;
+
 	makevectors(self.v_angle);
 	wishvel = v_right * self.movevect_y + v_forward * self.movevect_x;
 	
@@ -250,7 +254,7 @@ void() SV_WaterMove =
 		newspeed = cspeed - (real_frametime * cspeed * sv_friction);
 		if (newspeed < 0)
 			newspeed = 0;
-   	    self.velocity = self.velocity * (newspeed / cspeed);
+		self.velocity = self.velocity * (newspeed / cspeed);
 
 	} else
 		newspeed = 0;
@@ -266,6 +270,7 @@ void() SV_WaterMove =
 		cspeed = addspeed;
 	self.velocity = self.velocity + cspeed * wishvel;
 };
+
 void() SV_AirMove =
 {
 	local vector wishvel, vangle;
@@ -282,8 +287,8 @@ void() SV_AirMove =
 		wishvel_z = self.movevect_z;
 	else
 		wishvel_z = 0;
-        if (vlen(wishvel) > sv_maxspeed)
-                wishvel = normalize(wishvel) * sv_maxspeed;
+	if (vlen(wishvel) > sv_maxspeed)
+		wishvel = normalize(wishvel) * sv_maxspeed;
 	if (self.movetype == MOVETYPE_NOCLIP)
 		self.velocity = wishvel;
 	else if (self.flags & FL_ONGROUND) {
@@ -323,6 +328,7 @@ void() SV_ClientThink =
 	SV_AirMove();
 
 };
+
 /*
 =========================================
 
@@ -334,6 +340,7 @@ Stuff mimicking sv_phys.c
 float() SV_RunThink  =
 {
 	local float thinktime, bkuptime;
+
 	thinktime = self.nextthink;
 	bkuptime = time;
 	if (thinktime <= 0 || thinktime > (time + real_frametime))
@@ -381,9 +388,11 @@ float() SV_CheckWater =
 	return  (self.waterlevel > 1) ? 1.0 : 0.0;
 
 };
+
 void() RemoveThud = // well sometimes
 { 
 	local entity oself;
+
 	if (other == NIL) {
 		if (self.flags & FL_ONGROUND) {
 			self.flags = self.flags - FL_ONGROUND; 
@@ -407,11 +416,13 @@ void() RemoveThud = // well sometimes
 	}
 
 };
+
 void() SV_CheckOnGround =
 {
 	local vector org, v;
-	org = self.origin;
 	local float currentflags;
+
+	org = self.origin;
 	currentflags = self.flags;
 	self.flags = self.flags | FL_ONGROUND | FL_PARTIALGROUND;
 	walkmove(0,0); // perform C touch function
@@ -435,12 +446,14 @@ void() SV_CheckOnGround =
 		self.flags = self.flags - FL_ONGROUND;
 	setorigin(self, org);
 };
+
 // Thanks to Alan Kivlin for this function
 // modified heavily by me
 float(vector dir) botCheckForStep =
 {
 	local vector currentorigin, v;
 	local float currentflags, yaw, stepdistance, movedistance; 
+
 	currentorigin = self.origin;
 	currentflags = self.flags; 
 	self.flags = FL_ONGROUND | FL_PARTIALGROUND; 
@@ -463,6 +476,7 @@ float(vector dir) botCheckForStep =
 	setorigin(self, currentorigin);
 	return 0;
 }; 
+
 // this is merely here to fix a problem with e3m5
 void(vector dir) BruteForceStep =
 {
@@ -544,9 +558,9 @@ void() PostPhysics =
 	self.dmg_take = self.dmg_save = 0;
 
 };
+
 // Avoid calling BotAI and the physics at the same time
 // Can trip the runaway loop counter
-
 void() SV_FlyMove =
 {
 	// This is nothing like the Quake function.
@@ -577,7 +591,6 @@ void() SV_FlyMove =
 	self.phys_obj.nextthink = time;
 };
 
-
 void() SV_Physics_Toss =
 {
 	if (!SV_RunThink())
@@ -593,39 +606,49 @@ void() SV_Physics_Toss =
 	SV_FlyMove();
 
 };
+
 void() SV_Physics_Client =
 {
-
 	PlayerPreThink();
 
-	if (self.movetype == MOVETYPE_NONE) {
+	switch (self.movetype) {
+	case MOVETYPE_NONE:
 		if (!SV_RunThink())
 			return;
 		PlayerPostThink();
 		BotAI();
+		break;
 
-	} else if ((self.movetype == MOVETYPE_WALK) || (self.movetype == MOVETYPE_STEP)) {
+	case MOVETYPE_WALK:
+	case MOVETYPE_STEP:
 		if (!SV_RunThink())
 			return;
-            if (!(SV_CheckWater()) && (!(self.flags & FL_WATERJUMP)))
+		if (!(SV_CheckWater()) && (!(self.flags & FL_WATERJUMP)))
 			SV_AddGravity(1);
 		SV_FlyMove();
-	} else if ((self.movetype == MOVETYPE_TOSS) || (self.movetype == MOVETYPE_BOUNCE)) {
+		break;
+
+	case MOVETYPE_TOSS:
+	case MOVETYPE_BOUNCE:
 		SV_Physics_Toss();
-	} else if (self.movetype == MOVETYPE_FLY) {
+		break;
+
+	case MOVETYPE_FLY:
 		if (!SV_RunThink())
 			return;
 		SV_FlyMove();
-	} else if (self.movetype == MOVETYPE_NOCLIP) {
+		break;
+
+	case MOVETYPE_NOCLIP:
 		if (!SV_RunThink())
 			return;
 		self.origin = self.origin + real_frametime * self.velocity;
 
 		PlayerPostThink();
 		BotAI();
-	} else
+		break;
+	default:
 		error ("SV_Physics_Client: Bad Movetype (BOT)");
-
+		break;
+	}
 };
-
-
