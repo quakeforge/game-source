@@ -292,10 +292,10 @@ Pick a weapon based on range / ammo
 	// quick little function to stop making him shoot the wrong way ! Argh
 	local float g;
 
-	g = angcomp (v_angle.x, b_angle.x);
+	g = angcomp (ent.v_angle_x, b_angle.x);
 	if (fabs (g) > 30)
 		return; // argh, too far away
-	g = angcomp (v_angle.y, b_angle.y);
+	g = angcomp (ent.v_angle_y, b_angle.y);
 	if (fabs (g) > 30)
 		return; // not again!
 	buttons |= 1;
@@ -324,7 +324,7 @@ attacking an enemy.
 	}
 
 	org = realorigin (ent.enemy);
-	makevectors (v_angle);
+	makevectors (ent.v_angle);
 
 	// decide if I should shoot
 	foedist = vlen (org - ent.origin);

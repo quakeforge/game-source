@@ -64,22 +64,19 @@ typedef struct bot_data_t bot_data_t;
 @interface Bot: Target
 {
 @public
-	//model modelindex
-	//frame angles colormap effects
-	//owner
-
-	//movetype solid touch <size> watertype flags think nextthink 
-
-	integer keys, oldkeys;
-	integer buttons, impulse;
-	vector v_angle, b_angle;
+	integer keys;
+	integer buttons;
+	integer impulse;
+	vector b_angle;
 	vector mouse_emu;
 
 	integer wallhug;
 	integer ishuman;
-	float b_frags;
-	integer b_clientno, b_clientflag;
-	float b_shirt, b_pants;
+	float b_frags;		// for detecting score changes
+	integer b_clientno;
+	integer b_clientflag;
+	float b_shirt;
+	float b_pants;
 	float ai_time;
 	float b_sound;
 	float missile_speed;
@@ -90,11 +87,16 @@ typedef struct bot_data_t bot_data_t;
 	integer b_num;
 	float b_chattime;
 	float b_entertime;
-	float b_menu, b_menu_time, b_menu_value;
+	float b_menu;
+	float b_menu_time;
+	float b_menu_value;
 	integer route_failed;
-	integer dyn_flags, dyn_plat;
+	integer dyn_flags;
+	integer dyn_plat;
 	float dyn_time;
-	Waypoint temp_way, last_way, current_way;
+	Waypoint temp_way;
+	Waypoint last_way;
+	Waypoint current_way;
 	Target [4] targets;
 	entity avoid;
 	vector obs_dir;
@@ -102,7 +104,8 @@ typedef struct bot_data_t bot_data_t;
 	vector dyn_dest;
 	vector punchangle;
 
-	float teleport_time, portal_time;
+	float teleport_time;
+	float portal_time;
 }
 - (id) init;
 - (id) initWithEntity: (entity) e named:(bot_data_t [])name skill:(integer)skill;

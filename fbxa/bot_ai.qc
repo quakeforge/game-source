@@ -342,7 +342,7 @@ based b_aiflags.
 			b_aiflags &= ~AI_SUPER_JUMP;
 			if ([self canRJ]) {
 				[self jump];
-				v_angle.x = b_angle.x = 80;
+				ent.v_angle_x = b_angle.x = 80;
 				buttons |= 1;
 			} else
 				[self lost: targets[0] :FALSE];
@@ -694,32 +694,32 @@ generally making the bot look good.
 	// so let the bot use instant turn around when not hunting a player
 	if (b_skill == 3) {
 		keys &= ~KEY_LOOK;
-		v_angle = b_angle;
-		while (v_angle.x < -180)
-			v_angle.x += 360;
-		while (v_angle.x > 180)
-			v_angle.x -= 360;
+		ent.v_angle = b_angle;
+		while (ent.v_angle.x < -180)
+			ent.v_angle.x += 360;
+		while (ent.v_angle.x > 180)
+			ent.v_angle.x -= 360;
 	} else if ((ent.enemy == NIL || ent.enemy.movetype == MOVETYPE_PUSH)
 			   && targets[0].ent.classname != "player") {
 		keys &= ~KEY_LOOK;
-		v_angle = b_angle;
-		while (v_angle.x < -180)
-			v_angle.x += 360;
-		while (v_angle.x > 180)
-			v_angle.x -= 360;
+		ent.v_angle = b_angle;
+		while (ent.v_angle.x < -180)
+			ent.v_angle.x += 360;
+		while (ent.v_angle.x > 180)
+			ent.v_angle.x -= 360;
 	} else if (b_skill < 2) {
 		// skill 2 handled in bot_phys
 		if (b_angle.x > 180)
 			b_angle.x -= 360;
 		keys &= ~KEY_LOOK;
 
-		if (angcomp (b_angle.y, v_angle.y) > 10)
+		if (angcomp (b_angle.y, ent.v_angle.y) > 10)
 			keys |= KEY_LOOKLEFT;
-		else if (angcomp(b_angle.y, v_angle.y) < -10)
+		else if (angcomp(b_angle.y, ent.v_angle.y) < -10)
 			keys |= KEY_LOOKRIGHT;
-		if (angcomp(b_angle.x, v_angle.x) < -10)
+		if (angcomp(b_angle.x, ent.v_angle.x) < -10)
 			keys |= KEY_LOOKUP;
-		else if (angcomp (b_angle.x, v_angle.x) > 10)
+		else if (angcomp (b_angle.x, ent.v_angle.x) > 10)
 			keys |= KEY_LOOKDOWN;
 	}
 }

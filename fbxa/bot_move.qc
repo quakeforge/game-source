@@ -359,7 +359,7 @@ blah
 	local float g;
 
 	if (targets[0] == NIL) {
-		makevectors(v_angle);
+		makevectors(ent.v_angle);
 		[self walkmove: v_forward];
 		return;
 	}
@@ -377,10 +377,10 @@ blah
 	[self recognizePlat: TRUE];
 
 	if (b_aiflags & AI_PRECISION) {
-		g = angcomp (v_angle.x, b_angle.x);
+		g = angcomp (ent.v_angle_x, b_angle.x);
 		if (fabs (g) > 10)
 			keys &= ~KEY_MOVE;
-		g = angcomp (v_angle.y, b_angle.y);
+		g = angcomp (ent.v_angle_y, b_angle.y);
 		if (fabs(g) > 10)
 			keys &= ~KEY_MOVE;
 	}
@@ -448,6 +448,6 @@ own waypoints.
 			}
 		}
 	}
-	b_angle.y = v_angle.y + 10;
+	b_angle.y = ent.v_angle_y + 10;
 }
 @end
