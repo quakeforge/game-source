@@ -161,7 +161,7 @@ Bot has lost its target.
 		b_aiflags = 0;
 	} else {
 		if (targ.ent.classname == "item_artifact_invisibility")
-			if (ent.items & 524288)		// IT_INVISIBILITY
+			if (ent.items & IT_INVISIBILITY)
 				[self start_topic:3];
                 
                 if (targ.ent.flags & FL_ITEM) {
@@ -539,22 +539,22 @@ the bot finds things it wants to kill/grab.
 					thisp = thisp + 25;
 			}
 		} else if (thing.classname == "weapon_supershotgun") {
-			if (!(ent.items & 2)) // IT_SUPER_SHOTGUN  
+			if (!(ent.items & IT_SUPER_SHOTGUN))
 				thisp = 25;
 		} else if (thing.classname == "weapon_nailgun") {
-			if (!(ent.items & 4)) // IT_NAILGUN 
+			if (!(ent.items & IT_NAILGUN))
 				thisp = 30;
 		} else if (thing.classname == "weapon_supernailgun") {
-			if (!(ent.items & 8)) // IT_SUPER_NAILGUN
+			if (!(ent.items & IT_SUPER_NAILGUN))
 				thisp = 35;
 		} else if (thing.classname == "weapon_grenadelauncher") {
-			if (!(ent.items & 16)) // IT_GRENADE_LAUNCHER
+			if (!(ent.items & IT_GRENADE_LAUNCHER))
 				thisp = 45;
 		} else if (thing.classname == "weapon_rocketlauncher") {
-			if (!(ent.items & 32)) // IT_ROCKET_LAUNCHER
+			if (!(ent.items & IT_ROCKET_LAUNCHER))
 				thisp = 60;
 		} else if (thing.classname == "weapon_lightning") {
-			if (!(ent.items & 64)) // IT_LIGHTNING
+			if (!(ent.items & IT_LIGHTNING))
 				thisp = 50;
 		}
 	} else if ((thing.flags & FL_MONSTER) && thing.health > 0)
@@ -653,7 +653,7 @@ generally making the bot look good.
 	local vector view;
 	
 	if (ent.enemy) {
-		if (ent.enemy.items & 524288)
+		if (ent.enemy.items & IT_INVISIBILITY)
 			if (random () > 0.2)
 				return;
 		if (missile_speed == 0)

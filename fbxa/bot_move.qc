@@ -61,15 +61,15 @@ this notice in its entirety.
 		return FALSE;
 
 	// quad = bad
-	if (ent.items & 4194304)
+	if (ent.items & IT_QUAD)
 		return FALSE;
 
 	// do I have rockets & RL?
-	if (!((ent.items & 32) && (ent.ammo_rockets > 0)))
+	if (!((ent.items & IT_ROCKET_LAUNCHER) && (ent.ammo_rockets > 0)))
 		return FALSE;
 
 	// do I have pent?
-	if (ent.items & 1048576)
+	if (ent.items & IT_INVULNERABILITY)
 		return TRUE;
 
 	if (ent.health > 50)

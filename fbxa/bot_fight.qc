@@ -53,21 +53,21 @@ vector (float wep)
 weapon_range =
 {
 	switch (wep) {
-	case 4096:	// IT_AXE
+	case IT_AXE:
 		return '48 0 64';
-	case 1:		// IT_SHOTGUN
+	case IT_SHOTGUN:
 		return '128 0 99999';
-	case 2:		// IT_SUPER_SHOTGUN
+	case IT_SUPER_SHOTGUN:
 		return '128 0 99999';
-	case 4:		// IT_NAILGUN
+	case IT_NAILGUN:
 		return '180 0 3000';
-	case 8:		// IT_SUPER_NAILGUN
+	case IT_SUPER_NAILGUN:
 		return '180 0 3000';
-	case 16:	// IT_GRENADE_LAUNCHER
+	case IT_GRENADE_LAUNCHER:
 		return '180 48 3000';
-	case 32:	// IT_ROCKET_LAUNCHER
+	case IT_ROCKET_LAUNCHER:
 		return '180 48 3000';
-	case 64:	// IT_LIGHTNING
+	case IT_LIGHTNING:
 		return '350 0 512';
 	default:
 		break;
@@ -81,39 +81,39 @@ weapon_range =
 
 	sz = e.health + e.armorvalue * e.armortype;
 	switch (e.weapon) {
-	case 4096:
+	case IT_AXE:
 		sz -= 50;
 		break;
-	case 64:
+	case IT_LIGHTNING:
 		sz += 60;
 		break;
-	case 32:
+	case IT_ROCKET_LAUNCHER:
 		sz += 60;
 		break;
-	case 16:
+	case IT_GRENADE_LAUNCHER:
 		sz += 50;
 		break;
-	case 8:
+	case IT_SUPER_NAILGUN:
 		sz += 50;
 		break;
-	case 4:
+	case IT_NAILGUN:
 		sz += 40;
 		break;
-	case 2:
+	case IT_SUPER_SHOTGUN:
 		sz += 40;
 		break;
-	case 1:
+	case IT_SHOTGUN:
 		sz += 10;
 		break;
 	default:
 		break;
 	}
 
-	if (e.items & 4194304) // Quad
+	if (e.items & IT_QUAD)
 		sz += 200;
-	if (e.items & 1048576) // Invul
+	if (e.items & IT_INVULNERABILITY)
 		sz += 300;
-	if (e.items & 524288) // Invis
+	if (e.items & IT_INVISIBILITY)
 		sz += 250;
 	return sz;
 }

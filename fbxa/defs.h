@@ -279,33 +279,33 @@
 @extern float   DAMAGE_AIM;
 
 // items
-@extern float   IT_AXE;
-@extern float   IT_SHOTGUN;
-@extern float   IT_SUPER_SHOTGUN;
-@extern float   IT_NAILGUN;
-@extern float   IT_SUPER_NAILGUN;
-@extern float   IT_GRENADE_LAUNCHER;
-@extern float   IT_ROCKET_LAUNCHER;
-@extern float   IT_LIGHTNING;
-@extern float   IT_EXTRA_WEAPON;
+#define IT_AXE				0x001000
+#define IT_SHOTGUN			0x000001
+#define IT_SUPER_SHOTGUN	0x000002
+#define IT_NAILGUN			0x000004
+#define IT_SUPER_NAILGUN	0x000008
+#define IT_GRENADE_LAUNCHER	0x000010
+#define IT_ROCKET_LAUNCHER	0x000020
+#define IT_LIGHTNING		0x000040
+#define IT_EXTRA_WEAPON		0x000080
 
-@extern float   IT_SHELLS;
-@extern float   IT_NAILS;
-@extern float   IT_ROCKETS;
-@extern float   IT_CELLS;
+#define IT_SHELLS			0x000100
+#define IT_NAILS			0x000200
+#define IT_ROCKETS			0x000400
+#define IT_CELLS			0x000800
 
-@extern float   IT_ARMOR1;
-@extern float   IT_ARMOR2;
-@extern float   IT_ARMOR3;
-@extern float   IT_SUPERHEALTH;
+#define IT_ARMOR1			0x002000
+#define IT_ARMOR2			0x004000
+#define IT_ARMOR3			0x008000
+#define IT_SUPERHEALTH		0x010000
 
-@extern float   IT_KEY1;
-@extern float   IT_KEY2;
+#define IT_KEY1				0x020000
+#define IT_KEY2				0x040000
 
-@extern float   IT_INVISIBILITY;
-@extern float   IT_INVULNERABILITY;
-@extern float   IT_SUIT;
-@extern float   IT_QUAD;
+#define IT_INVISIBILITY		0x080000
+#define IT_INVULNERABILITY	0x100000
+#define IT_SUIT				0x200000
+#define IT_QUAD				0x400000
 
 // point content values
 
