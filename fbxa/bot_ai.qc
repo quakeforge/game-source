@@ -151,7 +151,7 @@ Bot has lost its target.
 
 	[self targetDrop:targ];
 	if ([targ isKindOfClass:[Waypoint class]])
-		((Waypoint)targ).b_sound &= ~b_clientflag;
+		[(Waypoint)targ clearRouteForBot:self];
 
 	// find a new route
 	if (!success) {
