@@ -2,6 +2,12 @@
 
 @interface Bot: Entity
 {
+	//model modelindex
+	//frame angles colormap effects
+	//owner
+
+	//movetype solid touch <size> watertype flags think nextthink 
+
 	integer keys, oldkeys;
 	integer buttons, impulse;
 	vector v_angle, b_angle;
