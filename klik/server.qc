@@ -15,6 +15,8 @@
 
 #include "delays.qh"
 
+#include "mapents.qh"
+
 #define	SV_FRAMES_BEFORE_SPAWN	3
 
 void() main = {

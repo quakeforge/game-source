@@ -1,0 +1,10 @@
+#ifndef IMPLEMENT_MAPENTS
+@extern {
+#endif
+
+entity intermission_head;
+entity spawn_head;
+
+#ifndef IMPLEMENT_MAPENTS
+};
+#endif

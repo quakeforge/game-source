@@ -1,3 +1,6 @@
+#ifndef SYSTEM_qh
+#include "sys_defs.qc"
+#endif
 
 void() NOTHING_function = {};
 

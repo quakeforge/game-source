@@ -2,7 +2,7 @@
 #define QW_SYSTEM_qh 1
 
 @extern {
-#include "qw/system.qc"
+#include "qw/sys_defs.qc"
 };
 
 #endif

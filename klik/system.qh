@@ -1,6 +1,8 @@
 #ifndef SYSTEM_qh
 #define SYSTEM_qh 1
 
+#include "sys_defs.qh"
+
 @extern {
 #include "system.qc"
 };
