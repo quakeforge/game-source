@@ -6,7 +6,6 @@
 ***********************************************/
 
 /*
-
 This program is in the Public Domain. My crack legal
 team would like to add:
 
@@ -39,7 +38,6 @@ with applicable reexport restrictions.
 
 Any reproduction of this software must contain
 this notice in its entirety. 
-
 */
 
 #include "libfrikbot.h"
@@ -63,9 +61,9 @@ float MENU_WAYLIST	= 7;
 // 14 = Teleport to way
 // 15 = confirmation of delete point
 
-void() BSPDumpWaypoints;
-void() QCDumpWaypoints;
-void() DumpWaypoints;
+void () BSPDumpWaypoints;
+void () QCDumpWaypoints;
+void () DumpWaypoints;
 /*
 // source for the menu strings...
 
@@ -157,58 +155,68 @@ void() DumpWaypoints;
 [8] [#] QC output        \n
 [9] [#] BSP ents output  \n
 [0] Main Menu            \n
-
 */
 
-void() bot_menu_display =
+void ()
+bot_menu_display =
 {
-// build options
+	// build options
 	local string s1, s2, s3, s4, s5, s6, s7, h;
 	local entity t;
 
-// check impulses
+	// check impulses
 	if (self.impulse > 0 && self.impulse < 11 && self.b_menu) {
 		if (self.b_menu == MENU_MAIN) {
-			if (self.impulse == 1) {
+			switch (self.impulse) {
+			case 1:
 				self.b_menu = MENU_WAYPOINTS;
 				self.b_menu_time = time;
+				break;
 			} else if (self.impulse == 2) {
 				self.b_menu = MENU_LINKS;
 				self.b_menu_time = time;
+				break;
 			} else if (self.impulse == 3) {
 				self.b_menu = MENU_FLAGS;
 				self.b_menu_time = time;
+				break;
 			} else if (self.impulse == 4) {
 				self.b_menu = MENU_BOTS;
 				self.b_menu_time = time;
+				break;
 			} else if (self.impulse == 5) {
 				self.b_menu = MENU_WAYLIST;
 				self.b_menu_time = time;
+				break;
 			} else if (self.impulse == 6) {
 				if (self.movetype == MOVETYPE_NOCLIP)
 					self.movetype = MOVETYPE_WALK;
 				else
 					self.movetype = MOVETYPE_NOCLIP;
 				self.b_menu_time = time;
-
+				break;
 			} else if (self.impulse == 7) {
 				if (self.flags & FL_GODMODE)
-					self.flags = self.flags - FL_GODMODE;
+					self.flags &= ~FL_GODMODE;
 				else
-					self.flags = self.flags | FL_GODMODE;
+					self.flags |= FL_GODMODE;
 				self.b_menu_time = time;
-
-			} else if (self.impulse == 8) {
+				break;
+			case 8:
 				if (self.b_aiflags & AI_HOLD_SELECT)
-					self.b_aiflags = self.b_aiflags - AI_HOLD_SELECT;
+					self.b_aiflags &= ~AI_HOLD_SELECT;
 				else
-					self.b_aiflags = self.b_aiflags | AI_HOLD_SELECT;
+					self.b_aiflags |= AI_HOLD_SELECT;
 				self.b_menu_time = time;
-			} else if (self.impulse == 9) {
+				break;
+			case 9:
 				self.b_menu = 14;
 				self.b_menu_time = time;
-			} else if (self.impulse == 10)
-				bot_way_edit();
+				break;
+			case 10:
+				bot_way_edit ();
+				break;
+			}
 		} else if (self.b_menu == MENU_WAYPOINTS) {
 			if (self.impulse == 1) {
 				if (self.current_way)
@@ -219,75 +227,82 @@ void() bot_menu_display =
 					self.b_menu_time = time;
 					self.last_way = self.current_way;
 				}
-			} else if (self.impulse == 3) {
-				make_waypoint(self.origin + self.view_ofs);
-			} else if (self.impulse == 4) {
-				t = make_waypoint(self.origin + self.view_ofs);
-				if (!LinkWays(self.current_way, t))
-					sprint(self, "Unable to link them\n");
-			} else if (self.impulse == 5) {
-				t = make_waypoint(self.origin + self.view_ofs);
-				if (!LinkWays(self.current_way, t))
-					sprint(self, "Unable to link old to new\n");
-				LinkWays(t, self.current_way);
-			} else if (self.impulse == 6) {
-				t = make_waypoint(self.origin + self.view_ofs);
-				if (!TeleLinkWays(self.current_way, t))
-					sprint(self, "Unable to link them\n");
-			} else if (self.impulse == 7) {
+			case 3:
+				make_waypoint (self.origin + self.view_ofs);
+				break;
+			case 4:
+				t = make_waypoint (self.origin + self.view_ofs);
+				if (!LinkWays (self.current_way, t))
+					sprint (self, "Unable to link them\n");
+				break;
+			case 5:
+				t = make_waypoint (self.origin + self.view_ofs);
+				if (!LinkWays (self.current_way, t))
+					sprint (self, "Unable to link old to new\n");
+				LinkWays (t, self.current_way);
+				break;
+			case 6:
+				t = make_waypoint (self.origin + self.view_ofs);
+				if (!TeleLinkWays (self.current_way, t))
+					sprint (self, "Unable to link them\n");
+				break;
+			case 7:
 				if (self.current_way) {
-					sprint(self, "\nwaypoint info for waypoint #");
-					h = ftos(self.current_way.count);
-					sprint(self, h);
-					sprint(self, "\nAI Flag value: ");
-					h = ftos(self.current_way.b_aiflags);
-					sprint(self, h);
+					sprint (self, "\nwaypoint info for waypoint #");
+					h = ftos (self.current_way.count);
+					sprint (self, h);
+					sprint (self, "\nAI Flag value: ");
+					h = ftos (self.current_way.b_aiflags);
+					sprint (self, h);
 
 					if (self.current_way.target1) {
-						h = ftos(self.current_way.target1.count);
+						h = ftos (self.current_way.target1.count);
 						if (self.current_way.b_aiflags & AI_TELELINK_1)
-							sprint(self, "\nTelelink1 to:");
+							sprint (self, "\nTelelink1 to:");
 						else
-							sprint(self, "\nLink1 to:");
-						sprint(self, h);
+							sprint (self, "\nLink1 to:");
+						sprint (self, h);
 					}
 					if (self.current_way.target2) {
-						h = ftos(self.current_way.target2.count);
+						h = ftos (self.current_way.target2.count);
 						if (self.current_way.b_aiflags & AI_TELELINK_2)
-							sprint(self, "\nTelelink2 to:");
+							sprint (self, "\nTelelink2 to:");
 						else
-							sprint(self, "\nLink2 to:");
-						sprint(self, h);
+							sprint (self, "\nLink2 to:");
+						sprint (self, h);
 					}
 					if (self.current_way.target3) {
-						h = ftos(self.current_way.target3.count);
+						h = ftos (self.current_way.target3.count);
 						if (self.current_way.b_aiflags & AI_TELELINK_3)
-							sprint(self, "\nTelelink3 to:");
+							sprint (self, "\nTelelink3 to:");
 						else
-							sprint(self, "\nLink3 to:");
-						sprint(self, h);
+							sprint (self, "\nLink3 to:");
+						sprint (self, h);
 					}
 					if (self.current_way.target4) {
-						h = ftos(self.current_way.target4.count);
+						h = ftos (self.current_way.target4.count);
 						if (self.current_way.b_aiflags & AI_TELELINK_4)
-							sprint(self, "\nTelelink4 to:");
+							sprint (self, "\nTelelink4 to:");
 						else
-							sprint(self, "\nLink4 to:");
-						sprint(self, h);
+							sprint (self, "\nLink4 to:");
+						sprint (self, h);
 					}
-					sprint(self, "\n\n");
+					sprint (self, "\n\n");
 				}
-
-			}
-			if (self.impulse == 8) {
+				break;
+			case 8:
 				self.b_menu = MENU_LINKS;
 				self.b_menu_time = time;
-			} else if (self.impulse == 9) {
+				break;
+			case 9:
 				self.b_menu = MENU_FLAGS;
 				self.b_menu_time = time;
-			} else if (self.impulse == 10) {
+				break;
+			case 10:
 				self.b_menu = MENU_MAIN;
 				self.b_menu_time = time;
+			default:
+				break;
 			}
 		} else if (self.b_menu == MENU_LINKS) {
 			if (self.impulse == 1) {
@@ -762,19 +777,20 @@ void() bot_menu_display =
 	}
 };
 
-
 // engage menu
-void() bot_way_edit =
+void ()
+bot_way_edit =
 {
 	local entity t;
 	local float f;
+
 	if (self.b_menu_value) {
 		if (self.b_menu == 14) {
-			t = WaypointForNum(self.b_menu_value);
+			t = WaypointForNum (self.b_menu_value);
 			if (t)
-				setorigin(self, t.origin - self.view_ofs);
+				setorigin (self, t.origin - self.view_ofs);
 			else
-				sprint(self, "No waypoint with that number\n");
+				sprint (self, "No waypoint with that number\n");
 
 			self.b_menu = MENU_MAIN;
 			self.b_menu_time = time;
@@ -786,39 +802,39 @@ void() bot_way_edit =
 		self.b_menu = MENU_MAIN;
 		waypoint_mode = WM_EDITOR;
 		self.b_menu_time = 0;
-		cvar_set("saved2", "0");
-		WriteByte(MSG_ALL, 8);
-		WriteByte(MSG_ALL, 1);
-		WriteString(MSG_ALL, "MAKE SURE THE FOLLOWING LINE CONTAINS -CONDEBUG BEFORE PROCEEDING\n");
-		localcmd("cmdline\n");
+		cvar_set ("saved2", "0");
+		WriteByte (MSG_ALL, 8);
+		WriteByte (MSG_ALL, 1);
+		WriteString (MSG_ALL, "MAKE SURE THE FOLLOWING LINE CONTAINS "
+					 "-CONDEBUG BEFORE PROCEEDING\n");
+		localcmd ("cmdline\n");
 		t = way_head;
 		while (t) {
-			setmodel(t, "progs/s_bubble.spr"); // show the waypoints
+			setmodel (t, "progs/s_bubble.spr"); // show the waypoints
 			t = t._next;
 		}
 		if (self.current_way)
-			setmodel(self.current_way, "progs/s_light.spr");
+			setmodel (self.current_way, "progs/s_light.spr");
 	} else {
-		saved2 = cvar("saved2");
+		saved2 = cvar ("saved2");
 		if (saved2 != 0) {
 			f = self.b_menu;
-			self.b_menu = floor(saved2/16);
+			self.b_menu = floor (saved2 / 16);
 			self.impulse = saved2 & 15;
-			bot_menu_display();
+			bot_menu_display ();
 			self.b_menu = f;
-			cvar_set("saved2", "0");
+			cvar_set ("saved2", "0");
 			return;
 		}
 		self.b_menu = 0;
 		waypoint_mode = WM_LOADED;
 		t = way_head;
 		while (t) {
-			setmodel(t, string_null); // hide the waypoints
+			setmodel (t, string_null); // hide the waypoints
 			t = t._next;
 		}
 	}
 };
-
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -828,14 +844,14 @@ Waypoint Saving to file.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
-
 // bytecount is really iffy
 // since there is no true way to determine the length of an ftos
 // it uses an approximate of 5
 // various other things are guesses, but I don't cut it at the absolute
 // max so it should be okay
 
-void() PrintWaypoint =
+void ()
+PrintWaypoint =
 {
 	local entity t;
 	local float needcolon;
@@ -846,136 +862,138 @@ void() PrintWaypoint =
 	else
 		t = self.enemy._next;
 	if (bytecounter >= 8000) {
-		bprint("exec maps/");
-		bprint(mapname);
-		bprint(".wa");
-		h = ftos(filecount);
-		bprint(h);
-		filecount = filecount + 1;
-		bprint("\n// **** break here **** \n");
+		bprint ("exec maps/");
+		bprint (mapname);
+		bprint (".wa");
+		h = ftos (filecount);
+		bprint (h);
+		filecount++;
+		bprint ("\n// **** break here **** \n");
 		bytecounter = 26;
 	}
 	if (t == NIL) {
-		remove(self);
+		remove (self);
 		fixer = NIL;
 		bprint("saved4 3\n// end waypoint dump\n");
-		bytecounter = bytecounter + 27;
+		bytecounter += 27;
 		return;
 	}
 	if ((t.origin_x != saved1) || (t.count == 1)) {
-		bprint("saved1 ");
-		h = ftos(t.origin_x);
-		bprint(h);
+		bprint ("saved1 ");
+		h = ftos (t.origin_x);
+		bprint (h);
 		saved1 = t.origin_x;
-		bytecounter = bytecounter + 12;
+		bytecounter += 12;
 		needcolon = TRUE;
 	}
 	if ((t.origin_y != saved2) || (t.count == 1)) {
 		if (needcolon) {
-			bprint("; ");
-			bytecounter = bytecounter + 2;
+			bprint ("; ");
+			bytecounter += 2;
 		} else
 			needcolon = TRUE;
-		bprint("saved2 ");
-		h = ftos(t.origin_y);
-		bprint(h);
-		bytecounter = bytecounter + 12;
+		bprint ("saved2 ");
+		h = ftos (t.origin_y);
+		bprint (h);
+		bytecounter += 12;
 		saved2 = t.origin_y;
 	}
 	if ((t.origin_z != saved3) || (t.count == 1)) {
 		if (needcolon) {
-			bprint("; ");
-			bytecounter = bytecounter + 2;
+			bprint ("; ");
+			bytecounter += 2;
 		} else
 			needcolon = TRUE;
-		bprint("saved3 ");
-		h = ftos(t.origin_z);
-		bprint(h);
-		bytecounter = bytecounter + 12;
+		bprint ("saved3 ");
+		h = ftos (t.origin_z);
+		bprint (h);
+		bytecounter += 12;
 		saved3 = t.origin_z;
 	}
-	bytecounter = bytecounter + 1;
-	bprint("\n");
+	bytecounter++;
+	bprint ("\n");
 	needcolon = FALSE;
 	if ((scratch1 != t.target1.count) || t.count == 1) {
 		needcolon = TRUE;
-		bprint("scratch1 ");
-		bytecounter = bytecounter + 14;
-		h = ftos(t.target1.count);
-		bprint(h);
+		bprint ("scratch1 ");
+		bytecounter += 14;
+		h = ftos (t.target1.count);
+		bprint (h);
 		scratch1 = t.target1.count;
 	}
 	if ((scratch2 != t.target2.count) || t.count == 1) {
 		if (needcolon) {
-			bprint("; ");
-			bytecounter = bytecounter + 2;
+			bprint ("; ");
+			bytecounter += 2;
 		} else
 			needcolon = TRUE;
-		bprint("scratch2 ");
-		bytecounter = bytecounter + 14;
-		h = ftos(t.target2.count);
-		bprint(h);
+		bprint ("scratch2 ");
+		bytecounter += 14;
+		h = ftos (t.target2.count);
+		bprint (h);
 		scratch2 = t.target2.count;
 	}
 	if ((scratch3 != t.target3.count) || t.count == 1) {
 		if (needcolon) {
-			bprint("; ");
-			bytecounter = bytecounter + 2;
+			bprint ("; ");
+			bytecounter += 2;
 		} else
 			needcolon = TRUE;
-		bprint("scratch3 ");
-		bytecounter = bytecounter + 14;
-		h = ftos(t.target3.count);
-		bprint(h);
+		bprint ("scratch3 ");
+		bytecounter += 14;
+		h = ftos (t.target3.count);
+		bprint (h);
 		scratch3 = t.target3.count;
 	}
 	if ((scratch4 != t.target4.count) || t.count == 1) {
 		if (needcolon) {
-			bprint("; ");
+			bprint ("; ");
 			bytecounter = bytecounter + 2;
 		} else
 			needcolon = TRUE;
-		bprint("scratch4 ");
+		bprint ("scratch4 ");
 		bytecounter = bytecounter + 14;
-		h = ftos(t.target4.count);
-		bprint(h);
+		h = ftos (t.target4.count);
+		bprint (h);
 		scratch4 = t.target4.count;
 	}
-	bprint("\nsaved4 ");
-	bytecounter = bytecounter + 19;
+	bprint ("\nsaved4 ");
+	bytecounter += 19;
 	if (t.count != 1)
-		h = ftos(t.b_aiflags * 4 + 2);
+		h = ftos (t.b_aiflags * 4 + 2);
 	else 
-		h = ftos(t.b_aiflags * 4 + 1);
-	bprint(h);
+		h = ftos (t.b_aiflags * 4 + 1);
+	bprint (h);
 	bprint ("; wait\n");
 	self.nextthink = time + 0.01;
 	self.enemy = t;
 };
 
 // to allow for 100+ waypoints, we need to trick the runaway loop counter
-void() DumpWaypoints =
+void ()
+DumpWaypoints =
 {
 	bytecounter = 50; 
 	filecount = 1;
 
-	bprint("// ");
-	bprint(world.message);
-	bprint("- maps/");
-	bprint(mapname);
-	bprint(".way\n");
-	bprint("// Ways by ");
-	bprint(self.netname);
-	bprint("\n");
+	bprint ("// ");
+	bprint (world.message);
+	bprint ("- maps/");
+	bprint (mapname);
+	bprint (".way\n");
+	bprint ("// Ways by ");
+	bprint (self.netname);
+	bprint ("\n");
 	if (!fixer) {
-		fixer = spawn();
+		fixer = spawn ();
 		fixer.nextthink = time + 0.01;
 		fixer.think = PrintWaypoint;
 		fixer.enemy = NIL;
 	}
 };
 
-void() PrintQCWaypoint =
+void ()
+PrintQCWaypoint =
 {
 	local entity t;
 	local string h;
@@ -986,58 +1004,61 @@ void() PrintQCWaypoint =
 		t = self.enemy._next;
 
 	if (t == NIL) {
-		remove(self);
+		remove (self);
 		fixer = NIL;
-		bprint("};\n\n// End dump\n");
+		bprint ("};\n\n// End dump\n");
 		return;
 	}
-	bprint("	make_way(");
-	h = vtos(t.origin);
-	bprint(h);
-	bprint(", '");
-	h = ftos(t.target1.count);
-	bprint(h);
-	bprint(" ");
-	h = ftos(t.target2.count);
-	bprint(h);
-	bprint(" ");
-	h = ftos(t.target3.count);
-	bprint(h);
-	bprint("', ");
-	h = ftos(t.target4.count);
-	bprint(h);
-	bprint(", ");
-	h = ftos(t.b_aiflags);
-	bprint(h);
-	bprint(");\n");
+	bprint ("	make_way(");
+	h = vtos (t.origin);
+	bprint (h);
+	bprint (", '");
+	h = ftos (t.target1.count);
+	bprint (h);
+	bprint (" ");
+	h = ftos (t.target2.count);
+	bprint (h);
+	bprint (" ");
+	h = ftos (t.target3.count);
+	bprint (h);
+	bprint ("', ");
+	h = ftos (t.target4.count);
+	bprint (h);
+	bprint (", ");
+	h = ftos (t.b_aiflags);
+	bprint (h);
+	bprint (");\n");
 	self.nextthink = time + 0.01;
 	self.enemy = t;
-
 };
-void() QCDumpWaypoints =
+
+void ()
+QCDumpWaypoints =
 {
-	bprint("/* QC Waypoint Dump - src/frikbot/map_");
+	bprint ("/* QC Waypoint Dump - src/frikbot/map_");
 
-	bprint(mapname);
-	bprint(".qc\nFor instructions please read the\nreadme.html that comes with FrikBot */\n\nvoid(vector org, vector bit1, float bit4, float flargs) make_way;\n");
-	bprint("// Ways by ");
-	bprint(self.netname);
-	bprint("\n\n");
+	bprint (mapname);
+	bprint (".qc\nFor instructions please read the\nreadme.html that comes "
+			"with FrikBot */\n\nvoid(vector org, vector bit1, float bit4, "
+			"float flargs) make_way;\n");
+	bprint ("// Ways by ");
+	bprint (self.netname);
+	bprint ("\n\n");
 
-	bprint("void() map_");
-	bprint(mapname);
-	bprint(" =\n{\n");
-
+	bprint ("void() map_");
+	bprint (mapname);
+	bprint (" =\n{\n");
 
 	if (!fixer) {
-		fixer = spawn();
+		fixer = spawn ();
 		fixer.nextthink = time + 0.01;
 		fixer.think = PrintQCWaypoint;
 		fixer.enemy = NIL;
 	}
 };
 
-void() PrintBSPWaypoint =
+void ()
+PrintBSPWaypoint =
 {
 	local entity t;
 	local string h;
@@ -1048,59 +1069,61 @@ void() PrintBSPWaypoint =
 		t = self.enemy._next;
 
 	if (t == NIL) {
-		bprint("\n\n// End dump\n");
-		remove(self);
+		bprint ("\n\n// End dump\n");
+		remove (self);
 		fixer = NIL;
 		return;
 	}
-	bprint("{\n\"classname\" \"waypoint\"\n\"origin\" \"");
-	h = ftos(t.origin_x);
-	bprint(h);
-	bprint(" ");
-	h = ftos(t.origin_y);
-	bprint(h);
-	bprint(" ");
-	h = ftos(t.origin_z);
-	bprint(h);
+	bprint ("{\n\"classname\" \"waypoint\"\n\"origin\" \"");
+	h = ftos (t.origin_x);
+	bprint (h);
+	bprint (" ");
+	h = ftos (t.origin_y);
+	bprint (h);
+	bprint (" ");
+	h = ftos (t.origin_z);
+	bprint (h);
 	if (t.target1.count) {
-		bprint("\"\n\"b_pants\" \"");
-		h = ftos(t.target1.count);
-		bprint(h);
+		bprint ("\"\n\"b_pants\" \"");
+		h = ftos (t.target1.count);
+		bprint (h);
 	}
 	if (t.target2.count) {
-		bprint("\"\n\"b_skill\" \"");
-		h = ftos(t.target2.count);
-		bprint(h);
+		bprint ("\"\n\"b_skill\" \"");
+		h = ftos (t.target2.count);
+		bprint (h);
 	}
 	if (t.target3.count) {
-		bprint("\"\n\"b_shirt\" \"");
-		h = ftos(t.target3.count);
-		bprint(h);
+		bprint ("\"\n\"b_shirt\" \"");
+		h = ftos (t.target3.count);
+		bprint (h);
 	}
 	if (t.target4.count) {
-		bprint("\"\n\"b_frags\" \"");
-		h = ftos(t.target4.count);
-		bprint(h);
+		bprint ("\"\n\"b_frags\" \"");
+		h = ftos (t.target4.count);
+		bprint (h);
 	}
 	if (t.b_aiflags) {
-		bprint("\"\n\"b_aiflags\" \"");
-		h = ftos(t.b_aiflags);
-		bprint(h);
+		bprint ("\"\n\"b_aiflags\" \"");
+		h = ftos (t.b_aiflags);
+		bprint (h);
 	}
-	bprint("\"\n}\n");
+	bprint ("\"\n}\n");
 	self.nextthink = time + 0.01;
 	self.enemy = t;
-
 };
-void() BSPDumpWaypoints =
-{
-	bprint("/* BSP entities Dump - maps/");
 
-	bprint(mapname);
-	bprint(".ent\nFor instructions please read the\nreadme.html that comes with FrikBot */\n\n\n");
+void ()
+BSPDumpWaypoints =
+{
+	bprint ("/* BSP entities Dump - maps/");
+
+	bprint (mapname);
+	bprint (".ent\nFor instructions please read the\nreadme.html that comes "
+			"with FrikBot */\n\n\n");
 
 	if (!fixer) {
-		fixer = spawn();
+		fixer = spawn ();
 		fixer.nextthink = time + 0.01;
 		fixer.think = PrintBSPWaypoint;
 		fixer.enemy = NIL;

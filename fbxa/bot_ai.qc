@@ -53,7 +53,6 @@ checks to see if an entity is on the bot's stack
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
 float(entity scot) target_onstack =
 {
 	if (scot == NIL)
@@ -80,20 +79,19 @@ LIFO stack, this will be the bot's new target1
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
 void(entity ent) target_add =
 {
 	if (ent == NIL)
 		return;
-	if (target_onstack(ent))
+	if (target_onstack (ent))
 		return;
+
 	self.target4 = self.target3;
 	self.target3 = self.target2;
 	self.target2 = self.target1;
 	self.target1 = ent;
 	self.search_time = time + 5;
 };
-
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -108,26 +106,29 @@ is gone too.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
 void(entity ent) target_drop =
 {
-	local float tg;
-	
-	tg = target_onstack(ent);
-	if (tg == 1) {
+	switch (target_onstack (ent)) {
+	case 1:
 		self.target1 = self.target2;
 		self.target2 = self.target3;
 		self.target3 = self.target4;
 		self.target4 = NIL;
-	} else if (tg == 2) {
+		break;
+	case 2:
 		self.target1 = self.target3;
 		self.target2 = self.target4;
 		self.target3 = self.target4 = NIL;
-	} else if (tg == 3) {
+		break;
+	case 3:
 		self.target1 = self.target4;
 		self.target2 = self.target3 = self.target4 = NIL;
-	} else if (tg == 4)
+		break;
+	case 4:
 		self.target1 = self.target2 = self.target3 = self.target4 = NIL;
+	default:
+		break;
+	}
 	self.search_time = time + 5;
 };
 
@@ -140,7 +141,6 @@ Bot has lost its target.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
 void(entity targ, float success) bot_lost =
 {
 	if (!targ)
@@ -148,18 +148,18 @@ void(entity targ, float success) bot_lost =
 
 	target_drop(targ);
 	if (targ.classname == "waypoint")
-		targ.b_sound = targ.b_sound - (targ.b_sound & ClientBitFlag(self.b_clientno));
+		targ.b_sound &= ~(ClientBitFlag (self.b_clientno));
 
 	// find a new route
 	if (!success) {
 		self.target1 = self.target2 = self.target3 = self.target4 = NIL;
-		self.last_way = FindWayPoint(self.current_way);
-		ClearMyRoute();
+		self.last_way = FindWayPoint (self.current_way);
+		ClearMyRoute ();
 		self.b_aiflags = 0;
 	} else {
 		if (targ.classname == "item_artifact_invisibility")
 			if (self.items & 524288)
-				bot_start_topic(3);
+				bot_start_topic (3);
                 
                 if (targ.flags & FL_ITEM) {
 					if (!targ.model)
@@ -168,7 +168,6 @@ void(entity targ, float success) bot_lost =
 						targ._last = self;
                 }
         }
-
 
 	if (targ.classname != "player")
 		targ.search_time = time + 5;
@@ -187,73 +186,73 @@ removed.
 void(entity targ) bot_check_lost =
 {
 	local vector dist;
-	dist = realorigin(targ) - self.origin;
+
+	dist = realorigin (targ) - self.origin;
 	dist_z = 0;
+
 	if (targ == NIL)
 		return;
 
 	// waypoints and items are lost if you get close enough to them
-
-	else if (targ.flags & FL_ITEM) {
-		if (vlen(targ.origin - self.origin) < 32)
-			bot_lost(targ, TRUE);
+	if (targ.flags & FL_ITEM) {
+		if (vlen (targ.origin - self.origin) < 32)
+			bot_lost (targ, TRUE);
 		else if (!targ.model)
-			bot_lost(targ, TRUE);
+			bot_lost (targ, TRUE);
 	} else if (targ.classname == "waypoint") {
 		if (!(self.b_aiflags & (AI_SNIPER | AI_AMBUSH))) {
 			if (self.b_aiflags & AI_RIDE_TRAIN) {
-				if (vlen(targ.origin - self.origin) < 48)
-					bot_lost(targ, TRUE);
+				if (vlen (targ.origin - self.origin) < 48)
+					bot_lost (targ, TRUE);
 			} else if (self.b_aiflags & AI_PRECISION) {
-				if (vlen(targ.origin - self.origin) < 24)
-					bot_lost(targ, TRUE);
-			} else if (vlen(targ.origin - self.origin) < 32)
-				bot_lost(targ, TRUE);
+				if (vlen (targ.origin - self.origin) < 24)
+					bot_lost (targ, TRUE);
+			} else if (vlen (targ.origin - self.origin) < 32)
+				bot_lost (targ, TRUE);
 		}
 	} else if (targ.classname == "temp_waypoint") {
-		if (vlen(targ.origin - self.origin) < 32)
-			bot_lost(targ, TRUE);
+		if (vlen (targ.origin - self.origin) < 32)
+			bot_lost (targ, TRUE);
 	} else if (targ.classname == "player") {
 		if (targ.health <= 0)
-			bot_lost(targ, TRUE);
+			bot_lost (targ, TRUE);
 		else if ((coop) || (teamplay && targ.team == self.team)) {
 			if (targ.target1.classname == "player") {
 				if (!targ.target1.ishuman)
-					bot_lost(targ, TRUE);
+					bot_lost (targ, TRUE);
 			} else if (targ.teleport_time > time) {
 				// try not to telefrag teammates
-				self.keys = self.keys & 960;
-			} else if (vlen(targ.origin - self.origin) < 128) {
-				if (vlen(targ.origin - self.origin) < 48)
-					frik_walkmove(self.origin - targ.origin);
+				self.keys &= 960;
+			} else if (vlen (targ.origin - self.origin) < 128) {
+				if (vlen (targ.origin - self.origin) < 48)
+					frik_walkmove (self.origin - targ.origin);
 				else {
-					self.keys = self.keys & 960;
-					bot_start_topic(4);
+					self.keys &= 960;
+					bot_start_topic (4);
 				}
 				self.search_time = time + 5; // never time out
 			} else if (!fisible(targ))
-				bot_lost(targ, FALSE);	
+				bot_lost (targ, FALSE);	
 		} else if (waypoint_mode > WM_LOADED) {
-			if (vlen(targ.origin - self.origin) < 128) {
-				bot_lost(targ, TRUE);	
+			if (vlen (targ.origin - self.origin) < 128) {
+				bot_lost (targ, TRUE);	
 			}
 		}
 	} else if (targ.classname == "func_button") {
 		// buttons are lost of their frame changes
 		if (targ.frame) {
-			bot_lost(targ, TRUE);
+			bot_lost (targ, TRUE);
 			if (self.enemy == targ)
 				self.enemy = NIL;
-			//if (self.target1)
-			//	bot_get_path(self.target1, TRUE);
-				
+//			if (self.target1)
+//				bot_get_path (self.target1, TRUE);
 		}
 	} else if ((targ.movetype == MOVETYPE_NONE) && (targ.solid == SOLID_TRIGGER)) {
 		// trigger_multiple style triggers are lost if their thinktime changes
 		if (targ.nextthink >= time) {
-			bot_lost(targ, TRUE);
-			//if (self.target1)
-			//	bot_get_path(self.target1, TRUE);
+			bot_lost (targ, TRUE);
+//			if (self.target1)
+//				bot_get_path (self.target1, TRUE);
 		}
 	}
 	// lose any target way above the bot's head
@@ -261,19 +260,18 @@ void(entity targ) bot_check_lost =
 	if ((targ.origin_z - self.origin_z) > 64) {
 		dist = targ.origin - self.origin;
 		dist_z = 0;
-		if (vlen(dist) < 32)
+		if (vlen (dist) < 32)
 			if (self.flags & FL_ONGROUND)
-				if(!frik_recognize_plat(FALSE))
-					bot_lost(targ, FALSE);
+				if (!frik_recognize_plat (FALSE))
+					bot_lost (targ, FALSE);
 	} else if (targ.classname == "train") {
-		if (frik_recognize_plat(FALSE))
-			bot_lost(targ, TRUE);
+		if (frik_recognize_plat (FALSE))
+			bot_lost (targ, TRUE);
 	}
 	// targets are lost if the bot's search time has expired
 	if (time > self.search_time)
-		bot_lost(targ, FALSE);
+		bot_lost (targ, FALSE);
 };
-
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -285,7 +283,6 @@ based b_aiflags.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
 void() bot_handle_ai =
 {
 	local entity newt;
@@ -297,36 +294,36 @@ void() bot_handle_ai =
 	// wait is used by the ai to stop the bot until his search time expires / or route changes
 
 	if (self.b_aiflags & AI_WAIT)
-		self.keys = self.keys & 960;
+		self.keys &= 960;
 
 	if (self.b_aiflags & AI_DOORFLAG) {
 		// was on a door when spawned
 		b_temp3 = self;
 		self = self.last_way;
 		// if there is nothing there now
-		if (!frik_recognize_plat(FALSE)) {
-			newt = FindThing("door"); // this is likely the door responsible (crossfingers)
+		if (!frik_recognize_plat (FALSE)) {
+			newt = FindThing ("door"); // this is likely the door responsible (crossfingers)
 			self = b_temp3;
 
 			if (self.b_aiflags & AI_DOOR_NO_OPEN) {
 				if (newt.nextthink)
-					self.keys = self.keys & 960; // wait until it closes
+					self.keys &= 960; // wait until it closes
 				else {
-					bot_lost(self.last_way, FALSE);
+					bot_lost (self.last_way, FALSE);
 				}
 			} else {
 				if (newt.targetname) {
-					newt = find(NIL, target, newt.targetname);
+					newt = find (NIL, target, newt.targetname);
 					if (newt.health > 0) {
 						self.enemy = newt;
-						bot_weapon_switch(1);
+						bot_weapon_switch (1);
 					} else {
-					//	target_drop(self.last_way);
-						target_add(newt);
-					//	bot_get_path(newt, TRUE);
+					//	target_drop (self.last_way);
+						target_add (newt);
+					//	bot_get_path (newt, TRUE);
 					}
 				}
-				self.b_aiflags = self.b_aiflags - AI_DOORFLAG;
+				self.b_aiflags &= ~AI_DOORFLAG;
 			}
 		} else
 			self = b_temp3;
@@ -334,21 +331,20 @@ void() bot_handle_ai =
 
 	if (self.b_aiflags & AI_JUMP) {
 		if (self.flags & FL_ONGROUND) {
-			bot_jump();
-			self.b_aiflags = self.b_aiflags - AI_JUMP;
+			bot_jump ();
+			self.b_aiflags &= ~AI_JUMP;
 		}
 	} else if (self.b_aiflags & AI_SUPER_JUMP) {
 		if (self.weapon != 32)
 			self.impulse = 7;
 		else if (self.flags & FL_ONGROUND) {
-			self.b_aiflags = self.b_aiflags - AI_SUPER_JUMP;
-			if (bot_can_rj(self)) {
-				bot_jump();
+			self.b_aiflags &= ~AI_SUPER_JUMP;
+			if (bot_can_rj (self)) {
+				bot_jump ();
 				self.v_angle_x = self.b_angle_x = 80;
 				self.button0 = TRUE;
 			} else
-				bot_lost(self.target1, FALSE);
-			
+				bot_lost (self.target1, FALSE);
 		}
 	}
 	if (self.b_aiflags & AI_SURFACE) {
@@ -356,7 +352,7 @@ void() bot_handle_ai =
 			self.keys = KEY_MOVEUP;
 			self.button2 = TRUE; // swim!
 		} else
-			self.b_aiflags = self.b_aiflags - AI_SURFACE;
+			self.b_aiflags &= ~AI_SURFACE;
 	}
 	if (self.b_aiflags & AI_RIDE_TRAIN) {
 		// simple, but effective
@@ -364,54 +360,53 @@ void() bot_handle_ai =
 		// things, not just trains (door elevators come to mind)
 		b_temp3 = self;
 		self = self.last_way;
-	
+
 		if (!frik_recognize_plat(FALSE)) {
 			// if there is nothing there now
 			self = b_temp3;
-			self.keys = self.keys & 960;
+			self.keys &= 960;
 		} else {
 			self = b_temp3;
-			if (frik_recognize_plat(FALSE)) {
-				v = realorigin(trace_ent) + trace_ent.origin - self.origin;
+			if (frik_recognize_plat (FALSE)) {
+				v = realorigin (trace_ent) + trace_ent.origin - self.origin;
 				v_z = 0;
-				if (vlen(v) < 24)
-					self.keys = self.keys & 960;
+				if (vlen (v) < 24)
+					self.keys &= 960;
 				else {
-					self.b_aiflags = self.b_aiflags | AI_PRECISION;
-					self.keys = frik_KeysForDir(v);
+					self.b_aiflags |= AI_PRECISION;
+					self.keys = frik_KeysForDir (v);
 				}
 			}
 		}
 	}
 	if (self.b_aiflags & AI_PLAT_BOTTOM) {
-		newt = FindThing("plat");
+		newt = FindThing ("plat");
 		if (newt.state != 1) {
-			v =  self.origin - realorigin(newt);
+			v =  self.origin - realorigin (newt);
 			v_z = 0;
-			if (vlen(v) > 96)
-				self.keys = self.keys & 960;
+			if (vlen (v) > 96)
+				self.keys &= 960;
 			else
-				frik_walkmove(v);
+				frik_walkmove (v);
 		} else
-			self.b_aiflags = self.b_aiflags - AI_PLAT_BOTTOM;
+			self.b_aiflags &= ~AI_PLAT_BOTTOM;
 	}
 	if (self.b_aiflags & AI_DIRECTIONAL) {
-		if ((normalize(self.last_way.origin - self.origin) * self.b_dir) > 0.4) {
-			self.b_aiflags = self.b_aiflags - AI_DIRECTIONAL;
-			bot_lost(self.target1, TRUE);
+		if ((normalize (self.last_way.origin - self.origin) * self.b_dir) > 0.4) {
+			self.b_aiflags &= ~AI_DIRECTIONAL;
+			bot_lost (self.target1, TRUE);
 		}
 	}
 	if (self.b_aiflags & AI_SNIPER) {
-		self.b_aiflags = (self.b_aiflags | AI_WAIT | AI_PRECISION) - AI_SNIPER;
+		self.b_aiflags |= AI_WAIT | AI_PRECISION | AI_SNIPER;
 		// FIXME: Add a switch to wep command
 		// FIXME: increase delay?
 	}
 	if (self.b_aiflags & AI_AMBUSH) {
-		self.b_aiflags = (self.b_aiflags | AI_WAIT) - AI_AMBUSH;
+		self.b_aiflags |= AI_WAIT | AI_AMBUSH;
 		// FIXME: Add a switch to wep command
 		// FIXME: increase delay?
 	}
-
 };
 
 /*
@@ -432,21 +427,21 @@ void() bot_path =
 
 	local entity jj, tele;
 
-	bot_check_lost(self.target1);
+	bot_check_lost (self.target1);
 	if (!self.target1) {
 		self.keys=0;
 		return;
 	}
-	if (target_onstack(self.last_way))
+	if (target_onstack (self.last_way))
 		return; // old waypoint still being hunted
 
-	jj = FindRoute(self.last_way);
+	jj = FindRoute (self.last_way);
 	if (!jj) {
 		// this is an ugly hack
 		if (self.target1.current_way != self.last_way) {
 			if (self.target1.classname != "temp_waypoint")
 				if (self.target1.classname != "player")
-					bot_lost(self.target1, FALSE);
+					bot_lost (self.target1, FALSE);
 		}
 
 		return;
@@ -458,14 +453,14 @@ void() bot_path =
 	// point types are AI flags that should be executed once reaching a waypoint
 
 	self.b_aiflags = (jj.b_aiflags & AI_READAHEAD_TYPES) | (self.last_way.b_aiflags & AI_POINT_TYPES);
-	target_add(jj);
+	target_add (jj);
 	if (self.last_way) {
-		if (CheckLinked(self.last_way, jj) == 2) {
+		if (CheckLinked (self.last_way, jj) == 2) {
 			// waypoints are telelinked
-			tele = FindThing("trigger_teleport"); // this is probbly the teleport responsible
-			target_add(tele);
+			tele = FindThing ("trigger_teleport"); // this is probbly the teleport responsible
+			target_add (tele);
 		}
-		traceline(self.last_way.origin, jj.origin, FALSE, self); // check for blockage
+		traceline (self.last_way.origin, jj.origin, FALSE, self); // check for blockage
    		if (trace_fraction != 1) {
 			if (trace_ent.classname == "door" && !(self.b_aiflags & AI_DOOR_NO_OPEN)) {
 				// a door blocks the way
@@ -474,34 +469,33 @@ void() bot_path =
 					trace_ent = trace_ent.owner;
 				if ((trace_ent.health > 0) && (self.enemy == NIL)) {
 					self.enemy = trace_ent;
-					bot_weapon_switch(1);
+					bot_weapon_switch (1);
 					self.b_aiflags = self.b_aiflags | AI_BLIND; // nick knack paddy hack
 				} else if (trace_ent.targetname) {
-					tele = find(NIL, target, trace_ent.targetname);
+					tele = find (NIL, target, trace_ent.targetname);
 					if (tele.health > 0) {
 						self.enemy = tele;
-						bot_weapon_switch(1);
+						bot_weapon_switch (1);
 					} else {
-					//	target_drop(jj);
-						target_add(tele);
-					//	bot_get_path(tele, TRUE);
-						self.b_aiflags = self.b_aiflags | AI_BLIND; // give a bot a bone	
+//						target_drop (jj);
+						target_add (tele);
+//						bot_get_path (tele, TRUE);
+						self.b_aiflags |= AI_BLIND; // give a bot a bone	
 						return;
 					}					
 				}		
 			} else if (trace_ent.classname == "func_wall") {
 				// give up
-				bot_lost(self.target1, FALSE);
+				bot_lost (self.target1, FALSE);
 				return;
 			}
 		}
 	}
 	// this is used for AI_DRIECTIONAL
-	self.b_dir = normalize(jj.origin - self.last_way.origin);
+	self.b_dir = normalize (jj.origin - self.last_way.origin);
 
 	self.last_way = jj;
 };
-
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -522,13 +516,13 @@ the bot finds things it wants to kill/grab.
 float(entity thing) priority_for_thing =
 {
 	local float thisp;
+
 	thisp = 0;
 	// This is the most executed function in the bot. Careful what you do here.
-
 	if ((thing.flags & FL_ITEM) && thing.model && thing.search_time < time) {
 		// ugly hack
-                if (thing._last != self)
-                        thisp = 20;
+		if (thing._last != self)
+			thisp = 20;
 		if (thing.classname == "item_artifact_super_damage")
 			thisp = 65;
 		else if (thing.classname == "item_artifact_invulnerability")
@@ -592,7 +586,7 @@ float(entity thing) priority_for_thing =
 		else if (thing.b_aiflags & AI_AMBUSH)
 			thisp = 30;
 	}
-	if (pointcontents(thing.origin) < -3)
+	if (pointcontents (thing.origin) < -3)
 		return 0;
 	if (thisp) {
 		if (thing.current_way) {
@@ -600,8 +594,7 @@ float(entity thing) priority_for_thing =
 			if (thing.current_way.items == -1)
 				return 0;
 			else
-				thisp = thisp + (13000 - thing.current_way.items) * 0.05; 
-
+				thisp += (13000 - thing.current_way.items) * 0.05; 
 		}
 	} 		
 	return thisp;
@@ -613,35 +606,34 @@ void(float scope) bot_look_for_crap =
 	local float thatp, bestp, dist;
 
 	if (scope == 1)
-		foe = findradius(self.origin, 13000);
+		foe = findradius (self.origin, 13000);
 	else
-		foe = findradius(self.origin, 500);
+		foe = findradius (self.origin, 500);
 
 	bestp = 1;
-	while(foe) {
-		thatp = priority_for_thing(foe);
+	while (foe) {
+		thatp = priority_for_thing (foe);
 		if (thatp)
 			if (!scope)
-				if (!sisible(foe))
+				if (!sisible (foe))
 					thatp = 0;
 		if (thatp > bestp) {
 			bestp = thatp;
 			best = foe;
-			dist = vlen(self.origin - foe.origin);
+			dist = vlen (self.origin - foe.origin);
 		}
 		foe = foe.chain;
 	}
 	if (best == NIL)
 		return;
-	if (!target_onstack(best)) {	
-		target_add(best);
+	if (!target_onstack (best)) {	
+		target_add (best);
 		if (scope) {
-			bot_get_path(best, FALSE);
-			self.b_aiflags = self.b_aiflags | AI_WAIT;
+			bot_get_path (best, FALSE);
+			self.b_aiflags |= AI_WAIT;
 		}
 	}
 };
-
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -654,7 +646,6 @@ generally making the bot look good.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
 void() bot_angle_set =
 {
 	local float h;
@@ -662,38 +653,38 @@ void() bot_angle_set =
 	
 	if (self.enemy) {
 		if (self.enemy.items & 524288)
-			if (random() > 0.2)
+			if (random () > 0.2)
 				return;
 		if (self.missile_speed == 0)
 			self.missile_speed = 10000;
 		if (self.enemy.solid == SOLID_BSP) {
 			view = (((self.enemy.absmin + self.enemy.absmax) * 0.5) - self.origin);
 		} else {
-			h = vlen(self.enemy.origin - self.origin) / self.missile_speed;
+			h = vlen (self.enemy.origin - self.origin) / self.missile_speed;
 			if (self.enemy.flags & FL_ONGROUND)
 				view = self.enemy.velocity * h;
 			else
 				view = (self.enemy.velocity - (sv_gravity * '0 0 1') * h) * h;
 			view = self.enemy.origin + view;  
 			// FIXME: ?
-			traceline(self.enemy.origin, view, FALSE, self);
+			traceline (self.enemy.origin, view, FALSE, self);
 			view = trace_endpos;
 			
 			if (self.weapon == 32) 
 				view = view - '0 0 22';
 
-			view = normalize(view - self.origin);
+			view = normalize (view - self.origin);
 		}
-		view = vectoangles(view);
+		view = vectoangles (view);
 		view_x = view_x * -1;
 		self.b_angle = view;
 	} else if (self.target1) {
-		view = realorigin(self.target1);
+		view = realorigin (self.target1);
 		if (self.target1.flags & FL_ITEM)
 			view = view + '0 0 48';
-		view = view - (self.origin + self.view_ofs);
-		view = vectoangles(view);
-		view_x = view_x * -1;
+		view -= (self.origin + self.view_ofs);
+		view = vectoangles (view);
+		view_x *= -1;
 		self.b_angle = view;
 	} else
 		self.b_angle_x = 0;
@@ -704,31 +695,30 @@ void() bot_angle_set =
 		self.keys = self.keys & 63;
 		self.v_angle = self.b_angle;
 		while (self.v_angle_x < -180)
-			self.v_angle_x = self.v_angle_x + 360;
+			self.v_angle_x += 360;
 		while (self.v_angle_x > 180)
-			self.v_angle_x = self.v_angle_x - 360;
-
+			self.v_angle_x -= 360;
 	} else if ((self.enemy == NIL || self.enemy.movetype == MOVETYPE_PUSH) && self.target1.classname != "player") {
 		self.keys = self.keys & 63;
 		self.v_angle = self.b_angle;
 		while (self.v_angle_x < -180)
-			self.v_angle_x = self.v_angle_x + 360;
+			self.v_angle_x += 360;
 		while (self.v_angle_x > 180)
-			self.v_angle_x = self.v_angle_x - 360;
+			self.v_angle_x -= 360;
 	} else if (self.b_skill < 2) {
 		// skill 2 handled in bot_phys
 		if (self.b_angle_x > 180)
-			self.b_angle_x = self.b_angle_x - 360;
+			self.b_angle_x -= 360;
 		self.keys = self.keys & 63;
 
-		if (angcomp(self.b_angle_y, self.v_angle_y) > 10)
-			self.keys = self.keys | KEY_LOOKLEFT;
+		if (angcomp (self.b_angle_y, self.v_angle_y) > 10)
+			self.keys = KEY_LOOKLEFT;
 		else if (angcomp(self.b_angle_y, self.v_angle_y) < -10)
-			self.keys = self.keys | KEY_LOOKRIGHT;
+			self.keys |= KEY_LOOKRIGHT;
 		if (angcomp(self.b_angle_x, self.v_angle_x) < -10)
-			self.keys = self.keys | KEY_LOOKUP;
-		else if (angcomp(self.b_angle_x, self.v_angle_x) > 10)
-			self.keys = self.keys | KEY_LOOKDOWN;
+			self.keys |= KEY_LOOKUP;
+		else if (angcomp (self.b_angle_x, self.v_angle_x) > 10)
+			self.keys |= KEY_LOOKDOWN;
 	}
 };
 
@@ -751,11 +741,11 @@ void() BotAI =
 	// status bars, and the mod probably already compensated for that
 
 	if (self.health < 1) { 
-		self.button0 = floor(random() * 2);
+		self.button0 = floor (random() * 2);
 		self.button2 = 0;
 		self.keys = 0;
 		self.b_aiflags = 0;
-		ClearMyRoute();
+		ClearMyRoute ();
 		self.target1 = self.target2 = self.target3 = self.target4 = self.enemy = NIL;
 		self.last_way = NIL;
 		return;
@@ -770,19 +760,17 @@ void() BotAI =
 		self.ai_time = time + 0.05;
 		if (bot_count > 0) {
 			if ((time - stagger_think) < (0.1 / bot_count))
-				self.ai_time = self.ai_time + 0.1 / (2 * bot_count);
+				self.ai_time += 0.1 / (2 * bot_count);
 		} else
 			return;
 	}
 	if (self.view_ofs == '0 0 0')
-		bot_start_topic(7);
+		bot_start_topic (7);
 	stagger_think = time;
 
 	// shut the bot's buttons off, various functions will turn them on by AI end
-
 	self.button2 = 0;
 	self.button0 = 0;
-	
 
 	// target1 is like goalentity in normal Quake monster AI.
 	// it's the bot's most immediate target
@@ -794,15 +782,15 @@ void() BotAI =
 		self.b_aiflags = 0;
 		self.keys = 0;
 	} else if (self.target1) {
-		frik_movetogoal();
-		bot_path();
+		frik_movetogoal ();
+		bot_path ();
 	} else {
 		if (waypoint_mode < WM_EDITOR) {
-			if(self.route_failed) {
+			if (self.route_failed) {
 				frik_bot_roam();
 				self.route_failed = 0;
-			} else if(!begin_route()) {	
-						bot_look_for_crap(FALSE);
+			} else if (!begin_route()) {	
+				bot_look_for_crap (FALSE);
 			}
 			self.keys = 0;
 		} else {
@@ -812,24 +800,23 @@ void() BotAI =
 	}
 
 	// bot_angle_set points the bot at it's goal (self.enemy or target1)
+	bot_angle_set ();
 
-	bot_angle_set();
-
-	// fight my enemy. Enemy is probably a field QC coders will most likely use a lot
-	// for their own needs, since it's unused on a normal player
+	// fight my enemy. Enemy is probably a field QC coders will most likely
+	// use a lot for their own needs, since it's unused on a normal player
 	// FIXME
 	if (self.enemy)
-		bot_fight_style();
-	else if (random() < 0.2)
-		if (random() < 0.2)
-			bot_weapon_switch(-1);
-	bot_dodge_stuff();
+		bot_fight_style ();
+	else if (random () < 0.2)
+		if (random () < 0.2)
+			bot_weapon_switch (-1);
+	bot_dodge_stuff ();
 
 	// checks to see if bot needs to start going up for air
 	if (self.waterlevel > 2) {
 		if (time > (self.air_finished - 2)) {
 			traceline (self.origin, self.origin + '0 0 6800', TRUE, self);
-			if (trace_inopen)	{
+			if (trace_inopen) {
 				self.keys = KEY_MOVEUP;
 				self.button2 = TRUE; // swim!
 				return; // skip ai flags for now - this is life or death
@@ -838,10 +825,8 @@ void() BotAI =
 	}
 
 	// b_aiflags handling
-
-	
 	if (self.b_aiflags)
-		bot_handle_ai(); 
+		bot_handle_ai (); 
 	else
-		bot_chat(); // don't want chat to screw him up if he's rjing or something
+		bot_chat (); // don't want chat to screw him up if he's rjing or something
 };

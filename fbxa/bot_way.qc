@@ -44,22 +44,15 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 
+// Waypoint Linking code ======================================================
 
-
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-Waypoint Linking code
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-
-float (entity e1, entity e2) CheckLinked =
+float (entity e1, entity e2)
+CheckLinked =
 {
 	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
 		return FALSE;
-	else if (e1.target1 == e2) {
+
+	if (e1.target1 == e2) {
 		if (e1.b_aiflags & AI_TELELINK_1)
 			return 2;
 		else
@@ -83,12 +76,12 @@ float (entity e1, entity e2) CheckLinked =
 		return FALSE;
 };
 
-
-float (entity e1, entity e2) LinkWays =
+float (entity e1, entity e2)
+LinkWays =
 {
 	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
 		return FALSE;
-	else if (CheckLinked(e1, e2))
+	else if (CheckLinked (e1, e2))
 		return FALSE; // already linked!!!
 
 	if (e1.target1 == NIL) {
@@ -103,42 +96,40 @@ float (entity e1, entity e2) LinkWays =
 	} else if (e1.target4 == NIL) {
 		e1.target4 = e2;
 		return TRUE;
-	}
-	else return FALSE;
-
+	} else return FALSE;
 };
-// Link Ways part 2, used only for teleporters
 
-float (entity e1, entity e2) TeleLinkWays =
+// Link Ways part 2, used only for teleporters
+float (entity e1, entity e2)
+TeleLinkWays =
 {
 	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
 		return FALSE;
-	else if (CheckLinked(e1, e2))
+	else if (CheckLinked (e1, e2))
 		return FALSE; // already linked!!!
 
 	if (e1.target1 == NIL) {
 		e1.target1 = e2;
-		e1.b_aiflags = e1.b_aiflags | AI_TELELINK_1;
+		e1.b_aiflags |= AI_TELELINK_1;
 		return TRUE;
 	} else if (e1.target2 == NIL) {
 		e1.target2 = e2;
-		e1.b_aiflags = e1.b_aiflags | AI_TELELINK_2;
+		e1.b_aiflags |= AI_TELELINK_2;
 		return TRUE;
 	} else if (e1.target3 == NIL) {
 		e1.target3 = e2;
-		e1.b_aiflags = e1.b_aiflags | AI_TELELINK_3;
+		e1.b_aiflags |= AI_TELELINK_3;
             return TRUE;
 	} else if (e1.target4 == NIL) {
 		e1.target4 = e2;
-		e1.b_aiflags = e1.b_aiflags | AI_TELELINK_4;
+		e1.b_aiflags |= AI_TELELINK_4;
 		return TRUE;
-	}
-	else
+	} else
 		return FALSE;
-
 };
 
-void (entity e1, entity e2) UnlinkWays =
+void (entity e1, entity e2)
+UnlinkWays =
 {
 	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
 		return;
@@ -146,62 +137,56 @@ void (entity e1, entity e2) UnlinkWays =
 		return;
 
 	if (e1.target1 == e2) {
-		e1.b_aiflags = e1.b_aiflags - (e1.b_aiflags & AI_TELELINK_1);
+		e1.b_aiflags &= ~AI_TELELINK_1;
 		e1.target1 = NIL;
 	}
 	if (e1.target2 == e2) {
-		e1.b_aiflags = e1.b_aiflags - (e1.b_aiflags & AI_TELELINK_2);
+		e1.b_aiflags &= ~AI_TELELINK_2;
 		e1.target2 = NIL;
 	}
 	if (e1.target3 == e2) {
-		e1.b_aiflags = e1.b_aiflags - (e1.b_aiflags & AI_TELELINK_3);
+		e1.b_aiflags &= ~AI_TELELINK_3;
 		e1.target3 = NIL;
 	}
 	if (e1.target4 == e2) {
-		e1.b_aiflags = e1.b_aiflags - (e1.b_aiflags & AI_TELELINK_4);
+		e1.b_aiflags &= ~AI_TELELINK_4;
 		e1.target4 = NIL;
 	}
-
 };
 
 /*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 FindWaypoint
 
 This is used quite a bit, by many different
 functions big lag causer
 
 Finds the closest, fisible, waypoint to e
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
-entity(entity start) FindWayPoint =
+entity (entity start)
+FindWayPoint =
 {
-	local entity t;
-	local vector org;
+	local entity best, t;
 	local float dst, tdst;
-	local entity best;
+	local vector org;
 
-	org = realorigin(self);
+	org = realorigin (self);
 
-	t = way_head; 
+	t = way_head;
 	if (start != NIL) {
-		dst = vlen(start.origin - org);
+		dst = vlen (start.origin - org);
 		best = start;
 	} else {
 		dst = 100000;
 		best = NIL;
 	}
-	while(t) {
+	while (t) {
 		// real players cut through ignore types
 		if (dst < 20)
 			return best;
 		if (!(t.b_aiflags & AI_IGNORE_TYPES) || self.ishuman) {
-			tdst = vlen(t.origin - org);
+			tdst = vlen (t.origin - org);
 			if (tdst < dst) {
-				if (sisible(t)) {
+				if (sisible (t)) {
 					dst = tdst;
 					best = t;
 				}
@@ -212,29 +197,25 @@ entity(entity start) FindWayPoint =
 	return best;
 };
 
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-Waypoint Spawning Code
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
+// Waypoint Spawning Code =====================================================
 
 entity way_foot; // Ugh. Do I need a foot for this or not?
 
-entity(vector org) make_waypoint = 
+entity (vector org)
+make_waypoint = 
 {
 	local entity point;
-	point = spawn();
+
+	point = spawn ();
 	point.classname = "waypoint";
 	point.search_time = time; // don't double back for me;
 	point.solid = SOLID_TRIGGER;
 	point.movetype = MOVETYPE_NONE;
 	point.items = -1;
-	setorigin(point, org);
+	setorigin (point, org);
 	
-	setsize(point, VEC_HULL_MIN, VEC_HULL_MAX);
-	waypoints = waypoints + 1;
+	setsize (point, VEC_HULL_MIN, VEC_HULL_MAX);
+	waypoints++;
 	if (!way_head) {
 		way_head = point;
 		way_foot = point;
@@ -246,20 +227,16 @@ entity(vector org) make_waypoint =
 
 	point.count = waypoints;
 	if (waypoint_mode > WM_LOADED) // editor modes
-		setmodel(point, "progs/s_bubble.spr"); 
+		setmodel (point, "progs/s_bubble.spr"); 
 	return point;
 };
 
 /*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 Dynamic Waypoint spawning and linking. Not
 very good all things considered.
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
-void() DynamicWaypoint =
+void ()
+DynamicWaypoint =
 {
 	local entity t;
 	local float dist, dynlink = 0, dynpoint = 0, editor = 0;
@@ -268,17 +245,16 @@ void() DynamicWaypoint =
 		if (!(self.flags & FL_WATERJUMP)) {
 			self.dyn_flags = 2;
 			if (!self.ishuman) {
-				bot_lost(self.target1, TRUE);
+				bot_lost (self.target1, TRUE);
 				self.enemy = NIL;
 			}
 		}
 		self.portal_time = self.teleport_time;
 	}
-// stacking everything on waypoint_mode might've been good for the editor,
-// but it sucks to beat hell for this code.
+	// stacking everything on waypoint_mode might've been good for the editor,
+	// but it sucks to beat hell for this code.
 
-
-// convert waypoint_mode to something more usable..
+	// convert waypoint_mode to something more usable..
 	if (waypoint_mode > WM_LOADED) {
 		if (self.ishuman) {
 			if (waypoint_mode == WM_EDITOR_DYNLINK)
@@ -290,28 +266,27 @@ void() DynamicWaypoint =
 	} else if (waypoint_mode == WM_DYNAMIC)
 		dynlink = dynpoint = 1;
 
-// if there's nothing for dynamic to do..
+	// if there's nothing for dynamic to do..
 	if (!dynpoint) {
 		if (!editor)
 			return;
 	}
-// for speed sake, I won't have bots dynamic waypoint in coop
+	// for speed sake, I won't have bots dynamic waypoint in coop
 	if (!self.ishuman)
 		if (coop)
 			return;
-
-// don't waypoint in single player
+	// don't waypoint in single player
 	if (max_clients < 2)
 		return; 
-// if you're dead
+	// if you're dead
 	else if (self.health <= 0) {
 		if (dynpoint) {
 			if (self.current_way) {
 				if (pointcontents(self.origin) < -4) {
 					if (self.current_way.b_aiflags & AI_BLIND)
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_PRECISION;
+						self.current_way.b_aiflags |= AI_PRECISION;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_BLIND;
+						self.current_way.b_aiflags |= AI_BLIND;
 				}
 			}
 		}
@@ -321,7 +296,7 @@ void() DynamicWaypoint =
 		return;
 	}
 
-// you shouldn't be making waypoints mid air
+	// you shouldn't be making waypoints mid air
 	if (dynpoint) {
 		if (!((self.flags & FL_ONGROUND) || self.waterlevel == 3)) {
 			if (self.dyn_flags != 2) {
@@ -330,42 +305,45 @@ void() DynamicWaypoint =
 			return;
 		}
 	}
-// keep from doing the rest of this every frame
+	// keep from doing the rest of this every frame
 	if (self.dyn_time > time)
 		return;
 	self.dyn_time = time + 0.2;
 
-// display the links for editor mode
+	// display the links for editor mode
 	if (editor) {
 		if (self.current_way) {
 			if (self.current_way.target1)
-				DeveloperLightning(self.current_way, self.current_way.target1, self.current_way.b_aiflags & AI_TELELINK_1);
+				DeveloperLightning (self.current_way, self.current_way.target1,
+								self.current_way.b_aiflags & AI_TELELINK_1);
 			if (self.current_way.target2)
-				DeveloperLightning(self.current_way, self.current_way.target2, self.current_way.b_aiflags & AI_TELELINK_2);
+				DeveloperLightning (self.current_way, self.current_way.target2,
+								self.current_way.b_aiflags & AI_TELELINK_2);
 			if (self.current_way.target3)
-				DeveloperLightning(self.current_way, self.current_way.target3, self.current_way.b_aiflags & AI_TELELINK_3);
+				DeveloperLightning (self.current_way, self.current_way.target3,
+								self.current_way.b_aiflags & AI_TELELINK_3);
 			if (self.current_way.target4)
-				DeveloperLightning(self.current_way, self.current_way.target4, self.current_way.b_aiflags & AI_TELELINK_4);
+				DeveloperLightning (self.current_way, self.current_way.target4,
+								self.current_way.b_aiflags & AI_TELELINK_4);
 		}
 		if (self.b_aiflags & AI_HOLD_SELECT)
 			return;
 	}
 
-	t = FindWayPoint(self.current_way);
+	t = FindWayPoint (self.current_way);
 	if (t) {
-		dist = vlen(self.origin - t.origin);
+		dist = vlen (self.origin - t.origin);
 		if (dist < 192) {
 			if (dist < 64) {
-
 				if (t != self.current_way) {
 					if (dynlink) {
 						if (!self.dyn_flags) {
-							if (wisible(t, self.current_way))
-								LinkWays(t, self.current_way);
+							if (wisible (t, self.current_way))
+								LinkWays (t, self.current_way);
 						}
 						if (self.dyn_flags == 2)
-							TeleLinkWays(self.current_way, t);
-						else if (wisible(t, self.current_way))
+							TeleLinkWays (self.current_way, t);
+						else if (wisible (t, self.current_way))
 							LinkWays(self.current_way, t);
 					}
 					if (editor) {

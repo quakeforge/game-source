@@ -1,4 +1,3 @@
-
 /*
 ======================================
 FrikBot X (Version 0.10.0) QW
@@ -36,7 +35,6 @@ with applicable reexport restrictions.
 
 Any reproduction of this software must contain
 this notice in its entirety. 
-
 
 ======================================
 These installation instructions only apply to QuakeWorld (as does this entire
@@ -77,32 +75,36 @@ ClientFixRankings(); // FrikBot
 
 #include "libfrikbot.h"
 
-void() bot_map_load =
+void ()
+bot_map_load =
 {
 	// place your qc loaded waypoints here
-
-	if (mapname == "dm1")
-		map_dm1();
-	else if (mapname == "dm2")
-		map_dm2();
-	else if (mapname == "dm3")
-		map_dm3();
-	else if (mapname == "dm4")
-		map_dm4();
-	else if (mapname == "dm5")
-		map_dm5();
-	else if (mapname == "dm6")
-		map_dm6();
+	switch (mapname) {
+	case "dm1":
+		map_dm1 ();
+		break;
+	case "dm2":
+		map_dm2 ();
+		break;
+	case "dm3":
+		map_dm3 ();
+		break;
+	case "dm4":
+		map_dm4 ();
+		break;
+	case "dm5":
+		map_dm5 ();
+		break;
+	case "dm6":
+		map_dm6 ();
 };
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 Variables and shtuff
 
 bot.qc has become pretty much a header file
 for all variable in the bot...
-
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
@@ -130,7 +132,6 @@ entity [32] phys_objects;
 .vector	movevect, b_dir;
 .vector dyn_dest;
 .vector	punchangle; // HACK - Don't want to screw with bot_phys
-
 
 // -------globals-----
 integer		max_clients;
@@ -161,8 +162,7 @@ void (entity e, integer ping) SV_SetPing = #0;
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-Function redclarations. These allow function 
+Function redeclarations. These allow function 
 designed to work for clients (sprint, so forth)
 to mainly not complain when working with a bot
 
@@ -170,26 +170,28 @@ Although these shouldn't be needed anymore,
 as the bots truly are clients now, if you don't
 stop the SZ_ buffer from filling up by disabling
 direct messages to the bots, it crashes quake :-(
-
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-void(entity e) setspawnparms =
+void (entity e)
+setspawnparms =
 {
    if (e.ishuman)
-	   frik_setspawnparms(e);
+	   frik_setspawnparms (e);
    else
-	   SetNewParms();
+	   SetNewParms ();
 };
 
-vector(entity e, float sped) aim =
+vector (entity e, float sped)
+aim =
 {
    e.missile_speed = sped;
-   return frik_aim(e, sped);
+   return frik_aim (e, sped);
 };
 
-void(entity e, float chan, string samp, float vol, float atten) sound = 
+void (entity e, float chan, string samp, float vol, float atten)
+sound = 
 {
-   frik_sound(e, chan, samp, vol, atten);
+   frik_sound (e, chan, samp, vol, atten);
    if (samp == "items/inv3.wav")
 	   return;
    else if (e.classname == "player")
@@ -200,34 +202,34 @@ void(entity e, float chan, string samp, float vol, float atten) sound =
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 Stuff mentioned up top
 it just links the bot into the mod
-
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
-void() ClientFixRankings =
+void ()
+ClientFixRankings =
 {
 	local integer cno;
 	if (self.switch_wallhug > time)
 		return;
 	self.switch_wallhug = 0;
 
-	b_temp2 = nextent(NIL);
+	b_temp2 = nextent (NIL);
 	cno = 0;
 
 	while (cno < max_clients) {
 		if (!b_temp2.ishuman) {
 			if (players[cno])
-				UpdateClient(b_temp2);
+				UpdateClient (b_temp2);
 		}
 		cno++;
-		b_temp2 = nextent(b_temp2);
+		b_temp2 = nextent (b_temp2);
 	}
 };
 		
-void() ClientInRankings =
+void ()
+ClientInRankings =
 {
 	local float cno;
 	local integer cl_no = ClientNumber (self);
@@ -248,12 +250,13 @@ void() ClientInRankings =
 	self.switch_wallhug = time + 1;
 };
 
-
-void() ClientDisconnected =
+void ()
+ClientDisconnected =
 {
 	local integer cl_no = ClientNumber (self);
 	players[cl_no] = NIL;
 };
+
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -262,39 +265,42 @@ bot easier to install
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-float () BotPreFrame =
+float ()
+BotPreFrame =
 {
 	if (self.b_clientno == -1)
 		return TRUE;
 	if (self.ishuman)
 		if (self.switch_wallhug)
-			ClientFixRankings();
+			ClientFixRankings ();
 	if (self.b_frags != self.frags) {
 		if (self.b_frags > self.frags) {
-			if (pointcontents(self.origin) == CONTENT_LAVA)
-				bot_start_topic(10);
+			if (pointcontents (self.origin) == CONTENT_LAVA)
+				bot_start_topic (10);
 			else
-				bot_start_topic(9);
+				bot_start_topic (9);
 		} else
-			bot_start_topic(2);
+			bot_start_topic (2);
 		self.b_frags = self.frags;
 		if (!self.ishuman) {
-			WriteByte(2, 14);
-			WriteByte(2, (float)self.b_clientno);
-			WriteShort(2, self.frags);
+			WriteByte (2, 14);
+			WriteByte (2, (float)self.b_clientno);
+			WriteShort (2, self.frags);
 		}
 	}
 	DynamicWaypoint();
 	return FALSE;
 };
-float () BotPostFrame =
+float ()
+BotPostFrame =
 {
 	if (self.b_clientno == -1)
 		return TRUE;
 	if (self.ishuman)
-		BotImpulses();
+		BotImpulses ();
 	return FALSE;
 };
+
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -304,87 +310,87 @@ The rest of this code is in bot_rank.qc
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-void(string h) BotSay = // simulate talking by composing a 'chat' message
+void (string h)
+BotSay = // simulate talking by composing a 'chat' message
 {
-	WriteByte(MSG_ALL, 8);
-	WriteByte(MSG_ALL, 3);
-	WriteByte(MSG_ALL, 1);
-	WriteString(MSG_ALL, self.netname);
-	WriteByte(MSG_ALL, 8);
-	WriteByte(MSG_ALL, 3);
-	WriteByte(MSG_ALL, 2);
-	WriteString(MSG_ALL, h);
+	WriteByte (MSG_ALL, 8);
+	WriteByte (MSG_ALL, 3);
+	WriteByte (MSG_ALL, 1);
+	WriteString (MSG_ALL, self.netname);
+	WriteByte (MSG_ALL, 8);
+	WriteByte (MSG_ALL, 3);
+	WriteByte (MSG_ALL, 2);
+	WriteString (MSG_ALL, h);
 };
-void() BotSayInit =
+
+void ()
+BotSayInit =
 {
-	WriteByte(MSG_ALL, 8);
-	WriteByte(MSG_ALL, 3);
-	WriteByte(MSG_ALL, 1);
-	WriteString(MSG_ALL, self.netname);
+	WriteByte (MSG_ALL, 8);
+	WriteByte (MSG_ALL, 3);
+	WriteByte (MSG_ALL, 1);
+	WriteString (MSG_ALL, self.netname);
 };
-void(string h) BotSay2 =
+void (string h)
+BotSay2 =
 {
-	WriteByte(MSG_ALL, 8);
-	WriteByte(MSG_ALL, 3);
-	WriteByte(MSG_ALL, 2);
-	WriteString(MSG_ALL, h);
+	WriteByte (MSG_ALL, 8);
+	WriteByte (MSG_ALL, 3);
+	WriteByte (MSG_ALL, 2);
+	WriteString (MSG_ALL, h);
 };
-void(string h) BotSayTeam = 
+void (string h)
+BotSayTeam = 
 {
 	// FBX QW doesn't support teamplay...yet
 };
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-BotInit
+// BotInit ====================================================================
 
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-
-void() BotInit =
+void ()
+BotInit =
 {
 	local entity ent;
 	local integer numents = 0;
 	
 	// spawn entities for the physics
-	ent = nextent(NIL);
+	ent = nextent (NIL);
 	max_clients = 0;
 
-	while(ent != NIL) {
-		max_clients = max_clients + 1;
-		ent = nextent(ent);
+	while (ent != NIL) {
+		max_clients++;
+		ent = nextent (ent);
 	}
 
-	ent = nextent(NIL);
+	ent = nextent (NIL);
 	while (numents < max_clients) {
 
-		phys_objects[numents] = spawn();
+		phys_objects[numents] = spawn ();
 		phys_objects[numents].classname = "phys_obj";
 		phys_objects[numents].owner = ent;
 		numents++;
-		ent = nextent(ent);
+		ent = nextent (ent);
 	}
-	bot_map_load();
+	bot_map_load ();
 };
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 Rankings 'utilities'. Written by Alan Kivlin,
 this code just fools clients by sending precisely
 the same network messages as when a real player
 signs on to the server.
-
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
-
-void(entity who) UpdateClient =
+void (entity who)
+UpdateClient =
 {
 	local string bottomcolor = ftos (who.b_pants);
 	local string topcolor = ftos (who.b_shirt);
-dprint (who.netname); dprint ("\n");
+
+	dprint (who.netname);
+	dprint ("\n");
 	SV_SetPing (who, 100 * (3 - who.b_skill));
 	SV_SetUserinfo (who, "\\bottomcolor\\" + bottomcolor
 					+ "\\topcolor\\" + topcolor
@@ -392,54 +398,55 @@ dprint (who.netname); dprint ("\n");
 	// FIXME: do teams properly
 };
 
-float(integer clientno) ClientBitFlag =
+float (integer clientno)
+ClientBitFlag =
 {
 	local float bitflag;
+
 	bitflag = 1;
-	while(clientno > 0) {
-		bitflag = bitflag * 2;
-		clientno = clientno - 1;
+	while (clientno > 0) {
+		bitflag *= 2;
+		clientno--;
 	}
 	return bitflag;
 };
 
-integer() ClientNextAvailable =
+integer ()
+ClientNextAvailable =
 {
 	local integer clientno;
+
 	// I want to do this top down, but QW won't let me
 	clientno = 0;
-	while(clientno < max_clients) {
-		clientno = clientno + 1;
+	while (clientno < max_clients) {
+		clientno++;
 
-		//FIXME if(!ClientIsActive(clientno))
+		//FIXME if (!ClientIsActive (clientno))
 			return clientno;
 	}
 	return -1;
 };
 
-
 void(entity e1, entity e2, float flag) DeveloperLightning = {};
 
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// BotConnect and related functions. -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-BotConnect and related functions.
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/				
-entity(float num) GetClientEntity =
+entity (float num)
+GetClientEntity =
 {
 	local entity upsy;
+
 	upsy = NIL;
-	num = num + 1;
+	num++;
 	while (num > 0) {
-		num = num - 1;
-		upsy = nextent(upsy);
+		num--;
+		upsy = nextent (upsy);
 	} 
 	return upsy;
 };
 
-integer (entity cl) ClientNumber =
+integer (entity cl)
+ClientNumber =
 {
 	local entity e = NIL;
 	local integer f = -1;
@@ -451,7 +458,8 @@ integer (entity cl) ClientNumber =
 	return f;
 };
 
-void(float whatbot, integer whatskill) BotConnect =
+void (float whatbot, integer whatskill)
+BotConnect =
 {
 	local integer f;
 	local entity uself;
@@ -460,19 +468,19 @@ void(float whatbot, integer whatskill) BotConnect =
 	uself = self;
 	self = SV_AllocClient ();
 	if (!self) {
-		bprint(PRINT_HIGH, "Unable to connect a bot, server is full.\n");
+		bprint (PRINT_HIGH, "Unable to connect a bot, server is full.\n");
 		self = uself;
 		return;
 	}
 	bot_count++;
-	bot_start_topic(1);
+	bot_start_topic (1);
 	f = ClientNumber (self) + 1;
 	self.b_clientno = f;
 	self.colormap = (float) f;
 	if (whatbot)
-		self.netname = BotName(whatbot);
+		self.netname = BotName (whatbot);
 	else
-		self.netname = PickARandomName();
+		self.netname = PickARandomName ();
 
 	// players can set skill all weird, so leave these checks in
 	if (whatskill > 3)
@@ -482,55 +490,58 @@ void(float whatbot, integer whatskill) BotConnect =
 	self.b_skill = whatskill;
 	self.b_entertime = time;
 	self.team = self.b_pants + 1;
-	UpdateClient(self);
-	SetNewParms();
+	UpdateClient (self);
+	SetNewParms ();
 	self.ishuman = 2;
-	ClientConnect();
-	PutClientInServer();
+	ClientConnect ();
+	PutClientInServer ();
 	self = uself;
 };
 
-void(entity bot) BotDisconnect =
+void (entity bot)
+BotDisconnect =
 {
 	local entity uself;
+
 	uself = self;
 	self = bot;
 
-	bot_count = bot_count - 1;
+	bot_count--;
 
-	ClientDisconnect();
+	ClientDisconnect ();
 
 	setmodel (self.phys_obj, "");
 	SV_FreeClient (self);
 	self = uself;
 };
 
-void() BotFrame =
+void ()
+BotFrame =
 {
 	local integer num;
 	local string h;
 	
-	h = infokey(NIL, "bot_options");
-	b_options = stof(h);
+	h = infokey (NIL, "bot_options");
+	b_options = stof (h);
 	
 	// for the sake of speed
-	sv_maxspeed = cvar("sv_maxspeed");
-	sv_gravity = cvar("sv_gravity");
-	sv_friction = cvar("sv_friction");
-	sv_accelerate = cvar("sv_accelerate");
-	sv_stopspeed = cvar("sv_stopspeed");
+	sv_maxspeed = cvar ("sv_maxspeed");
+	sv_gravity = cvar ("sv_gravity");
+	sv_friction = cvar ("sv_friction");
+	sv_accelerate = cvar ("sv_accelerate");
+	sv_stopspeed = cvar ("sv_stopspeed");
 	real_frametime = time - lasttime; // in QW frametime is fuxx0red
 	lasttime = time;
 	
-	self = nextent(NIL);
+	self = nextent (NIL);
 	num = 0;
 	while (num < max_clients) {
 		if (self.ishuman == FALSE) {
 			if (self.b_clientno > 0) {
-				frik_obstacles();
-				CL_KeyMove();
-				SV_ClientThink();
-				SV_Physics_Client();
+				frik_obstacles ();
+				CL_KeyMove ();
+				SV_ClientThink ();
+				SV_Physics_Client ();
 				// this is sickening	
 				if (self.phys_obj) {
 					if (self.phys_obj.modelindex != self.modelindex) {
@@ -544,31 +555,26 @@ void() BotFrame =
 				}
 			}
 		}
-		self = nextent(self);
-		num = num + 1;
+		self = nextent (self);
+		num++;
 	}
 };
 
 /*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 Bot Impulses. Allows the player to perform bot
 related functions.
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
-void() BotImpulses =
+void () BotImpulses =
 {
 	local integer f;
 	local string h;
 	
 	if (self.impulse == 100) {
-		h = infokey(NIL, "skill");
-		f = (integer) stof(h);
-		BotConnect(0, f);
+		h = infokey (NIL, "skill");
+		f = (integer) stof (h);
+		BotConnect (0, f);
 	} else if (self.impulse == 102)
-		KickABot();
+		KickABot ();
 	else
 		return;
 	self.impulse = 0;

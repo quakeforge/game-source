@@ -38,90 +38,91 @@ with applicable reexport restrictions.
 
 Any reproduction of this software must contain
 this notice in its entirety. 
-
 */
 
 #include "libfrikbot.h"
 
 /*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 BotName
 
 Sets bot's name and colors
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-string(float r) BotName =
+string (float r)
+BotName =
 {
 	self.b_num = r;
-	if (r == 1) {	
+	switch (r) {
+	case 1:
 		self.b_pants = 11;
 		self.b_shirt = 0; 
 		return "Vincent";
-	} else if (r == 2) {
+	case 2:
 		self.b_pants = 1;
 		self.b_shirt = 3;
 		return "Bishop";
-	} else if (r == 3) {	
+	case 3:
 		self.b_pants = 13;
 		self.b_shirt = 2;
 		return "Nomad";
-	} else if (r == 4) {
+	case 4:
 		self.b_pants = 7;
 		self.b_shirt = 6;
 		return "Hudson";
-	} else if (r == 5) {
+	case 5:
 		self.b_pants = 12;
 		self.b_shirt = 6;
 		return "Lore";
-	} else if (r == 6) {
+	case 6:
 		self.b_pants = 4;
 		self.b_shirt = 4;
 		return "Servo";
-	} else if (r == 7) {
+	case 7:
 		self.b_pants = 2;
 		self.b_shirt = 5;
 		return "Gort";
-	} else if (r == 8) {	
+	case 8:
 		self.b_pants = 10;
 		self.b_shirt = 3;
 		return "Kryten";
-	} else if (r == 9) {
+	case 9:
 		self.b_pants = 9;
 		self.b_shirt = 4;
 		return "Pimp Bot";
-	} else if (r == 10) {
+	case 10:
 		self.b_pants = 4;
 		self.b_shirt = 7;
 		return "Max";
-	} else if (r == 11) {
+	case 11:
 		self.b_pants = 3;
 		self.b_shirt = 11;
 		return "Marvin";
-	} else if (r == 12) {
+	case 12:
 		self.b_pants = 13;
 		self.b_shirt = 12;
 		return "Erwin";
-	} else if (r == 13) {
+	case 13:
 		self.b_pants = 11;
 		self.b_shirt = 2;
 		return "FrikBot";
-	} else if (r == 14) {
+	case 14:
 		self.b_pants = 0;
 		self.b_shirt = 2;
 		return "Krosis";
-	} else if (r == 15) {
+	case 15:
 		self.b_pants = 8;
 		self.b_shirt = 9;
 		return "Gypsy";
-	} else if (r == 16) {
+	case 16:
 		self.b_pants = 5;
 		self.b_shirt = 10;
 		return "Hal";
+	default:
+		break;
 	}
 };
-string () PickARandomName =
+
+string ()
+PickARandomName =
 {
 	if (bot_count > 16)
 		return "player";
@@ -130,17 +131,15 @@ string () PickARandomName =
 	local string h;
 	local entity t;
 	y = TRUE;
-	while(y) {
-		test = ceil(random() * 16);
-		h = BotName(test);
-		t = find(NIL, netname, h);
+	while (y) {
+		test = ceil (16 * random ());
+		h = BotName (test);
+		t = find (NIL, netname, h);
 		if (t == NIL)
 			y = FALSE;
 	}
 	return h;
 };
-
-
 
 // I didn't like the old code so this is very stripped down
 
@@ -163,10 +162,9 @@ b_originator == self
  10 - ridicule lost frag (lava)
  11 - lag
 b_originator == targ
-
- 
 */
-void(float tpic) bot_start_topic =
+void (float tpic)
+bot_start_topic =
 {
 	if (random() < 0.2) {
 		b_topic = tpic;
@@ -175,217 +173,293 @@ void(float tpic) bot_start_topic =
 		b_topic = 0;
 };
 
-void() bot_chat =
+void ()
+bot_chat =
 {
 	local float r;
+
 	if (b_options & OPT_NOCHAT)
 		return;
-	r = ceil (random() * 6);
+
+	r = ceil (6 * random ());
 	
 	if (self.b_chattime > time) {
 		if (self.b_skill < 2)
 			self.keys = self.button0 = self.button2 = 0;
 		return;
 	} else if (self.b_chattime) {
-		if (b_topic == 1) {
+		switch (b_topic) {
+		case 1:
 			if (b_originator == self) {
-				if (r == 1) {
-					BotSay(": lo all\n");
-					bot_start_topic(8);
-				} else if (r == 2) {
-					BotSay(": hey everyone\n");
-					bot_start_topic(8);
-				} else if (r == 3) {
-					BotSay(": prepare to be fragged!\n");
-					bot_start_topic(0);
-				} else if (r == 4) {
-					BotSay(": boy this is laggy\n");
-					bot_start_topic(11);
-				} else if (r == 5) {
-					BotSay(": #mm getting some lag here\n");
-					bot_start_topic(11);
-				} else {
+				switch (r) {
+				case 1:
+					BotSay (": lo all\n");
+					bot_start_topic (8);
+					break;
+				case 2:
+					BotSay (": hey everyone\n");
+					bot_start_topic (8);
+					break;
+				case 3:
+					BotSay (": prepare to be fragged!\n");
+					bot_start_topic (0);
+					break;
+				case 4:
+					BotSay (": boy this is laggy\n");
+					bot_start_topic (11);
+					break;
+				case 5:
+					BotSay (": #mm getting some lag here\n");
+					bot_start_topic (11);
+					break;
+				default:
 					BotSay(": hi everyone\n");
-					bot_start_topic(8);
+					bot_start_topic (8);
+					break;
 				}
 			}
-		} else if (b_topic == 2) {
+			break;
+		case 2:
 			if (b_originator == self) {
-				if (r == 1)
-					BotSay(": take that\n");
-				else if (r == 2)
-					BotSay(": yehaww!\n");
-				else if (r == 3)
-					BotSay(": wh00p\n");
-				else if (r == 4)
-					BotSay(": j00_sawk();\n");
-				else if (r == 5)
-					BotSay(": i rule\n");
-				else
-					BotSay(": eat that\n");
-				bot_start_topic(0);
+				switch (r) {
+				case 1:
+					BotSay (": take that\n");
+					break;
+				case 2:
+					BotSay (": yehaww!\n");
+					break;
+				case 3:
+					BotSay (": wh00p\n");
+					break;
+				case 4:
+					BotSay (": j00_sawk();\n");
+					break;
+				case 5:
+					BotSay (": i rule\n");
+					break;
+				default:
+					BotSay (": eat that\n");
+					break;
+				}
+				bot_start_topic (0);
 			}
-		} else if (b_topic == 3) {
+			break;
+		case 3:
 			if (b_originator == self) {
 				if (r < 3)
-					BotSayTeam(": friendly eyes\n");
+					BotSayTeam (": friendly eyes\n");
 				else
-					BotSayTeam(": team eyes\n");
-				bot_start_topic(0);
+					BotSayTeam (": team eyes\n");
+				bot_start_topic (0);
 			}
-		} else if (b_topic == 4) {
+			break;
+		case 4:
 			if (b_originator == self) {
 				if (r < 3)
-					BotSayTeam(": on your back\n");
+					BotSayTeam (": on your back\n");
 				else
-					BotSayTeam(": I'm with you\n");
-				bot_start_topic(0);
+					BotSayTeam (": I'm with you\n");
+				bot_start_topic (0);
 			}
-		} else if (b_topic == 5) {
+			break;
+		case 5:
 			if (b_originator == self) {
 				if (r < 3)
-					BotSayTeam(": I need help\n");
+					BotSayTeam (": I need help\n");
 				else
-					BotSayTeam(": need backup\n");
-				bot_start_topic(0);
+					BotSayTeam (": need backup\n");
+				bot_start_topic (0);
 			}
-		} else if (b_topic == 6) {
+			break;
+		case 6:
 			if (b_originator == self) {
-				if (r == 1) {
-					BotSay(": sun got in my eyes\n");
-					bot_start_topic(0);
-				} else if (r == 2) {
-					BotSay(": mouse needs cleaning\n");
-					bot_start_topic(0);
-				} else if (r == 3) {
-					BotSay(": i meant to do that\n");
-					bot_start_topic(0);
-				} else if (r == 4) {
-					BotSay(": lag\n");
-					bot_start_topic(11);
-				} else if (r == 5) {
-					BotSay(": killer lag\n");
-					bot_start_topic(11);
-				} else {
-					BotSay(": 100% lag\n");
-					bot_start_topic(11);
+				switch (r) {
+				case 1:
+					BotSay (": sun got in my eyes\n");
+					bot_start_topic (0);
+					break;
+				case 2:
+					BotSay (": mouse needs cleaning\n");
+					bot_start_topic (0);
+					break;
+				case 3:
+					BotSay (": i meant to do that\n");
+					bot_start_topic (0);
+					break;
+				case 4:
+					BotSay (": lag\n");
+					bot_start_topic (11);
+					break;
+				case 5:
+					BotSay (": killer lag\n");
+					bot_start_topic (11);
+					break;
+				default:
+					BotSay (": 100% lag\n");
+					bot_start_topic (11);
+					break;
 				}
 			}
-		} else if (b_topic == 7) {
-			if (r == 1)
-				BotSay(": gg\n");
-			else if (r == 2)
-				BotSay(": gg all\n");
-			else if (r == 3)
-				BotSay(": that was fun\n");
-			else if (r == 4)
-				BotSay(": good game\n");
-			else if (r == 5)
-				BotSay(": pah\n");
-			else
-				BotSay(": hrm\n");
-			bot_start_topic(0);
-		} else if (b_topic == 8) {
+			break;
+		case 7:
+			switch (r) {
+			case 1:
+				BotSay (": gg\n");
+				break;
+			case 2:
+				BotSay (": gg all\n");
+				break;
+			case 3:
+				BotSay (": that was fun\n");
+				break;
+			case 4:
+				BotSay (": good game\n");
+				break;
+			case 5:
+				BotSay (": pah\n");
+				break;
+			default:
+				BotSay (": hrm\n");
+				break;
+			}
+			bot_start_topic (0);
+			break;
+		case 8:
 			if (b_originator != self) {
-				if (r == 1) {
-					BotSay(": heya\n");
-					bot_start_topic(0);
-				} else if (r == 2) {
-					BotSay(": welcome\n");
-					bot_start_topic(0);
-				} else if (r == 3) {
-					BotSayInit();
-					BotSay2(": hi ");
-					BotSay2(b_originator.netname);
-					BotSay2("\n");
-					bot_start_topic(0);
-				} else if (r == 4) {
-					BotSayInit();
-					BotSay2(": hey ");
-					BotSay2(b_originator.netname);
-					BotSay2("\n");
-					bot_start_topic(0);
-				} else if (r == 5) {
-					BotSay(": howdy\n");
-					bot_start_topic(0);
-				} else {
+				switch (r) {
+				case 1:
+					BotSay (": heya\n");
+					bot_start_topic (0);
+					break;
+				case 2:
+					BotSay (": welcome\n");
+					bot_start_topic (0);
+					break;
+				case 3:
+					BotSayInit ();
+					BotSay2 (": hi ");
+					BotSay2 (b_originator.netname);
+					BotSay2 ("\n");
+					bot_start_topic (0);
+					break;
+				case 5:
+					BotSayInit ();
+					BotSay2 (": hey ");
+					BotSay2 (b_originator.netname);
+					BotSay2 ("\n");
+					bot_start_topic (0);
+					break;
+				case 5:
+					BotSay (": howdy\n");
+					bot_start_topic (0);
+					break;
+				default:
 					BotSay(": lo\n");
 					bot_start_topic(0);	
+					break;
 				}
 			}
-		} else if (b_topic == 9) {
+			break;
+		case 9:
 			if (b_originator != self) {
-				if (r == 1)
-					BotSay(": hah\n");
-				else if (r == 2)
-					BotSay(": heheh\n");
-				else if (r == 3) {
-					BotSayInit();
-					BotSay2(": good work ");
-					BotSay2(b_originator.netname);
-					BotSay2("\n");
-				} else if (r == 4) {
-					BotSayInit();
-					BotSay2(": nice1 ");
-					BotSay2(b_originator.netname);
-					BotSay2("\n");
-				} else if (r == 5)
-					BotSay(": lol\n");
-				else
-					BotSay(": :)\n");
+				switch (r) {
+				case 1:
+					BotSay (": hah\n");
+					break;
+				case 2:
+					BotSay (": heheh\n");
+					break;
+				case 3:
+					BotSayInit ();
+					BotSay2 (": good work ");
+					BotSay2 (b_originator.netname);
+					BotSay2 ("\n");
+					break;
+				case 4:
+					BotSayInit ();
+					BotSay2 (": nice1 ");
+					BotSay2 (b_originator.netname);
+					BotSay2 ("\n");
+					break;
+				case 5:
+					BotSay (": lol\n");
+					break;
+				default:
+					BotSay (": :)\n");
+					break;
+				}
 				b_topic = 6;
 			}
-		} else if (b_topic == 10) {
+			break;
+		case 10:
 			if (b_originator != self) {
-				if (r == 1)
-					BotSay(": have a nice dip?\n");
-				else if (r == 2)
-					BotSay(": bah I hate levels with lava\n");
-				else if (r == 3) {
+				switch (r) {
+				case 1:
+					BotSay (": have a nice dip?\n");
+					break;
+				case 2:
+					BotSay (": bah I hate levels with lava\n");
+					break;
+				case 3:
 					BotSayInit();
-					BotSay2(": good job ");
-					BotSay2(b_originator.netname);
-					BotSay2("\n");
-				} else if (r == 4) {
-					BotSayInit();
-					BotSay2(": nice backflip ");
-					BotSay2(b_originator.netname);
-					BotSay2("\n");
-				} else if (r == 5)
-					BotSay(": watch your step\n");
-				else
-					BotSay(": hehe\n");
+					BotSay2 (": good job ");
+					BotSay2 (b_originator.netname);
+					BotSay2 ("\n");
+					break;
+				case 4:
+					BotSayInit ();
+					BotSay2 (": nice backflip ");
+					BotSay2 (b_originator.netname);
+					BotSay2 ("\n");
+					break;
+				case 5:
+					BotSay (": watch your step\n");
+					break;
+				default:
+					BotSay (": hehe\n");
+					break;
+				}
 				b_topic = 6;
 			}
-		} else if (b_topic == 11) {
+			break;
+		case 11:
 			if (b_originator != self) {
-				if (r == 1) {
-					BotSayInit();
-					BotSay2(": yeah right ");
-					BotSay2(b_originator.netname);
-					BotSay2("\n");
-					bot_start_topic(0);
-				} else if (r == 2) {
-					BotSay(": ping\n");
-					bot_start_topic(0);
-				} else if (r == 3) {
-					BotSay(": shuddup, you're an lpb\n");
-					bot_start_topic(0);
-				} else if (r == 4) {
-					BotSay(": lag my eye\n");
-					bot_start_topic(0);
-				} else if (r == 5) {
-					BotSay(": yeah\n");
-					bot_start_topic(11);
-				} else {
-					BotSay(": totally\n");
-					bot_start_topic(11);
+				switch (r) {
+				case 1:
+					BotSayInit ();
+					BotSay2 (": yeah right ");
+					BotSay2 (b_originator.netname);
+					BotSay2 ("\n");
+					bot_start_topic (0);
+					break;
+				case 2:
+					BotSay (": ping\n");
+					bot_start_topic (0);
+					break;
+				case 3:
+					BotSay (": shuddup, you're an lpb\n");
+					bot_start_topic (0);
+					break;
+				case 4:
+					BotSay (": lag my eye\n");
+					bot_start_topic (0);
+					break;
+				case 5:
+					BotSay (": yeah\n");
+					bot_start_topic (11);
+					break;
+				default:
+					BotSay (": totally\n");
+					bot_start_topic (11);
+					break;
 				}
 			}
+		default:
+			break;
 		}
 		self.b_chattime = 0;
 	} else if (b_topic) {
-		if (random() < 0.5) {
+		if (random () < 0.5) {
 			if (self == b_originator) {
 				if (b_topic <= 7)
 					self.b_chattime = time + 2;
@@ -397,64 +471,47 @@ void() bot_chat =
 	}
 };
 
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-Kick A Bot. 
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-void() KickABot =
+void ()
+KickABot =
 {
 	local entity ty;
-	ty = find(NIL, classname, "player");
+
+	ty = find (NIL, classname, "player");
 	while (ty != NIL) {
 		if (!(ty.ishuman)) {
-			
-			BotDisconnect(ty);
+			BotDisconnect (ty);
 			ty.ishuman = TRUE;
 			ty = NIL;
 		} else
-			ty = find(ty, classname, "player");
+			ty = find (ty, classname, "player");
 	}
-
 };
 
-
 /*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 Simplified origin checking. 
 
 God, I wish I had inline
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
-vector(entity ent) realorigin =
+vector (entity ent)
+realorigin =
 {
-// even more simplified...
+	// even more simplified...
 	return (ent.absmin + ent.absmax) * 0.5;
 };
 
 /*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 fisible
 
 a version of visible that checks for corners
 of the bounding boxes
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
-float (entity targ) fisible =
+float (entity targ)
+fisible =
 {
+	local float		thruwater = 0, pc1 = 0, pc2 = 0;
 	local vector	spot1, org;
-	local float thruwater = 0, pc1 = 0, pc2 = 0;
-	
-	org = realorigin(targ);
+
+	org = realorigin (targ);
 	spot1 = self.origin + self.view_ofs;
 	
 	if (targ.solid == SOLID_BSP) {
@@ -465,8 +522,8 @@ float (entity targ) fisible =
 			return TRUE;
 		return FALSE;
 	} else {
-		pc1 = pointcontents(org);
-		pc2 = pointcontents(spot1);
+		pc1 = pointcontents (org);
+		pc2 = pointcontents (spot1);
 		if (targ.classname == "player")
 			thruwater = FALSE;
 		else if (pc1 == CONTENT_LAVA)
@@ -523,26 +580,21 @@ float (entity targ) fisible =
 	return FALSE;
 };
 
-
 /*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 Wisible 
 
 goes through movable brushes/entities, used
 for waypoints
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
 // this is used for waypoint stuff....
-float (entity targ1, entity targ2) wisible =
+float (entity targ1, entity targ2)
+wisible =
 {
+	local entity	ignore;
 	local vector	spot1, spot2;
-	local entity ignore;
 
 	spot1 = targ1.origin;
-	spot2 = realorigin(targ2);
+	spot2 = realorigin (targ2);
 	
 	ignore = self;
 	do {
@@ -556,19 +608,14 @@ float (entity targ1, entity targ2) wisible =
 		return FALSE;
 };
 
-
 /*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 sisible
 
 Now this is getting ridiculous. Simple visible,
 used when we need just a simple traceline nothing else
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
-float (entity targ) sisible =
+float (entity targ)
+sisible =
 {
 	traceline (self.origin, targ.origin, TRUE, self);
 	if (trace_ent == targ)
@@ -576,65 +623,54 @@ float (entity targ) sisible =
 	else if (trace_fraction == 1)
 		return TRUE;
 };
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+/*
 angcomp
 
 subtracts one angle from another
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
-float (float y1, float y2) angcomp = 
+float (float y1, float y2)
+angcomp = 
 {
-	y1 = frik_anglemod(y1);
-	y2 = frik_anglemod(y2);
-
 	local float answer;
+
+	y1 = frik_anglemod (y1);
+	y2 = frik_anglemod (y2);
+
 	answer = y1 - y2;
 	if (answer > 180)
-		answer = (360 - answer) * -1;
+		answer -= 360;
 	else if (answer < -180)
-		answer = answer + 360;
+		answer += 360;
 	return answer;
 };
 
 /*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 fov
 
 is the entity in the bot's field of view
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-float (entity targ) fov =
+float (entity targ)
+fov =
 {
-	local vector yawn;
-	local float g;
-	yawn = realorigin(targ);
+	local float		g;
+	local vector	yawn;
+
+	yawn = realorigin (targ);
 	yawn = (yawn + targ.view_ofs) - (self.origin + self.view_ofs);
-	yawn = normalize(yawn);
-	yawn = vectoangles(yawn);
-	g = angcomp(self.v_angle_x, yawn_x);
-	if (fabs(g) > 45)
+	yawn = normalize (yawn);
+	yawn = vectoangles (yawn);
+	g = angcomp (self.v_angle_x, yawn_x);
+	if (fabs (g) > 45)
 		return FALSE;
-	g = angcomp(self.v_angle_y, yawn_y);
-	if (fabs(g) > 60)
+	g = angcomp (self.v_angle_y, yawn_y);
+	if (fabs (g) > 60)
 		return FALSE;
- 
 	return TRUE;
 };
 
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-frik_anglemod
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-float(float v) frik_anglemod =
+float (float v)
+frik_anglemod =
 {
-	return v - floor(v/360) * 360;
+	return v - floor (v / 360) * 360;
 };

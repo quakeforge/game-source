@@ -95,18 +95,27 @@ void() bot_map_load =
 {
 	// place your qc loaded waypoints here
 
-	if (mapname == "dm1")
-		map_dm1();
-	else if (mapname == "dm2")
-		map_dm2();
-	else if (mapname == "dm3")
-		map_dm3();
-	else if (mapname == "dm4")
-		map_dm4();
-	else if (mapname == "dm5")
-		map_dm5();
-	else if (mapname == "dm6")
-		map_dm6();
+	switch (mapname) {
+	case "dm1":
+		map_dm1 ();
+		break;
+	case "dm2":
+		map_dm2 ();
+		break;
+	case "dm3":
+		map_dm3 ();
+		break;
+	case "dm4":
+		map_dm4 ();
+		break;
+	case "dm5":
+		map_dm5 ();
+		break;
+	case "dm6":
+		map_dm6 ();
+	default:
+		break;
+	}
 };
 
 /*
@@ -182,7 +191,6 @@ float AI_ROUTE_FAILED	= 2;
 float AI_WAIT		= 4;
 float AI_DANGER		= 8;
 
-
 // addition masks
 float AI_POINT_TYPES 	= 29152;
 float AI_READAHEAD_TYPES	= 36528;
@@ -195,7 +203,6 @@ float WM_LOADED		= 3;
 float WM_EDITOR		= 4;
 float WM_EDITOR_DYNAMIC	= 5;
 float WM_EDITOR_DYNLINK	= 6;
-
 
 float OPT_SAVEBOTS	= 1;
 float OPT_NOCHAT	= 2;
@@ -271,12 +278,10 @@ float(float v)			frik_anglemod;
 void() bot_chat;
 void(float tpic) bot_start_topic;
 
-
 // editor stuffs
 
 void()				bot_way_edit;
 void()				bot_menu_display;
-
 
 // ----------Commands---------
 void(entity e, float chan, string samp, float vol, float atten) frik_sound = #8;
@@ -316,13 +321,13 @@ direct messages to the bots, it crashes quake :-(
 void(entity	client, string s) stuffcmd =
 {
 	if (client.ishuman == 1)
-		frik_stuffcmd(client, s);
+		frik_stuffcmd (client, s);
 	b_temp1 = player_head;
 
-	while(b_temp1) {
+	while (b_temp1) {
 		if (b_temp1.classname == "botcam") {
 			if ((b_temp1.enemy == client) && b_temp1.ishuman)
-				frik_stuffcmd(b_temp1, s);
+				frik_stuffcmd (b_temp1, s);
 		}
 		b_temp1 = b_temp1._next;
 	}
@@ -334,26 +339,26 @@ void(entity	e) setspawnparms =
 		frik_setspawnparms(e);
 	else {
 		b_temp1 = player_head;
-		while(b_temp1) {
+		while (b_temp1) {
 			if (b_temp1.ishuman) {
-				frik_setspawnparms(b_temp1);
+				frik_setspawnparms (b_temp1);
 				return;
 			}
 			b_temp1 = b_temp1._next;
 		}
-		SetNewParms();
+		SetNewParms ();
 	}
 };
 void(entity	client, string s) sprint =
 {
 	if (client.ishuman == 1)
-		frik_sprint(client, s);
+		frik_sprint (client, s);
 	b_temp1 = player_head;
 
-	while(b_temp1) {
+	while (b_temp1) {
 		if (b_temp1.classname == "botcam") {
 			if ((b_temp1.enemy == client) && b_temp1.ishuman)
-				frik_sprint(b_temp1, s);
+				frik_sprint (b_temp1, s);
 		}
 		b_temp1 = b_temp1._next;
 	}
@@ -362,13 +367,13 @@ void(entity	client, string s) sprint =
 void(entity	client, string s) centerprint =
 {
 	if (client.ishuman == 1)
-		frik_centerprint(client, s);
+		frik_centerprint (client, s);
 	b_temp1 = player_head;
 
-	while(b_temp1) {
+	while (b_temp1) {
 		if (b_temp1.classname == "botcam") {
 			if ((b_temp1.enemy == client) && b_temp1.ishuman)
-				frik_centerprint(b_temp1, s);
+				frik_centerprint (b_temp1, s);
 		}
 		b_temp1 = b_temp1._next;
 	}
@@ -377,69 +382,77 @@ void(entity	client, string s) centerprint =
 vector(entity e, float sped) aim =
 {
 	e.missile_speed = sped;
-	return frik_aim(e, sped);
+	return frik_aim (e, sped);
 };
 
 void(entity e, float chan, string samp, float vol, float atten) sound = 
 {
 
-	frik_sound(e, chan, samp, vol, atten);
+	frik_sound (e, chan, samp, vol, atten);
 	if (samp == "items/inv3.wav")
 		return;
 	else if (e.classname == "player")
 		e.b_sound = time + 1;
 	else if (other.classname == "player")
 		other.b_sound = time + 1;
-
 };
+
 void(float to, float f) WriteByte =
 {
 	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
 		return;
-	frik_WriteByte(to, f);
+	frik_WriteByte (to, f);
 };
+
 void(float to, float f) WriteChar =		
 {
 	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
 		return;
-	frik_WriteChar(to, f);
+	frik_WriteChar (to, f);
 };
+
 void(float to, float f) WriteShort =	
 {
 	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
 		return;
-	frik_WriteShort(to, f);
+	frik_WriteShort (to, f);
 };
+
 void(float to, float f) WriteLong = 
 {
 	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
 		return;
-	frik_WriteLong(to, f);
+	frik_WriteLong (to, f);
 };
+
 void(float to, float f) WriteCoord = 
 {
 	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
 		return;
-	frik_WriteCoord(to, f);
+	frik_WriteCoord (to, f);
 };
+
 void(float to, float f) WriteAngle = 
 {
 	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
 		return;
-	frik_WriteAngle(to, f);
+	frik_WriteAngle (to, f);
 };
+
 void(float to, string s) WriteString = 
 {
 	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
 		return;
-	frik_WriteString(to, s);
+	frik_WriteString (to, s);
 };
+
 void(float to, entity s) WriteEntity = 
 {
 	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
 		return;
-	frik_WriteEntity(to, s);
+	frik_WriteEntity (to, s);
 };
+
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -447,12 +460,12 @@ Bot Cam, see what the bot sees (or any other player)
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
 float() botcam =
 {
 	if (self.classname != "botcam")
 		return FALSE;
-	setorigin(self, self.enemy.origin);
+
+	setorigin (self, self.enemy.origin);
 	self.items = self.enemy.items;
 	self.weapon = self.enemy.weapon;
 	self.weaponmodel = self.enemy.weaponmodel;
@@ -471,22 +484,20 @@ float() botcam =
 	self.punchangle = self.enemy.punchangle;
 	self.deadflag = self.enemy.deadflag;
 	msg_entity = self;
-	WriteByte (MSG_ONE,5);
+	WriteByte (MSG_ONE, 5);
 	WriteEntity (MSG_ONE, self.enemy); 
 	WriteByte (MSG_ONE, 10);
-     	WriteAngle (MSG_ONE,self.enemy.v_angle_x);
-     	WriteAngle (MSG_ONE,self.enemy.v_angle_y);
-     	WriteAngle (MSG_ONE,self.enemy.v_angle_z);
+	WriteAngle (MSG_ONE, self.enemy.v_angle_x);
+	WriteAngle (MSG_ONE, self.enemy.v_angle_y);
+	WriteAngle (MSG_ONE, self.enemy.v_angle_z);
 	self.modelindex = 0;
 	
 	self.impulse = 0;	
 	return TRUE;
-	
 };
 
 void() botcam_u = 
 {
-
 	// sloppy cycling code
 	if (self.classname != "botcam") {
 		self.enemy = player_head;
@@ -506,25 +517,22 @@ void() botcam_u =
 	self.movetype = MOVETYPE_NONE;
 	self.takedamage = DAMAGE_NO;
 
-
 	if (!self.enemy) {
-		sprint(self, "No one left to track!\n");
+		sprint (self, "No one left to track!\n");
 		msg_entity = self;
 		WriteByte (MSG_ONE,5);
 		WriteEntity (MSG_ONE, self);
-		PutClientInServer();
+		PutClientInServer ();
 		return;
 	}
 	if (!self.enemy.ishuman) {
 		self.enemy.dmg_take = 0;
 		self.enemy.dmg_save = 0;
 	}
-	sprint(self, "Now tracking ");
-	sprint(self, self.enemy.netname);
-	sprint(self, "\n");
+	sprint (self, "Now tracking ");
+	sprint (self, self.enemy.netname);
+	sprint (self, "\n");
 };
-
-
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -538,8 +546,10 @@ it just links the bot into the mod
 void() ClientFixRankings =
 {
 	local float cno;
+
 	if (self.switch_wallhug > time)
 		return;
+
 	self.switch_wallhug = 0;
 
 	b_temp2 = nextent(NIL);
@@ -556,6 +566,7 @@ void() ClientFixRankings =
 void() ClientInRankings =
 {
 	local float cno;
+
 	if (player_head)
 		player_head._last = self;
 
@@ -576,13 +587,12 @@ void() ClientInRankings =
 	}
    	cno = self.colormap - 1;
 	BotInvalidClientNo (cno);
-	active_clients = active_clients | ClientBitFlag(cno);
+	active_clients |= ClientBitFlag (cno);
 	
 	self.b_clientno = cno;
 	self.ishuman = TRUE;
 	self.switch_wallhug = time + 1;
 };
-
 
 void() ClientDisconnected =
 {
@@ -593,8 +603,9 @@ void() ClientDisconnected =
 	if (self._last)
 		self._last._next = self._next;
 
-	active_clients = active_clients - active_clients & ClientBitFlag(self.b_clientno);
+	active_clients &= ~(ClientBitFlag (self.b_clientno));
 };
+
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -614,20 +625,19 @@ float () BotPreFrame =
 			return TRUE;
 	}
 	if (self.b_frags != self.frags) {
-		
 		if (self.b_frags > self.frags) {
-			if (pointcontents(self.origin) == CONTENT_LAVA)
-				bot_start_topic(10);
+			if (pointcontents (self.origin) == CONTENT_LAVA)
+				bot_start_topic (10);
 			else
-				bot_start_topic(9);
-		}
-		else
-			bot_start_topic(2);
+				bot_start_topic (9);
+		} else
+			bot_start_topic (2);
 		self.b_frags = self.frags;
 	}
-	DynamicWaypoint();
+	DynamicWaypoint ();
 	return FALSE;
 };
+
 float () BotPostFrame =
 {
 	if (self.b_clientno == -1)
@@ -656,24 +666,26 @@ The rest of this code is in bot_misc.qc
 */
 void(string h) BotSay = // simulate talking by composing a 'chat' message
 {
-	WriteByte(MSG_ALL, 8);
-	WriteByte(MSG_ALL, 1);
-	WriteString(MSG_ALL, self.netname);
-	WriteByte(MSG_ALL, 8);
-	WriteByte(MSG_ALL, 2);
-	WriteString(MSG_ALL, h);
+	WriteByte (MSG_ALL, 8);
+	WriteByte (MSG_ALL, 1);
+	WriteString (MSG_ALL, self.netname);
+	WriteByte (MSG_ALL, 8);
+	WriteByte (MSG_ALL, 2);
+	WriteString (MSG_ALL, h);
 };
+
 void() BotSayInit =
 {
-	WriteByte(MSG_ALL, 8);
-	WriteByte(MSG_ALL, 1);
-	WriteString(MSG_ALL, self.netname);
+	WriteByte (MSG_ALL, 8);
+	WriteByte (MSG_ALL, 1);
+	WriteString (MSG_ALL, self.netname);
 };
+
 void(string h) BotSay2 =
 {
-	WriteByte(MSG_ALL, 8);
-	WriteByte(MSG_ALL, 2);
-	WriteString(MSG_ALL, h);
+	WriteByte (MSG_ALL, 8);
+	WriteByte (MSG_ALL, 2);
+	WriteString (MSG_ALL, h);
 };
 void(string h) BotSayTeam = 
 {
@@ -681,21 +693,22 @@ void(string h) BotSayTeam =
 	if (!teamplay)
 		return;
 	t = player_head;
-	while(t) {
+	while (t) {
 		if (t.team == self.team) {
 			msg_entity = t;
-			WriteByte(MSG_ONE, 8);
-			WriteByte(MSG_ONE, 1);
-			WriteByte(MSG_ONE, 40);
-			WriteString(MSG_ONE, self.netname);
-			WriteByte(MSG_ONE, 8);
-			WriteByte(MSG_ONE, 2);
-			WriteByte(MSG_ONE, 41);
-			WriteString(MSG_ONE, h);
+			WriteByte (MSG_ONE, 8);
+			WriteByte (MSG_ONE, 1);
+			WriteByte (MSG_ONE, 40);
+			WriteString (MSG_ONE, self.netname);
+			WriteByte (MSG_ONE, 8);
+			WriteByte (MSG_ONE, 2);
+			WriteByte (MSG_ONE, 41);
+			WriteString (MSG_ONE, h);
 		}
 		t = t._next;
 	}
 };
+
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -703,28 +716,25 @@ BotInit
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
-
 void() BotInit =
 {
 	local entity ent, fisent;
 	local float numents;
 	
 	// spawn entities for the physics
-	ent = nextent(NIL);
+	ent = nextent (NIL);
 	max_clients = 0;
 
-	while(ent != NIL) {
-		max_clients = max_clients + 1;
-		ent = nextent(ent);
+	while (ent != NIL) {
+		max_clients++;
+		ent = nextent (ent);
 	}
 	if (max_clients > 16)
 		max_clients = 16;
 
-	ent = nextent(NIL);
+	ent = nextent (NIL);
 	fisent = NIL;
 	while (numents < max_clients) {
-
 		phys_head = spawn();
 		if (fisent)
 			fisent._next = phys_head;
@@ -733,28 +743,27 @@ void() BotInit =
 		ent.phys_obj = phys_head;
 		phys_head.classname = "phys_obj";
 		phys_head.owner = ent;
-		numents = numents + 1;
-		ent = nextent(ent);
+		numents++;
+		ent = nextent (ent);
 	}
-	precache_model("progs/s_light.spr");
-	precache_model("progs/s_bubble.spr");
+	precache_model ("progs/s_light.spr");
+	precache_model ("progs/s_bubble.spr");
 	// the bots return!
-	b_options = cvar("saved1");
+	b_options = cvar ("saved1");
 	if (coop || (b_options & OPT_SAVEBOTS)) {
-		saved_bots = cvar("scratch1");
-		saved_skills1 = cvar("scratch2");
-		saved_skills2 = cvar("scratch3");
+		saved_bots = cvar ("scratch1");
+		saved_skills1 = cvar ("scratch2");
+		saved_skills2 = cvar ("scratch3");
 	}
 	cvar_set ("saved4", "0");
 	if (max_clients > 1) {
-		localcmd("exec maps/");
-		localcmd(mapname);
-		localcmd(".way\n");
+		localcmd ("exec maps/");
+		localcmd (mapname);
+		localcmd (".way\n");
 		waypoint_mode = WM_DYNAMIC;
-		bot_map_load();
+		bot_map_load ();
 	} else
 		waypoint_mode = WM_LOADED;
-
 };
 
 /*
@@ -767,7 +776,6 @@ signs on to the server.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
 
 void(entity who) UpdateClient =
 {
@@ -785,39 +793,42 @@ void(entity who) UpdateClient =
 float(float clientno) ClientBitFlag =
 {
 	// bigger, but faster
-	if (clientno == 0)
+	switch (clientno) {
+	case 0:
 		return 1;
-	else if (clientno == 1)
+	case 1:
 		return 2;
-	else if (clientno == 2)
+	case 2:
 		return 4;
-	else if (clientno == 3)
+	case 3:
 		return 8;
-	else if (clientno == 4)
+	case 4:
 		return 16;
-	else if (clientno == 5)
+	case 5:
 		return 32;
-	else if (clientno == 6)
+	case 6:
 		return 64;
-	else if (clientno == 7)
+	case 7:
 		return 128;
-	else if (clientno == 8)
+	case 8:
 		return 256;
-	else if (clientno == 9)
+	case 9:
 		return 512;
-	else if (clientno == 10)
+	case 10:
 		return 1024;
-	else if (clientno == 11)
+	case 11:
 		return 2048;
-	else if (clientno == 12)
+	case 12:
 		return 4096;
-	else if (clientno == 13)
+	case 13:
 		return 8192;
-	else if (clientno == 14)
+	case 14:
 		return 16384;
-	else if (clientno == 15)
+	case 15:
 		return 32768;
-	return 0;
+	default:
+		return 0;
+	}
 };
 
 float() ClientNextAvailable =
@@ -825,10 +836,10 @@ float() ClientNextAvailable =
 	local float clientno;
 
 	clientno = max_clients;
-	while(clientno > 0) {
-		clientno = clientno - 1;
+	while (clientno > 0) {
+		clientno--;
 
-		if(!(active_clients & ClientBitFlag(clientno)))
+		if (!(active_clients & ClientBitFlag (clientno)))
 			return clientno;
 	}
 
@@ -862,19 +873,19 @@ Team finding code
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
 float(float tcolor) FindAnotherColor =
 {
 	local float bestbet, scolor, pcount, bestp;
+
 	bestbet = -1;
 	bestp = 16;
-	while(scolor < 14) {
+	while (scolor < 14) {
 		if (scolor != tcolor) {
 			b_temp2 = player_head;
 			pcount = 0;
-			while(b_temp2 != NIL) {
+			while (b_temp2 != NIL) {
 				if (b_temp2.team == scolor + 1)
-					pcount = pcount + 1;
+					pcount++;
 				b_temp2 = b_temp2._next;
 			}
 			if ((pcount < bestp) && pcount) {
@@ -882,12 +893,12 @@ float(float tcolor) FindAnotherColor =
 				bestp = pcount;
 			}
 		}
-		scolor = scolor + 1;
+		scolor++;
 	}
 	if (bestbet < 0) {
 		bestbet = tcolor;
 		while (bestbet == tcolor) {
-			bestbet = floor(random() * 13);
+			bestbet = floor (13 * random ());
 		}
 	}
 	return bestbet;
@@ -904,10 +915,10 @@ entity(float num) GetClientEntity =
 {
 	local entity upsy;
 	upsy = NIL;
-	num = num + 1;
+	num++;
 	while (num > 0) {
-		num = num - 1;
-		upsy = nextent(upsy);
+		num--;
+		upsy = nextent (upsy);
 	} 
 	return upsy;
 };
@@ -918,27 +929,26 @@ void(float whichteam, float whatbot, float whatskill) BotConnect =
 	local string h;
 	local entity uself;
 	
-	f = ClientNextAvailable();
+	f = ClientNextAvailable ();
 	uself = self;
-	if(f == -1) {
+	if (f == -1) {
 		bprint("Unable to connect a bot, server is full.\n");
 		return;
 	}
 	
 	// chat thing
 
-	active_clients = active_clients | ClientBitFlag(f);
-	bot_count = bot_count + 1;
-	self = GetClientEntity(f);
+	active_clients |= ClientBitFlag (f);
+	bot_count++;
+	self = GetClientEntity (f);
 	if (!saved_bots)
-		bot_start_topic(1);
+		bot_start_topic (1);
 	self.b_clientno = f;
 	self.colormap = f + 1;
 	if (whatbot)
-		self.netname = BotName(whatbot);
+		self.netname = BotName (whatbot);
 	else
-		self.netname = PickARandomName();
-
+		self.netname = PickARandomName ();
 
 	// players can set skill all weird, so leave these checks in
 	whatskill = rint(whatskill);
@@ -950,40 +960,40 @@ void(float whichteam, float whatbot, float whatskill) BotConnect =
 
 	if (teamplay && !coop) {
 		if (whichteam)
-			self.b_pants = FindAnotherColor(uself.team - 1);
+			self.b_pants = FindAnotherColor (uself.team - 1);
 		else
 			self.b_pants = uself.team - 1;
 		self.b_shirt = self.b_pants;
 	}
 
 	self.team = self.b_pants + 1;
-	UpdateClient(self);
-	SetNewParms();
+	UpdateClient (self);
+	SetNewParms ();
 	self.ishuman = 2;
-	ClientConnect();
-	PutClientInServer();
+	ClientConnect ();
+	PutClientInServer ();
 
 	// this is risky... could corrupt .way files if done wrong
 	// If you're not the gambling type, comment this out
 
-	f = ClientBitFlag(self.b_num - 1);
-	current_bots = current_bots | f;
+	f = ClientBitFlag (self.b_num - 1);
+	current_bots |= f;
 
+// FIXME: ugh
 	if (self.b_num <= 8)
 		saved_skills1 = (saved_skills1 & (65536 - (3 * f)) | (self.b_skill * f));
 	else {
-		f = ClientBitFlag(self.b_num - 9);
+		f = ClientBitFlag (self.b_num - 9);
 		saved_skills2 = (saved_skills2 & (65536 - (3 * f)) | (self.b_skill * f));
 	}
 
-	h = ftos(current_bots);
-	cvar_set("scratch1", h);
-	h = ftos(saved_skills1);
-	cvar_set("scratch2", h);
-	h = ftos(saved_skills2);
-	cvar_set("scratch3", h);
+	h = ftos (current_bots);
+	cvar_set ("scratch1", h);
+	h = ftos (saved_skills1);
+	cvar_set ("scratch2", h);
+	h = ftos (saved_skills2);
+	cvar_set ("scratch3", h);
 	self = uself;
-
 };
 
 void(entity bot) BotDisconnect =
@@ -993,13 +1003,12 @@ void(entity bot) BotDisconnect =
 	uself = self;
 	self = bot;
 
-	bot_count = bot_count - 1;
-	current_bots = current_bots - (current_bots & ClientBitFlag(self.b_num - 1));
-	h = ftos(current_bots);
-	cvar_set("scratch1", h);
+	bot_count--;
+	current_bots &= ~(ClientBitFlag (self.b_num - 1));
+	h = ftos (current_bots);
+	cvar_set ("scratch1", h);
 
-
-	ClientDisconnect();
+	ClientDisconnect ();
 
 	if (self.b_clientno != -1) {
       	// the bot's client number is not in use by a real player so we
@@ -1015,12 +1024,13 @@ void(entity bot) BotDisconnect =
 		self.b_pants = 0;
 		self.b_shirt = 0;
 		self.ammo_shells = self.ammo_nails = self.ammo_rockets = self.ammo_cells = 0;
-		UpdateClient(self);
-		active_clients = active_clients - (active_clients & ClientBitFlag(self.b_clientno));
+		UpdateClient (self);
+		active_clients &= ~(ClientBitFlag (self.b_clientno));
 	      self.b_clientno = -1;
    	}
 	self = uself;
 };
+
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -1029,18 +1039,17 @@ kicks a bot if a player connects and takes the bot's space
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
 void(float clientno) BotInvalidClientNo =
 {
 	local entity bot;
 
 	bot = GetClientEntity(clientno);
-	if(bot.b_clientno > 0) {
+	if (bot.b_clientno > 0) {
 		if (!bot.ishuman) {
 			bot.b_clientno = -1;
-			BotDisconnect(bot);
-			active_clients = active_clients | ClientBitFlag(self.b_clientno);
-			BotConnect(0, bot.b_num, bot.b_skill); 
+			BotDisconnect (bot);
+			active_clients |= ClientBitFlag (self.b_clientno);
+			BotConnect (0, bot.b_num, bot.b_skill); 
 			return;
 		}
 	}
@@ -1058,19 +1067,20 @@ void() LoadWaypoint =
 	local vector org;
 	local entity tep;
 	local float r;
-	org_x = cvar("saved1");
-	org_y = cvar("saved2");
-	org_z = cvar("saved3");
+
+	org_x = cvar ("saved1");
+	org_y = cvar ("saved2");
+	org_z = cvar ("saved3");
 	
-	tep = make_waypoint(org);
+	tep = make_waypoint (org);
 
-	r = cvar("saved4");
+	r = cvar ("saved4");
 
-	tep.b_aiflags = floor(r / 4);
-	tep.b_pants = cvar("scratch1");
-	tep.b_skill = cvar("scratch2");
-	tep.b_shirt = cvar("scratch3");
-	tep.b_frags = cvar("scratch4");
+	tep.b_aiflags = floor (r / 4);
+	tep.b_pants = cvar ("scratch1");
+	tep.b_skill = cvar ("scratch2");
+	tep.b_shirt = cvar ("scratch3");
+	tep.b_frags = cvar ("scratch4");
 };
 
 void() bot_return =
@@ -1079,27 +1089,42 @@ void() bot_return =
 		if ((waypoint_mode == WM_DYNAMIC) || (waypoint_mode == WM_LOADED)) {
 			// minor precaution
 
-			if (saved_bots & 1) BotConnect(0, 1, saved_skills1 & 3);
-			if (saved_bots & 2) BotConnect(0, 2, (saved_skills1 & 12) / 4);
-			if (saved_bots & 4) BotConnect(0, 3, (saved_skills1 & 48) / 16);
-			if (saved_bots & 8) BotConnect(0, 4, (saved_skills1 & 192) / 64);
-			if (saved_bots & 16) BotConnect(0, 5, (saved_skills1 & 768) / 256);
-			if (saved_bots & 32) BotConnect(0, 6, (saved_skills1 & 3072) / 1024);
-			if (saved_bots & 64) BotConnect(0, 7, (saved_skills1 & 12288) / 4096);
-			if (saved_bots & 128) BotConnect(0, 8, (saved_skills1 & 49152) / 16384);
-			if (saved_bots & 256) BotConnect(0, 9, saved_skills2 & 3);
-			if (saved_bots & 512) BotConnect(0, 10, (saved_skills2 & 12) / 4);
-			if (saved_bots & 1024) BotConnect(0, 11, (saved_skills2& 48) / 16);
-			if (saved_bots & 2048) BotConnect(0, 12, (saved_skills2 & 192) / 64);
-			if (saved_bots & 4096) BotConnect(0, 13, (saved_skills2 & 768) / 256);
-			if (saved_bots & 8192) BotConnect(0, 14, (saved_skills2 & 3072) / 1024);
-			if (saved_bots & 16384) BotConnect(0, 15, (saved_skills2 & 12288) / 4096);
-			if (saved_bots & 32768) BotConnect(0, 16, (saved_skills2 & 49152) / 16384);
+			if (saved_bots & 1)
+				BotConnect (0, 1, saved_skills1 & 3);
+			if (saved_bots & 2)
+				BotConnect (0, 2, (saved_skills1 & 12) / 4);
+			if (saved_bots & 4)
+				BotConnect (0, 3, (saved_skills1 & 48) / 16);
+			if (saved_bots & 8)
+				BotConnect (0, 4, (saved_skills1 & 192) / 64);
+			if (saved_bots & 16)
+				BotConnect (0, 5, (saved_skills1 & 768) / 256);
+			if (saved_bots & 32)
+				BotConnect (0, 6, (saved_skills1 & 3072) / 1024);
+			if (saved_bots & 64)
+				BotConnect (0, 7, (saved_skills1 & 12288) / 4096);
+			if (saved_bots & 128)
+				BotConnect (0, 8, (saved_skills1 & 49152) / 16384);
+			if (saved_bots & 256)
+				BotConnect (0, 9, saved_skills2 & 3);
+			if (saved_bots & 512)
+				BotConnect (0, 10, (saved_skills2 & 12) / 4);
+			if (saved_bots & 1024)
+				BotConnect (0, 11, (saved_skills2& 48) / 16);
+			if (saved_bots & 2048)
+				BotConnect (0, 12, (saved_skills2 & 192) / 64);
+			if (saved_bots & 4096)
+				BotConnect (0, 13, (saved_skills2 & 768) / 256);
+			if (saved_bots & 8192)
+				BotConnect (0, 14, (saved_skills2 & 3072) / 1024);
+			if (saved_bots & 16384)
+				BotConnect (0, 15, (saved_skills2 & 12288) / 4096);
+			if (saved_bots & 32768)
+				BotConnect (0, 16, (saved_skills2 & 49152) / 16384);
 			saved_bots = 0;
 		}
 	}
 };
-
 
 void() WaypointWatch =
 {
@@ -1110,55 +1135,56 @@ void() WaypointWatch =
 	if (max_clients < 2)
 		return;
 	if (waypoint_mode != WM_UNINIT) {
-		bigboobs = cvar("saved4");
+		bigboobs = cvar ("saved4");
 		if (bigboobs != 0) {
 			if ((bigboobs & 3) == 1)
 				ClearAllWays();
 			else if ((bigboobs & 3) == 3) {
-				FixWaypoints();
-				h = ftos(b_options);
-				cvar_set("saved1", h);
-				cvar_set("saved4", "0");
-				cvar_set("scratch1", "0");
+				FixWaypoints ();
+				h = ftos (b_options);
+				cvar_set ("saved1", h);
+				cvar_set ("saved4", "0");
+				cvar_set ("scratch1", "0");
 				waypoint_mode = WM_LOADED;
 				return;
 			}
-			LoadWaypoint();
+			LoadWaypoint ();
 			waypoint_mode = WM_LOADING;
-			cvar_set("saved4", "0");
+			cvar_set ("saved4", "0");
 		}
 	}
 };
+
 void() BotFrame =
 {
 	local float num;
 
 	// for the sake of speed
-	sv_maxspeed = cvar("sv_maxspeed");
-	sv_gravity = cvar("sv_gravity");
-	sv_friction = cvar("sv_friction");
-	sv_accelerate = cvar("sv_accelerate");
-	sv_stopspeed = cvar("sv_stopspeed");
+	sv_maxspeed = cvar ("sv_maxspeed");
+	sv_gravity = cvar ("sv_gravity");
+	sv_friction = cvar ("sv_friction");
+	sv_accelerate = cvar ("sv_accelerate");
+	sv_stopspeed = cvar ("sv_stopspeed");
 	real_frametime = frametime; // in NQ this is alright
-	
-	self = nextent(NIL);
+
+	self = nextent (NIL);
 	num = 0;
 	while (num < max_clients) {
 		if (self.ishuman == FALSE) {
 			if (active_clients & ClientBitFlag(num)) {
-				frik_obstacles();
-				CL_KeyMove();
-				SV_ClientThink();
-				SV_Physics_Client();
+				frik_obstacles ();
+				CL_KeyMove ();
+				SV_ClientThink ();
+				SV_Physics_Client ();
 			}
 		}
-		self = nextent(self);
-		num = num + 1;
+		self = nextent (self);
+		num++;
 	}
-	WaypointWatch();
+	WaypointWatch ();
 
 	if (saved_bots)
-		bot_return();
+		bot_return ();
 };
 
 /*
@@ -1169,28 +1195,30 @@ related functions.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
 void() BotImpulses =
 {
 	local float f;
 
-	if (self.impulse == 100) {
-		f = cvar("skill");
-		BotConnect(0, 0, f);
-	} else if (self.impulse == 101) {
-		f = cvar("skill");
-		BotConnect(1, 0, f);
-	} else if (self.impulse == 102)
-		KickABot();
-	else if (self.impulse == 103)
-		botcam_u();
-	else if (self.impulse == 104)
+	switch (self.impulse) {
+	case 100:
+		f = cvar ("skill");
+		BotConnect (0, 0, f);
+		break;
+	case 101:
+		f = cvar ("skill");
+		BotConnect (1, 0, f);
+		break;
+	case 102:
+		KickABot ();
+		break;
+	case 103:
+		botcam_u ();
+		break;
+	case 104:
 		bot_way_edit();
-	else
+		break;
+	default:
 		return;
-
+	}
 	self.impulse = 0;
 };
-
-
-

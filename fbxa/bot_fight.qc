@@ -6,7 +6,6 @@
 ***********************************************/
 
 /*
-
 This program is in the Public Domain. My crack legal
 team would like to add:
 
@@ -39,79 +38,92 @@ with applicable reexport restrictions.
 
 Any reproduction of this software must contain
 this notice in its entirety. 
-
 */
 
 #include "libfrikbot.h"
 
 .entity avoid;
 
-float(entity e) bot_size_player =
+float (entity e)
+bot_size_player =
 {
-	local float sz;
+	local float		sz;
 
 	sz = e.health + e.armorvalue * e.armortype;
-	if (e.weapon == 32)
-		sz = sz + 60;
-	else if (e.weapon == 64)
-		sz = sz + 60;
-	else if (e.weapon == 16)
-		sz = sz + 50;
-	else if (e.weapon == 8)
-		sz = sz + 50;
-	else if (e.weapon == 4)
-		sz = sz + 40;
-	else if (e.weapon == 2)
-		sz = sz + 40;
-	else if (e.weapon == 1)
-		sz = sz + 10;
-	else if (e.weapon == 4096)
-		sz = sz - 50;
+	switch (e.weapon) {
+	case 4096:
+		sz -= 50;
+		break;
+	case 64:
+		sz += 60;
+		break;
+	case 32:
+		sz += 60;
+		break;
+	case 16:
+		sz += 50;
+		break;
+	case 8:
+		sz += 50;
+		break;
+	case 4:
+		sz += 40;
+		break;
+	case 2:
+		sz += 40;
+		break;
+	case 1:
+		sz += 10;
+		break;
+	default:
+		break;
+	}
+
 	if (e.items & 4194304) // Quad
-		sz = sz + 200;
+		sz += 200;
 	if (e.items & 1048576) // Invul
-		sz = sz + 300;
+		sz += 300;
 	if (e.items & 524288) // Invis
-		sz = sz + 250;
+		sz += 250;
 	return sz;
 };
 
-void() bot_dodge_stuff =
+void ()
+bot_dodge_stuff =
 {
-	local entity foe;
-	local float foedist, avdist, foesz, flen, tsz;
-	local vector v;
+	local entity	foe;
+	local float		foedist, avdist, foesz, flen, tsz;
+	local vector	v;
 
 	if (waypoint_mode > WM_LOADED)
 		return;
 
 	self.avoid = NIL;
 
-
 	if (self.enemy) {
-		v = self.origin - realorigin(self.enemy);
-		foedist = vlen(v);
-		foesz = bot_size_player(self.enemy);
+		v = self.origin - realorigin (self.enemy);
+		foedist = vlen (v);
+		foesz = bot_size_player (self.enemy);
 	} else {
 		foedist = 3000;
 		foesz = 9999999;
 	}
 	avdist = 256;
 
-	foe = find(NIL, classname, "grenade");
-	while(foe) {
-		flen = vlen(foe.origin - self.origin);
+	foe = find (NIL, classname, "grenade");
+	while (foe) {
+		flen = vlen (foe.origin - self.origin);
 		if (flen < avdist) {
 			avdist = flen;
 			self.avoid = foe;
 		}
-		foe = find(foe, classname, "grenade");
+		foe = find (foe, classname, "grenade");
 	}
 	if (!self.avoid) {
-		foe = find(NIL, classname, "missile");
-		while(foe) {
+		foe = find (NIL, classname, "missile");
+		while (foe) {
 			if (foe.owner != self) {
-				flen = vlen(foe.origin - self.origin);
+				flen = vlen (foe.origin - self.origin);
 				if (flen < avdist) {
 					avdist = flen;
 					self.avoid = foe;
@@ -121,7 +133,7 @@ void() bot_dodge_stuff =
 		}
 		if (!self.avoid) {
 			foe = find(NIL, classname, "spike");
-			while(foe) {
+			while (foe) {
 				if (foe.owner != self) {
 					flen = vlen(foe.origin - self.origin);
 					if (flen < avdist) {
@@ -129,21 +141,21 @@ void() bot_dodge_stuff =
 						self.avoid = foe;
 					}
 				}
-				foe = find(foe, classname, "spike");
+				foe = find (foe, classname, "spike");
 			}
 		}
 	}
 	if (coop) {
 		if (!self.enemy) {
-			foe = findradius(self.origin, foedist);
-			while(foe) {
-				if(foe.flags & FL_MONSTER) {
-					if(foe.health > 0) {
-						flen = vlen(foe.origin - self.origin);
+			foe = findradius (self.origin, foedist);
+			while (foe) {
+				if (foe.flags & FL_MONSTER) {
+					if (foe.health > 0) {
+						flen = vlen (foe.origin - self.origin);
 						if (flen < foedist) {
-							tsz = bot_size_player(foe);
+							tsz = bot_size_player (foe);
 							if (tsz < foesz) {
-								if (fisible(foe)) {
+								if (fisible (foe)) {
 									self.enemy = foe;
 									foedist = flen;
 									foesz = tsz;
@@ -164,14 +176,14 @@ void() bot_dodge_stuff =
 				if (foe.modelindex != 0) {
 					if (foe.health > 0) {
 						if (!(teamplay && self.team == foe.team)) {
-							flen = vlen(foe.origin - self.origin);
+							flen = vlen (foe.origin - self.origin);
 							if (flen < foedist) {
 								tsz = bot_size_player(foe);
 								if (tsz < foesz) {
 									if (fov(foe) || foe.b_sound > time || self.b_skill == 3) {
-										if (fisible(foe)) {
+										if (fisible (foe)) {
 											self.enemy = foe;
-											foedist = vlen(foe.origin - self.origin);
+											foedist = vlen (foe.origin - self.origin);
 										}
 									}
 								}
@@ -184,76 +196,71 @@ void() bot_dodge_stuff =
 	}
 };
 
-
-
-
 /*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 weapon_range
 
 _x "sweet spot range" - try to maintain this range if possible
 _y minimum range bot can be to be effective (rl/gl) (move away)
 _z maximum range bot can be to be effective (lg/axe) (move in)
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
-vector(float wep) weapon_range =
+vector (float wep)
+weapon_range =
 {
-	if (wep == 4096) // IT_AXE
+	switch (wep) {
+	case 4096:	// IT_AXE
 		return '48 0 64';
-	else if (wep == 1) // IT_SHOTGUN
+	case 1:		// IT_SHOTGUN
 		return '128 0 99999';
-	else if (wep == 2) // IT_SUPER_SHOTGUN
+	case 2:		// IT_SUPER_SHOTGUN
 		return '128 0 99999';
-	else if (wep == 4) // IT_NAILGUN
+	case 4:		// IT_NAILGUN
 		return '180 0 3000';
-	else if (wep == 8) // IT_SUPER_NAILGUN
+	case 8:		// IT_SUPER_NAILGUN
 		return '180 0 3000';
-	else if (wep == 16) // IT_GRENADE_LAUNCHER
+	case 16:	// IT_GRENADE_LAUNCHER
 		return '180 48 3000';
-	else if (wep == 32) // IT_ROCKET_LAUNCHER
+	case 32:	// IT_ROCKET_LAUNCHER
 		return '180 48 3000';
-	else if (wep == 64) // IT_LIGHTNING
+	case 64:	// IT_LIGHTNING
 		return '350 0 512';
+	default:
+		break;
+	}
 };
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+/*
 bot_weapon_switch
 
 Pick a weapon based on range / ammo
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
-void(float brange) bot_weapon_switch =
+void (float brange)
+bot_weapon_switch =
 {
-	local	float	it, flag = 0, pulse = 0;
-	local vector v;
+	local float		it, flag = 0, pulse = 0;
+	local vector	v;
 
 	it = self.items & 127;
 
-	while(it) {
+	while (it) {
 		if ((self.ammo_rockets >= 1) && (it & 32)) {
 			flag = 32;
 			pulse = 7;
 		} else if (self.waterlevel <= 1 && self.ammo_cells >= 1 && (it & 64)) {
 			flag = 64;
 			pulse = 8;
-		} else if(self.ammo_nails >= 2 && (it & 8)) {
+		} else if (self.ammo_nails >= 2 && (it & 8)) {
 			flag = 8;
 			pulse = 5;
 		} else if ((self.ammo_rockets >= 1) && (it & 16)) {
 			flag = 16;
 			pulse = 6;
-		} else if(self.ammo_shells >= 2 && (it & 2)) {
+		} else if (self.ammo_shells >= 2 && (it & 2)) {
 			flag = 2;
 			pulse = 3;
-		} else if(self.ammo_nails >= 1 && (it & 4)) {
+		} else if (self.ammo_nails >= 1 && (it & 4)) {
 			flag = 4;
 			pulse = 4;
-		} else if(self.ammo_shells >= 1 && (it & 1)) {
+		} else if (self.ammo_shells >= 1 && (it & 1)) {
 			flag = 1;
 			pulse = 2;
 		} else {
@@ -268,7 +275,7 @@ void(float brange) bot_weapon_switch =
 			return;
 		}
 
-		v = weapon_range(flag);
+		v = weapon_range (flag);
 		if (brange < v_y || brange > v_z)
 			it = it - flag;
 		else {
@@ -279,35 +286,32 @@ void(float brange) bot_weapon_switch =
 	}
 };
 
-void() bot_shoot = 
+void ()
+bot_shoot = 
 {
 	// quick little function to stop making him shoot the wrong way ! Argh
 	local float g;
-	g = angcomp(self.v_angle_x, self.b_angle_x);
-	if (fabs(g) > 30)
+
+	g = angcomp (self.v_angle_x, self.b_angle_x);
+	if (fabs (g) > 30)
 		return; // argh, too far away
-	g = angcomp(self.v_angle_y, self.b_angle_y);
-	if (fabs(g) > 30)
+	g = angcomp (self.v_angle_y, self.b_angle_y);
+	if (fabs (g) > 30)
 		return; // not again!
 	self.button0 = TRUE;
 };
 
 /*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
 Bot_fight_style
 
 This is the core of the bot's thinking when
 attacking an enemy. 
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
-void() bot_fight_style =
+void ()
+bot_fight_style =
 {
-	local vector v, v1 = '0 0 0', v2 = '0 0 0', org;
-	local float foedist, mysz, foesz;
-
+	local float		foedist, mysz, foesz;
+	local vector	v, v1 = '0 0 0', v2 = '0 0 0', org;
 
 	if (self.enemy.health <= 0) {
 		self.enemy = NIL;
@@ -315,42 +319,40 @@ void() bot_fight_style =
 	} else if (!self.enemy.takedamage) {
 		self.enemy = NIL;
 		return;
-	} else if (!fisible(self.enemy)) {
+	} else if (!fisible (self.enemy)) {
 		self.enemy = NIL;
 		return;
 	}
 
-	org = realorigin(self.enemy);
-	makevectors(self.v_angle);
+	org = realorigin (self.enemy);
+	makevectors (self.v_angle);
 
 	// decide if I should shoot
-
-	foedist = vlen(org - self.origin);
-	v = weapon_range(self.weapon);
+	foedist = vlen (org - self.origin);
+	v = weapon_range (self.weapon);
 	if (foedist > v_y && foedist < v_z) {
-		traceline(self.origin + self.view_ofs, self.origin + self.view_ofs + v_forward * v_z, FALSE, self);
+		traceline (self.origin + self.view_ofs, self.origin + self.view_ofs + v_forward * v_z, FALSE, self);
 		if (vlen(trace_endpos - (self.origin + self.view_ofs)) >= v_y) {
 			// try to avoid shooting teammates
 			if (trace_ent.classname == "player")
 				if ((trace_ent.team == self.team && teamplay) || (coop))
 					return;
-			bot_shoot();
+			bot_shoot ();
 		}
 	} else
-		bot_weapon_switch(foedist);
+		bot_weapon_switch (foedist);
 
 	if (!(self.b_aiflags & (AI_PRECISION | AI_BLIND | AI_OBSTRUCTED))) {
-		foesz = bot_size_player(self.enemy);
-		mysz = bot_size_player(self) + 5;
+		foesz = bot_size_player (self.enemy);
+		mysz = bot_size_player (self) + 5;
 
 		if (foesz > mysz) {
 			if (teamplay) {
-				if (random() < 0.02) {
-					bot_start_topic(5);
+				if (random () < 0.02) {
+					bot_start_topic (5);
 					self.b_chattime = 1;
 				}
 			}
-			
 			return;
 		} else if (mysz < 140)
 			return;
@@ -358,36 +360,34 @@ void() bot_fight_style =
 			if (self.avoid.velocity)
 				v = self.avoid.velocity;
 			else
-				v = normalize(self.avoid.origin - self.origin);
+				v = normalize (self.avoid.origin - self.origin);
 			v1_x = v_y;
 			v1_y = v_y * -1;
 			v2_x = v_y;
 			v2_y = v_y * -1;
-			foedist = vlen(self.avoid.origin - (self.origin + v1));
-			if (foedist < vlen(self.avoid.origin - (self.origin + v2)))
-				frik_walkmove(v2);
+			foedist = vlen (self.avoid.origin - (self.origin + v1));
+			if (foedist < vlen (self.avoid.origin - (self.origin + v2)))
+				frik_walkmove (v2);
 			else
-				frik_walkmove(v1);
+				frik_walkmove (v1);
 		} else if (!(self.enemy.flags & FL_MONSTER)) {
 			if (foedist + 32 <  v_x)
-				frik_walkmove(self.origin - org);
+				frik_walkmove (self.origin - org);
 			else if (foedist - 32 >  v_x)
-				frik_walkmove(org - self.origin);
+				frik_walkmove (org - self.origin);
 			else if (self.wallhug)
-				frik_walkmove(v_right);
+				frik_walkmove (v_right);
 			else
-				frik_walkmove(v_right * -1);
+				frik_walkmove (v_right * -1);
 		}
 	} else {
-		foesz = bot_size_player(self.enemy);
-		mysz = bot_size_player(self) + 5;
+		foesz = bot_size_player (self.enemy);
+		mysz = bot_size_player (self) + 5;
 
 		if (foesz > mysz)
 			return;
 		else if (mysz < 140)
 			return;
-		self.keys = self.keys & 960;
+		self.keys &= 960;
 	}
 };
-
-
