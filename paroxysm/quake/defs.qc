@@ -224,8 +224,10 @@ void		end_sys_fields;			// flag for structure dumping
 // constants
 //
 
-float	FALSE					= 0;
-float	TRUE					= 1;
+enum {
+	FALSE,
+	TRUE
+};
 
 // edict.flags
 float	FL_FLY					= 1;
@@ -596,7 +598,7 @@ void(entity e, vector o) setorigin	= #2;
 void(entity e, string m) setmodel	= #3;		// set movetype and solid first
 void(entity e, vector min, vector max) setsize = #4;
 // #5 was removed
-void() break						= #6;
+void() Break						= #6;
 float() random						= #7;		// returns 0 - 1
 void(entity e, float chan, string samp, float vol, float atten) sound = #8;
 vector(vector v) normalize			= #9;

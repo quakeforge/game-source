@@ -315,7 +315,7 @@ void() weapon_touch =
 {
 	local	float	hadammo, best, new = 0, old;
 	local	entity	stemp;
-	local	float	leave;
+	//local	float	leave;
 
 	if (!(other.flags & FL_CLIENT))
 		return;
@@ -405,8 +405,8 @@ void() weapon_touch =
 
 	self = stemp;
 
-	if (leave)
-		return;
+//	if (leave)
+//		return;
 
 // remove it in single player, or setup for respawning in deathmatch
 	self.model = string_null;

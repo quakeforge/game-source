@@ -134,7 +134,7 @@ float(float a) CamReAngle =
 
 // point visibility test
 
-float(vector vec) CamVisible =
+integer(vector vec) CamVisible =
 {
  traceline(self.origin,vec,TRUE,self);
  return ((trace_fraction == 1) && !((trace_inopen && trace_inwater)));
@@ -143,7 +143,7 @@ float(vector vec) CamVisible =
 // entity visibility test
 // suited for players and player size bots; may vary for various classnames
 
-float(entity ent) CamVisibleEnt =
+integer(entity ent) CamVisibleEnt =
 {
  local vector vec;
 
@@ -214,7 +214,8 @@ float(float d, float a) CamHurry =
 
 vector(float s, float v, float a) CamSmooth =
 {
- local float dt,t1,t2,v2,as,sv2,b;
+ local float dt,t1,t2,v2,as,sv2;
+ local integer b;
  local vector vec;
 
  s = CamReAngle(s);
@@ -749,7 +750,7 @@ void() CamImpulses =
   }
 // Messages ON/OFF
  } else if (self.impulse == 210) {
-  self.aflag = !self.aflag;
+  self.aflag = (float)!self.aflag;	//FIXME qfcc issue
 // Report position
  } else if (self.impulse == 211) {
   bprint("Current camera position: ");
