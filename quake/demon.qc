@@ -148,7 +148,7 @@ void()	demon1_die6		=[	$death6,		demon1_die7	]
 {self.solid = SOLID_NOT;};
 void()	demon1_die7		=[	$death7,		demon1_die8	] {};
 void()	demon1_die8		=[	$death8,		demon1_die9	] {};
-void()	demon1_die9		=[	$death9,		demon1_die9 ] {};
+void()	demon1_die9		=[	$death9,		demon1_die9 ] { bringback (); };
 
 void() demon_die =
 {
@@ -209,8 +209,9 @@ void() monster_demon1 =
 	self.th_melee = Demon_MeleeAttack;		// one of two attacks
 	self.th_missile = demon1_jump1;			// jump attack
 	self.th_pain = demon1_pain;
-		
-	walkmonster_start();
+
+	savecritter ();
+	walkmonster_start ();
 };
 
 

@@ -108,9 +108,7 @@ void() f_attack16       =[      $attack16,      f_attack17] {ai_charge(10);};
 void() f_attack17       =[      $attack17,      f_attack18] {ai_charge(10);};
 void() f_attack18       =[      $attack18,      f_run1    ] {ai_charge(10);};
 
-void() f_death1 =[      $death1,        f_death2        ] {
-sound (self, CHAN_VOICE, "fish/death.wav", 1, ATTN_NORM);
-};
+void() f_death1 =[      $death1,        f_death2        ] {};
 void() f_death2 =[      $death2,        f_death3        ] {};
 void() f_death3 =[      $death3,        f_death4        ] {};
 void() f_death4 =[      $death4,        f_death5        ] {};
@@ -130,7 +128,24 @@ void() f_death17 =[      $death17,       f_death18       ] {};
 void() f_death18 =[      $death18,       f_death19       ] {};
 void() f_death19 =[      $death19,       f_death20       ] {};
 void() f_death20 =[      $death20,       f_death21       ] {};
-void() f_death21 =[      $death21,       f_death21       ] {self.solid = SOLID_NOT;};
+void() f_death21 =[      $death21,       f_death21       ] {
+	self.solid = SOLID_NOT;
+	bringback ();
+};
+
+void () f_death =
+{
+	if (self.health < -35) {
+		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+		ThrowGib ("progs/gib3.mdl", self.health);
+		ThrowGib ("progs/gib3.mdl", self.health);
+		ThrowGib ("progs/gib3.mdl", self.health);
+		remove (self);
+		return;
+	}
+
+	f_death1 ();
+};
 
 void() f_pain1  =[      $pain1, f_pain2 ] {};
 void() f_pain2  =[      $pain2, f_pain3 ] {ai_pain(6);};
@@ -177,10 +192,11 @@ void() monster_fish =
 	self.th_stand = f_stand1;
 	self.th_walk = f_walk1;
 	self.th_run = f_run1;
-	self.th_die = f_death1;
+	self.th_die = f_death;
 	self.th_pain = fish_pain;
 	self.th_melee = f_attack1;
 	
+	savecritter ();
 	swimmonster_start ();
 };
 
