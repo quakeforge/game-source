@@ -17,10 +17,56 @@ Door.enemy chains from the master door through all doors linked in the chain.
 
 // THINK FUNCTIONS ============================================================
 
-void() door_go_down;
-void() door_go_up;
+void ()
+door_hit_bottom =
+{
+	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+	self.state = STATE_BOTTOM;
+};
 
-void() door_blocked =
+void ()
+door_go_down =
+{
+	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
+	if (self.max_health) {
+		self.takedamage = DAMAGE_YES;
+		self.health = self.max_health;
+	}
+	
+	self.state = STATE_DOWN;
+	SUB_CalcMove (self.pos1, self.speed, door_hit_bottom);
+};
+
+void ()
+door_hit_top =
+{
+	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+	self.state = STATE_TOP;
+	if (self.spawnflags & DOOR_TOGGLE)
+		return;         // don't come down automatically
+	self.think = door_go_down;
+	self.nextthink = self.ltime + self.wait;
+};
+
+void ()
+door_go_up =
+{
+	if (self.state == STATE_UP)
+		return;			// allready going up
+	if (self.state == STATE_TOP) {		// reset top wait time
+		self.nextthink = self.ltime + self.wait;
+		return;
+	}
+	
+	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
+	self.state = STATE_UP;
+	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
+
+	SUB_UseTargets ();
+};
+
+void ()
+door_blocked =
 {
 	other.deathtype = "squish";
 	T_Damage (other, self, self.goalentity, self.dmg);
@@ -35,54 +81,10 @@ void() door_blocked =
 	}
 };
 
-void() door_hit_top =
-{
-	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-	self.state = STATE_TOP;
-	if (self.spawnflags & DOOR_TOGGLE)
-		return;         // don't come down automatically
-	self.think = door_go_down;
-	self.nextthink = self.ltime + self.wait;
-};
-
-void() door_hit_bottom =
-{
-	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-	self.state = STATE_BOTTOM;
-};
-
-void() door_go_down =
-{
-	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
-	if (self.max_health) {
-		self.takedamage = DAMAGE_YES;
-		self.health = self.max_health;
-	}
-	
-	self.state = STATE_DOWN;
-	SUB_CalcMove (self.pos1, self.speed, door_hit_bottom);
-};
-
-void() door_go_up =
-{
-	if (self.state == STATE_UP)
-		return;			// allready going up
-
-	if (self.state == STATE_TOP) {		// reset top wait time
-		self.nextthink = self.ltime + self.wait;
-		return;
-	}
-	
-	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
-	self.state = STATE_UP;
-	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
-
-	SUB_UseTargets ();
-};
-
 // ACTIVATION FUNCTIONS =======================================================
 
-void() door_fire =
+void ()
+door_fire =
 {
 	local entity	oself, starte;
 
@@ -119,7 +121,8 @@ void() door_fire =
 	self = oself;
 };
 
-void() door_use =
+void ()
+door_use =
 {
 	local entity	oself;
 
@@ -133,7 +136,8 @@ void() door_use =
 	self = oself;
 };
 
-void() door_trigger_touch =
+void ()
+door_trigger_touch =
 {
 	if (other.health <= 0)
 		return;
@@ -148,7 +152,8 @@ void() door_trigger_touch =
 	door_use ();
 };
 
-void() door_killed =
+void ()
+door_killed =
 {
 	local entity	oself;
 	
@@ -167,7 +172,8 @@ door_touch
 Prints messages and opens key doors
 ================
 */
-void() door_touch =
+void ()
+door_touch =
 {
 	if (other.classname != "player")
 		return;
@@ -232,10 +238,10 @@ void() door_touch =
 
 // SPAWNING FUNCTIONS =========================================================
 
-entity(vector fmins, vector fmaxs) spawn_field =
+entity (vector fmins, vector fmaxs)
+spawn_field =
 {
 	local entity	trigger;
-	local vector	t1, t2;
 
 	trigger = spawn ();
 	trigger.movetype = MOVETYPE_NONE;
@@ -243,13 +249,12 @@ entity(vector fmins, vector fmaxs) spawn_field =
 	trigger.owner = self;
 	trigger.touch = door_trigger_touch;
 
-	t1 = fmins;
-	t2 = fmaxs;
-	setsize (trigger, t1 - '60 60 8', t2 + '60 60 8');
+	setsize (trigger, fmins - '60 60 8', fmaxs + '60 60 8');
 	return (trigger);
 };
 
-float (entity e1, entity e2) EntitiesTouching =
+float (entity e1, entity e2)
+EntitiesTouching =
 {
 	if (e1.mins_x > e2.maxs_x)
 		return FALSE;
@@ -266,7 +271,8 @@ float (entity e1, entity e2) EntitiesTouching =
 	return TRUE;
 };
 
-void() LinkDoors =
+void ()
+LinkDoors =
 {
 	local entity	t, starte;
 	local vector	cmins, cmaxs;
@@ -362,10 +368,11 @@ Key doors are allways wait -1.
 3)      stone chain
 4)      screechy metal
 */
-void() func_door =
+void ()
+func_door =
 {
 	switch (world.worldtype) {
-		case 0:
+	case 0:
 		precache_sound ("doors/medtry.wav");
 		precache_sound ("doors/meduse.wav");
 		self.noise3 = "doors/medtry.wav";
@@ -480,13 +487,7 @@ void() func_door =
 
 // SECRET DOORS ===============================================================
 
-void() fd_secret_move1;
-void() fd_secret_move2;
-void() fd_secret_move3;
-void() fd_secret_move4;
-void() fd_secret_move5;
-void() fd_secret_move6;
-void() fd_secret_done;
+void () fd_secret_done;
 
 float SECRET_OPEN_ONCE = 1;             // stays open
 float SECRET_1ST_LEFT = 2;              // 1st move is left of arrow
@@ -494,7 +495,60 @@ float SECRET_1ST_DOWN = 4;              // 1st move is down from arrow
 float SECRET_NO_SHOOT = 8;              // only opened by trigger
 float SECRET_YES_SHOOT = 16;    // shootable even if targeted
 
-void () fd_secret_use =
+void ()
+fd_secret_move6 =
+{
+	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
+	SUB_CalcMove (self.oldorigin, self.speed, fd_secret_done);
+};
+
+// Wait 1 second...
+void ()
+fd_secret_move5 = 
+{
+	self.nextthink = self.ltime + 1.0;
+	self.think = fd_secret_move6;
+	sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
+};
+
+// Move backward...
+void ()
+fd_secret_move4 =
+{
+	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
+	SUB_CalcMove (self.dest1, self.speed, fd_secret_move5);          
+};
+
+// Wait here until time to go back...
+void ()
+fd_secret_move3 =
+{
+	sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
+	if (!(self.spawnflags & SECRET_OPEN_ONCE)) {
+		self.nextthink = self.ltime + self.wait;
+		self.think = fd_secret_move4;
+	}
+};
+
+// Start moving sideways w/sound...
+void ()
+fd_secret_move2 =
+{
+	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
+	SUB_CalcMove (self.dest2, self.speed, fd_secret_move3);
+};
+
+// Wait after first movement...
+void ()
+fd_secret_move1 = 
+{
+	self.nextthink = self.ltime + 1.0;
+	self.think = fd_secret_move2;
+	sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
+};
+
+void ()
+fd_secret_use =
 {
 	local float		temp;
 	
@@ -542,58 +596,14 @@ void () fd_secret_use =
 	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
 };
 
-void (entity attacker, float damage) fd_secret_pain =
+void (entity attacker, float damage)
+fd_secret_pain =
 {
 	fd_secret_use ();
 };
 
-// Wait after first movement...
-void () fd_secret_move1 = 
-{
-	self.nextthink = self.ltime + 1.0;
-	self.think = fd_secret_move2;
-	sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
-};
-
-// Start moving sideways w/sound...
-void () fd_secret_move2 =
-{
-	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
-	SUB_CalcMove (self.dest2, self.speed, fd_secret_move3);
-};
-
-// Wait here until time to go back...
-void () fd_secret_move3 =
-{
-	sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
-	if (!(self.spawnflags & SECRET_OPEN_ONCE)) {
-		self.nextthink = self.ltime + self.wait;
-		self.think = fd_secret_move4;
-	}
-};
-
-// Move backward...
-void () fd_secret_move4 =
-{
-	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
-	SUB_CalcMove (self.dest1, self.speed, fd_secret_move5);          
-};
-
-// Wait 1 second...
-void () fd_secret_move5 = 
-{
-	self.nextthink = self.ltime + 1.0;
-	self.think = fd_secret_move6;
-	sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
-};
-
-void () fd_secret_move6 =
-{
-	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
-	SUB_CalcMove (self.oldorigin, self.speed, fd_secret_done);
-};
-
-void () fd_secret_done =
+void ()
+fd_secret_done =
 {
 	if (!self.targetname || self.spawnflags&SECRET_YES_SHOOT) {
 		self.health = 10000;
@@ -605,7 +615,8 @@ void () fd_secret_done =
 	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise3, 1, ATTN_NORM);
 };
 
-void () secret_blocked =
+void ()
+secret_blocked =
 {
 	if (time < self.attack_finished)
 		return;
@@ -622,7 +633,8 @@ secret_touch
 Prints messages
 ================
 */
-void() secret_touch =
+void ()
+secret_touch =
 {
 	if (other.classname != "player")
 		return;
@@ -653,7 +665,8 @@ If a secret door has a targetname, it will only be opened by it's botton or trig
 2) metal
 3) base
 */
-void () func_door_secret =
+void ()
+func_door_secret =
 {
 	switch (self.sounds) {
 	case 1:

@@ -1,20 +1,23 @@
-void() W_SetCurrentAmmo;
+void () W_SetCurrentAmmo;
 
 /* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
 BE .8 .3 .4 IN COLOR */
 
-void() SUB_regen =
+void ()
+SUB_regen =
 {
 	self.model = self.mdl;          // restore original model
 	self.solid = SOLID_TRIGGER;     // allow it to be touched again
-	sound (self, CHAN_VOICE, "items/itembk2.wav", 1, ATTN_NORM);    // play respawn sound
+	// play respawn sound
+	sound (self, CHAN_VOICE, "items/itembk2.wav", 1, ATTN_NORM);
 	setorigin (self, self.origin);
 };
 
 /*QUAKED noclass (0 0 0) (-8 -8 -8) (8 8 8)
 prints a warning message when spawned
 */
-void() noclass =
+void ()
+noclass =
 {
 	dprint ("noclass spawned at");
 	dprint (vtos (self.origin));
@@ -22,7 +25,8 @@ void() noclass =
 	remove (self);
 };
 
-void() q_touch =
+void ()
+q_touch =
 {
 	local string	s;
 
@@ -62,7 +66,8 @@ void() q_touch =
 	SUB_UseTargets ();		// fire all targets / killtargets
 };
 
-void(float timeleft) DropQuad =
+void (float timeleft)
+DropQuad =
 {
 	local entity    item;
 
@@ -86,7 +91,8 @@ void(float timeleft) DropQuad =
 	item.think = SUB_Remove;
 };
 
-void() r_touch =
+void ()
+r_touch =
 {
 	local string	s;
 
@@ -116,7 +122,8 @@ void() r_touch =
 	SUB_UseTargets ();			// fire all targets / killtargets
 };
 
-void(float timeleft) DropRing =
+void (float timeleft)
+DropRing =
 {
 	local entity	item;
 
@@ -146,7 +153,8 @@ PlaceItem
 plants the object on the floor
 ============
 */
-void() PlaceItem =
+void ()
+PlaceItem =
 {
 	local float		oldz;
 
@@ -173,7 +181,8 @@ StartItem
 Sets the clipping size and plants the object on the floor
 ============
 */
-void() StartItem =
+void ()
+StartItem =
 {
 	self.nextthink = time + 0.2;    // items start after other solids
 	self.think = PlaceItem;
@@ -181,10 +190,14 @@ void() StartItem =
 
 // HEALTH BOX =================================================================
 
+float   H_ROTTEN = 1;
+float   H_MEGA = 2;
+.float  healamount, healtype;
 
 // T_Heal: add health to an entity, limiting health to max_health
 // "ignore" will ignore max_health limit
-float (entity e, float healamount, float ignore) T_Heal =
+float (entity e, float healamount, float ignore)
+T_Heal =
 {
 	if (e.health <= 0)
 		return 0;
@@ -201,49 +214,29 @@ float (entity e, float healamount, float ignore) T_Heal =
 	return 1;
 };
 
-/*QUAKED item_health (.3 .3 1) (0 0 0) (32 32 32) rotten megahealth
-Health box. Normally gives 25 points.
-Rotten box heals 5-10 points,
-megahealth will add 100 health, then 
-rot you down to your maximum health limit, 
-one point per second.
-*/
-float   H_ROTTEN = 1;
-float   H_MEGA = 2;
-.float  healamount, healtype;
-void() health_touch;
-void() item_megahealth_rot;
-void() item_health =
-{       
-	self.touch = health_touch;
-
-	if (self.spawnflags & H_ROTTEN) {
-		precache_model ("maps/b_bh10.bsp");
-		precache_sound ("items/r_item1.wav");
-		setmodel (self, "maps/b_bh10.bsp");
-		self.noise = "items/r_item1.wav";
-		self.healamount = 15;
-		self.healtype = 0;
-	} else if (self.spawnflags & H_MEGA) {
-		precache_model ("maps/b_bh100.bsp");
-		precache_sound ("items/r_item2.wav");
-		setmodel (self, "maps/b_bh100.bsp");
-		self.noise = "items/r_item2.wav";
-		self.healamount = 100;
-		self.healtype = 2;
-	} else {
-		precache_model ("maps/b_bh25.bsp");
-		precache_sound ("items/health1.wav");
-		setmodel (self, "maps/b_bh25.bsp");
-		self.noise = "items/health1.wav";
-		self.healamount = 25;
-		self.healtype = 1;
+void ()
+item_megahealth_rot =
+{
+	other = self.owner;
+	
+	if (other.health > other.max_health) {
+		other.health = other.health - 1;
+		self.nextthink = time + 1;
+		return;
 	}
-	setsize (self, '0 0 0', '32 32 56');
-	StartItem ();
+
+	// it is possible for a player to die and respawn between rots, so don't
+	// just blindly subtract the flag off
+	other.items &= ~IT_SUPERHEALTH;
+	
+	if (deathmatch != 2) {		// deathmatch 2 is silly old rules
+		self.nextthink = time + 20;
+		self.think = SUB_regen;
+	}
 };
 
-void() health_touch =
+void ()
+health_touch =
 {
 	local  string	s;
 	
@@ -295,29 +288,48 @@ void() health_touch =
 	SUB_UseTargets ();			// fire all targets / killtargets
 };      
 
-void() item_megahealth_rot =
-{
-	other = self.owner;
-	
-	if (other.health > other.max_health) {
-		other.health = other.health - 1;
-		self.nextthink = time + 1;
-		return;
-	}
+/*QUAKED item_health (.3 .3 1) (0 0 0) (32 32 32) rotten megahealth
+Health box. Normally gives 25 points.
+Rotten box heals 5-10 points,
+megahealth will add 100 health, then 
+rot you down to your maximum health limit, 
+one point per second.
+*/
+void ()
+item_health =
+{       
+	self.touch = health_touch;
 
-	// it is possible for a player to die and respawn between rots, so don't
-	// just blindly subtract the flag off
-	other.items &= ~IT_SUPERHEALTH;
-	
-	if (deathmatch != 2) {		// deathmatch 2 is silly old rules
-		self.nextthink = time + 20;
-		self.think = SUB_regen;
+	if (self.spawnflags & H_ROTTEN) {
+		precache_model ("maps/b_bh10.bsp");
+		precache_sound ("items/r_item1.wav");
+		setmodel (self, "maps/b_bh10.bsp");
+		self.noise = "items/r_item1.wav";
+		self.healamount = 15;
+		self.healtype = 0;
+	} else if (self.spawnflags & H_MEGA) {
+		precache_model ("maps/b_bh100.bsp");
+		precache_sound ("items/r_item2.wav");
+		setmodel (self, "maps/b_bh100.bsp");
+		self.noise = "items/r_item2.wav";
+		self.healamount = 100;
+		self.healtype = 2;
+	} else {
+		precache_model ("maps/b_bh25.bsp");
+		precache_sound ("items/health1.wav");
+		setmodel (self, "maps/b_bh25.bsp");
+		self.noise = "items/health1.wav";
+		self.healamount = 25;
+		self.healtype = 1;
 	}
+	setsize (self, '0 0 0', '32 32 56');
+	StartItem ();
 };
 
 // ARMOR ======================================================================
 
-void() armor_touch =
+void ()
+armor_touch =
 {
 	local float		type = 0, value = 0, bit = 0;
 	
@@ -374,7 +386,8 @@ void() armor_touch =
 
 /*QUAKED item_armor1 (0 .5 .8) (-16 -16 0) (16 16 32)
 */
-void() item_armor1 =
+void ()
+item_armor1 =
 {
 	self.touch = armor_touch;
 	precache_model ("progs/armor.mdl");
@@ -386,7 +399,8 @@ void() item_armor1 =
 
 /*QUAKED item_armor2 (0 .5 .8) (-16 -16 0) (16 16 32)
 */
-void() item_armor2 =
+void ()
+item_armor2 =
 {
 	self.touch = armor_touch;
 	precache_model ("progs/armor.mdl");
@@ -398,7 +412,8 @@ void() item_armor2 =
 
 /*QUAKED item_armorInv (0 .5 .8) (-16 -16 0) (16 16 32)
 */
-void() item_armorInv =
+void ()
+item_armorInv =
 {
 	self.touch = armor_touch;
 	precache_model ("progs/armor.mdl");
@@ -410,7 +425,8 @@ void() item_armorInv =
 
 // WEAPONS ====================================================================
 
-void() bound_other_ammo =
+void ()
+bound_other_ammo =
 {
 	if (other.ammo_shells > 100)
 		other.ammo_shells = 100;
@@ -422,7 +438,8 @@ void() bound_other_ammo =
 		other.ammo_cells = 100;         
 };
 
-float(float w) RankForWeapon =
+float (float w)
+RankForWeapon =
 {
 	switch (w) {
 	case IT_LIGHTNING:
@@ -442,7 +459,8 @@ float(float w) RankForWeapon =
 	}
 };
 
-float (float w) WeaponCode =
+float (float w)
+WeaponCode =
 {
 	switch (w) {
 	case IT_SUPER_SHOTGUN:
@@ -471,7 +489,8 @@ Deathmatch weapon change rules for picking up a weapon
 .float          ammo_shells, ammo_nails, ammo_rockets, ammo_cells;
 =============
 */
-void(float old, float new) Deathmatch_Weapon =
+void (float old, float new)
+Deathmatch_Weapon =
 {
 	local float		or, nr;
 
@@ -482,9 +501,10 @@ void(float old, float new) Deathmatch_Weapon =
 		self.weapon = new;
 };
 
-float() W_BestWeapon;
+float () W_BestWeapon;
 
-void() weapon_touch =
+void ()
+weapon_touch =
 {
 	local float		w_switch, hadammo, leave, best, old, new = 0;
 	local entity 	stemp;
@@ -603,7 +623,8 @@ void() weapon_touch =
 
 /*QUAKED weapon_supershotgun (0 .5 .8) (-16 -16 0) (16 16 32)
 */
-void() weapon_supershotgun =
+void ()
+weapon_supershotgun =
 {
 	if (deathmatch <= 3) {
 		precache_model ("progs/g_shot.mdl");
@@ -618,7 +639,8 @@ void() weapon_supershotgun =
 
 /*QUAKED weapon_nailgun (0 .5 .8) (-16 -16 0) (16 16 32)
 */
-void() weapon_nailgun =
+void ()
+weapon_nailgun =
 {
 	if (deathmatch <= 3) {
 		precache_model ("progs/g_nail.mdl");
@@ -633,7 +655,8 @@ void() weapon_nailgun =
 
 /*QUAKED weapon_supernailgun (0 .5 .8) (-16 -16 0) (16 16 32)
 */
-void() weapon_supernailgun =
+void ()
+weapon_supernailgun =
 {
 	if (deathmatch <= 3) {
 		precache_model ("progs/g_nail2.mdl");
@@ -648,7 +671,8 @@ void() weapon_supernailgun =
 
 /*QUAKED weapon_grenadelauncher (0 .5 .8) (-16 -16 0) (16 16 32)
 */
-void() weapon_grenadelauncher =
+void ()
+weapon_grenadelauncher =
 {
 	if (deathmatch <= 3) {
 		precache_model ("progs/g_rock.mdl");
@@ -663,7 +687,8 @@ void() weapon_grenadelauncher =
 
 /*QUAKED weapon_rocketlauncher (0 .5 .8) (-16 -16 0) (16 16 32)
 */
-void() weapon_rocketlauncher =
+void ()
+weapon_rocketlauncher =
 {
 	if (deathmatch <= 3) {
 		precache_model ("progs/g_rock2.mdl");
@@ -678,7 +703,8 @@ void() weapon_rocketlauncher =
 
 /*QUAKED weapon_lightning (0 .5 .8) (-16 -16 0) (16 16 32)
 */
-void() weapon_lightning =
+void ()
+weapon_lightning =
 {
 	if (deathmatch <= 3) {
 		precache_model ("progs/g_light.mdl");
@@ -693,7 +719,8 @@ void() weapon_lightning =
 
 // AMMO =======================================================================
 
-void() ammo_touch =
+void ()
+ammo_touch =
 {
 	local entity	stemp;
 	local float		best;
@@ -776,7 +803,8 @@ float WEAPON_BIG2 = 1;
 
 /*QUAKED item_shells (0 .5 .8) (0 0 0) (32 32 32) big
 */
-void() item_shells =
+void ()
+item_shells =
 {
 	if (deathmatch == 4)
 		return;
@@ -800,7 +828,8 @@ void() item_shells =
 
 /*QUAKED item_spikes (0 .5 .8) (0 0 0) (32 32 32) big
 */
-void() item_spikes =
+void ()
+item_spikes =
 {
 	if (deathmatch == 4)
 		return;
@@ -824,7 +853,8 @@ void() item_spikes =
 
 /*QUAKED item_rockets (0 .5 .8) (0 0 0) (32 32 32) big
 */
-void() item_rockets =
+void ()
+item_rockets =
 {
 	if (deathmatch == 4)
 		return;
@@ -848,7 +878,8 @@ void() item_rockets =
 
 /*QUAKED item_cells (0 .5 .8) (0 0 0) (32 32 32) big
 */
-void() item_cells =
+void ()
+item_cells =
 {
 	if (deathmatch == 4)
 		return;
@@ -870,14 +901,16 @@ void() item_cells =
 	StartItem ();
 };
 
-/*QUAKED item_weapon (0 .5 .8) (0 0 0) (32 32 32) shotgun rocket spikes big
-DO NOT USE THIS!!!! IT WILL BE REMOVED!
-*/
 float WEAPON_SHOTGUN = 1;
 float WEAPON_ROCKET = 2;
 float WEAPON_SPIKES = 4;
 float WEAPON_BIG = 8;
-void() item_weapon =
+
+/*QUAKED item_weapon (0 .5 .8) (0 0 0) (32 32 32) shotgun rocket spikes big
+DO NOT USE THIS!!!! IT WILL BE REMOVED!
+*/
+void ()
+item_weapon =
 {
 	self.touch = ammo_touch;
 
@@ -929,7 +962,8 @@ void() item_weapon =
 
 // KEYS =======================================================================
 
-void() key_touch =
+void ()
+key_touch =
 {
 	if (other.classname != "player")
 		return;
@@ -953,7 +987,8 @@ void() key_touch =
 	SUB_UseTargets ();			// fire all targets / killtargets
 };
 
-void() key_setsounds =
+void ()
+key_setsounds =
 {
 	switch (world.worldtype) {
 	case 0:
@@ -982,7 +1017,8 @@ following:
 1: metal
 2: base
 */
-void() item_key1 =
+void ()
+item_key1 =
 {
 	switch (world.worldtype) {
 	case 0:
@@ -1020,7 +1056,8 @@ following:
 1: metal
 2: base
 */
-void() item_key2 =
+void ()
+item_key2 =
 {
 	switch (world.worldtype) {
 	case 0:
@@ -1050,7 +1087,8 @@ void() item_key2 =
 
 // END OF LEVEL RUNES =========================================================
 
-void() sigil_touch =
+void ()
+sigil_touch =
 {
 	if (other.classname != "player")
 		return;
@@ -1073,7 +1111,8 @@ void() sigil_touch =
 /*QUAKED item_sigil (0 .5 .8) (-16 -16 -24) (16 16 32) E1 E2 E3 E4
 End of level sigil, pick up to end episode and return to jrstart.
 */
-void() item_sigil =
+void ()
+item_sigil =
 {
 	if (!self.spawnflags)
 		objerror ("no spawnflags");
@@ -1105,7 +1144,8 @@ void() item_sigil =
 
 // POWERUPS ===================================================================
 
-void() powerup_touch =
+void ()
+powerup_touch =
 {
 	if (other.classname != "player")
 		return;
@@ -1113,8 +1153,8 @@ void() powerup_touch =
 		return;
 
 	sprint (other, PRINT_LOW, "You got the ");
-	sprint (other,PRINT_LOW,  self.netname);
-	sprint (other,PRINT_LOW, "\n");
+	sprint (other, PRINT_LOW,  self.netname);
+	sprint (other, PRINT_LOW, "\n");
 
 	self.mdl = self.model;
 	
@@ -1154,7 +1194,7 @@ void() powerup_touch =
 	default:
 		self.nextthink = time + 60;
 		break;
-	}       
+	}
 
 	activator = other;
 	SUB_UseTargets ();			// fire all targets / killtargets
@@ -1163,7 +1203,8 @@ void() powerup_touch =
 /*QUAKED item_artifact_invulnerability (0 .5 .8) (-16 -16 -24) (16 16 32)
 Player is invulnerable for 30 seconds
 */
-void() item_artifact_invulnerability =
+void ()
+item_artifact_invulnerability =
 {
 	self.touch = powerup_touch;
 
@@ -1183,7 +1224,8 @@ void() item_artifact_invulnerability =
 /*QUAKED item_artifact_envirosuit (0 .5 .8) (-16 -16 -24) (16 16 32)
 Player takes no damage from water or slime for 30 seconds
 */
-void() item_artifact_envirosuit =
+void ()
+item_artifact_envirosuit =
 {
 	self.touch = powerup_touch;
 
@@ -1201,7 +1243,8 @@ void() item_artifact_envirosuit =
 /*QUAKED item_artifact_invisibility (0 .5 .8) (-16 -16 -24) (16 16 32)
 Player is invisible for 30 seconds
 */
-void() item_artifact_invisibility =
+void ()
+item_artifact_invisibility =
 {
 	self.touch = powerup_touch;
 
@@ -1220,7 +1263,8 @@ void() item_artifact_invisibility =
 /*QUAKED item_artifact_super_damage (0 .5 .8) (-16 -16 -24) (16 16 32)
 The next attack from the player will do 4x damage
 */
-void() item_artifact_super_damage =
+void ()
+item_artifact_super_damage =
 {
 	self.touch = powerup_touch;
 
@@ -1242,7 +1286,8 @@ void() item_artifact_super_damage =
 
 // PLAYER BACKPACKS ===========================================================
 
-void() BackpackTouch =
+void ()
+BackpackTouch =
 {
 	local entity	stemp;
 	local float		acount, b_switch, best, old, new;
@@ -1384,7 +1429,8 @@ void() BackpackTouch =
 	W_SetCurrentAmmo ();
 };
 
-void() DropBackpack =
+void ()
+DropBackpack =
 {
 	local entity	item;
 

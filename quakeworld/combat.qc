@@ -1,11 +1,5 @@
-void() T_MissileTouch;
-void() info_player_start;
-void(entity targ, entity attacker) ClientObituary;
-void(entity inflictor, entity attacker, float damage, entity ignore,
-	 string dtype) T_RadiusDamage;
-
 /* SERVER
-void() monster_death_use;
+void () monster_death_use;
 */
 
 //============================================================================
@@ -18,7 +12,8 @@ Returns true if the inflictor can directly damage the target.  Used for
 explosions and melee attacks.
 ============
 */
-float(entity targ, entity inflictor) CanDamage =
+float (entity targ, entity inflictor)
+CanDamage =
 {
 	// bmodels need special checking because their origin is 0,0,0
 	if (targ.movetype == MOVETYPE_PUSH) {
@@ -50,7 +45,10 @@ float(entity targ, entity inflictor) CanDamage =
 	return FALSE;
 };
 
-void(entity targ, entity attacker) Killed =
+void (entity targ, entity attacker) ClientObituary;
+
+void (entity targ, entity attacker)
+Killed =
 {
 	local entity oself;
 
@@ -97,7 +95,8 @@ The damage is coming from inflictor, but get mad at attacker
 This should be the only function that ever reduces health.
 ============
 */
-void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
+void (entity targ, entity inflictor, entity attacker, float damage)
+T_Damage=
 {
 	local entity	oldself;
 	local float		save, take;
@@ -221,7 +220,9 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	self = oldself;
 };
 
-void(entity inflictor, entity attacker, float damage, entity ignore, string dtype) T_RadiusDamage =
+void (entity inflictor, entity attacker, float damage, entity ignore,
+	  string dtype)
+T_RadiusDamage =
 {
 	local entity	head;
 	local float		points;
@@ -257,7 +258,8 @@ void(entity inflictor, entity attacker, float damage, entity ignore, string dtyp
 	}
 };
 
-void(entity attacker, float damage) T_BeamDamage =
+void (entity attacker, float damage)
+T_BeamDamage =
 {
 	local entity	head;
 	local float		points;

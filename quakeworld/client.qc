@@ -1,11 +1,3 @@
-// prototypes
-void() W_WeaponFrame;
-void() W_SetCurrentAmmo;
-void(entity attacker, float damage) player_pain;
-void() player_stand1;
-void(vector org) spawn_tfog;
-void(vector org, entity death_owner) spawn_tdeath;
-
 float   modelindex_eyes, modelindex_player;
 
 // LEVEL CHANGING / INTERMISSION ==============================================
@@ -19,12 +11,14 @@ float   intermission_exittime;
 This is the camera point for the intermission.
 Use mangle instead of angle, so you can set pitch or roll as well as yaw.  'pitch roll yaw'
 */
-void() info_intermission =
+void ()
+info_intermission =
 {
 	self.angles = self.mangle;      // so C can get at it
 };
 
-void() SetChangeParms =
+void ()
+SetChangeParms =
 {
 	if (self.health <= 0) {
 		SetNewParms ();
@@ -54,7 +48,8 @@ void() SetChangeParms =
 	parm9 = self.armortype * 100;
 };
 
-void() SetNewParms =
+void ()
+SetNewParms =
 {
 	parm1 = IT_SHOTGUN | IT_AXE;
 	parm2 = 100;
@@ -67,7 +62,8 @@ void() SetNewParms =
 	parm9 = 0;
 };
 
-void() DecodeLevelParms =
+void ()
+DecodeLevelParms =
 {
 	if (serverflags) {
 		if (world.model == "maps/start.bsp")
@@ -92,7 +88,8 @@ FindIntermission
 Returns the entity to view from
 ============
 */
-entity() FindIntermission =
+entity ()
+FindIntermission =
 {
 	local entity	spot;
 	local float		cyc;
@@ -118,12 +115,12 @@ entity() FindIntermission =
 	objerror ("FindIntermission: no spot");
 };
 
-void() GotoNextMap =
+void ()
+GotoNextMap =
 {
 	local string	newmap;
 
-//ZOID: 12-13-96, samelevel is overloaded, only 1 works for same level
-
+	// ZOID: 12-13-96, samelevel is overloaded, only 1 works for same level
 	if (cvar ("samelevel") == 1)     // if samelevel is set, stay on same level
 		changelevel (mapname);
 	else {
@@ -144,7 +141,8 @@ IntermissionThink
 When the player presses attack or jump, change to the next level
 ============
 */
-void() IntermissionThink =
+void ()
+IntermissionThink =
 {
 	if (time < intermission_exittime)
 		return;
@@ -162,7 +160,8 @@ The global "nextmap" has been set previously.
 Take the players to the intermission spot
 ============
 */
-void() execute_changelevel =
+void ()
+execute_changelevel =
 {
 	local entity	pos;
 
@@ -188,14 +187,13 @@ void() execute_changelevel =
 	}       
 };
 
-void() changelevel_touch =
+void ()
+changelevel_touch =
 {
 	if (other.classname != "player")
 		return;
 
-// if "noexit" is set, blow up the player trying to leave
-//ZOID, 12-13-96, noexit isn't supported in QW.  Overload samelevel
-//      if ((cvar ("noexit") == 1) || ((cvar ("noexit") == 2) && (mapname != "start")))
+	// ZOID, 12-13-96, noexit isn't supported in QW.  Overload samelevel
 	if ((cvar ("samelevel") == 2) || ((cvar ("samelevel") == 3)
 									  && (mapname != "start"))) {
 		T_Damage (other, self, self, 50000);
@@ -220,7 +218,8 @@ void() changelevel_touch =
 /*QUAKED trigger_changelevel (0.5 0.5 0.5) ? NO_INTERMISSION
 When the player touches this, he gets sent to the map listed in the "map" variable.  Unless the NO_INTERMISSION flag is set, the view will go to the info_intermission spot and display stats.
 */
-void() trigger_changelevel =
+void ()
+trigger_changelevel =
 {
 	if (!self.map)
 		objerror ("chagnelevel trigger doesn't have map");
@@ -231,10 +230,11 @@ void() trigger_changelevel =
 
 // PLAYER GAME EDGE FUNCTIONS =================================================
 
-void() set_suicide_frame;
+void () set_suicide_frame;
 
 // called by ClientKill and DeadThink
-void() respawn =
+void ()
+respawn =
 {
 	// make a copy of the dead body for appearances sake
 	CopyToBodyQueue (self);
@@ -262,7 +262,8 @@ void() ClientKill =
 	respawn ();
 };
 
-float(vector v) CheckSpawnPoint =
+float (vector v)
+CheckSpawnPoint =
 {
 	return FALSE;
 };
@@ -274,7 +275,8 @@ SelectSpawnPoint
 Returns the entity to spawn at
 ============
 */
-entity() SelectSpawnPoint =
+entity ()
+SelectSpawnPoint =
 {
 	local entity	spot, spots, thing;
 	local float		pcount, numspots, totalspots;
@@ -338,10 +340,8 @@ entity() SelectSpawnPoint =
 	return spot;
 };
 
-void() DecodeLevelParms;
-void() PlayerDie;
-
-float(entity e) ValidateUser =
+float (entity e)
+ValidateUser =
 {
 /*
 	local string	userclan, s;
@@ -382,6 +382,14 @@ float(entity e) ValidateUser =
 */
 };
 
+void () DecodeLevelParms;
+void () PlayerDie;
+void () W_SetCurrentAmmo;
+void () player_stand1;
+void (entity attacker, float damage) player_pain;
+void (vector org, entity death_owner) spawn_tdeath;
+void (vector org) spawn_tfog;
+
 /*
 ===========
 PutClientInServer
@@ -389,7 +397,8 @@ PutClientInServer
 called each time a player enters a new level
 ============
 */
-void() PutClientInServer =
+void ()
+PutClientInServer =
 {
 	local entity	spot;
 
@@ -465,10 +474,10 @@ void() PutClientInServer =
 						   IT_ROCKET_LAUNCHER | IT_LIGHTNING);
 		}
 		self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+		self.items |= (IT_ARMOR3 | IT_INVULNERABILITY);
 		self.armorvalue = 200;
 		self.armortype = 0.8;
 		self.health = 250;
-		self.items |= (IT_ARMOR3 | IT_INVULNERABILITY);
 		self.invincible_time = 1;
 		self.invincible_finished = time + 3;
 	}
@@ -495,37 +504,40 @@ void() PutClientInServer =
 /*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 24)
 The normal starting point for a level.
 */
-void() info_player_start =
+void ()
+info_player_start =
 {
 };
 
 /*QUAKED info_player_start2 (1 0 0) (-16 -16 -24) (16 16 24)
 Only used on start map for the return point from an episode.
 */
-void() info_player_start2 =
+void ()
+info_player_start2 =
 {
 };
 
 /*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 24)
 potential spawning position for deathmatch games
 */
-void() info_player_deathmatch =
+void ()
+info_player_deathmatch =
 {
 };
 
 /*QUAKED info_player_coop (1 0 1) (-16 -16 -24) (16 16 24)
 potential spawning position for coop games
 */
-void() info_player_coop =
+void ()
+info_player_coop =
 {
 };
 
 // RULES ======================================================================
 
-/*
-go to the next level for deathmatch
-*/
-void() NextLevel =
+// go to the next level for deathmatch
+void ()
+NextLevel =
 {
 	local entity	o;
 
@@ -576,7 +588,8 @@ CheckRules
 Exit deathmatch games upon conditions
 ============
 */
-void() CheckRules =
+void ()
+CheckRules =
 {       
 	if (timelimit && time >= timelimit)
 		NextLevel ();
@@ -586,7 +599,8 @@ void() CheckRules =
 
 //============================================================================
 
-void() PlayerDeathThink =
+void ()
+PlayerDeathThink =
 {
 	local float		forward;
 
@@ -616,7 +630,8 @@ void() PlayerDeathThink =
 	respawn ();
 };
 
-void() PlayerJump =
+void ()
+PlayerJump =
 {
 	if (self.flags & FL_WATERJUMP)
 		return;
@@ -647,7 +662,8 @@ void() PlayerJump =
 
 .float  dmgtime;
 
-void() WaterMove =
+void ()
+WaterMove =
 {
 //	dprint (ftos (self.waterlevel));
 	if (self.movetype == MOVETYPE_NOCLIP)
@@ -718,7 +734,8 @@ void() WaterMove =
 	}
 };
 
-void() CheckWaterJump =
+void ()
+CheckWaterJump =
 {
 	local vector	start, end;
 
@@ -752,7 +769,8 @@ PlayerPreThink
 Called every frame before physics are run
 ================
 */
-void() PlayerPreThink =
+void ()
+PlayerPreThink =
 {
 	if (intermission_running) {
 		IntermissionThink ();   // otherwise a button could be missed between
@@ -804,7 +822,8 @@ CheckPowerups
 Check for turning off powerups
 ================
 */
-void() CheckPowerups =
+void ()
+CheckPowerups =
 {
 	if (self.health <= 0)
 		return;
@@ -938,6 +957,8 @@ void() CheckPowerups =
 	}       
 };
 
+void () W_WeaponFrame;
+
 /*
 ================
 PlayerPostThink
@@ -945,7 +966,8 @@ PlayerPostThink
 Called every frame after physics are run
 ================
 */
-void() PlayerPostThink =
+void ()
+PlayerPostThink =
 {
 //	dprint ("post think\n");
 	if (self.view_ofs == '0 0 0')
@@ -979,7 +1001,8 @@ ClientConnect
 called when a player connects to a server
 ============
 */
-void() ClientConnect =
+void ()
+ClientConnect =
 {
 	bprint (PRINT_HIGH, self.netname);
 	bprint (PRINT_HIGH, " entered the game\n");
@@ -996,7 +1019,8 @@ ClientDisconnect
 called when a player disconnects from a server
 ============
 */
-void() ClientDisconnect =
+void ()
+ClientDisconnect =
 {
 	// let everyone else know
 	bprint (PRINT_HIGH, self.netname);
@@ -1014,7 +1038,8 @@ ClientObituary
 called when a player dies
 ============
 */
-void(entity targ, entity attacker) ClientObituary =
+void (entity targ, entity attacker)
+ClientObituary =
 {
 	local float		rnum;
 	local string	deathstring, deathstring2, attackerteam, targteam;
@@ -1034,7 +1059,8 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 		}
 
-		if (attacker.classname == "teledeath") {
+		switch (attacker.classname) {
+		case "teledeath":
 			bprint (PRINT_MEDIUM,targ.netname);
 			bprint (PRINT_MEDIUM," was telefragged by ");
 			bprint (PRINT_MEDIUM,attacker.owner.netname);
@@ -1043,9 +1069,7 @@ void(entity targ, entity attacker) ClientObituary =
 
 			attacker.owner.frags = attacker.owner.frags + 1;
 			return;
-		}
-
-		if (attacker.classname == "teledeath2") {
+		case "teledeath2":
 			bprint (PRINT_MEDIUM,"Satan's power deflects ");
 			bprint (PRINT_MEDIUM,targ.netname);
 			bprint (PRINT_MEDIUM,"'s telefrag\n");
@@ -1053,10 +1077,8 @@ void(entity targ, entity attacker) ClientObituary =
 			targ.frags = targ.frags - 1;
 			logfrag (targ, targ);
 			return;
-		}
-
-		// double 666 telefrag (can happen often in deathmatch 4)
-		if (attacker.classname == "teledeath3")  {
+		case "teledeath3":
+			// double 666 telefrag (can happen often in deathmatch 4)
 			bprint (PRINT_MEDIUM,targ.netname);
 			bprint (PRINT_MEDIUM," was telefragged by ");
 			bprint (PRINT_MEDIUM,attacker.owner.netname);
@@ -1067,7 +1089,8 @@ void(entity targ, entity attacker) ClientObituary =
 		}
 	
 		if (targ.deathtype == "squish") {
-			if (teamplay && targteam == attackerteam && attackerteam != "" && targ != attacker) {
+			if (teamplay && targteam == attackerteam && attackerteam != ""
+				&& targ != attacker) {
 				logfrag (attacker, attacker);
 				attacker.frags = attacker.frags - 1; 
 				bprint (PRINT_MEDIUM,attacker.netname);
@@ -1082,8 +1105,8 @@ void(entity targ, entity attacker) ClientObituary =
 				attacker.frags = attacker.frags + 1;
 				return;
 			} else {
+				targ.frags--;					// killed self
 				logfrag (targ, targ);
-				targ.frags = targ.frags - 1;            // killed self
 				bprint (PRINT_MEDIUM,targ.netname);
 				bprint (PRINT_MEDIUM," was squished\n");
 				return;
@@ -1092,21 +1115,25 @@ void(entity targ, entity attacker) ClientObituary =
 
 		if (attacker.classname == "player") {
 			if (targ == attacker) {
-				// killed self
+				attacker.frags--;				// killed self
 				logfrag (attacker, attacker);
-				attacker.frags = attacker.frags - 1;
 				bprint (PRINT_MEDIUM,targ.netname);
 				if (targ.deathtype == "grenade")
 					bprint (PRINT_MEDIUM," tries to put the pin back in\n");
 				else if (targ.deathtype == "rocket")
 					bprint (PRINT_MEDIUM," becomes bored with life\n");
 				else if (targ.weapon == 64 && targ.waterlevel > 1) {
-					if (targ.watertype == CONTENT_SLIME)
+					switch (targ.watertype) {
+					case CONTENT_SLIME:
 						bprint (PRINT_MEDIUM," discharges into the slime\n");
-					else if (targ.watertype == CONTENT_LAVA)
+						break;
+					case CONTENT_LAVA:
 						bprint (PRINT_MEDIUM," discharges into the lava\n");
-					else
+						break;
+					default:
 						bprint (PRINT_MEDIUM," discharges into the water.\n");
+						break;
+					}
 				} else
 					bprint (PRINT_MEDIUM," becomes bored with life\n");
 				return;
@@ -1122,31 +1149,34 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " loses another friend\n";
 				bprint (PRINT_MEDIUM, attacker.netname);
 				bprint (PRINT_MEDIUM, deathstring);
-				attacker.frags = attacker.frags - 1;
+				attacker.frags--;
 				//ZOID 12-13-96:  killing a teammate logs as suicide
 				logfrag (attacker, attacker);
 				return;
 			} else {
+				attacker.frags++;
 				logfrag (attacker, targ);
-				attacker.frags = attacker.frags + 1;
 
-				rnum = attacker.weapon;
 				deathstring = deathstring2 = "'s quad rocket\n";
 
-				if (targ.deathtype == "nail") {
+				switch (targ.deathtype) {
+				case "nail":
 					deathstring = " was nailed by ";
 					deathstring2 = "\n";
-				} else if (targ.deathtype == "supernail") {
+					break;
+				case "supernail":
 					deathstring = " was punctured by ";
 					deathstring2 = "\n";
-				} else if (targ.deathtype == "grenade") {
+					break;
+				case "grenade":
 					deathstring = " eats ";
 					deathstring2 = "'s pineapple\n";
 					if (targ.health < -40) {
 						deathstring = " was gibbed by ";
 						deathstring2 = "'s grenade\n";
 					}
-				} else if (targ.deathtype == "rocket") {
+					break;
+				case "rocket":
 					if (attacker.super_damage_finished > 0 && targ.health
 						< -40) {
 						rnum = random ();
@@ -1169,24 +1199,33 @@ void(entity targ, entity attacker) ClientObituary =
 							deathstring2 = "'s rocket\n" ;
 						}
 					}
-				} else if (rnum == IT_AXE) {
-					deathstring = " was ax-murdered by ";
-					deathstring2 = "\n";
-				} else if (rnum == IT_SHOTGUN) {
-					deathstring = " chewed on ";
-					deathstring2 = "'s boomstick\n";
-				} else if (rnum == IT_SUPER_SHOTGUN) {
-					deathstring = " ate 2 loads of ";
-					deathstring2 = "'s buckshot\n";
-				} else if (rnum == IT_LIGHTNING) {
-					deathstring = " accepts ";
-					if (attacker.waterlevel > 1)
-						deathstring2 = "'s discharge\n";
-					else
-						deathstring2 = "'s shaft\n";
-				} else {
-					deathstring = " dies mysteriously ";
-					deathstring2 = " progs bug\n";
+					break;
+				default:
+					switch (attacker.weapon) {
+					case IT_AXE:
+						deathstring = " was ax-murdered by ";
+						deathstring2 = "\n";
+						break;
+					case IT_SHOTGUN:
+						deathstring = " chewed on ";
+						deathstring2 = "'s boomstick\n";
+						break;
+					case IT_SUPER_SHOTGUN:
+						deathstring = " ate 2 loads of ";
+						deathstring2 = "'s buckshot\n";
+						break;
+					case IT_LIGHTNING:
+						deathstring = " accepts ";
+						if (attacker.waterlevel > 1)
+							deathstring2 = "'s discharge\n";
+						else
+							deathstring2 = "'s shaft\n";
+						break;
+					default:
+						deathstring = " dies mysteriously ";
+						deathstring2 = " progs bug\n";
+						break;
+					}
 				}
 				bprint (PRINT_MEDIUM, targ.netname);
 				bprint (PRINT_MEDIUM, deathstring);
@@ -1197,59 +1236,62 @@ void(entity targ, entity attacker) ClientObituary =
 		} else {
 			logfrag (targ, targ);
 			targ.frags = targ.frags - 1;            // killed self
-			rnum = targ.watertype;
 
 			bprint (PRINT_MEDIUM, targ.netname);
-			if (rnum == -3) {
+			switch (targ.watertype) {
+			case -3:
 				if (random () < 0.5)
 					bprint (PRINT_MEDIUM, " sleeps with the fishes\n");
 				else
 					bprint (PRINT_MEDIUM, " sucks it down\n");
 				return;
-			} else if (rnum == -4) {
+			case -4:
 				if (random () < 0.5)
 					bprint (PRINT_MEDIUM, " gulped a load of slime\n");
 				else
 					bprint (PRINT_MEDIUM, " can't exist on slime alone\n");
 				return;
-			} else if (rnum == -5) {
+			case -5:
 				if (targ.health < -15) {
-					bprint (PRINT_MEDIUM," burst into flames\n");
+					bprint (PRINT_MEDIUM, " burst into flames\n");
 					return;
 				}
 				if (random () < 0.5)
-					bprint (PRINT_MEDIUM," turned into hot slag\n");
+					bprint (PRINT_MEDIUM, " turned into hot slag\n");
 				else
-					bprint (PRINT_MEDIUM," visits the Volcano God\n");
+					bprint (PRINT_MEDIUM, " visits the Volcano God\n");
 				return;
+			default:
+				break;
 			}
 
 			if (attacker.classname == "explo_box") {
-				bprint (PRINT_MEDIUM," blew up\n");
-				return;
-			}
-			if (targ.deathtype == "falling") {
-				bprint (PRINT_MEDIUM," fell to his death\n");
-				return;
-			}
-			if (targ.deathtype == "nail" || targ.deathtype == "supernail") {
-				bprint (PRINT_MEDIUM," was spiked\n");
-				return;
-			}
-			if (targ.deathtype == "laser") {
-				bprint (PRINT_MEDIUM," was zapped\n");
-				return;
-			}
-			if (attacker.classname == "fireball") {
-				bprint (PRINT_MEDIUM," ate a lavaball\n");
-				return;
-			}
-			if (attacker.classname == "trigger_changelevel") {
-				bprint (PRINT_MEDIUM," tried to leave\n");
+				bprint (PRINT_MEDIUM, " blew up\n");
 				return;
 			}
 
-			bprint (PRINT_MEDIUM," died\n");
+			switch (targ.deathtype) {
+			case "falling":
+				bprint (PRINT_MEDIUM, " fell to his death\n");
+				return;
+			case "nail":
+			case "supernail":
+				bprint (PRINT_MEDIUM, " was spiked\n");
+				return;
+			case "laser":
+				bprint (PRINT_MEDIUM, " was zapped\n");
+				return;
+			case "fireball":
+				bprint (PRINT_MEDIUM, " ate a lavaball\n");
+				return;
+			case "trigger_changelevel":
+				bprint (PRINT_MEDIUM, " tried to leave\n");
+				return;
+			default:
+				break;
+			}
+
+			bprint (PRINT_MEDIUM, " died\n");
 		}
 	}
 };

@@ -1,19 +1,19 @@
-void() monster_ogre = {remove(self);};
-void() monster_demon1 = {remove(self);};
-void() monster_shambler = {remove(self);};
-void() monster_knight = {remove(self);};
-void() monster_army = {remove(self);};
-void() monster_wizard = {remove(self);};
-void() monster_dog = {remove(self);};
-void() monster_zombie = {remove(self);};
-void() monster_boss = {remove(self);};
-void() monster_tarbaby = {remove(self);};
-void() monster_hell_knight = {remove(self);};
-void() monster_fish = {remove(self);};
-void() monster_shalrath = {remove(self);};
-void() monster_enforcer = {remove(self);};
-void() monster_oldone = {remove(self);};
-void() event_lightning = {remove(self);};
+void () monster_ogre = {remove (self);};
+void () monster_demon1 = {remove (self);};
+void () monster_shambler = {remove (self);};
+void () monster_knight = {remove (self);};
+void () monster_army = {remove (self);};
+void () monster_wizard = {remove (self);};
+void () monster_dog = {remove (self);};
+void () monster_zombie = {remove (self);};
+void () monster_boss = {remove (self);};
+void () monster_tarbaby = {remove (self);};
+void () monster_hell_knight = {remove (self);};
+void () monster_fish = {remove (self);};
+void () monster_shalrath = {remove (self);};
+void () monster_enforcer = {remove (self);};
+void () monster_oldone = {remove (self);};
+void () event_lightning = {remove (self);};
 
 /*
 =============================================================================
@@ -40,7 +40,8 @@ Something has bumped into a movetarget.  If it is a monster
 moving towards it, change the next destination and continue.
 ==============
 */
-void() t_movetarget =
+void ()
+t_movetarget =
 {
 	local entity	temp;
 
@@ -67,7 +68,8 @@ void() t_movetarget =
 	}
 };
 
-void() movetarget_f =
+void ()
+movetarget_f =
 {
 	if (!self.targetname)
 		objerror ("monster_movetarget: no targetname");
@@ -80,7 +82,8 @@ void() movetarget_f =
 /*QUAKED path_corner (0.5 0.3 0) (-8 -8 -8) (8 8 8)
 Monsters will continue walking towards the next target corner.
 */
-void() path_corner =
+void ()
+path_corner =
 {
 	movetarget_f ();
 };

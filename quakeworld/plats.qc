@@ -1,12 +1,106 @@
-void() plat_center_touch;
-void() plat_outside_touch;
-void() plat_trigger_use;
-void() plat_go_up;
-void() plat_go_down;
-void() plat_crush;
 float PLAT_LOW_TRIGGER = 1;
 
-void() plat_spawn_inside_trigger =
+void ()
+plat_hit_bottom =
+{
+	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+	self.state = STATE_BOTTOM;
+};
+
+void ()
+plat_go_down =
+{
+	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+	self.state = STATE_DOWN;
+	SUB_CalcMove (self.pos2, self.speed, plat_hit_bottom);
+};
+
+void ()
+plat_hit_top =
+{
+	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+	self.state = STATE_TOP;
+	self.think = plat_go_down;
+	self.nextthink = self.ltime + 3;
+};
+
+void ()
+plat_go_up =
+{
+	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+	self.state = STATE_UP;
+	SUB_CalcMove (self.pos1, self.speed, plat_hit_top);
+};
+
+void ()
+plat_center_touch =
+{
+	if (other.classname != "player")
+		return;
+	if (other.health <= 0)
+		return;
+
+	self = self.enemy;
+	if (self.state == STATE_BOTTOM)
+		plat_go_up ();
+	else if (self.state == STATE_TOP)
+		self.nextthink = self.ltime + 1;	// delay going down
+};
+
+void ()
+plat_outside_touch =
+{
+	if (other.classname != "player")
+		return;
+	if (other.health <= 0)
+		return;
+
+//	dprint ("plat_outside_touch\n");
+	self = self.enemy;
+	if (self.state == STATE_TOP)
+		plat_go_down ();
+};
+
+void ()
+plat_trigger_use =
+{
+	if (self.think)
+		return;		// allready activated
+	plat_go_down ();
+};
+
+void ()
+plat_crush =
+{
+//	dprint ("plat_crush\n");
+
+	other.deathtype = "squish";
+	T_Damage (other, self, self, 1);
+
+	switch (self.state) {
+	case STATE_UP:
+		plat_go_down ();
+		break;
+	case STATE_DOWN:
+		plat_go_up ();
+		break;
+	default:
+		objerror ("plat_crush: bad self.state\n");
+		break;
+	}
+};
+
+void ()
+plat_use =
+{
+	self.use = SUB_Null;
+	if (self.state != STATE_UP)
+		objerror ("plat_use: not in up state");
+	plat_go_down ();
+};
+
+void ()
+plat_spawn_inside_trigger =
 {
 	local entity	trigger;
 	local vector	tmin, tmax;
@@ -36,96 +130,6 @@ void() plat_spawn_inside_trigger =
 	setsize (trigger, tmin, tmax);
 };
 
-void() plat_hit_top =
-{
-	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-	self.state = STATE_TOP;
-	self.think = plat_go_down;
-	self.nextthink = self.ltime + 3;
-};
-
-void() plat_hit_bottom =
-{
-	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-	self.state = STATE_BOTTOM;
-};
-
-void() plat_go_down =
-{
-	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
-	self.state = STATE_DOWN;
-	SUB_CalcMove (self.pos2, self.speed, plat_hit_bottom);
-};
-
-void() plat_go_up =
-{
-	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
-	self.state = STATE_UP;
-	SUB_CalcMove (self.pos1, self.speed, plat_hit_top);
-};
-
-void() plat_center_touch =
-{
-	if (other.classname != "player")
-		return;
-	if (other.health <= 0)
-		return;
-
-	self = self.enemy;
-	if (self.state == STATE_BOTTOM)
-		plat_go_up ();
-	else if (self.state == STATE_TOP)
-		self.nextthink = self.ltime + 1;	// delay going down
-};
-
-void() plat_outside_touch =
-{
-	if (other.classname != "player")
-		return;
-	if (other.health <= 0)
-		return;
-
-//	dprint ("plat_outside_touch\n");
-	self = self.enemy;
-	if (self.state == STATE_TOP)
-		plat_go_down ();
-};
-
-void() plat_trigger_use =
-{
-	if (self.think)
-		return;		// allready activated
-	plat_go_down ();
-};
-
-void() plat_crush =
-{
-//	dprint ("plat_crush\n");
-
-	other.deathtype = "squish";
-	T_Damage (other, self, self, 1);
-
-	switch (self.state) {
-	case STATE_UP:
-		plat_go_down ();
-		break;
-	case STATE_DOWN:
-		plat_go_up ();
-		break;
-	default:
-		objerror ("plat_crush: bad self.state\n");
-		break;
-	}
-};
-
-void() plat_use =
-{
-	self.use = SUB_Null;
-	if (self.state != STATE_UP)
-		objerror ("plat_use: not in up state");
-	plat_go_down ();
-};
-
 /*QUAKED func_plat (0 .5 .8) ? PLAT_LOW_TRIGGER
 speed	default 150
 
@@ -138,7 +142,8 @@ Set "sounds" to one of the following:
 1) base fast
 2) chain slow
 */
-void() func_plat =
+void ()
+func_plat =
 {
 	if (!self.t_length)
 		self.t_length = 80;
@@ -199,10 +204,8 @@ void() func_plat =
 
 //============================================================================
 
-void() train_next;
-void() func_train_find;
-
-void() train_blocked =
+void ()
+train_blocked =
 {
 	if (time < self.attack_finished)
 		return;
@@ -211,25 +214,10 @@ void() train_blocked =
 	T_Damage (other, self, self, self.dmg);
 };
 
-void() train_use =
-{
-	if (self.think != func_train_find)
-		return;		// already activated
-	train_next ();
-};
+void () train_wait;
 
-void() train_wait =
-{
-	if (self.wait) {
-		self.nextthink = self.ltime + self.wait;
-		sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise, 1, ATTN_NORM);
-	} else
-		self.nextthink = self.ltime + 0.1;
-	
-	self.think = train_next;
-};
-
-void() train_next =
+void ()
+train_next =
 {
 	local entity	targ;
 
@@ -245,7 +233,8 @@ void() train_next =
 	SUB_CalcMove (targ.origin - self.mins, self.speed, train_wait);
 };
 
-void() func_train_find =
+void ()
+func_train_find =
 {
 	local entity	targ;
 
@@ -259,6 +248,27 @@ void() func_train_find =
 	}
 };
 
+void ()
+train_use =
+{
+	if (self.think != func_train_find)
+		return;		// already activated
+
+	train_next ();
+};
+
+void ()
+train_wait =
+{
+	if (self.wait) {
+		self.nextthink = self.ltime + self.wait;
+		sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise, 1, ATTN_NORM);
+	} else
+		self.nextthink = self.ltime + 0.1;
+	
+	self.think = train_next;
+};
+
 /*QUAKED func_train (0 .5 .8) ?
 Trains are moving platforms that players can ride.
 The targets origin specifies the min point of the train at each corner.
@@ -269,7 +279,8 @@ dmg		default	2
 sounds
 1) ratchet metal
 */
-void() func_train =
+void ()
+func_train =
 {	
 	if (!self.speed)
 		self.speed = 100;

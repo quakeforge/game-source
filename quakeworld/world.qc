@@ -1,4 +1,4 @@
-void() InitBodyQueue;
+void () InitBodyQueue;
 
 entity  lastspawn;
 
@@ -14,7 +14,8 @@ World Types:
 2: base
 */
 //=======================
-void() worldspawn =
+void ()
+worldspawn =
 {
 	lastspawn = world;
 	InitBodyQueue ();
@@ -185,26 +186,29 @@ void() worldspawn =
 	lightstyle (63, "a");
 };
 
-void() StartFrame =
+void ()
+StartFrame =
 {
 	timelimit = cvar ("timelimit") * 60;
 	fraglimit = cvar ("fraglimit");
 	teamplay = cvar ("teamplay");
 	deathmatch = cvar ("deathmatch");
 
-	framecount = framecount + 1;
+	framecount++;
 };
 
 // BODY QUE ===================================================================
 
 entity  bodyqueue_head;
 
-void() bodyqueue =
+void ()
+bodyqueue =
 { 
 // just here so spawn functions don't complain after world creates bodyqueues
 };
 
-void() InitBodyQueue =
+void ()
+InitBodyQueue =
 {
 	bodyqueue_head = spawn ();
 	bodyqueue_head.classname = "bodyqueue";
@@ -218,7 +222,8 @@ void() InitBodyQueue =
 };
 
 // make body queue entry for the given ent so it can be respawned elsewhere
-void(entity ent) CopyToBodyQueue =
+void (entity ent)
+CopyToBodyQueue =
 {
 	bodyqueue_head.angles = ent.angles;
 	bodyqueue_head.model = ent.model;
