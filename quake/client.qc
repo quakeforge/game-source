@@ -39,8 +39,8 @@ void() SetChangeParms =
 	}
 
 // remove items
-	self.items = self.items - (self.items & 
-	(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD) );
+	self.items &= ~(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY
+					| IT_SUIT | IT_QUAD);
 	
 // cap super health
 	if (self.health > 100)
@@ -220,7 +220,7 @@ void() ExitIntermission =
 			return;
 		}
 		
-		if ( (serverflags&15) == 15)
+		if ((serverflags & 15) == 15)
 		{
 			WriteByte (MSG_ALL, SVC_FINALE);
 			WriteString (MSG_ALL, "Now, you have all four Runes. You sense\ntremendous invisible forces moving to\nunseal ancient barriers. Shub-Niggurath\nhad hoped to use the Runes Herself to\nclear off the Earth, but now instead,\nyou will use them to enter her home and\nconfront her as an avatar of avenging\nEarth-life. If you defeat her, you will\nbe remembered forever as the savior of\nthe planet. If she conquers, it will be\nas if you had never been born.");
@@ -308,7 +308,7 @@ void() changelevel_touch =
 
 	SUB_UseTargets ();
 
-	if ( (self.spawnflags & 1) && (deathmatch == 0) )
+	if ((self.spawnflags & 1) && (deathmatch == 0))
 	{	// NO_INTERMISSION
 		GotoNextMap();
 		return;
@@ -609,22 +609,22 @@ void() NextLevel =
 		else if (!(serverflags & 1))
 		{
 			mapname = "e1m1";
-			serverflags = serverflags | 1;
+			serverflags |= 1;
 		}
 		else if (!(serverflags & 2))
 		{
 			mapname = "e2m1";
-			serverflags = serverflags | 2;
+			serverflags |= 2;
 		}
 		else if (!(serverflags & 4))
 		{
 			mapname = "e3m1";
-			serverflags = serverflags | 4;
+			serverflags |= 4;
 		}
 		else if (!(serverflags & 8))
 		{
 			mapname = "e4m1";
-			serverflags = serverflags - 7;
+			serverflags -= 7; //FIXME should this be &= ~7?
 		}
 
 		o = spawn();
@@ -751,10 +751,10 @@ void() PlayerJump =
 	if (!(self.flags & FL_ONGROUND))
 		return;
 
-	if ( !(self.flags & FL_JUMPRELEASED) )
+	if (!(self.flags & FL_JUMPRELEASED) )
 		return;		// don't pogo stick
 
-	self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+	self.flags &= ~FL_JUMPRELEASED;
 
 	self.flags = self.flags - FL_ONGROUND;	// don't stairwalk
 	
@@ -804,8 +804,7 @@ void() WaterMove =
 	
 	if (!self.waterlevel)
 	{
-		if (self.flags & FL_INWATER)
-		{	
+		if (self.flags & FL_INWATER) {	
 			// play leave water sound
 			sound (self, CHAN_BODY, "misc/outwater.wav", 1, ATTN_NORM);
 			self.flags = self.flags - FL_INWATER;
@@ -834,8 +833,7 @@ void() WaterMove =
 		}
 	}
 	
-	if ( !(self.flags & FL_INWATER) )
-	{	
+	if (!(self.flags & FL_INWATER)) {	
 
 // player enter water sound
 
@@ -850,8 +848,8 @@ void() WaterMove =
 		self.dmgtime = 0;
 	}
 	
-	if (! (self.flags & FL_WATERJUMP) )
-		self.velocity = self.velocity - 0.8*self.waterlevel*frametime*self.velocity;
+	if (!(self.flags & FL_WATERJUMP))
+		self.velocity -= 0.8 * self.waterlevel * frametime * self.velocity;
 };
 
 void() CheckWaterJump =
@@ -874,9 +872,9 @@ void() CheckWaterJump =
 		traceline (start, end, TRUE, self);
 		if (trace_fraction == 1)
 		{	// open at eye level
-			self.flags = self.flags | FL_WATERJUMP;
+			self.flags |= FL_WATERJUMP;
 			self.velocity_z = 225;
-			self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+			self.flags &= ~FL_JUMPRELEASED;
 			self.teleport_time = time + 2;	// safety net
 			return;
 		}
@@ -924,13 +922,14 @@ void() PlayerPreThink =
 		PlayerJump ();
 	}
 	else
-		self.flags = self.flags | FL_JUMPRELEASED;
+		self.flags |= FL_JUMPRELEASED;
 
 // teleporters can force a non-moving pause time	
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
 
-	if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE)
+	if (time > self.attack_finished
+		&& self.currentammo == 0 && self.weapon != IT_AXE)
 	{
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
@@ -1019,9 +1018,9 @@ void() CheckPowerups =
 			self.invincible_finished = 0;
 		}
 		if (self.invincible_finished > time)
-			self.effects = self.effects | EF_DIMLIGHT;
+			self.effects |= EF_DIMLIGHT;
 		else
-			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+			self.effects &= ~EF_DIMLIGHT;
 	}
 
 // super damage
@@ -1054,9 +1053,9 @@ void() CheckPowerups =
 			self.super_time = 0;
 		}
 		if (self.super_damage_finished > time)
-			self.effects = self.effects | EF_DIMLIGHT;
+			self.effects |= EF_DIMLIGHT;
 		else
-			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+			self.effects &= ~EF_DIMLIGHT;
 	}	
 
 // suit	

@@ -85,7 +85,7 @@ void() walkmonster_start_go =
 	self.view_ofs = '0 0 25';
 	self.use = monster_use;
 	
-	self.flags = self.flags | FL_MONSTER;
+	self.flags |= FL_MONSTER;
 	
 	if (self.target)
 	{
@@ -136,8 +136,8 @@ void() flymonster_start_go =
 	self.view_ofs = '0 0 25';
 	self.use = monster_use;
 
-	self.flags = self.flags | FL_FLY;
-	self.flags = self.flags | FL_MONSTER;
+	self.flags |= FL_FLY;
+	self.flags |= FL_MONSTER;
 
 	if (!walkmove(0,0))
 	{
@@ -195,8 +195,8 @@ void() swimmonster_start_go =
 	self.view_ofs = '0 0 10';
 	self.use = monster_use;
 	
-	self.flags = self.flags | FL_SWIM;
-	self.flags = self.flags | FL_MONSTER;
+	self.flags |= FL_SWIM;
+	self.flags |= FL_MONSTER;
 
 	if (self.target)
 	{

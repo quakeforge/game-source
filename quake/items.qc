@@ -183,7 +183,7 @@ void() health_touch =
 	// Megahealth = rot down the player's super health
 	if (self.healtype == 2)
 	{
-		other.items = other.items | IT_SUPERHEALTH;
+		other.items |= IT_SUPERHEALTH;
 		self.nextthink = time + 5;
 		self.think = item_megahealth_rot;
 		self.owner = other;
@@ -215,7 +215,7 @@ void() item_megahealth_rot =
 
 // it is possible for a player to die and respawn between rots, so don't
 // just blindly subtract the flag off
-	other.items = other.items - (other.items & IT_SUPERHEALTH);
+	other.items &= ~IT_SUPERHEALTH;
 	
 	if (deathmatch == 1)	// deathmatch 2 is silly old rules
 	{
@@ -266,7 +266,8 @@ void() armor_touch =
 		
 	other.armortype = type;
 	other.armorvalue = value;
-	other.items = other.items - (other.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + bit;
+	other.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+	other.items |= bit;
 
 	self.solid = SOLID_NOT;
 	self.model = string_null;
@@ -470,7 +471,7 @@ void() weapon_touch =
 
 // change to the weapon
 	old = other.items;
-	other.items = other.items | new;
+	other.items |= new;
 	
 	stemp = self;
 	self = other;
@@ -880,7 +881,7 @@ void() key_touch =
 
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
-	other.items = other.items | self.items;
+	other.items |= self.items;
 
 	if (!coop)
 	{	
@@ -1011,7 +1012,7 @@ void() sigil_touch =
 	stuffcmd (other, "bf\n");
 	self.solid = SOLID_NOT;
 	self.model = string_null;
-	serverflags = serverflags | (self.spawnflags & 15);
+	serverflags |= self.spawnflags & 15;
 	self.classname = "";		// so rune doors won't find it
 	
 	activator = other;
@@ -1095,7 +1096,7 @@ void() powerup_touch =
 	sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	self.solid = SOLID_NOT;
-	other.items = other.items | self.items;
+	other.items |= self.items;
 	self.model = string_null;
 
 // do the apropriate action
@@ -1255,7 +1256,7 @@ void() BackpackTouch =
 	if (!new)
 		new = other.weapon;
 	old = other.items;
-	other.items = other.items | new;
+	other.items |= new;
 	
 	bound_other_ammo ();
 

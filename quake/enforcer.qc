@@ -103,7 +103,7 @@ void() enforcer_fire =
 {
 	local vector org;
 
-	self.effects = self.effects | EF_MUZZLEFLASH;
+	self.effects |= EF_MUZZLEFLASH;
 	makevectors (self.angles);
 	
 	org = self.origin + v_forward * 30 + v_right * 8.5 + '0 0 16';

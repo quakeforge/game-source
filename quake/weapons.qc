@@ -754,7 +754,7 @@ void() W_SetCurrentAmmo =
 {
 	player_run ();		// get out of any weapon firing states
 
-	self.items = self.items - ( self.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
+	self.items &= ~(IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS);
 	
 	if (self.weapon == IT_AXE)
 	{
@@ -1028,18 +1028,12 @@ void() CheatCommand =
 	self.ammo_rockets = 100;
 	self.ammo_nails = 200;
 	self.ammo_shells = 100;
-	self.items = self.items | 
-		IT_AXE |
-		IT_SHOTGUN |
-		IT_SUPER_SHOTGUN |
-		IT_NAILGUN |
-		IT_SUPER_NAILGUN |
-		IT_GRENADE_LAUNCHER |
-		IT_ROCKET_LAUNCHER |
-		IT_KEY1 | IT_KEY2;
+	self.items |= (IT_AXE | IT_SHOTGUN | IT_SUPER_SHOTGUN | IT_NAILGUN
+				   | IT_SUPER_NAILGUN | IT_GRENADE_LAUNCHER
+				   | IT_ROCKET_LAUNCHER | IT_KEY1 | IT_KEY2);
 
 	self.ammo_cells = 200;
-	self.items = self.items | IT_LIGHTNING;
+	self.items |= IT_LIGHTNING;
 
 	self.weapon = IT_ROCKET_LAUNCHER;
 	self.impulse = 0;
@@ -1212,7 +1206,7 @@ void() QuadCheat =
 		return;
 	self.super_time = 1;
 	self.super_damage_finished = time + 30;
-	self.items = self.items | IT_QUAD;
+	self.items |= IT_QUAD;
 	dprint ("quad cheat\n");
 };
 
