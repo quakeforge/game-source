@@ -144,35 +144,37 @@ Bot has lost its target.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)lost:(entity)targ :(integer)success
+-(void)lost:(WayPoint)targ :(integer)success
 {
 	if (!targ)
 		return;
 
 	[self target_drop:targ];
-	if (targ.classname == "waypoint")
+	if (targ.ent.classname == "waypoint")
 		targ.b_sound &= ~(ClientBitFlag (b_clientno));
 
 	// find a new route
 	if (!success) {
 		targets[0] = targets[1] = targets[2] = targets[3] = NIL;
-		last_way = FindWayPoint (current_way);
-		ClearMyRoute ();
+		last_way = [self findWayPoint:current_way];
+		[WayPoint clearMyRoute:self];
 		b_aiflags = 0;
 	} else {
-		if (targ.classname == "item_artifact_invisibility")
+		if (targ.ent.classname == "item_artifact_invisibility")
 			if (ent.items & 524288)
 				bot_start_topic (3);
                 
-                if (targ.flags & FL_ITEM) {
-					if (!targ.model)
-						targ._last = NIL;
+				/*XXX
+                if (targ.ent.flags & FL_ITEM) {
+					if (!targ.ent.model)
+						targ.prev = NIL;
 					else
-						targ._last = ent;
+						targ.prev = ent;
                 }
+				*/
         }
 
-	if (targ.classname != "player")
+	if (targ.ent.classname != "player")
 		targ.search_time = time + 5;
 }
 
@@ -186,23 +188,23 @@ removed.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)check_lost:(entity)targ
+-(void)check_lost:(WayPoint)targ
 {
 	local vector dist;
 
-	dist = realorigin (targ) - ent.origin;
+	dist = realorigin (targ.ent) - ent.origin;
 	dist_z = 0;
 
 	if (targ == NIL)
 		return;
 
 	// waypoints and items are lost if you get close enough to them
-	if (targ.flags & FL_ITEM) {
-		if (vlen (targ.origin - ent.origin) < 32)
+	if (targ.ent.flags & FL_ITEM) {
+		if (vlen (targ.ent.origin - ent.origin) < 32)
 			[self lost:targ :TRUE];
-		else if (!targ.model)
+		else if (!targ.ent.model)
 			[self lost:targ :TRUE];
-	} else if (targ.classname == "waypoint") {
+	} else if (targ.ent.classname == "waypoint") {
 		if (!(b_aiflags & (AI_SNIPER | AI_AMBUSH))) {
 			if (b_aiflags & AI_RIDE_TRAIN) {
 				if (vlen (targ.origin - ent.origin) < 48)
@@ -213,17 +215,17 @@ removed.
 			} else if (vlen (targ.origin - ent.origin) < 32)
 				[self lost:targ :TRUE];
 		}
-	} else if (targ.classname == "temp_waypoint") {
+	} else if (targ.ent.classname == "temp_waypoint") {
 		if (vlen (targ.origin - ent.origin) < 32)
 			[self lost:targ :TRUE];
-	} else if (targ.classname == "player") {
-		if (targ.health <= 0)
+	} else if (targ.ent.classname == "player") {
+		if (targ.ent.health <= 0)
 			[self lost:targ :TRUE];
-		else if ((coop) || (teamplay && targ.team == ent.team)) {
-			if (targ.target1.classname == "player") {
-				if (!targ.target1.ishuman)
+		else if ((coop) || (teamplay && targ.ent.team == ent.team)) {
+			if (targ.targets[0].ent.classname == "player") {
+				//XXX if (!targ.targets[0].ishuman)
 					[self lost:targ :TRUE];
-			} else if (targ.teleport_time > time) {
+			} else if (targ.ent.teleport_time > time) {
 				// try not to telefrag teammates
 				keys &= 960;
 			} else if (vlen (targ.origin - ent.origin) < 128) {
@@ -419,7 +421,8 @@ confused
 -(void)path
 {
 
-	local entity jj, tele;
+	local WayPoint jj, tele;
+	local entity e;
 
 	[self check_lost:targets[0]];
 	if (!targets[0]) {
@@ -432,11 +435,13 @@ confused
 	jj = FindRoute (last_way);
 	if (!jj) {
 		// this is an ugly hack
+		/*XXX
 		if (targets[0].current_way != last_way) {
 			if (targets[0].classname != "temp_waypoint")
 				if (targets[0].classname != "player")
 					[self lost:targets[0] :FALSE];
 		}
+		*/
 
 		return;
 	}
@@ -446,12 +451,12 @@ confused
 	// Readahed types are AI conditions to perform while heading to a waypoint
 	// point types are AI flags that should be executed once reaching a waypoint
 
-	b_aiflags = (jj.b_aiflags & AI_READAHEAD_TYPES) | (last_way.b_aiflags & AI_POINT_TYPES);
+	b_aiflags = (jj.flags & AI_READAHEAD_TYPES) | (last_way.flags & AI_POINT_TYPES);
 	[self target_add:jj];
 	if (last_way) {
-		if (CheckLinked (last_way, jj) == 2) {
+		if ([last_way isLinkedTo:jj] == 2) {
 			// waypoints are telelinked
-			tele = FindThing (ent, "trigger_teleport"); // this is probbly the teleport responsible
+			tele = FindThing (ent, "trigger_teleport").@this; // this is probbly the teleport responsible
 			[self target_add:tele];
 		}
 		traceline (last_way.origin, jj.origin, FALSE, ent); // check for blockage
@@ -466,13 +471,13 @@ confused
 					[self weapon_switch:1];
 					b_aiflags = b_aiflags | AI_BLIND; // nick knack paddy hack
 				} else if (trace_ent.targetname) {
-					tele = find (NIL, target, trace_ent.targetname);
-					if (tele.health > 0) {
-						ent.enemy = tele;
+					e = find (NIL, target, trace_ent.targetname);
+					if (e.health > 0) {
+						ent.enemy = e;
 						[self weapon_switch:1];
 					} else {
 //						target_drop (jj);
-						[self target_add:tele];
+						[self target_add:e];
 //						bot_get_path (tele, TRUE);
 						b_aiflags |= AI_BLIND; // give a bot a bone	
 						return;
@@ -767,7 +772,7 @@ frame, the ai_time limits it's actual updating
 
 	// target1 is like goalentity in normal Quake monster AI.
 	// it's the bot's most immediate target
-	if (route_table == ent) {
+	if (route_table == self) {
 		if (busy_waypoints <= 0) {
 			if (waypoint_mode < WM_EDITOR)
 				[self look_for_crap:TRUE];

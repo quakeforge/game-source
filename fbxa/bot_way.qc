@@ -44,163 +44,105 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 
+WayPoint way_foot; // Ugh. Do I need a foot for this or not?
+
 // Waypoint Linking code ======================================================
 
-float (entity e1, entity e2)
-CheckLinked =
+@implementation WayPoint
+
+-(integer)isLinkedTo:(WayPoint)way
 {
-	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
-		return FALSE;
+	local integer i;
 
-	if (e1.target1 == e2) {
-		if (e1.b_aiflags & AI_TELELINK_1)
-			return 2;
-		else
-			return TRUE;
-	} else if (e1.target2 == e2) {
-		if (e1.b_aiflags & AI_TELELINK_2)
-			return 2;
-		else
-			return TRUE;
-	} else if (e1.target3 == e2) {
-		if (e1.b_aiflags & AI_TELELINK_3)
-			return 2;
-		else
-			return TRUE;
-	} else if (e1.target4 == e2) {
-		if (e1.b_aiflags & AI_TELELINK_4)
-			return 2;
-		else
-			return TRUE;
-	} else
-		return FALSE;
-};
+	if (way == self || !way || !self)
+		return 0;
 
-float (entity e1, entity e2)
-LinkWays =
+	for (i = 0; i < 4; i++) {
+		if (targets[i] == way) {
+			if (flags & (AI_TELELINK_1 << i))
+				return 2;
+			return 1;
+		}
+	}
+	return 0;
+}
+
+-(integer)linkWay:(WayPoint)way
 {
-	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
-		return FALSE;
-	else if (CheckLinked (e1, e2))
-		return FALSE; // already linked!!!
+	local integer i;
 
-	if (e1.target1 == NIL) {
-		e1.target1 = e2;
-		return TRUE;
-	} else if (e1.target2 == NIL) {
-		e1.target2 = e2;
-		return TRUE;
-	} else if (e1.target3 == NIL) {
-		e1.target3 = e2;
-                return TRUE;
-	} else if (e1.target4 == NIL) {
-		e1.target4 = e2;
-		return TRUE;
-	} else return FALSE;
-};
+	if (self == way || !self || !way)
+		return 0;
+	else if ([self isLinkedTo:way])
+		return 0; // already linked!!!
+
+	for (i = 0; i < 4; i++) {
+		if (!targets[i]) {
+			targets[i] = way;
+			return 1;
+		}
+	}
+	return 0;
+}
 
 // Link Ways part 2, used only for teleporters
-float (entity e1, entity e2)
-TeleLinkWays =
+-(integer)teleLinkWay:(WayPoint)way
 {
-	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
-		return FALSE;
-	else if (CheckLinked (e1, e2))
-		return FALSE; // already linked!!!
+	local integer i;
 
-	if (e1.target1 == NIL) {
-		e1.target1 = e2;
-		e1.b_aiflags |= AI_TELELINK_1;
-		return TRUE;
-	} else if (e1.target2 == NIL) {
-		e1.target2 = e2;
-		e1.b_aiflags |= AI_TELELINK_2;
-		return TRUE;
-	} else if (e1.target3 == NIL) {
-		e1.target3 = e2;
-		e1.b_aiflags |= AI_TELELINK_3;
-            return TRUE;
-	} else if (e1.target4 == NIL) {
-		e1.target4 = e2;
-		e1.b_aiflags |= AI_TELELINK_4;
-		return TRUE;
-	} else
-		return FALSE;
-};
+	if (self == way || !self || !way)
+		return 0;
+	else if ([self isLinkedTo:way])
+		return 0; // already linked!!!
 
-void (entity e1, entity e2)
-UnlinkWays =
-{
-	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
-		return;
-	else if (!CheckLinked(e1, e2))
-		return;
-
-	if (e1.target1 == e2) {
-		e1.b_aiflags &= ~AI_TELELINK_1;
-		e1.target1 = NIL;
-	}
-	if (e1.target2 == e2) {
-		e1.b_aiflags &= ~AI_TELELINK_2;
-		e1.target2 = NIL;
-	}
-	if (e1.target3 == e2) {
-		e1.b_aiflags &= ~AI_TELELINK_3;
-		e1.target3 = NIL;
-	}
-	if (e1.target4 == e2) {
-		e1.b_aiflags &= ~AI_TELELINK_4;
-		e1.target4 = NIL;
-	}
-};
-
-/*
-FindWaypoint
-
-This is used quite a bit, by many different
-functions big lag causer
-
-Finds the closest, fisible, waypoint to e
-*/
-entity (entity start)
-FindWayPoint =
-{
-	local entity best, t;
-	local float dst, tdst;
-	local vector org;
-
-	org = realorigin (self);
-
-	t = way_head;
-	if (start != NIL) {
-		dst = vlen (start.origin - org);
-		best = start;
-	} else {
-		dst = 100000;
-		best = NIL;
-	}
-	while (t) {
-		// real players cut through ignore types
-		if (dst < 20)
-			return best;
-		if (!(t.b_aiflags & AI_IGNORE_TYPES) || self.ishuman) {
-			tdst = vlen (t.origin - org);
-			if (tdst < dst) {
-				if (sisible (t)) {
-					dst = tdst;
-					best = t;
-				}
-			}
+	for (i = 0; i < 4; i++) {
+		if (!targets[i]) {
+			targets[i] = way;
+			flags |= AI_TELELINK_1 << i;
+			return 1;
 		}
-		t = t._next;
-	} 
-	return best;
-};
+	}
+	return 0;
+}
+
+-(void)unlinkWay:(WayPoint)way
+{
+	local integer i;
+
+	if (self == way || !self || !way)
+		return;
+	else if (![self isLinkedTo:way])
+		return;
+
+	for (i = 0; i < 4; i++) {
+		if (targets[i] == way) {
+			flags &= ~(AI_TELELINK_1 << i);
+			targets[i] = NIL;
+		}
+	}
+}
 
 // Waypoint Spawning Code =====================================================
 
-entity way_foot; // Ugh. Do I need a foot for this or not?
+-(id)initAt:(vector)org
+{
+	count = ++waypoints;
+	if (!way_head) {
+		way_head = self;
+		way_foot = self;
+	} else {
+		way_foot.next = self;
+		self.prev = way_foot;
+		way_foot = self;
+	}
+	return self;
+}
 
+-(id)initFromEntity:(entity)ent
+{
+	[self initAt:ent.origin];
+}
+/*
 entity (vector org)
 make_waypoint = 
 {
@@ -208,6 +150,7 @@ make_waypoint =
 
 	point = spawn ();
 	point.classname = "waypoint";
+
 	point.search_time = time; // don't double back for me;
 	point.solid = SOLID_TRIGGER;
 	point.movetype = MOVETYPE_NONE;
@@ -230,26 +173,548 @@ make_waypoint =
 		setmodel (point, "progs/s_bubble.spr"); 
 	return point;
 };
+*/
+
+/*
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Waypoint Loading from file
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*/
+
++(void)clearAll
+{
+
+	local WayPoint t, n;
+
+	t = way_head;
+	while(t) {
+		n = t.next;
+		[t free];
+		t = n;
+	}
+	way_head = NIL;
+	way_foot = NIL;
+	waypoints = 0;
+}
+
++(WayPoint)waypointForNum:(integer)num
+{
+	local WayPoint t;
+	if (!num)
+		return NIL;
+
+	t = way_head;
+	while (t) {
+		if (t.count == num)
+			return t;
+		t = t.next;
+	}
+	return NIL;
+}
+
+-(void)fix
+{
+	targets[0] = [WayPoint waypointForNum:b_pants];
+	targets[1] = [WayPoint waypointForNum:b_skill];
+	targets[2] = [WayPoint waypointForNum:b_shirt];
+	targets[3] = [WayPoint waypointForNum:b_frags];
+}
+
++(void) fixWaypoints
+{
+	local WayPoint way;
+
+	for (way = way_head; way; way = way.next)
+		[way fix];
+}
+
+/*
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Route & path table management
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*/
+
++(void)clearRouteTable
+{
+	// cleans up route table
+
+	local WayPoint t;
+	t = way_head;
+	while (t) {
+		t.keys = FALSE;
+		t.enemy = NIL;
+		t.items = -1; // not in table
+		t = t.next;
+	}
+}
+
++(void)clearMyRoute:(Bot) bot
+{
+	local integer flag;
+	local WayPoint t;
+
+	flag = ClientBitFlag(bot.b_clientno);
+
+	t = way_head;
+	while (t) {
+		t.b_sound &= ~flag;
+		t = t.next;
+	}
+}
+
+/*
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+WaypointThink
+
+Calculates the routes. We use thinks to avoid
+tripping the runaway loop counter
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*/
+
+-(void)followLink:(WayPoint)e2 :(integer)b_bit
+{
+	local float dist;
+	
+	if (flags & b_bit)
+		dist = items;
+	else
+		dist = vlen(self.origin - e2.origin) + self.items;
+
+	// check if this is an RJ link
+	if (e2.flags & AI_SUPER_JUMP) {
+		if (![route_table can_rj])
+			return;
+	}
+	if (e2.flags & AI_DIFFICULT)
+		dist = dist + 1000;
+
+	dist = dist + random() * 100; // add a little chaos
+
+	if ((dist < e2.items) || (e2.items == -1)) {
+		if (!e2.keys)
+			busy_waypoints = busy_waypoints + 1;
+		e2.keys = TRUE;
+		e2.items = dist;
+		e2.ent.think = WaypointThink;
+		e2.ent.nextthink = time;
+		e2.enemy = self;
+	}
+}
+
+-(void)waypointThink
+{
+	local integer i;
+
+	if (self.items == -1)
+		return;
+	// can you say ugly?
+	if (flags & AI_TRACE_TEST) {
+		for (i = 0; i < 4; i++) {
+			if (targets[i]) {
+				traceline (origin, targets[i].origin, TRUE, /*self*/NIL);
+				if (trace_fraction == 1)
+					[self followLink:targets[i].origin :AI_TELELINK_1 << i];
+			}
+		}
+ 	} else {
+		for (i = 0; i < 4; i++) {
+			if (targets[i]) {
+				[self followLink:targets[i].origin :AI_TELELINK_1 << i];
+			}
+		}
+	}
+
+	busy_waypoints--;
+	keys = FALSE;
+
+	if (busy_waypoints <= 0) {
+		if (direct_route) {
+			[route_table get_path:route_table.targets[0] :FALSE];
+			direct_route = FALSE;
+		}
+	}
+}
+
+-(integer)canSee:(WayPoint)way ignoring:(entity)ignore
+{
+	local vector	spot1, spot2;
+
+	spot1 = origin;
+	spot2 = realorigin (way.ent);
+	
+	do {
+		traceline (spot1, spot2, TRUE, ignore);
+		spot1 = realorigin(trace_ent);
+                ignore = trace_ent;
+	} while ((trace_ent != world) && (trace_fraction != 1));
+	if (trace_endpos == spot2)
+		return TRUE;
+	else 
+		return FALSE;
+}
+
+@end
+
+
+/*
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+BSP/QC Waypoint loading
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*/
+
+void() waypoint =
+{	
+	local WayPoint way = [[WayPoint alloc] initFromEntity: @self];
+/*
+	self.search_time = time;
+	self.solid = SOLID_TRIGGER;
+	self.movetype = MOVETYPE_NONE;
+	setorigin(self, self.origin);
+	
+	setsize(self, VEC_HULL_MIN, VEC_HULL_MAX);
+	waypoints = waypoints + 1;
+	if (!way_head) {
+		way_head = self;
+		way_foot = self;
+	} else {
+		way_foot._next = self;
+		self._last = way_foot;
+		way_foot = self;
+	}
+
+	self.count = waypoints;
+	waypoint_mode = WM_LOADED;
+	if (self.count == 1) {
+		self.think = FixWaypoints; // wait until all bsp loaded points are spawned
+		self.nextthink = time;
+	}
+*/
+};
+
+void(vector org, vector bit1, integer bit4, integer flargs) make_way =
+{
+	local WayPoint y = [[WayPoint alloc] initAt:org];
+	//local entity y;
+	//waypoint_mode = WM_LOADED;
+	//y = make_waypoint(org);
+	y.flags = flargs;
+	y.b_pants = (integer)bit1_x;
+	y.b_skill = (integer)bit1_y;
+	y.b_shirt = (integer)bit1_z;
+	y.b_frags = bit4;
+	/*
+	if (y.count == 1) {
+		y.think = FixWaypoints; // wait until all qc loaded points are spawned
+		y.nextthink = time;
+	}
+	*/
+};
+
+@implementation Bot (Way)
+
+/*
+FindWaypoint
+
+This is used quite a bit, by many different
+functions big lag causer
+
+Finds the closest, fisible, waypoint to e
+*/
+-(WayPoint)findWayPoint:(WayPoint)start
+{
+	local WayPoint best, t;
+	local float dst, tdst;
+	local vector org;
+
+	org = realorigin (ent);
+
+	t = way_head;
+	if (start != NIL) {
+		dst = vlen (start.origin - org);
+		best = start;
+	} else {
+		dst = 100000;
+		best = NIL;
+	}
+	while (t) {
+		// real players cut through ignore types
+		if (dst < 20)
+			return best;
+		if (!(t.flags & AI_IGNORE_TYPES) || ishuman) {
+			tdst = vlen (t.origin - org);
+			if (tdst < dst) {
+				/*XXX
+				if (sisible (t)) {
+					dst = tdst;
+					best = t;
+				}
+				*/
+			}
+		}
+		t = t.next;
+	} 
+	return best;
+}
+
+-(void)deleteWaypoint:(WayPoint)what
+{
+	local WayPoint t;
+
+	if (way_head == what)
+		way_head = what.next;
+	if (way_foot == what)
+		way_foot = what.prev;
+	if (what.prev)
+		what.prev.next = what.next;
+	if (what.next)
+		what.next.prev = what.prev;
+	waypoints = 0;
+	t = way_head;
+	while(t) {
+		t.count = waypoints = waypoints + 1;
+		if ([t isLinkedTo:what])
+			[t unlinkWay:what];
+		t = t.next;
+	}
+	if (self.current_way == what)
+		self.current_way = NIL;
+	[what free];
+}
+
+/*
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+FindRoute & FindThing used by the pathing code
+in bot_ai.qc
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*/
+
+
+-(entity)findThing:(string)s
+{
+	local entity t;
+	local float tdst, dst;
+	local entity best;
+	dst = 100000;
+	best = NIL;
+	t = find (NIL, classname, s);
+	while (t != NIL) {
+		tdst = vlen(((t.absmin + t.absmax) * 0.5) - ent.origin);
+		if (tdst < dst) {
+			dst = tdst;
+			best = t;
+		} 
+		t = find(t, classname, s);
+	}
+	return best;
+}
+
+/*
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+FindRoute, this is a key function in the
+pathing. The name is a bit misleading, this
+code finds the closest waypoint that is part
+of a route calculated by the begin_route and
+end_route routines This is a definite path to
+an object.
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*/
+
+-(WayPoint)findRoute:(WayPoint)lastone
+{
+	// kinda like FindWaypoint, only of this bots route though
+	local WayPoint t, best;
+	local float dst, tdst;
+	local integer flag;
+
+	flag = ClientBitFlag(b_clientno);
+	t = way_head;
+	dst = 100000;
+	best = NIL;
+	while(t) {
+		tdst = vlen(t.origin - ent.origin);
+		if ((tdst < dst) &&  (t.b_sound & flag)) {
+			if ((lastone == NIL) || ([lastone isLinkedTo:t])) {
+				dst = tdst;
+				best = t;
+			}
+		} 
+		t = t.next;
+	} 
+	return best;
+}
+
+/*
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Mark_path
+
+After the route has been found, mark it with
+bitflags  so the table can be used for a
+different bot.
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*/
+
+
+-(void)mark_path:(entity)this
+{
+	local WayPoint t;
+	local integer flag;
+	local Bot bot = (Bot)this.@this;
+
+	ClearMyRoute();
+
+	t = [this.@this findWayPoint:bot.current_way];
+	// FIXME
+	// ugh, better way to find players please!!!
+	if (this.classname != "player")
+		bot.current_way = t;
+		
+	if (t.enemy == NIL) {
+		[self lost:this :FALSE];
+		if (waypoint_mode == WM_DYNAMIC)
+			route_failed = TRUE;
+		return;
+	}
+
+	flag = ClientBitFlag(b_clientno);
+
+	while(t) {
+		if (t.b_sound & flag)
+			return;
+		if (t == last_way)
+			return;
+		t.b_sound |= flag;
+		t = t.enemy; 	
+	}
+}
+
+/*
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+begin_route and bot_get_path
+
+PLEASE NOTE: bot_get_path replaces the old
+calls to begin_route. 
+
+Routing isn't done all at once now, but in two
+stages, the bot will calc a route *THEN*
+choose a target, *THEN* mark a path.
+
+Boy it's confusing.
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*/
+
+-(integer)begin_route
+{
+	if (busy_waypoints > 0)
+		return FALSE;
+	
+	if (route_table) {
+		if (!route_table.ishuman) {
+			if (route_table.b_clientno != -1)
+				return FALSE;
+		}
+	}
+
+	route_table = self;
+	[WayPoint clearRouteTable];
+	last_way = [self findWayPoint:current_way];
+
+	if (last_way != NIL) {
+		last_way.items = vlen(self.last_way.origin - ent.origin);
+		last_way.ent.nextthink = time;
+		last_way.ent.think = WaypointThink;
+		last_way.keys = TRUE;
+		busy_waypoints = 1;
+		return TRUE;
+	} else {
+		route_table = NIL;
+		busy_waypoints = 0;
+		return FALSE;
+	}
+}
+
+-(void)get_path:(WayPoint)this :(integer)direct
+{
+	if (this == NIL)
+		return;
+
+	if (route_table == self) {
+		if (busy_waypoints <= 0) {
+			route_table = NIL;
+			[self mark_path:this];
+		}
+		return;
+	}
+	if (direct) {
+		if([self begin_route])
+			direct_route = TRUE;
+		else
+			[self lost:this :FALSE];
+		return;
+	}
+}
+
+/*
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Temporary Marker code
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*/
+
+-(void)spawnTempWaypoint:(vector)org
+{	
+/*XXX
+	local entity tep;
+
+	if (!self.temp_way)
+		self.temp_way = tep = spawn();
+	else
+		tep = self.temp_way;
+
+	tep.classname = "temp_waypoint";
+	tep.search_time = 0;
+	tep.solid = SOLID_TRIGGER;
+	tep.movetype = MOVETYPE_NOCLIP;
+	setorigin(tep, org);
+	target_add(tep);
+	setsize(tep, VEC_HULL_MIN, VEC_HULL_MAX); // FIXME: convert these to numerical
+*/
+}
 
 /*
 Dynamic Waypoint spawning and linking. Not
 very good all things considered.
 */
-void ()
-DynamicWaypoint =
+-(void)dynamicWaypoint
 {
-	local entity t;
+	local WayPoint t;
 	local float dist, dynlink = 0, dynpoint = 0, editor = 0;
 
-	if (self.teleport_time > self.portal_time) {
-		if (!(self.flags & FL_WATERJUMP)) {
-			self.dyn_flags = 2;
-			if (!self.ishuman) {
-				bot_lost (self.target1, TRUE);
-				self.enemy = NIL;
+	if (teleport_time > portal_time) {
+		if (!(ent.flags & FL_WATERJUMP)) {
+			dyn_flags = 2;
+			if (!ishuman) {
+				[self lost:targets[0] :TRUE];
+				ent.enemy = NIL;
 			}
 		}
-		self.portal_time = self.teleport_time;
+		portal_time = teleport_time;
 	}
 	// stacking everything on waypoint_mode might've been good for the editor,
 	// but it sucks to beat hell for this code.
@@ -279,14 +744,14 @@ DynamicWaypoint =
 	if (max_clients < 2)
 		return; 
 	// if you're dead
-	else if (self.health <= 0) {
+	else if (ent.health <= 0) {
 		if (dynpoint) {
-			if (self.current_way) {
-				if (pointcontents(self.origin) < -4) {
-					if (self.current_way.b_aiflags & AI_BLIND)
-						self.current_way.b_aiflags |= AI_PRECISION;
+			if (current_way) {
+				if (pointcontents(ent.origin) < -4) {
+					if (self.current_way.flags & AI_BLIND)
+						self.current_way.flags |= AI_PRECISION;
 					else
-						self.current_way.b_aiflags |= AI_BLIND;
+						self.current_way.flags |= AI_BLIND;
 				}
 			}
 		}
@@ -298,9 +763,9 @@ DynamicWaypoint =
 
 	// you shouldn't be making waypoints mid air
 	if (dynpoint) {
-		if (!((self.flags & FL_ONGROUND) || self.waterlevel == 3)) {
-			if (self.dyn_flags != 2) {
-				self.dyn_flags = 1;
+		if (!((ent.flags & FL_ONGROUND) || ent.waterlevel == 3)) {
+			if (dyn_flags != 2) {
+				dyn_flags = 1;
 			}
 			return;
 		}
@@ -313,54 +778,51 @@ DynamicWaypoint =
 	// display the links for editor mode
 	if (editor) {
 		if (self.current_way) {
-			if (self.current_way.target1)
-				DeveloperLightning (self.current_way, self.current_way.target1,
-								self.current_way.b_aiflags & AI_TELELINK_1);
-			if (self.current_way.target2)
-				DeveloperLightning (self.current_way, self.current_way.target2,
-								self.current_way.b_aiflags & AI_TELELINK_2);
-			if (self.current_way.target3)
-				DeveloperLightning (self.current_way, self.current_way.target3,
-								self.current_way.b_aiflags & AI_TELELINK_3);
-			if (self.current_way.target4)
-				DeveloperLightning (self.current_way, self.current_way.target4,
-								self.current_way.b_aiflags & AI_TELELINK_4);
+			local WayPoint way = self.current_way;
+			local integer i;
+
+			for (i = 0; i < 4; i++) {
+				if (way.targets[i]) {
+					DeveloperLightning (way, way.targets[i],
+										way.flags & (AI_TELELINK_1 << i));
+				}
+			}
 		}
 		if (self.b_aiflags & AI_HOLD_SELECT)
 			return;
 	}
 
-	t = FindWayPoint (self.current_way);
+	t = [self findWayPoint:current_way];
 	if (t) {
-		dist = vlen (self.origin - t.origin);
+		dist = vlen (ent.origin - t.origin);
 		if (dist < 192) {
 			if (dist < 64) {
 				if (t != self.current_way) {
 					if (dynlink) {
 						if (!self.dyn_flags) {
-							if (wisible (t, self.current_way))
-								LinkWays (t, self.current_way);
+							if ([t canSee:current_way ignoring:ent])
+								[t linkWay:current_way];
 						}
-						if (self.dyn_flags == 2)
-							TeleLinkWays (self.current_way, t);
-						else if (wisible (t, self.current_way))
-							LinkWays(self.current_way, t);
+						if (dyn_flags == 2)
+							[current_way teleLinkWay:t];
+						else if ([t canSee:current_way ignoring:ent])
+							[current_way linkWay:t];
 					}
 					if (editor) {
-						setmodel(t, "progs/s_light.spr");
-						if (self.current_way)
-							setmodel(self.current_way, "progs/s_bubble.spr");
+						setmodel(t.ent, "progs/s_light.spr");
+						if (current_way)
+							setmodel(current_way.ent, "progs/s_bubble.spr");
 					}
 				}
 				self.current_way = t;
 				self.dyn_flags = 0;
 			}
-			self.dyn_dest = self.origin + self.view_ofs;
+			dyn_dest = ent.origin + ent.view_ofs;
 			return;
 		}
 	}
 
-	if (frik_recognize_plat(FALSE)) {
+	if ([self recognize_plat:FALSE]) {
 		if (vlen(trace_ent.velocity) > 0) {
 			if (self.dyn_plat)
 				return;
@@ -371,512 +833,38 @@ DynamicWaypoint =
 		} else
 			self.dyn_plat = FALSE;
 	} else
-		self.dyn_plat = FALSE;
+		dyn_plat = FALSE;
 
-	if (self.dyn_flags == 2)
-		self.dyn_dest = self.origin + self.view_ofs;
+	if (dyn_flags == 2)
+		dyn_dest = ent.origin + ent.view_ofs;
 	else if (self.dyn_dest == '0 0 0')
-		self.dyn_dest = self.origin + self.view_ofs;
+		dyn_dest = ent.origin + ent.view_ofs;
 	if (!dynpoint)
 		return;
-	t = make_waypoint(self.dyn_dest);
+	t = [[WayPoint alloc] initAt:dyn_dest];
 
-	if (!self.dyn_flags) {
-		if (wisible(t, self.current_way))
-			LinkWays(t, self.current_way);
+	if (!dyn_flags) {
+		if ([t canSee:current_way ignoring:ent])
+			[t linkWay:current_way];
 	}
-	if (self.dyn_flags == 2)
-		TeleLinkWays(self.current_way, t);
-	else if (wisible(t, self.current_way))
-		LinkWays(self.current_way, t);
+	if (dyn_flags == 2)
+		[current_way teleLinkWay: t];
+	else if ([t canSee:current_way ignoring:ent])
+		[current_way linkWay:t];
 
 	if (editor) {
-		setmodel(t, "progs/s_light.spr");
-		if (self.current_way)
-			setmodel(self.current_way, "progs/s_bubble.spr");
+		setmodel(t.ent, "progs/s_light.spr");
+		if (current_way)
+			setmodel(current_way.ent, "progs/s_bubble.spr");
 	}
-	self.current_way = t;
-	self.dyn_flags = 0;
+	current_way = t;
+	dyn_flags = 0;
 	
-	self.dyn_dest = self.origin + self.view_ofs;
+	dyn_dest = ent.origin + ent.view_ofs;
 
-	if (frik_recognize_plat(FALSE)) {
+	if ([self recognize_plat:FALSE]) {
 		if (trace_ent.classname == "door")
-			t.b_aiflags = t.b_aiflags | AI_DOORFLAG;
+			t.flags |= AI_DOORFLAG;
 	}
-};
-
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-Waypoint Loading from file
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-void() ClearAllWays =
-{
-
-	local entity t, n;
-	t = way_head;
-	while(t) {
-		n = t._next;
-		remove(t);
-		t = n;
-	}
-	way_head = NIL;
-	way_foot = NIL;
-	waypoints = 0;
-};
-
-entity(float num) WaypointForNum =
-{
-	local entity t;
-	if (!num)
-		return NIL;
-
-	t = way_head;
-	while (t) {
-		if (t.count == num)
-			return t;
-		t = t._next;
-	}
-	return NIL;
-};
-
-void() FixThisWaypoint = 
-{
-	self.enemy.target1 = WaypointForNum(self.enemy.b_pants);
-	self.enemy.target2 = WaypointForNum((float)self.enemy.b_skill);
-	self.enemy.target3 = WaypointForNum(self.enemy.b_shirt);
-	self.enemy.target4 = WaypointForNum(self.enemy.b_frags);
-	self.enemy = self.enemy._next;
-	self.nextthink = time;
-	if (self.enemy == NIL) {
-		remove(self);
-		fixer = NIL;
-	}
-};
-
-void() FixWaypoints =
-{
-	if (!fixer)
-		fixer = spawn();
-	fixer.nextthink = time;
-	fixer.think = FixThisWaypoint;
-	fixer.enemy = way_head;
-};
-
-
-
-void(entity what) delete_waypoint =
-{
-	local entity t;
-
-	if (way_head == what)
-		way_head = what._next;
-	if (way_foot == what)
-		way_foot = what._last;
-	if (what._last)
-		what._last._next = what._next;
-	if (what._next)
-		what._next._last = what._last;
-	waypoints = 0;
-	t = way_head;
-	while(t) {
-		t.count = waypoints = waypoints + 1;
-		if (CheckLinked(t, what))
-			UnlinkWays(t, what);
-		t = t._next;
-	}
-	if (self.current_way == what)
-		self.current_way = NIL;
-	remove(what);
-};
-
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-FindRoute & FindThing used by the pathing code
-in bot_ai.qc
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-
-entity(entity ent, string s) FindThing =
-{
-	local entity t;
-	local float tdst, dst;
-	local entity best;
-	dst = 100000;
-	best = NIL;
-	t = find (NIL, classname, s);
-	while (t != NIL) {
-		tdst = vlen(((t.absmin + t.absmax) * 0.5) - ent.origin);
-		if (tdst < dst) {
-			dst = tdst;
-			best = t;
-		} 
-		t = find(t, classname, s);
-	}
-	return best;
-};
-
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-FindRoute, this is a key function in the
-pathing. The name is a bit misleading, this
-code finds the closest waypoint that is part
-of a route calculated by the begin_route and
-end_route routines This is a definite path to
-an object.
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-entity(entity lastone) FindRoute =
-{
-	// kinda like FindWaypoint, only of this bots route though
-	local entity t, best;
-	local float dst, tdst, flag;
-	flag = ClientBitFlag(self.b_clientno);
-	t = way_head;
-	dst = 100000;
-	best = NIL;
-	while(t) {
-		tdst = vlen(t.origin - self.origin);
-		if ((tdst < dst) &&  (t.b_sound & flag)) {
-			if ((lastone == NIL) || (CheckLinked(lastone, t))) {
-				dst = tdst;
-				best = t;
-			}
-		} 
-		t = t._next;
-	} 
-	return best;
-};
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-Route & path table management
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-void() ClearRouteTable =
-{
-	// cleans up route table
-
-	local entity t;
-	t = way_head;
-	while (t) {
-		t. keys = FALSE;
-		t.enemy = NIL;
-		t.items = -1; // not in table
-		t = t._next;
-	}
-};
-
-void() ClearMyRoute =
-{
-	local float flag;
-	local entity t;
-
-	flag = ClientBitFlag(self.b_clientno);
-
-	t = way_head;
-	while (t) {
-		t.b_sound = t.b_sound - (t.b_sound & flag);
-		t = t._next;
-	}
-};
-
-
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-Mark_path
-
-After the route has been found, mark it with
-bitflags  so the table can be used for a
-different bot.
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-
-void(entity this) mark_path =
-{
-	local entity t, oself;
-	local float flag;
-
-	ClearMyRoute();
-
-	oself = self;
-	self = this;
-	t = FindWayPoint(this.current_way);
-	self = oself;
-	// FIXME
-	// ugh, better way to find players please!!!
-	if (this.classname != "player")
-		this.current_way = t;
-		
-	if (t.enemy == NIL) {
-		bot_lost(this, FALSE);
-		if (waypoint_mode == WM_DYNAMIC)
-			self.route_failed = TRUE;
-		return;
-	}
-
-	flag = ClientBitFlag(self.b_clientno);
-
-	while(t) {
-		if (t.b_sound & flag)
-			return;
-		if (t == self.last_way)
-			return;
-		t.b_sound = t.b_sound | flag;
-		t = t.enemy; 	
-	}
-};
-
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-WaypointThink
-
-Calculates the routes. We use thinks to avoid
-tripping the runaway loop counter
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-void(entity e2, float b_bit) FollowLink =
-{
-	local float dist;
-	
-	if (self.b_aiflags & b_bit)
-		dist = self.items;
-	else
-		dist = vlen(self.origin - e2.origin) + self.items;
-
-	// check if this is an RJ link
-	if (e2.b_aiflags & AI_SUPER_JUMP) {
-		if (!bot_can_rj(route_table))
-			return;
-	}
-	if (e2.b_aiflags & AI_DIFFICULT)
-		dist = dist + 1000;
-
-	dist = dist + random() * 100; // add a little chaos
-
-	if ((dist < e2.items) || (e2.items == -1)) {
-		if (!e2.keys)
-			busy_waypoints = busy_waypoints + 1;
-		e2.keys = TRUE;
-		e2.items = dist;
-		e2.think = WaypointThink;
-		e2.nextthink = time;
-		e2.enemy = self;
-	}
-};
-
-void() WaypointThink =
-{
-	local entity oself;
-
-	if (self.items == -1)
-		return;
-	// can you say ugly?
-	if (self.b_aiflags & AI_TRACE_TEST) {
-		if (self.target1) {
-			traceline(self.origin, self.target1.origin, TRUE, self);
-			if (trace_fraction == 1)
-				FollowLink(self.target1, AI_TELELINK_1);
-		}
-		if (self.target2) {
-			traceline(self.origin, self.target2.origin, TRUE, self);
-			if (trace_fraction == 1)
-				FollowLink(self.target2, AI_TELELINK_2);
-		}
-		if (self.target3) {
-			traceline(self.origin, self.target3.origin, TRUE, self);
-			if (trace_fraction == 1)
-				FollowLink(self.target3, AI_TELELINK_3);
-		}
-		if (self.target4) {
-			traceline(self.origin, self.target4.origin, TRUE, self);
-			if (trace_fraction == 1)
-				FollowLink(self.target4, AI_TELELINK_4);
-		}
- 	} else {
-		if (self.target1)
-			FollowLink(self.target1, AI_TELELINK_1);
-		if (self.target2)
-			FollowLink(self.target2, AI_TELELINK_2);
-		if (self.target3)
-			FollowLink(self.target3, AI_TELELINK_3);
-		if (self.target4)
-			FollowLink(self.target4, AI_TELELINK_4);
-	}
-
-	busy_waypoints = busy_waypoints - 1;
-	self.keys = FALSE;
-
-	if (busy_waypoints <= 0) {
-		if (direct_route) {
-			oself = self;
-			self = route_table;
-			bot_get_path(self.target1, FALSE);
-			self = oself;
-			direct_route = FALSE;
-		}
-	}
-};
-
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-begin_route and bot_get_path
-
-PLEASE NOTE: bot_get_path replaces the old
-calls to begin_route. 
-
-Routing isn't done all at once now, but in two
-stages, the bot will calc a route *THEN*
-choose a target, *THEN* mark a path.
-
-Boy it's confusing.
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-float() begin_route =
-{
-	if (busy_waypoints > 0)
-		return FALSE;
-	
-	if (route_table != NIL) {
-		if (!route_table.ishuman) {
-			if (route_table.b_clientno != -1)
-				return FALSE;
-		}
-	}
-
-	route_table = self;
-	ClearRouteTable();
-	self.last_way = FindWayPoint(self.current_way);
-
-	if (self.last_way != NIL) {
-		self.last_way.items = vlen(self.last_way.origin - self.origin);
-		self.last_way.nextthink = time;
-		self.last_way.think = WaypointThink;
-		self.last_way.keys = TRUE;
-		busy_waypoints = 1;
-		return TRUE;
-	} else {
-		route_table = NIL;
-		busy_waypoints = 0;
-		return FALSE;
-	}
-};
-
-void(entity this, float direct) bot_get_path =
-{
-	if (this == NIL)
-		return;
-
-	if (route_table == self) {
-		if (busy_waypoints <= 0) {
-			route_table = NIL;
-			mark_path(this);
-		}
-		return;
-	}
-	if (direct) {
-		if(begin_route())
-			direct_route = TRUE;
-		else
-			bot_lost(this, FALSE);
-		return;
-	}
-};
-
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-BSP/QC Waypoint loading
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-void() waypoint =
-{	
-	self.search_time = time;
-	self.solid = SOLID_TRIGGER;
-	self.movetype = MOVETYPE_NONE;
-	setorigin(self, self.origin);
-	
-	setsize(self, VEC_HULL_MIN, VEC_HULL_MAX);
-	waypoints = waypoints + 1;
-	if (!way_head) {
-		way_head = self;
-		way_foot = self;
-	} else {
-		way_foot._next = self;
-		self._last = way_foot;
-		way_foot = self;
-	}
-
-	self.count = waypoints;
-	waypoint_mode = WM_LOADED;
-	if (self.count == 1) {
-		self.think = FixWaypoints; // wait until all bsp loaded points are spawned
-		self.nextthink = time;
-	}
-};
-
-void(vector org, vector bit1, float bit4, float flargs) make_way =
-{
-	local entity y;
-	waypoint_mode = WM_LOADED;
-	y = make_waypoint(org);
-	y.b_aiflags = flargs;
-	y.b_pants = bit1_x;
-	y.b_skill = (integer)bit1_y;
-	y.b_shirt = bit1_z;
-	y.b_frags = bit4;
-	if (y.count == 1) {
-		y.think = FixWaypoints; // wait until all qc loaded points are spawned
-		y.nextthink = time;
-	}
-};
-
-
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-Temporary Marker code
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-void(vector org) SpawnTempWaypoint =
-{	
-	local entity tep;
-
-	if (!self.temp_way)
-		self.temp_way = tep = spawn();
-	else
-		tep = self.temp_way;
-
-	tep.classname = "temp_waypoint";
-	tep.search_time = 0;
-	tep.solid = SOLID_TRIGGER;
-	tep.movetype = MOVETYPE_NOCLIP;
-	setorigin(tep, org);
-	target_add(tep);
-	setsize(tep, VEC_HULL_MIN, VEC_HULL_MAX); // FIXME: convert these to numerical
-};
+}
+@end

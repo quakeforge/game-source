@@ -554,33 +554,6 @@ fisible =
 	return FALSE;
 };
 
-/*
-Wisible 
-
-goes through movable brushes/entities, used
-for waypoints
-*/
-// this is used for waypoint stuff....
-float (entity targ1, entity targ2)
-wisible =
-{
-	local entity	ignore;
-	local vector	spot1, spot2;
-
-	spot1 = targ1.origin;
-	spot2 = realorigin (targ2);
-	
-	ignore = self;
-	do {
-		traceline (spot1, spot2, TRUE, ignore);
-		spot1 = realorigin(trace_ent);
-                ignore = trace_ent;
-	} while ((trace_ent != NIL) && (trace_fraction != 1));
-	if (trace_endpos == spot2)
-		return TRUE;
-	else 
-		return FALSE;
-};
 
 /*
 sisible
