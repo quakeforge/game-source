@@ -72,7 +72,7 @@ weapon_range =
 	case IT_LIGHTNING:
 		return '350 0 512';
 	default:
-		break;
+		return '0 0 0';
 	}
 };
 
@@ -243,26 +243,27 @@ Pick a weapon based on range / ammo
 	it = (integer) ent.items & 127;
 
 	while (it) {
-		if ((ent.ammo_rockets >= 1) && (it & 32)) {
-			flag = 32;
+		if ((ent.ammo_rockets >= 1) && (it & IT_ROCKET_LAUNCHER)) {
+			flag = IT_ROCKET_LAUNCHER;
 			pulse = 7;
-		} else if (ent.waterlevel <= 1 && ent.ammo_cells >= 1 && (it & 64)) {
-			flag = 64;
+		} else if (ent.waterlevel <= 1 && ent.ammo_cells >= 1
+				   && (it & IT_LIGHTNING)) {
+			flag = IT_LIGHTNING;
 			pulse = 8;
-		} else if (ent.ammo_nails >= 2 && (it & 8)) {
-			flag = 8;
+		} else if (ent.ammo_nails >= 2 && (it & IT_SUPER_NAILGUN)) {
+			flag = IT_SUPER_NAILGUN;
 			pulse = 5;
-		} else if ((ent.ammo_rockets >= 1) && (it & 16)) {
-			flag = 16;
+		} else if ((ent.ammo_rockets >= 1) && (it & IT_GRENADE_LAUNCHER)) {
+			flag = IT_GRENADE_LAUNCHER;
 			pulse = 6;
-		} else if (ent.ammo_shells >= 2 && (it & 2)) {
-			flag = 2;
+		} else if (ent.ammo_shells >= 2 && (it & IT_SUPER_SHOTGUN)) {
+			flag = IT_SUPER_SHOTGUN;
 			pulse = 3;
-		} else if (ent.ammo_nails >= 1 && (it & 4)) {
-			flag = 4;
+		} else if (ent.ammo_nails >= 1 && (it & IT_NAILGUN)) {
+			flag = IT_NAILGUN;
 			pulse = 4;
-		} else if (ent.ammo_shells >= 1 && (it & 1)) {
-			flag = 1;
+		} else if (ent.ammo_shells >= 1 && (it & IT_SHOTGUN)) {
+			flag = IT_SHOTGUN;
 			pulse = 2;
 		} else {
 			if (pulse)
@@ -330,7 +331,8 @@ attacking an enemy.
 	foedist = vlen (org - ent.origin);
 	v = weapon_range ((integer)ent.weapon);
 	if (foedist > v_y && foedist < v_z) {
-		traceline (ent.origin + ent.view_ofs, ent.origin + ent.view_ofs + v_forward * v_z, FALSE, ent);
+		traceline (ent.origin + ent.view_ofs,
+				   ent.origin + ent.view_ofs + v_forward * v_z, FALSE, ent);
 		if (vlen(trace_endpos - (ent.origin + ent.view_ofs)) >= v_y) {
 			// try to avoid shooting teammates
 			if (trace_ent.classname == "player")
