@@ -425,8 +425,7 @@ local vector	org;
 	{
 		other.fixangle = 1;		// turn this way immediately
 		other.teleport_time = time + 0.7;
-		if (other.flags & FL_ONGROUND)
-			other.flags = other.flags - FL_ONGROUND;
+		other.flags &= ~FL_ONGROUND;
 		other.velocity = v_forward * 300;
 	}
 	other.flags &= ~FL_ONGROUND;
@@ -636,7 +635,7 @@ void() trigger_monsterjump_touch =
 	if ( !(other.flags & FL_ONGROUND) )
 		return;
 	
-	other.flags = other.flags - FL_ONGROUND;
+	other.flags &= ~FL_ONGROUND;
 
 	other.velocity_z = self.height;
 };

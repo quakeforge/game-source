@@ -493,7 +493,7 @@ void(string gibname, float dm) ThrowHead =
 	setsize (self, '-16 -16 0', '16 16 56');
 	self.velocity = VelocityForDamage (dm);
 	self.origin_z = self.origin_z - 24;
-	self.flags &= FL_ONGROUND;
+	self.flags &= ~FL_ONGROUND;
 	self.avelocity = (random () - 0.5) * '0 1200 0';
 };
 

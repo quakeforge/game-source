@@ -81,8 +81,7 @@ void()	demon1_jump4	=[	$leap4,		demon1_jump5	]
 	makevectors (self.angles);
 	self.origin_z = self.origin_z + 1;
 	self.velocity = v_forward * 600 + '0 0 250';
-	if (self.flags & FL_ONGROUND)
-		self.flags = self.flags - FL_ONGROUND;
+	self.flags &= ~FL_ONGROUND;
 };
 void()	demon1_jump5	=[	$leap5,		demon1_jump6	] {};
 void()	demon1_jump6	=[	$leap6,		demon1_jump7	] {};
