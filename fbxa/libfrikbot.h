@@ -317,6 +317,8 @@ typedef struct bot_data_t bot_data_t;
 	move is forward right up
 */
 @extern void (entity cl, float sec, vector angles, vector move, integer buttons, integer impulse) SV_UserCmd;
+@extern void () Break;
+@extern string (integer i) itos;
 
 @extern integer bot_way_linker;
 @extern integer bot_move_linker;

@@ -102,6 +102,11 @@ Array waypoint_array;
 	return origin;
 }
 
+-(vector)realorigin
+{
+	return origin;
+}
+
 -(integer)isLinkedTo:(Waypoint)way
 {
 	local integer i;

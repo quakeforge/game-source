@@ -148,7 +148,7 @@ different bot.
 	t = [this findWaypoint:this.current_way];
 	// FIXME
 	// ugh, better way to find players please!!!
-	if (this.ent.classname != "player")
+	if ([this classname] != "player")
 		this.current_way = t;
 		
 	if (t.enemy == NIL) {

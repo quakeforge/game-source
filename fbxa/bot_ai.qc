@@ -150,7 +150,7 @@ Bot has lost its target.
 		return;
 
 	[self targetDrop:targ];
-	if ([targ isKindOfClass:[Waypoint class]])
+	if ([targ classname] == "waypoint")
 		[(Waypoint)targ clearRouteForBot:self];
 
 	// find a new route
@@ -160,19 +160,19 @@ Bot has lost its target.
 		[Waypoint clearMyRoute:self];
 		b_aiflags = 0;
 	} else {
-		if (targ.ent.classname == "item_artifact_invisibility")
+		if ([targ classname] == "item_artifact_invisibility")
 			if (ent.items & IT_INVISIBILITY)
 				[self startTopic:3];
                 
-                if (targ.ent.flags & FL_ITEM) {
-					if (!targ.ent.model)
-						targ._last = NIL;
-					else
-						targ._last = self;
-                }
-        }
+		if (targ.ent.flags & FL_ITEM) {
+			if (!targ.ent.model)
+				targ._last = NIL;
+			else
+				targ._last = self;
+		}
+	}
 
-	if (targ.ent.classname != "player")
+	if ([targ classname] != "player")
 		[self setSearchTime:time + 5];
 }
 
@@ -199,25 +199,28 @@ removed.
 	// waypoints and items are lost if you get close enough to them
 	if ([targ isKindOfClass:[Waypoint class]]) {
 		local Waypoint way = (Waypoint) targ;
-		if (!(b_aiflags & (AI_SNIPER | AI_AMBUSH))) {
-			if (b_aiflags & AI_RIDE_TRAIN) {
-				if (vlen (way.origin - ent.origin) < 48)
+		if ([way classname] == "waypoint") {
+			if (!(b_aiflags & (AI_SNIPER | AI_AMBUSH))) {
+				if (b_aiflags & AI_RIDE_TRAIN) {
+					if (vlen (way.origin - ent.origin) < 48)
+						[self lost:way :TRUE];
+				} else if (b_aiflags & AI_PRECISION) {
+					if (vlen (way.origin - ent.origin) < 24)
+						[self lost:way :TRUE];
+				} else if (vlen (way.origin - ent.origin) < 32)
 					[self lost:way :TRUE];
-			} else if (b_aiflags & AI_PRECISION) {
-				if (vlen (way.origin - ent.origin) < 24)
-					[self lost:way :TRUE];
-			} else if (vlen (way.origin - ent.origin) < 32)
+			}
+		} else {
+			//temp_waypoint
+			if (vlen (way.origin - ent.origin) < 32)
 				[self lost:way :TRUE];
 		}
-		//temp_waypoint
-		if (vlen (way.origin - ent.origin) < 32)
-			[self lost:way :TRUE];
 	} else if ([targ isKindOfClass:[Bot class]]) {
 		local Bot bot = (Bot) targ;
 		if (bot.ent.health <= 0)
 			[self lost:bot :TRUE];
 		else if ((coop) || (teamplay && bot.ent.team == ent.team)) {
-			if (bot.targets[0].ent.classname == "player") {
+			if ([bot.targets[0] classname] == "player") {
 				if (![bot.targets[0] ishuman])
 					[self lost:bot :TRUE];
 			} else if (bot.ent.teleport_time > time) {
@@ -526,12 +529,12 @@ the bot finds things it wants to kill/grab.
 	if (ent.items & IT_INVISIBILITY) //FIXME
 		p = 2;
 	else if (coop) {
-		if (targets[0].ent.classname == "player")
+		if ([targets[0] classname] == "player")
 			if (![targets[0] ishuman])
 				return 0;
 		p = 100;
 	} else if (teamplay && ent.team == bot.ent.team) {
-		if (targets[0].ent.classname == "player")
+		if ([targets[0] classname] == "player")
 			return 0;
 		p = 100;
 	} else
@@ -661,7 +664,7 @@ generally making the bot look good.
 			view = view + '0 0 48';
 		view -= (ent.origin + ent.view_ofs);
 		view = vectoangles (view);
-		view_x *= -1;
+		view_x = -view_x;
 		b_angle = view;
 	} else
 		b_angle.x = 0;

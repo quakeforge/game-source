@@ -49,6 +49,10 @@ float (integer keys, integer key) key_state =
 	return ((keys & key) != 0) ? 1.0 : 0.0;
 };
 
+void (vector start, vector mins, vector maxs, vector end, float type,
+      entity passent) checkmove = #98;              // Wrapper around SV_Move.
+
+
 @implementation Bot (Move)
 
 -(void)sendMove
@@ -56,6 +60,8 @@ float (integer keys, integer key) key_state =
 	local vector movevect = '0 0 0';
 	local float anglespeed;
 	local vector view;
+	local vector probe, start;
+	local integer obstructed = 0;
 
 	movevect.y += (350 * key_state (keys, KEY_MOVERIGHT));
 	movevect.y -= (350 * key_state (keys, KEY_MOVELEFT));
@@ -95,9 +101,30 @@ float (integer keys, integer key) key_state =
 
 		
 	}
+	start = ent.origin;
+	//start.z += 16;			// step offset
+	makevectors (ent.v_angle);
+	probe = v_forward * movevect.x + v_right * movevect.y + ent.velocity;
+	probe.z = 0;
+	if (probe) {
+		probe = normalize (probe);
+		probe = probe * 32 + start;
+		checkmove (start, ent.mins, ent.maxs, probe, 1, ent);
+		if (trace_fraction != 1) {
+			obstructed = 1;
+			probe = (probe - start);
+			if (trace_fraction)
+				probe *= trace_fraction;
+			else
+				probe = normalize (probe);
+		}
+	}
 	//dprint (itos (buttons) + " " + itos (impulse) + "\n");
+	//dprint (ftos (real_frametime) + "\n");
 	SV_UserCmd (ent, real_frametime, ent.v_angle, movevect, buttons, impulse);
 	impulse = 0;
+	if (obstructed)
+		[self obstructed:probe:FALSE];
 }
 
 - (void) jump
@@ -199,7 +226,6 @@ manuever around.
 // TODO: something
 	if (b_aiflags & AI_BLIND)
 		return;
-	org = [targets[0] realorigin];
 
 	if (danger) {
 		b_aiflags |= AI_DANGER;
@@ -208,6 +234,7 @@ manuever around.
 	if (b_aiflags & AI_PRECISION)
 		return;
 
+	disway_z = 0;
 
 	if (targets[0]) {
 		if (b_aiflags & AI_OBSTRUCTED) {
@@ -217,10 +244,10 @@ manuever around.
 			} else if (!danger)
 				return;
 		}
+		org = [targets[0] realorigin];
 		obs_dir = whichway;
 		disway_x = whichway_y * -1;
 		disway_y = whichway_x;
-		disway_z = 0;
 		dist = vlen (org - (ent.origin + disway));
 		disway_x = whichway_y;
 		disway_y = whichway_x * -1;
@@ -230,7 +257,6 @@ manuever around.
 	} else {
 		disway_x = whichway_y * -1;
 		disway_y = whichway_x;
-		disway_z = 0;
 		dist = vlen (disway - obs_dir);
 		disway_x = whichway_y;
 		disway_y = whichway_x * -1;
