@@ -223,7 +223,7 @@ removed.
 			[self lost:targ :TRUE];
 		else if ((coop) || (teamplay && targ.ent.team == ent.team)) {
 			if (targ.targets[0].ent.classname == "player") {
-				//XXX if (!targ.targets[0].ishuman)
+				if (![targ.targets[0] ishuman])
 					[self lost:targ :TRUE];
 			} else if (targ.ent.teleport_time > time) {
 				// try not to telefrag teammates
@@ -337,7 +337,7 @@ based b_aiflags.
 		}
 	} else if (b_aiflags & AI_SUPER_JUMP) {
 		if (ent.weapon != 32)
-			ent.impulse = 7;
+			impulse = 7;
 		else if (ent.flags & FL_ONGROUND) {
 			b_aiflags &= ~AI_SUPER_JUMP;
 			if ([self canRJ]) {
@@ -512,7 +512,7 @@ the bot finds things it wants to kill/grab.
 
 // *!* Make sure you add code to checkLost to remove the target *!*
 
--(float)priorityForThing:(entity)thing
+-(float)priorityForThing:(Target)thing
 {
 	local float thisp;
 
@@ -603,32 +603,32 @@ the bot finds things it wants to kill/grab.
 
 -(void)lookForCrap:(integer)scope
 {
-	local entity foe, best = NIL;
+	local Target foe, best = NIL;
 	local float thatp, bestp, dist;
 
 	if (scope == 1)
-		foe = findradius (ent.origin, 13000);
+		foe = [Target forEntity:findradius (ent.origin, 13000)];
 	else
-		foe = findradius (ent.origin, 500);
+		foe = [Target forEntity:findradius (ent.origin, 500)];
 
 	bestp = 1;
 	while (foe) {
 		thatp = [self priorityForThing:foe];
 		if (thatp)
 			if (!scope)
-				if (!sisible (ent, foe))
+				if (!sisible (ent, foe.ent))
 					thatp = 0;
 		if (thatp > bestp) {
 			bestp = thatp;
 			best = foe;
-			dist = vlen (ent.origin - foe.origin);
+			dist = vlen (ent.origin - foe.ent.origin);
 		}
-		foe = foe.chain;
+		foe = [Target forEntity:foe.ent.chain];
 	}
 	if (best == NIL)
 		return;
 	if (![self targetOnstack:best]) {	
-		[self targetAdd:[Target forEntity:best]];
+		[self targetAdd:best];
 		if (scope) {
 			[self getPath:best :FALSE];
 			b_aiflags |= AI_WAIT;

@@ -18,6 +18,7 @@ typedef struct bot_data_t bot_data_t;
 -(integer)canSee:(Target)targ ignoring:(entity)ignore;
 -(void)setOrigin:(vector) org;
 -(integer)recognizePlat:(integer)flag;
+-(integer)ishuman;
 @end
 
 @interface Waypoint: Target
@@ -151,7 +152,7 @@ typedef struct bot_data_t bot_data_t;
 -(void)checkLost:(Waypoint)targ;
 -(void)handleAI;
 -(void)path;
--(float)priorityForThing:(entity)thing;
+-(float)priorityForThing:(Target)thing;
 -(void)lookForCrap:(integer)scope;
 -(void)angleSet;
 -(void)AI;

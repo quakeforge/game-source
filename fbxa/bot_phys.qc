@@ -48,7 +48,7 @@ this notice in its entirety.
 */
 
 #include "libfrikbot.h"
-
+string (integer i) itos = #112;
 integer bot_phys_linker;
 
 float (integer keys, integer key) key_state =
@@ -102,6 +102,8 @@ float (integer keys, integer key) key_state =
 
 		
 	}
+	//dprint (itos (buttons) + " " + itos (impulse) + "\n");
 	SV_UserCmd (ent, real_frametime, ent.v_angle, movevect, buttons, impulse);
+	impulse = 0;
 }
 @end

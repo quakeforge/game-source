@@ -439,13 +439,16 @@ void () BotImpulses =
 	local string bottomcolor = ftos (b_pants);
 	local string topcolor = ftos (b_shirt);
 
-	dprint (ent.netname);
-	dprint ("\n");
 	SV_SetPing (ent, 100 * (3 - b_skill));
 	SV_SetUserinfo (ent, "\\bottomcolor\\" + bottomcolor
 					+ "\\topcolor\\" + topcolor
 					+ "\\team\\bot\\skin\\base\\name\\" + ent.netname);
 	// FIXME: do teams properly
+}
+
+-(integer)ishuman
+{
+	return ishuman;
 }
 @end
 

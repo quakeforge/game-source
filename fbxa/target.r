@@ -73,6 +73,9 @@ struct target_s = {
 	local Target t;
 	local struct target_s ele;
 
+	if (ent.classname == "player")
+		return ent.@this;
+
 	if (!target_tab) {
 		target_tab = Hash_NewTable (1021, NIL, NIL, NIL);
 		Hash_SetHashCompare (target_tab, target_get_hash, target_compare);
@@ -128,6 +131,11 @@ struct target_s = {
 		return TRUE;
 	else
 		return FALSE;
+}
+
+-(integer)ishuman
+{
+	return 0;
 }
 
 @end

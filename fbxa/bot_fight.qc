@@ -51,7 +51,7 @@ _x "sweet spot range" - try to maintain this range if possible
 _y minimum range bot can be to be effective (rl/gl) (move away)
 _z maximum range bot can be to be effective (lg/axe) (move in)
 */
-vector (float wep)
+vector (integer wep)
 weapon_range =
 {
 	switch (wep) {
@@ -212,14 +212,12 @@ weapon_range =
 							if (flen < foedist) {
 								tsz = [self sizePlayer:foe];
 								if (tsz < foesz) {
-									/*XXX
-									if (fov(foe) || foe.b_sound > time || b_skill == 3) {
+									if ([self fov:foe.ent] || foe.b_sound > time || b_skill == 3) {
 										if ([self canSee:foe]) {
-											ent.enemy = foe;
-											foedist = vlen (foe.origin - ent.origin);
+											ent.enemy = foe.ent;
+											foedist = vlen ([foe origin] - ent.origin);
 										}
 									}
-									*/
 								}
 							}
 						}
@@ -237,10 +235,10 @@ Pick a weapon based on range / ammo
 */
 -(void)weaponSwitch:(float)brange
 {
-	local float		it, flag = 0, pulse = 0;
+	local integer	it, flag = 0, pulse = 0;
 	local vector	v;
 
-	it = ent.items & 127;
+	it = (integer) ent.items & 127;
 
 	while (it) {
 		if ((ent.ammo_rockets >= 1) && (it & 32)) {
@@ -266,22 +264,22 @@ Pick a weapon based on range / ammo
 			pulse = 2;
 		} else {
 			if (pulse)
-				ent.impulse = pulse;
+				impulse = pulse;
 			return;
 		}
 
 		if (brange == -1) {
 			if (pulse)
-				ent.impulse = pulse;
+				impulse = pulse;
 			return;
 		}
 
 		v = weapon_range (flag);
 		if (brange < v_y || brange > v_z)
-			it = it - flag;
+			it &= ~flag;
 		else {
 			if (pulse)
-				ent.impulse = pulse;
+				impulse = pulse;
 			return;
 		}
 	}
@@ -328,7 +326,7 @@ attacking an enemy.
 
 	// decide if I should shoot
 	foedist = vlen (org - ent.origin);
-	v = weapon_range (ent.weapon);
+	v = weapon_range ((integer)ent.weapon);
 	if (foedist > v_y && foedist < v_z) {
 		traceline (ent.origin + ent.view_ofs, ent.origin + ent.view_ofs + v_forward * v_z, FALSE, ent);
 		if (vlen(trace_endpos - (ent.origin + ent.view_ofs)) >= v_y) {
