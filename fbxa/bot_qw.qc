@@ -77,7 +77,6 @@ ClientFixRankings(); // FrikBot
 
 integer []bot_way_ref;
 integer []bot_move_ref;
-integer []bot_phys_ref;
 integer []bot_chat_ref;
 float []stagger_think_ref;
 integer []bot_fight_ref;
@@ -240,7 +239,6 @@ BotInit =
 	[Waypoint clearAll];
 	bot_way_ref = &bot_way_linker;
 	bot_move_ref = &bot_move_linker;
-	bot_phys_ref = &bot_phys_linker;
 	bot_chat_ref = &bot_chat_linker;
 	stagger_think_ref = &stagger_think;
 	bot_fight_ref = &bot_fight_linker;

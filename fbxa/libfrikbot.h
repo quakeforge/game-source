@@ -133,11 +133,8 @@ typedef struct bot_data_t bot_data_t;
 +(void)kick;
 @end
 
-@interface Bot (Physics)
-- (void)sendMove;
-@end
-
 @interface Bot (Move)
+- (void)sendMove;
 - (void)jump;
 - (integer)canRJ;
 - (integer)recognizePlat: (integer) flag;
@@ -316,7 +313,6 @@ typedef struct bot_data_t bot_data_t;
 
 @extern integer bot_way_linker;
 @extern integer bot_move_linker;
-@extern integer bot_phys_linker;
 @extern integer bot_chat_linker;
 @extern float stagger_think;
 @extern integer bot_fight_linker;

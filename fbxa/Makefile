@@ -9,7 +9,6 @@ libfrikbot_source = \
 	bot_fight.qc	\
 	bot_misc.qc		\
 	bot_move.qc		\
-	bot_phys.qc		\
 	bot_qw.qc		\
 	bot_way.qc		\
 	map_dm1.qc		\

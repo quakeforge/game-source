@@ -44,7 +44,62 @@ this notice in its entirety.
 
 integer bot_move_linker;
 
+float (integer keys, integer key) key_state =
+{
+	return ((keys & key) != 0) ? 1.0 : 0.0;
+};
+
 @implementation Bot (Move)
+
+-(void)sendMove
+{
+	local vector movevect = '0 0 0';
+	local float anglespeed;
+	local vector view;
+
+	movevect.y += (350 * key_state (keys, KEY_MOVERIGHT));
+	movevect.y -= (350 * key_state (keys, KEY_MOVELEFT));
+
+	movevect.x += (200 * key_state (keys, KEY_MOVEFORWARD));
+	movevect.x -= (200 * key_state (keys, KEY_MOVEBACK));
+
+	movevect.z += (200 * key_state (keys, KEY_MOVEUP));
+	movevect.z -= (200 * key_state (keys, KEY_MOVEDOWN));
+
+	if (!(b_aiflags & AI_PRECISION))
+		movevect *= 2;
+
+	if (b_skill != 2) {
+		// use mouse emulation
+		anglespeed = 1.5 * real_frametime;
+		// 1.5 is the default cl_anglespeedkey & bot always has +speed
+		ent.v_angle_y += anglespeed * key_state (keys, KEY_LOOKLEFT) * 140;
+		// 140 is default cl_yawspeed
+		ent.v_angle_y -= anglespeed * key_state (keys, KEY_LOOKRIGHT) * 140;
+		// 140 is default cl_yawspeed
+		ent.v_angle_x -= anglespeed * key_state (keys, KEY_LOOKUP) * 150;
+		// 150 is default cl_pitchspeed
+		ent.v_angle_x += anglespeed * key_state (keys, KEY_LOOKDOWN) * 150;
+		// 150 is default cl_pitchspeed
+	} else {
+		view.x = angcomp (b_angle.x, ent.v_angle_x);
+		view.y = angcomp (b_angle.y, ent.v_angle_y);
+		view.z = 0;
+		if (vlen (view) > 30) {
+			mouse_emu += (view * 30);
+			if (vlen(mouse_emu) > 180)
+				mouse_emu = normalize (mouse_emu) * 180;
+		} else
+			mouse_emu = view * (1 / real_frametime);
+		ent.v_angle += mouse_emu * real_frametime;
+
+		
+	}
+	//dprint (itos (buttons) + " " + itos (impulse) + "\n");
+	SV_UserCmd (ent, real_frametime, ent.v_angle, movevect, buttons, impulse);
+	impulse = 0;
+}
+
 - (void) jump
 {
 	// TODO check for precision, etc.
