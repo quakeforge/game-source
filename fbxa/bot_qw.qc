@@ -444,9 +444,11 @@ void() ClientFixRankings =
 void() ClientInRankings =
 {
 	local float cno;
-	if (player_head)
-		player_head._last = self;
-	self._next = player_head;
+	//FIXME meant to spead up bot AI for low bot/player counts, but it's
+	//currently pooched
+	//if (player_head)
+	//	player_head._last = self;
+	//self._next = player_head;
 	player_head = self;
 	userid = userid + 1;
 	self.b_userid = userid;
@@ -478,12 +480,15 @@ void() ClientInRankings =
 
 void() ClientDisconnected =
 {
-	if (player_head == self)
-		player_head = self._next;
-	if (self._next)
-		self._next._last = self._last;
-	if (self._last)
-		self._last._next = self._next;
+	//FIXME meant to spead up bot AI for low bot/player counts, but it's
+	//currently pooched
+	//if (player_head == self)
+	//	player_head = self._next;
+	//if (self._next)
+	//	self._next._last = self._last;
+	//if (self._last)
+	//	self._last._next = self._next;
+	//self._last = self._next = NIL;
 	if(self.b_clientno > 16)
 		active_clients2 = active_clients2 - (active_clients2 & ClientBitFlag(self.b_clientno - 16));
 	else
