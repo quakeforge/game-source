@@ -63,6 +63,9 @@ frikbot/bot_misc.qc
 frikbot/bot_phys.qc
 frikbot/bot_move.qc
 --------------------------------------
+* Comment out the following functions in defs.qc
+sound, aim, setspawnparms
+--------------------------------------
 * Add this to worldspawn() in world.qc, right at the very top, before InitBodyQue();
 BotInit();  // FrikBot
 --------------------------------------
@@ -159,12 +162,54 @@ float		busy_waypoints;
 
 float coop = 0; // hack
 
+void(entity e, float chan, string samp, float vol, float atten) frik_sound = #8;
+vector(entity e, float sped)       frik_aim = #44; 
+void(entity e)             frik_setspawnparms  = #78;
+
 entity () SV_AllocClient = #0;
 void (entity e) SV_FreeClient = #0;
 void (entity e, string str) SV_SetUserinfo = #0;
 
 //----------------------------------------------------------------------------
 
+/*
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+Function redclarations. These allow function 
+designed to work for clients (sprint, so forth)
+to mainly not complain when working with a bot
+
+Although these shouldn't be needed anymore,
+as the bots truly are clients now, if you don't
+stop the SZ_ buffer from filling up by disabling
+direct messages to the bots, it crashes quake :-(
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*/
+void(entity e) setspawnparms =
+{
+   if (e.ishuman)
+	   frik_setspawnparms(e);
+   else
+	   SetNewParms();
+};
+
+vector(entity e, float sped) aim =
+{
+   e.missile_speed = sped;
+   return frik_aim(e, sped);
+};
+
+void(entity e, float chan, string samp, float vol, float atten) sound = 
+{
+   frik_sound(e, chan, samp, vol, atten);
+   if (samp == "items/inv3.wav")
+	   return;
+   else if (e.classname == "player")
+	   e.b_sound = time + 1;
+   else if (other.classname == "player")
+	   other.b_sound = time + 1;
+};
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
