@@ -45,6 +45,9 @@ To install on a new mod, do all this:
 --------------------------------------
 FIXME installing and linking instrunctions here
 --------------------------------------
+* Change all occurrences of "self" to "@self". One way of doing this is to
+pass the code through a preprocessor with "-Dself=@self"
+--------------------------------------
 * Comment out the following functions in defs.qc
 sound, aim, setspawnparms
 --------------------------------------
