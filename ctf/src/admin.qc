@@ -430,16 +430,16 @@ void() CheckAdminCmd =
 
 	} else if (self.accessparm == 20) { // give rune
 		if (self.impulse == 1) {
-			self.player_flag = self.player_flag | ITEM_RUNE1_FLAG;
+			self.player_flag |= ITEM_RUNE1_FLAG;
 			sprint(self, "You now have the Earth Magic rune\n");
 		} else if (self.impulse == 2) {
-			self.player_flag = self.player_flag | ITEM_RUNE2_FLAG;
+			self.player_flag |= ITEM_RUNE2_FLAG;
 			sprint(self, "You now have the Black Magic rune\n");
 		} else if (self.impulse == 3) {
-			self.player_flag = self.player_flag | ITEM_RUNE3_FLAG;
+			self.player_flag |= ITEM_RUNE3_FLAG;
 			sprint(self, "You now have the Hell Magic rune\n");
 		} else if (self.impulse == 4) {
-			self.player_flag = self.player_flag | ITEM_RUNE4_FLAG;
+			self.player_flag |= ITEM_RUNE4_FLAG;
 			sprint(self, "You now have the Elder Magic rune\n");
 		}
 

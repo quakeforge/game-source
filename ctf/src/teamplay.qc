@@ -771,7 +771,7 @@ void() Team_weapon_touch =
 
 // change to the weapon
 	old = other.items;
-	other.items = other.items | new;
+	other.items |= new;
 	
 	remove(self);
 	self = other;
@@ -984,7 +984,7 @@ void() TeamCaptureFlagTouch =
 				else
 					bprint(" γαπτυςεδ the ÒΕΔ flag!\n"); // red
 				LogMsg(other, "FLAG-CAPTURE");
-				other.items = other.items - (other.items & (IT_KEY1 | IT_KEY2));
+				other.items &= ~(IT_KEY1 | IT_KEY2);
 
 				last_flag_capture = time;
 				last_capture_team = other.team;
@@ -1026,7 +1026,7 @@ void() TeamCaptureFlagTouch =
 							self.frags = self.frags + TEAM_CAPTURE_FRAG_CARRIER_ASSIST_BONUS;
 						}
 					}
-					self.player_flag = self.player_flag - (self.player_flag & ITEM_ENEMY_FLAG);
+					self.player_flag &= ~ITEM_ENEMY_FLAG;
 					
 					p = find(p, classname, "player");
 				}
@@ -1077,7 +1077,7 @@ void() TeamCaptureFlagTouch =
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 
 	other.player_flag = other.player_flag + ITEM_ENEMY_FLAG;
-	other.items = other.items | self.items;
+	other.items |= self.items;
 
 	// *XXX* EXPERT CTF set the time at which the carrier picked up the flag
 	other.flag_since = time;
@@ -1274,7 +1274,7 @@ void() place_flag = {
 	self.nextthink = time + 0.1;
 	self.cnt = FLAG_AT_BASE;
 	self.mangle = self.angles;
-	self.effects = self.effects | EF_DIMLIGHT;
+	self.effects |= EF_DIMLIGHT;
 	if (!droptofloor()) {
 		dprint ("Flag fell out of level at ");
 		dprint (vtos(self.origin));

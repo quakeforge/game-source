@@ -210,7 +210,7 @@ void() health_touch =
 	// Megahealth = rot down the player's super health
 	if (self.healtype == 2)
 	{
-		other.items = other.items | IT_SUPERHEALTH;
+		other.items |= IT_SUPERHEALTH;
 		self.nextthink = time + 5;
 		self.think = item_megahealth_rot;
 		self.owner = other;
@@ -243,7 +243,7 @@ void() item_megahealth_rot =
 
 // it is possible for a player to die and respawn between rots, so don't
 // just blindly subtract the flag off
-	other.items = other.items - (other.items & IT_SUPERHEALTH);
+	other.items &= ~IT_SUPERHEALTH;
 	
 	if (deathmatch == 1 || deathmatch == 3)	// deathmatch 2 is silly old rules
 	{
@@ -294,7 +294,8 @@ void() armor_touch =
 		
 	other.armortype = type;
 	other.armorvalue = value;
-	other.items = other.items - (other.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + bit;
+	other.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+	other.items |= bit;
 
 	self.solid = SOLID_NOT;
 	self.model = string_null;
@@ -538,7 +539,7 @@ void() weapon_touch =
 
 // change to the weapon
 	old = other.items;
-	other.items = other.items | new;
+	other.items |= new;
 	
 	stemp = self;
 	self = other;
@@ -955,7 +956,7 @@ void() key_touch =
 
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
-	other.items = other.items | self.items;
+	other.items |= self.items;
 
 	if (!coop)
 	{	
@@ -1086,7 +1087,7 @@ void() sigil_touch =
 	stuffcmd (other, "bf\n");
 	self.solid = SOLID_NOT;
 	self.model = string_null;
-	serverflags = serverflags | (self.spawnflags & 15);
+	serverflags |= (self.spawnflags & 15);
 	self.classname = "";		// so rune doors won't find it
 	
 	activator = other;
@@ -1170,7 +1171,7 @@ void() powerup_touch =
 	sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	self.solid = SOLID_NOT;
-	other.items = other.items | self.items;
+	other.items |= self.items;
 	self.model = string_null;
 
 // do the apropriate action
@@ -1333,7 +1334,7 @@ void() BackpackTouch =
 	if (!new)
 		new = other.weapon;
 	old = other.items;
-	other.items = other.items | new;
+	other.items |= new;
 	
 	bound_other_ammo ();
 
@@ -1485,11 +1486,11 @@ void() RuneTouch =
 		return; // one per customer
 	}
 		
-	other.player_flag = other.player_flag | self.player_flag;
+	other.player_flag |= self.player_flag;
 
 	// notification of rune, no nofity in team mode
 	if (self.player_flag & ITEM_RUNE1_FLAG) {
-		self.items = self.items | IT_SIGIL1;
+		self.items |= IT_SIGIL1;
 		if (teamplay == 0) {
 			bprint(other.netname);
 			bprint(" got the rune of Åבעפט Íבחיד!\n");
@@ -1497,7 +1498,7 @@ void() RuneTouch =
 		TeamPlayerUpdate(other, "Åבעפט Íבחיד!    Òוףיףפבמדו");
 	}
 	if (self.player_flag & ITEM_RUNE2_FLAG) {
-		self.items = self.items | IT_SIGIL2;
+		self.items |= IT_SIGIL2;
 		if (teamplay == 0) {
 			bprint(other.netname);
 			bprint(" got the rune of Âלבדכ Íבחיד!\n");
@@ -1505,7 +1506,7 @@ void() RuneTouch =
 		TeamPlayerUpdate(other, "Âלבדכ Íבחיד!    Óפעומחפט");
 	}
 	if (self.player_flag & ITEM_RUNE3_FLAG) {
-		self.items = self.items | IT_SIGIL3;
+		self.items |= IT_SIGIL3;
 		if (teamplay == 0) {
 			bprint(other.netname);
 			bprint(" got the rune of Èולל Íבחיד!\n");
@@ -1513,7 +1514,7 @@ void() RuneTouch =
 		TeamPlayerUpdate(other, "Èולל Íבחיד!    Èבףפו");
 	}
 	if (self.player_flag & ITEM_RUNE4_FLAG) {
-		self.items = self.items | IT_SIGIL4;
+		self.items |= IT_SIGIL4;
 		if (teamplay == 0) {
 			bprint(other.netname);
 			bprint(" got the rune of Åלהוע Íבחיד!\n");
@@ -1591,7 +1592,7 @@ void() DropRune =
 		Do_DropRune(ITEM_RUNE3_FLAG);
 	if (self.player_flag & ITEM_RUNE4_FLAG)
 		Do_DropRune(ITEM_RUNE4_FLAG);
-	self.player_flag = self.player_flag - (self.player_flag & ITEM_RUNE_MASK);
+	self.player_flag &= ~ITEM_RUNE_MASK;
 };
 
 /*

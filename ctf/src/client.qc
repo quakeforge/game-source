@@ -59,9 +59,9 @@ void () CheckDimLight = {
 //		flag = 1;
 
 	if (flag)
-		self.effects = self.effects | EF_DIMLIGHT;
+		self.effects |= EF_DIMLIGHT;
 	else
-		self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+		self.effects &= ~EF_DIMLIGHT;
 };
 
 /*
@@ -97,8 +97,8 @@ void() SetChangeParms =
 	}
 
 // remove items
-	self.items = self.items - (self.items & 
-	(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD) );
+	self.items &= ~(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY
+					| IT_SUIT | IT_QUAD);
 
 // cap super health
 	if (self.health > 100)
@@ -148,9 +148,9 @@ void() SetNewParms =
 
 void() DecodeLevelParms =
 {
-	self.player_flag = self.player_flag | parm16;
-	self.player_flag = self.player_flag - (self.player_flag & ITEM_RUNE_MASK);
-	self.player_flag = self.player_flag - (self.player_flag & ITEM_ENEMY_FLAG);
+	self.player_flag |= parm16;
+	self.player_flag &= ~ITEM_RUNE_MASK;
+	self.player_flag &= ~ITEM_ENEMY_FLAG;
 	self.skin = (self.player_flag & 65280)/256;
 	self.accesslvl = parm15;
 	self.statstate = parm14;
@@ -951,7 +951,7 @@ void() PlayerJump =
 	if ( !(self.flags & FL_JUMPRELEASED) )
 		return;		// don't pogo stick
 
-	self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+	self.flags &= ~FL_JUMPRELEASED;
 
 	self.flags = self.flags - FL_ONGROUND;	// don't stairwalk
 	
@@ -1071,9 +1071,9 @@ void() CheckWaterJump =
 		traceline (start, end, TRUE, self);
 		if (trace_fraction == 1)
 		{	// open at eye level
-			self.flags = self.flags | FL_WATERJUMP;
+			self.flags |= FL_WATERJUMP;
 			self.velocity_z = 225;
-			self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+			self.flags &= ~FL_JUMPRELEASED;
 			self.teleport_time = time + 2;	// safety net
 			return;
 		}
@@ -1143,7 +1143,7 @@ void() PlayerPreThink =
 		PlayerJump ();
 	}
 	else
-		self.flags = self.flags | FL_JUMPRELEASED;
+		self.flags |= FL_JUMPRELEASED;
 
 // teleporters can force a non-moving pause time	
 	if (time < self.pausetime)
@@ -1264,9 +1264,9 @@ void() CheckPowerups =
 // ZOID, next line isn't needed, EF_DIMLIGHT is handled by
 // client.qc:CheckDimLight
 //		if (self.invincible_finished > time)
-//			self.effects = self.effects | EF_DIMLIGHT;
+//			self.effects |= EF_DIMLIGHT;
 //		else
-//			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+//			self.effects &= ~EF_DIMLIGHT);
 	}
 
 // super damage
@@ -1301,9 +1301,9 @@ void() CheckPowerups =
 // ZOID, next line isn't needed, EF_DIMLIGHT is handled by
 // client.qc:CheckDimLight
 //		if (self.super_damage_finished > time)
-//			self.effects = self.effects | EF_DIMLIGHT;
+//			self.effects |= EF_DIMLIGHT;
 //		else
-//			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+//			self.effects &= ~EF_DIMLIGHT);
 	}	
 
 // suit	
@@ -1423,7 +1423,7 @@ void() ClientConnect =
 			self.do_observer = 1;
 		else if (!self.do_observer) {
 			TeamCheckLock();
-			self.player_flag = self.player_flag | TEAM_STUFF_COLOR;
+			self.player_flag |= TEAM_STUFF_COLOR;
 			if ((teamplay & TEAM_CAPTURE_CUSTOM)) {
 				if (self.lastteam == TEAM_COLOR1)
 					self.skin = 1;
@@ -1431,8 +1431,8 @@ void() ClientConnect =
 					self.skin = 3;
 				if (random() < 0.5)
 					self.skin = self.skin + 1; // visor dude
-				self.player_flag = self.player_flag - (self.player_flag & 65280);
-				self.player_flag = self.player_flag | (self.skin * 256);  
+				self.player_flag &= ~65280;
+				self.player_flag |= (self.skin * 256);  
 			}
 		}
 	}

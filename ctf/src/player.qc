@@ -166,7 +166,7 @@ void()	player_run =[	$rockrun1,	player_run	]
 
 
 void()	player_shot1 =	[$shotatt1, player_shot2	] {self.weaponframe=1;
-self.effects = self.effects | EF_MUZZLEFLASH;};
+self.effects |= EF_MUZZLEFLASH;};
 void()	player_shot2 =	[$shotatt2, player_shot3	] {self.weaponframe=2;};
 void()	player_shot3 =	[$shotatt3, player_shot4	] {self.weaponframe=3;};
 void()	player_shot4 =	[$shotatt4, player_shot5	] {self.weaponframe=4;};
@@ -233,7 +233,7 @@ void()  player_chain5=  [$axattd4, player_run    ] {self.weaponframe=5;};
 
 void() player_nail1   =[$nailatt1, player_nail2  ] 
 {
-	self.effects = self.effects | EF_MUZZLEFLASH;
+	self.effects |= EF_MUZZLEFLASH;
 
 	if (!self.button0)
 		{player_run ();return;}
@@ -246,7 +246,7 @@ void() player_nail1   =[$nailatt1, player_nail2  ]
 };
 void() player_nail2   =[$nailatt2, player_nail1  ]
 {
-	self.effects = self.effects | EF_MUZZLEFLASH;
+	self.effects |= EF_MUZZLEFLASH;
 
 	if (!self.button0)
 		{player_run ();return;}
@@ -262,7 +262,7 @@ void() player_nail2   =[$nailatt2, player_nail1  ]
 
 void() player_light1   =[$light1, player_light2  ] 
 {
-	self.effects = self.effects | EF_MUZZLEFLASH;
+	self.effects |= EF_MUZZLEFLASH;
 
 	if (!self.button0)
 		{player_run ();return;}
@@ -275,7 +275,7 @@ void() player_light1   =[$light1, player_light2  ]
 };
 void() player_light2   =[$light2, player_light1  ]
 {
-	self.effects = self.effects | EF_MUZZLEFLASH;
+	self.effects |= EF_MUZZLEFLASH;
 
 	if (!self.button0)
 		{player_run ();return;}
@@ -291,7 +291,7 @@ void() player_light2   =[$light2, player_light1  ]
 
 
 void() player_rocket1   =[$rockatt1, player_rocket2  ] {self.weaponframe=1;
-self.effects = self.effects | EF_MUZZLEFLASH;};
+self.effects |= EF_MUZZLEFLASH;};
 void() player_rocket2   =[$rockatt2, player_rocket3  ] {self.weaponframe=2;};
 void() player_rocket3   =[$rockatt3, player_rocket4  ] {self.weaponframe=3;};
 void() player_rocket4   =[$rockatt4, player_rocket5  ] {self.weaponframe=4;};
@@ -551,7 +551,7 @@ void(string gibname, float dm) ThrowHead =
 	setsize (self, '-16 -16 0', '16 16 56');
 	self.velocity = VelocityForDamage (dm);
 	self.origin_z = self.origin_z - 24;
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
+	self.flags &= ~FL_ONGROUND;
 	self.avelocity = crandom() * '0 600 0';
 };
 
@@ -589,7 +589,7 @@ void() PlayerDie =
 {
 	local	float	i;
 	
-	self.items = self.items - (self.items & IT_INVISIBILITY);
+	self.items &= ~IT_INVISIBILITY;
 	self.invisible_finished = 0;	// don't die as eyes
 	self.invincible_finished = 0;
 	self.super_damage_finished = 0;
@@ -610,7 +610,7 @@ void() PlayerDie =
 	self.view_ofs = '0 0 -8';
 	self.deadflag = DEAD_DYING;
 	self.solid = SOLID_NOT;
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
+	self.flags &= ~FL_ONGROUND;
 	self.movetype = MOVETYPE_TOSS;
 	if (self.velocity_z < 10)
 		self.velocity_z = self.velocity_z + random()*300;

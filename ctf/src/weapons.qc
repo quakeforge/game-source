@@ -807,7 +807,7 @@ void() W_SetCurrentAmmo =
 {
 	player_run ();		// get out of any weapon firing states
 
-	self.items = self.items - ( self.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
+	self.items &= ~(IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS);
 	
 	if (self.weapon == IT_AXE)
 	{
@@ -829,49 +829,49 @@ void() W_SetCurrentAmmo =
 		self.currentammo = self.ammo_shells;
 		self.weaponmodel = "progs/v_shot.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_SHELLS;
+		self.items |= IT_SHELLS;
 	}
 	else if (self.weapon == IT_SUPER_SHOTGUN)
 	{
 		self.currentammo = self.ammo_shells;
 		self.weaponmodel = "progs/v_shot2.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_SHELLS;
+		self.items |= IT_SHELLS;
 	}
 	else if (self.weapon == IT_NAILGUN)
 	{
 		self.currentammo = self.ammo_nails;
 		self.weaponmodel = "progs/v_nail.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_NAILS;
+		self.items |= IT_NAILS;
 	}
 	else if (self.weapon == IT_SUPER_NAILGUN)
 	{
 		self.currentammo = self.ammo_nails;
 		self.weaponmodel = "progs/v_nail2.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_NAILS;
+		self.items |= IT_NAILS;
 	}
 	else if (self.weapon == IT_GRENADE_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
 		self.weaponmodel = "progs/v_rock.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_ROCKETS;
+		self.items |= IT_ROCKETS;
 	}
 	else if (self.weapon == IT_ROCKET_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
 		self.weaponmodel = "progs/v_rock2.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_ROCKETS;
+		self.items |= IT_ROCKETS;
 	}
 	else if (self.weapon == IT_LIGHTNING)
 	{
 		self.currentammo = self.ammo_cells;
 		self.weaponmodel = "progs/v_light.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_CELLS;
+		self.items |= IT_CELLS;
 	}
 	else
 	{
@@ -1136,19 +1136,12 @@ void() CheatCommand =
 	self.ammo_rockets = 100;
 	self.ammo_nails = 200;
 	self.ammo_shells = 100;
-	self.items = self.items | 
-		IT_AXE |
-		IT_HOOK |
-		IT_SHOTGUN |
-		IT_SUPER_SHOTGUN |
-		IT_NAILGUN |
-		IT_SUPER_NAILGUN |
-		IT_GRENADE_LAUNCHER |
-		IT_ROCKET_LAUNCHER |
-		IT_KEY1 | IT_KEY2;
+	self.items |= (IT_AXE | IT_HOOK | IT_SHOTGUN | IT_SUPER_SHOTGUN
+				   | IT_NAILGUN | IT_SUPER_NAILGUN | IT_GRENADE_LAUNCHER
+				   | IT_ROCKET_LAUNCHER | IT_KEY1 | IT_KEY2);
 
 	self.ammo_cells = 200;
-	self.items = self.items | IT_LIGHTNING;
+	self.items |= IT_LIGHTNING;
 
 	self.weapon = IT_ROCKET_LAUNCHER;
 	self.impulse = 0;
@@ -1361,7 +1354,7 @@ void() ServerflagsCommand =
 {
 	serverflags = serverflags * 2 + 1;
 // ZOID:  Bug fix
-	serverflags = (serverflags & 15);
+	serverflags &= 15;
 };
 
 void() QuadCheat =
@@ -1370,7 +1363,7 @@ void() QuadCheat =
 		return;
 	self.super_time = 1;
 	self.super_damage_finished = time + 30;
-	self.items = self.items | IT_QUAD;
+	self.items |= IT_QUAD;
 	dprint ("quad cheat\n");
 };
 

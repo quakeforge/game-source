@@ -115,7 +115,7 @@ void(entity player,entity tele) ObserverTeleporter =
   player.fixangle = TRUE; // turn this way immediately
   player.teleport_time = time + 0.7;
   player.velocity = v_forward * 300;
-  // player.flags = player.flags - player.flags & FL_ONGROUND;
+  // player.flags &= ~FL_ONGROUND;
 };
 
 float() DoObserverImpulse =
@@ -146,7 +146,7 @@ float() DoObserverImpulse =
 
 		self.impulse = 0;
 
-		self.player_flag = self.player_flag | TEAM_STUFF_COLOR;
+		self.player_flag |= TEAM_STUFF_COLOR;
 		if (teamplay & TEAM_CAPTURE_CUSTOM) {
 			if (self.lastteam == TEAM_COLOR1)
 				self.skin = 1;
@@ -154,8 +154,8 @@ float() DoObserverImpulse =
 				self.skin = 3;
 			if (random() < 0.5)
 				self.skin = self.skin + 1; // visor dude
-			self.player_flag = self.player_flag - (self.player_flag & 65280);
-			self.player_flag = self.player_flag | (self.skin * 256);  
+			self.player_flag &= ~65280;
+			self.player_flag |= (self.skin * 256);  
 		}
 
 		self.weapon = W_BestWeapon();
@@ -172,7 +172,7 @@ void () ObserverThink =
 
 	self.weaponmodel = "";
 	self.weaponframe = 0;
-	self.flags = self.flags | FL_ONGROUND;
+	self.flags |= FL_ONGROUND;
 
   { 
     local float invcos,nvp,nvpmax,sp,svz;

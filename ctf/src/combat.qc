@@ -180,7 +180,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	{
 		save = targ.armorvalue;
 		targ.armortype = 0;	// lost all armor
-		targ.items = targ.items - (targ.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3));
+		targ.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
 	}
 	
 	targ.armorvalue = targ.armorvalue - save;
