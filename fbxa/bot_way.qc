@@ -1,4 +1,4 @@
- /***********************************************
+/***********************************************
 *                                              *
 *             FrikBot Waypoints                *
 *         "The better than roaming AI"         *
@@ -44,10 +44,11 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 #include "Array.h"
+#include "List.h"
 
 @static Array waypoint_array;
 @static entity waypoint_thinker;
-
+@static List waypoint_queue;
 @implementation Target
 
 -(vector)realorigin
@@ -82,6 +83,7 @@ this notice in its entirety.
 {
 	if (!waypoint_array) {
 		waypoint_array = [[Array alloc] init];
+		waypoint_queue = [[List alloc] init];
 		waypoint_thinker = spawn ();
 	}
 	return [super init];
@@ -304,9 +306,8 @@ tripping the runaway loop counter
 			busy_waypoints = busy_waypoints + 1;
 		e2.keys = TRUE;
 		e2.items = dist;
-		(IMP)waypoint_thinker.think = [self methodFor: @selector (waypointThink)];
-		waypoint_thinker.nextthink = time;
 		e2.enemy = self;
+		[e2 queueForThink];
 	}
 }
 
@@ -342,6 +343,25 @@ tripping the runaway loop counter
 			direct_route = FALSE;
 		}
 	}
+	if (waypoint_thinker.@this = [waypoint_queue removeItemAtHead]) {
+		local id obj = waypoint_thinker.@this;
+		local IMP imp = [obj methodFor: @selector (waypointThink)];
+		(IMP)waypoint_thinker.think = imp;
+		waypoint_thinker.nextthink = time;
+	}
+}
+
+-(id)queueForthink
+{
+	if (waypoint_thinker.@this) {
+		[waypoint_queue addItemAtTail: self];
+	} else {
+		local IMP imp = [self methodFor: @selector (waypointThink)];
+		(IMP)waypoint_thinker.think = imp;
+		waypoint_thinker.nextthink = time;
+		waypoint_thinker.@this = self;
+	}
+	return self;
 }
 
 @end
@@ -604,9 +624,7 @@ Boy it's confusing.
 
 	if (last_way != NIL) {
 		last_way.items = vlen(last_way.origin - ent.origin);
-		waypoint_thinker.@this = last_way;
-		waypoint_thinker.nextthink = time;
-		(IMP)waypoint_thinker.think = [last_way methodFor: @selector(waypointThink)];
+		[last_way queueForThink];
 		last_way.keys = TRUE;
 		busy_waypoints = 1;
 		return TRUE;

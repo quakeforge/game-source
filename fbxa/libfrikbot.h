@@ -45,6 +45,8 @@
 
 -(void)clearRoute;
 -(void)clearRouteForBot:(Bot)bot;
+
+-(id)queueForThink;
 @end
 
 @interface Bot: Target
