@@ -136,7 +136,6 @@ void (entity cl, float sec, vector angles, vector move, integer buttons, integer
 
 void() SV_Physics_Client = #0;
 void() SV_ClientThink = #0;
-void() CL_KeyMove = #0;
 
 
 //----------------------------------------------------------------------------
@@ -443,7 +442,7 @@ void () BotImpulses =
 	lasttime = time;
 	
 	[self obstacles];
-	CL_KeyMove ();
+	[self sendMove];
 	SV_ClientThink ();
 	SV_Physics_Client ();
 }
