@@ -1,4 +1,5 @@
 
+void(entity quad) Spawn_QuadCore;
 // POX - had to make room for Paroxysm's DM modes......
 void() W_SetCurrentAmmo;
 /* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
@@ -77,12 +78,14 @@ void(float timeleft) DropQuad =
 	item.solid = SOLID_TRIGGER;
 	item.movetype = MOVETYPE_TOSS;
 	item.noise = "items/damage.wav";
-	setmodel (item, "progs/quaddama.mdl");
+	setmodel (item, "progs/poxquad.mdl");
 	setsize (item, '-16 -16 -24', '16 16 32');
 	item.cnt = time + timeleft;
 	item.touch = q_touch;
 	item.nextthink = time + timeleft;    // remove it with the time left on it
 	item.think = SUB_Remove;
+
+	Spawn_QuadCore (item);
 };
 void() r_touch;
 void() r_touch =
@@ -1196,12 +1199,12 @@ void() item_artifact_invisibility =
 	StartItem ();
 };
 //POX - A little hack to get a multi-model item for a cool effect
-void() Spawn_QuadCore =
+void(entity quad) Spawn_QuadCore =
 {	
 	local	entity qcore;
 	
 	qcore = spawn ();
-	qcore.owner = self;	
+	qcore.owner = quad;	
 	qcore.solid = SOLID_TRIGGER;
 	qcore.movetype = MOVETYPE_TOSS;
 	
@@ -1209,10 +1212,10 @@ void() Spawn_QuadCore =
 	setsize (qcore, '-16 -16 -24', '16 16 32');
 	
 	qcore.velocity = '0 0 0';
-	setorigin(qcore, self.origin);
+	setorigin(qcore, quad.origin);
 	qcore.origin_z = qcore.origin_z + 6;
 	
-	self.quadcore = qcore;
+	quad.quadcore = qcore;
 	
 	qcore.nextthink = time + 999999999;
 	qcore.think = SUB_Null;
@@ -1237,7 +1240,7 @@ void() item_artifact_super_damage =
 	self.effects = self.effects | EF_BLUE;
 	setsize (self, '-16 -16 -24', '16 16 32');
 	
-	Spawn_QuadCore ();
+	Spawn_QuadCore (self);
 	
 	StartItem ();
 };
