@@ -745,8 +745,8 @@ ammo_touch =
 	case 2:			// spikes
 		if (other.ammo_nails >= 200)
 			return;
-		break;
 		other.ammo_nails = other.ammo_nails + self.aflag;
+		break;
 	case 3:			// rockets
 		if (other.ammo_rockets >= 100)
 			return;
@@ -760,7 +760,7 @@ ammo_touch =
 	}
 
 	bound_other_ammo ();
-	
+
 	sprint (other, PRINT_LOW, "You got the ");
 	sprint (other, PRINT_LOW, self.netname);
 	sprint (other, PRINT_LOW, "\n");
