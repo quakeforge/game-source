@@ -745,6 +745,7 @@ ammo_touch =
 	case 2:			// spikes
 		if (other.ammo_nails >= 200)
 			return;
+		break;
 		other.ammo_nails = other.ammo_nails + self.aflag;
 	case 3:			// rockets
 		if (other.ammo_rockets >= 100)
