@@ -56,13 +56,13 @@ Stuff mimicking cl_input.c code
 */
 float(float key) CL_KeyState =
 {
-	return (float)((self.keys & key) > 0);
+	return ((self.keys & key) > 0) ? 1.0 : 0.0;
 };
 
 void() CL_KeyMove = // CL_BaseMove + CL_AdjustAngles
 {
 	local float anglespeed;
-	local vector view = '0 0 0';
+	local vector view;
 	if (self.keys != self.oldkeys)
 	{
 		self.movevect = '0 0 0';
@@ -101,6 +101,7 @@ void() CL_KeyMove = // CL_BaseMove + CL_AdjustAngles
 	{
 		view_x = angcomp(self.b_angle_x, self.v_angle_x);
 		view_y = angcomp(self.b_angle_y, self.v_angle_y);
+		view_z = 0;
 		if (vlen(view) > 30)
 		{
 			self.mouse_emu = self.mouse_emu + (view * 30);
@@ -392,7 +393,7 @@ float() SV_CheckWater =
 				self.waterlevel = 3;
 		}
 	}
-	return (float) (self.waterlevel > 1);
+	return  (self.waterlevel > 1) ? 1.0 : 0.0;
 
 };
 void() RemoveThud = // well sometimes

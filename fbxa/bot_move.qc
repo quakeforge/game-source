@@ -149,7 +149,7 @@ manuever around.
 void(vector whichway, float danger) frik_obstructed =
 {
 	local float dist;
-	local vector disway = '0 0 0', org;
+	local vector disway, org;
 // TODO: something
 	if (self.b_aiflags & AI_BLIND)
 		return;
@@ -179,10 +179,11 @@ void(vector whichway, float danger) frik_obstructed =
 		self.obs_dir = whichway;
 		disway_x = whichway_y * -1;
 		disway_y = whichway_x;
+		disway_z = 0;
 		dist = vlen(org - (self.origin + disway));
 		disway_x = whichway_y;
 		disway_y = whichway_x * -1;
-		self.wallhug = (float) (vlen(org - (self.origin + disway)) > dist);
+		self.wallhug =  (vlen(org - (self.origin + disway)) > dist) ? 1.0 : 0.0;
 		self.b_aiflags = self.b_aiflags | AI_OBSTRUCTED;
 		
 	}
@@ -190,10 +191,11 @@ void(vector whichway, float danger) frik_obstructed =
 	{
 		disway_x = whichway_y * -1;
 		disway_y = whichway_x;
+		disway_z = 0;
 		dist = vlen(disway - self.obs_dir);
 		disway_x = whichway_y;
 		disway_y = whichway_x * -1;
-		self.wallhug = (float) (vlen(disway - self.obs_dir) < dist);
+		self.wallhug =  (vlen(disway - self.obs_dir) < dist) ? 1.0 : 0.0;
 		self.obs_dir = whichway;
 
 		self.b_aiflags = self.b_aiflags | AI_OBSTRUCTED;
@@ -348,7 +350,7 @@ I have no idea how well it will work
 
 void() frik_dodge_obstruction =
 {
-	local vector way = '0 0 0', org;
+	local vector way, org;
 	local float oflags, yaw;
 
 	if (!(self.b_aiflags & AI_OBSTRUCTED))
@@ -385,6 +387,7 @@ void() frik_dodge_obstruction =
 			way_x = self.obs_dir_y;
 			way_y = self.obs_dir_x * -1;
 		}
+		way_z = 0;
 		self.keys = self.keys & 960 + frik_KeysForDir(way);
 	}
 	
