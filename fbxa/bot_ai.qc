@@ -529,13 +529,17 @@ the bot finds things it wants to kill/grab.
 	if (ent.items & IT_INVISIBILITY) //FIXME
 		p = 2;
 	else if (coop) {
-		if ([targets[0] classname] == "player")
-			if (![targets[0] ishuman])
-				return 0;
+		if (targets[0]) {
+			if ([targets[0] classname] == "player")
+				if (![targets[0] ishuman])
+					return 0;
+		}
 		p = 100;
 	} else if (teamplay && ent.team == bot.ent.team) {
-		if ([targets[0] classname] == "player")
-			return 0;
+		if (targets[0]) {
+			if ([targets[0] classname] == "player")
+				return 0;
+		}
 		p = 100;
 	} else
 		p = 30;
