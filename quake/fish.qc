@@ -135,7 +135,7 @@ void() f_death21 =[      $death21,       f_death21       ] {
 
 void () f_death =
 {
-	if (self.health < -35) {
+	if (self.health < -25) {
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
@@ -148,6 +148,7 @@ void () f_death =
 	if (!respawn_enabled)
 		killed_monsters++;
 
+	sound (self, CHAN_VOICE, "fish/death.wav", 1, ATTN_NORM);
 	f_death1 ();
 };
 
@@ -191,7 +192,7 @@ void() monster_fish =
 	setmodel (self, "progs/fish.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 24');
-	self.health = 25;
+	self.health = 20;
 	
 	self.th_stand = f_stand1;
 	self.th_walk = f_walk1;
