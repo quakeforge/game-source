@@ -149,7 +149,7 @@ void() ExitIntermission =
 	// run some text if at the end of an episode
 	if (intermission_running == 2) {
 		if (world.model == "maps/e1m7.bsp") {
-			WriteBytes (MSG_ALL, SVC_CDTRACK, 2, 3);
+			WriteBytes (MSG_ALL, SVC_CDTRACK, 2.0, 3.0);
 			if (!cvar("registered")) {
 				WriteByte (MSG_ALL, SVC_FINALE);
 				WriteString (MSG_ALL, "As the corpse of the monstrous entity\nChthon sinks back into the lava whence\nit rose, you grip the Rune of Earth\nMagic tightly. Now that you have\nconquered the Dimension of the Doomed,\nrealm of Earth Magic, you are ready to\ncomplete your task in the other three\nhaunted lands of Quake. Or are you? If\nyou don't register Quake, you'll never\nknow what awaits you in the Realm of\nBlack Magic, the Netherworld, and the\nElder World!");
@@ -159,15 +159,15 @@ void() ExitIntermission =
 			}
 			return;
 		} else if (world.model == "maps/e2m6.bsp") {
-			WriteBytes (MSG_ALL, SVC_CDTRACK, 2, 3, SVC_FINALE);
+			WriteBytes (MSG_ALL, SVC_CDTRACK, 2.0, 3.0, SVC_FINALE);
 			WriteString (MSG_ALL, "The Rune of Black Magic throbs evilly in\nyour hand and whispers dark thoughts\ninto your brain. You learn the inmost\nlore of the Hell-Mother; Shub-Niggurath!\nYou now know that she is behind all the\nterrible plotting which has led to so\nmuch death and horror. But she is not\ninviolate! Armed with this Rune, you\nrealize that once all four Runes are\ncombined, the gate to Shub-Niggurath's\nPit will open, and you can face the\nWitch-Goddess herself in her frightful\notherworld cathedral.");
 			return;
 		} else if (world.model == "maps/e3m6.bsp") {
-			WriteBytes (MSG_ALL, SVC_CDTRACK, 2, 3, SVC_FINALE);
+			WriteBytes (MSG_ALL, SVC_CDTRACK, 2.0, 3.0, SVC_FINALE);
 			WriteString (MSG_ALL, "The charred viscera of diabolic horrors\nbubble viscously as you seize the Rune\nof Hell Magic. Its heat scorches your\nhand, and its terrible secrets blight\nyour mind. Gathering the shreds of your\ncourage, you shake the devil's shackles\nfrom your soul, and become ever more\nhard and determined to destroy the\nhideous creatures whose mere existence\nthreatens the souls and psyches of all\nthe population of Earth.");
 			return;
 		} else if (world.model == "maps/e4m7.bsp") {
-			WriteBytes (MSG_ALL, SVC_CDTRACK, 2, 3, SVC_FINALE);
+			WriteBytes (MSG_ALL, SVC_CDTRACK, 2.0, 3.0, SVC_FINALE);
 			WriteString (MSG_ALL, "Despite the awful might of the Elder\nWorld, you have achieved the Rune of\nElder Magic, capstone of all types of\narcane wisdom. Beyond good and evil,\nbeyond life and death, the Rune\npulsates, heavy with import. Patient and\npotent, the Elder Being Shub-Niggurath\nweaves her dire plans to clear off all\nlife from the Earth, and bring her own\nfoul offspring to our world! For all the\ndwellers in these nightmare dimensions\nare her descendants! Once all Runes of\nmagic power are united, the energy\nbehind them will blast open the Gateway\nto Shub-Niggurath, and you can travel\nthere to foil the Hell-Mother's plots\nin person.");
 			return;
 		}
@@ -221,7 +221,7 @@ void() execute_changelevel =
 	else
 		intermission_exittime = time + 2;
 
-	WriteBytes (MSG_ALL, SVC_CDTRACK, 3, 3);
+	WriteBytes (MSG_ALL, SVC_CDTRACK, 3.0, 3.0);
 
 	pos = FindIntermission ();
 

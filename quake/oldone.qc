@@ -221,7 +221,7 @@ void() finale_4 =
 	remove (self);
 
 	// switch cd track
-	WriteBytes (MSG_ALL, SVC_CDTRACK, 3, 3);
+	WriteBytes (MSG_ALL, SVC_CDTRACK, 3.0, 3.0);
 	lightstyle (0, "m");
 };
 
