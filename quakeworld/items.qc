@@ -588,7 +588,7 @@ weapon_touch =
 
 	// change to the weapon
 	old = other.items;
-	other.items = other.items | new;
+	other.items |= new;
 	
 	stemp = self;
 	self = other;
@@ -980,7 +980,7 @@ key_touch =
 
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
-	other.items = other.items | self.items;
+	other.items |= self.items;
 
 	self.solid = SOLID_NOT;
 	self.model = string_null;
@@ -1286,7 +1286,7 @@ item_artifact_super_damage =
 	else
 		self.netname = "Quad Damage";
 	self.items = IT_QUAD;
-	self.effects = self.effects | EF_BLUE;
+	self.effects |= EF_BLUE;
 	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
 };
@@ -1331,11 +1331,11 @@ BackpackTouch =
 			if (other.invincible_time != 1) {                       
 				other.invincible_time = 1;
 				other.invincible_finished = time + 30;
-				other.items = other.items | IT_INVULNERABILITY;
+				other.items |= IT_INVULNERABILITY;
 
 				other.super_time = 1;
 				other.super_damage_finished = time + 30;
-				other.items = other.items | IT_QUAD;
+				other.items |= IT_QUAD;
 
 				other.ammo_cells = 0;
 

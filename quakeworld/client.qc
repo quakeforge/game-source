@@ -549,16 +549,16 @@ NextLevel =
 			mapname = "e1m1";
 		} else if (!(serverflags & 1)) {
 			mapname = "e1m1";
-			serverflags = serverflags | 1;
+			serverflags |= 1;
 		} else if (!(serverflags & 2)) {
 			mapname = "e2m1";
-			serverflags = serverflags | 2;
+			serverflags |= 2;
 		} else if (!(serverflags & 4)) {
 			mapname = "e3m1";
-			serverflags = serverflags | 4;
+			serverflags |= 4;
 		} else if (!(serverflags & 8)) {
 			mapname = "e4m1";
-			serverflags = serverflags - 7;
+			serverflags -= 7;	//FIXME &= ~7?
 		}
  
 		o = spawn ();
@@ -802,7 +802,7 @@ PlayerPreThink =
 	if (self.button2)
 		PlayerJump ();
 	else
-		self.flags = self.flags | FL_JUMPRELEASED;
+		self.flags |= FL_JUMPRELEASED;
 
 	// teleporters can force a non-moving pause time        
 	if (time < self.pausetime)
