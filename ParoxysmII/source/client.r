@@ -87,7 +87,7 @@ entity() FindIntermission =
 	local	float cyc;
 
 	// look for info_intermission first
-	if (spot = find (world, classname, "info_intermission")) {	// pick a random one
+	if ((spot = find (world, classname, "info_intermission"))) {	// pick a random one
 		cyc = random() * 4;
 		while (cyc > 1) {
 			spot = find (spot, classname, "info_intermission");
@@ -99,7 +99,7 @@ entity() FindIntermission =
 	}
 
 	// then look for the start position
-	if (spot = find (world, classname, "info_player_start"))
+	if ((spot = find (world, classname, "info_player_start")))
 		return spot;
 
 	objerror ("FindIntermission: no spot");
