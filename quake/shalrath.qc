@@ -26,9 +26,10 @@ void() ShalMissile;
 void() shal_stand     =[      $walk1,       shal_stand    ] {ai_stand();};
 
 void() shal_walk1     =[      $walk2,       shal_walk2    ] {
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
-ai_walk(6);};
+	if (random () < 0.2)
+		sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
+	ai_walk (6);
+};
 void() shal_walk2     =[      $walk3,       shal_walk3    ] {ai_walk(4);};
 void() shal_walk3     =[      $walk4,       shal_walk4    ] {ai_walk(0);};
 void() shal_walk4     =[      $walk5,       shal_walk5    ] {ai_walk(0);};
@@ -42,9 +43,10 @@ void() shal_walk11    =[      $walk12,       shal_walk12    ] {ai_walk(4);};
 void() shal_walk12    =[      $walk1,       shal_walk1    ] {ai_walk(5);};
 
 void() shal_run1     =[      $walk2,       shal_run2    ] {
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
-ai_run(6);};
+	if (random () < 0.2)
+		sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
+	ai_run (6);
+};
 void() shal_run2     =[      $walk3,       shal_run3    ] {ai_run(4);};
 void() shal_run3     =[      $walk4,       shal_run4    ] {ai_run(0);};
 void() shal_run4     =[      $walk5,       shal_run5    ] {ai_run(0);};
@@ -58,8 +60,8 @@ void() shal_run11    =[      $walk12,       shal_run12    ] {ai_run(4);};
 void() shal_run12    =[      $walk1,       shal_run1    ] {ai_run(5);};
 
 void() shal_attack1     =[      $attack1,       shal_attack2    ] {
-sound (self, CHAN_VOICE, "shalrath/attack.wav", 1, ATTN_NORM);
-ai_face();
+	sound (self, CHAN_VOICE, "shalrath/attack.wav", 1, ATTN_NORM);
+	ai_face ();
 };
 void() shal_attack2     =[      $attack2,       shal_attack3    ] {ai_face();};
 void() shal_attack3     =[      $attack3,       shal_attack4    ] {ai_face();};
@@ -93,15 +95,14 @@ void(entity attacker, float damage) shalrath_pain =
 		return;
 
 	sound (self, CHAN_VOICE, "shalrath/pain.wav", 1, ATTN_NORM);
-	shal_pain1();
+	shal_pain1 ();
 	self.pain_finished = time + 3;
 };
 
 void() shalrath_die =
 {
-// check for gib
-	if (self.health < -90)
-	{
+	// check for gib
+	if (self.health < -90) {
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_shal.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -111,25 +112,20 @@ void() shalrath_die =
 	}
 
 	sound (self, CHAN_VOICE, "shalrath/death.wav", 1, ATTN_NORM);
-	shal_death1();
+	shal_death1 ();
 	self.solid = SOLID_NOT;
 	// insert death sounds here
 };
 
-/*
-================
-ShalMissile
-================
-*/
 void() ShalMissileTouch;
 void() ShalHome;
 void() ShalMissile =
 {
-	local	entity 	missile;
-	local	vector	dir;
 	local	float	dist, flytime;
+	local	vector	dir;
+	local	entity 	missile;
 
-	dir = normalize((self.enemy.origin + '0 0 10') - self.origin);
+	dir = normalize ((self.enemy.origin + '0 0 10') - self.origin);
 	dist = vlen (self.enemy.origin - self.origin);
 	flytime = dist * 0.002;
 	if (flytime < 0.1)
@@ -160,12 +156,11 @@ void() ShalHome =
 {
 	local vector	dir, vtemp;
 	vtemp = self.enemy.origin + '0 0 10';
-	if (self.enemy.health < 1)
-	{
-		remove(self);
+	if (self.enemy.health < 1) {
+		remove (self);
 		return;
 	}
-	dir = normalize(vtemp - self.origin);
+	dir = normalize (vtemp - self.origin);
 	if (skill == 3)
 		self.velocity = dir * 350;
 	else
@@ -184,11 +179,8 @@ void() ShalMissileTouch =
 	T_RadiusDamage (self, self.owner, 40, world);
 	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, self.origin_x);
-	WriteCoord (MSG_BROADCAST, self.origin_y);
-	WriteCoord (MSG_BROADCAST, self.origin_z);
+	WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_EXPLOSION);
+	WriteCoordV (MSG_BROADCAST, self.origin);
 
 	self.velocity = '0 0 0';
 	self.touch = SUB_Null;
@@ -203,9 +195,8 @@ void() ShalMissileTouch =
 */
 void() monster_shalrath =
 {
-	if (deathmatch)
-	{
-		remove(self);
+	if (deathmatch) {
+		remove (self);
 		return;
 	}
 	precache_model2 ("progs/shalrath.mdl");
@@ -234,6 +225,5 @@ void() monster_shalrath =
 	self.th_missile = shal_attack1;
 
 	self.think = walkmonster_start;
-	self.nextthink = time + 0.1 + random ()*0.1;	
-
+	self.nextthink = time + 0.1 + random () * 0.1;	
 };

@@ -40,35 +40,28 @@ $frame paind17 paind18 paind19
 
 void() Laser_Touch =
 {
-	local vector org;
-	
+	local vector	org;
+
 	if (other == self.owner)
 		return;		// don't explode on owner
 
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
-		remove(self);
+	if (pointcontents (self.origin) == CONTENT_SKY) {
+		remove (self);
 		return;
 	}
 	
 	sound (self, CHAN_WEAPON, "enforcer/enfstop.wav", 1, ATTN_STATIC);
-	org = self.origin - 8*normalize(self.velocity);
+	org = self.origin - 8 * normalize (self.velocity);
 
-	if (other.health)
-	{
-		SpawnBlood (org, self.velocity*0.2, 15);
+	if (other.health) {
+		SpawnBlood (org, self.velocity * 0.2, 15);
 		T_Damage (other, self, self.owner, 15);
+	} else {
+		WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_GUNSHOT);
+		WriteCoordV (MSG_BROADCAST, org);
 	}
-	else
-	{
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
-		WriteCoord (MSG_BROADCAST, org_x);
-		WriteCoord (MSG_BROADCAST, org_y);
-		WriteCoord (MSG_BROADCAST, org_z);
-	}
-	
-	remove(self);	
+
+	remove (self);	
 };
 
 void(vector org, vector vec) LaunchLaser =
@@ -76,9 +69,9 @@ void(vector org, vector vec) LaunchLaser =
 	if (self.classname == "monster_enforcer")
 		sound (self, CHAN_WEAPON, "enforcer/enfire.wav", 1, ATTN_NORM);
 
-	vec = normalize(vec);
+	vec = normalize (vec);
 	
-	newmis = spawn();
+	newmis = spawn ();
 	newmis.owner = self;
 	newmis.movetype = MOVETYPE_FLY;
 	newmis.solid = SOLID_BBOX;
@@ -90,25 +83,23 @@ void(vector org, vector vec) LaunchLaser =
 	setorigin (newmis, org);
 
 	newmis.velocity = vec * 600;
-	newmis.angles = vectoangles(newmis.velocity);
+	newmis.angles = vectoangles (newmis.velocity);
 
 	newmis.nextthink = time + 5;
 	newmis.think = SUB_Remove;
 	newmis.touch = Laser_Touch;
 };
 
-
-
 void() enforcer_fire =
 {
-	local vector org;
+	local vector	org;
 
 	self.effects |= EF_MUZZLEFLASH;
 	makevectors (self.angles);
 	
 	org = self.origin + v_forward * 30 + v_right * 8.5 + '0 0 16';
 
-	LaunchLaser(org, self.enemy.origin - self.origin);
+	LaunchLaser (org, self.enemy.origin - self.origin);
 };
 
 //============================================================================
@@ -122,9 +113,10 @@ void()	enf_stand6	=[	$stand6,	enf_stand7	] {ai_stand();};
 void()	enf_stand7	=[	$stand7,	enf_stand1	] {ai_stand();};
 
 void()	enf_walk1	=[	$walk1 ,	enf_walk2	] {
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
-ai_walk(2);};
+	if (random () < 0.2)
+		sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
+	ai_walk (2);
+};
 void()	enf_walk2	=[	$walk2 ,	enf_walk3	] {ai_walk(4);};
 void()	enf_walk3	=[	$walk3 ,	enf_walk4	] {ai_walk(4);};
 void()	enf_walk4	=[	$walk4 ,	enf_walk5	] {ai_walk(3);};
@@ -142,9 +134,10 @@ void()	enf_walk15	=[	$walk15,	enf_walk16	] {ai_walk(4);};
 void()	enf_walk16	=[	$walk16,	enf_walk1	] {ai_walk(2);};
 
 void()	enf_run1	=[	$run1  ,	enf_run2	] {
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
-ai_run(18);};
+	if (random() < 0.2)
+		sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
+	ai_run (18);
+};
 void()	enf_run2	=[	$run2  ,	enf_run3	] {ai_run(14);};
 void()	enf_run3	=[	$run3  ,	enf_run4	] {ai_run(7);};
 void()	enf_run4	=[	$run4  ,	enf_run5	] {ai_run(12);};
@@ -212,35 +205,27 @@ void()	enf_paind19	=[	$paind19,	enf_run1	] {};
 
 void(entity attacker, float damage)	enf_pain =
 {
-	local float r;
+	local float		r;
 
 	r = random ();
 	if (self.pain_finished > time)
 		return;
 
-	
 	if (r < 0.5)
 		sound (self, CHAN_VOICE, "enforcer/pain1.wav", 1, ATTN_NORM);
 	else
 		sound (self, CHAN_VOICE, "enforcer/pain2.wav", 1, ATTN_NORM);
 
-	if (r < 0.2)
-	{
+	if (r < 0.2) {
 		self.pain_finished = time + 1;
 		enf_paina1 ();
-	}
-	else if (r < 0.4)
-	{
+	} else if (r < 0.4) {
 		self.pain_finished = time + 1;
 		enf_painb1 ();
-	}
-	else if (r < 0.7)
-	{
+	} else if (r < 0.7) {
 		self.pain_finished = time + 1;
 		enf_painc1 ();
-	}
-	else
-	{
+	} else {
 		self.pain_finished = time + 2;
 		enf_paind1 ();
 	}
@@ -248,13 +233,13 @@ void(entity attacker, float damage)	enf_pain =
 
 //============================================================================
 
-
-
-
 void()	enf_die1	=[	$death1,	enf_die2	] {};
 void()	enf_die2	=[	$death2,	enf_die3	] {};
-void()	enf_die3	=[	$death3,	enf_die4	]
-{self.solid = SOLID_NOT;self.ammo_cells = 5;DropBackpack();};
+void()	enf_die3	=[	$death3,	enf_die4	] {
+	self.solid = SOLID_NOT;
+	self.ammo_cells = 5;
+	DropBackpack ();
+};
 void()	enf_die4	=[	$death4,	enf_die5	] {ai_forward(14);};
 void()	enf_die5	=[	$death5,	enf_die6	] {ai_forward(2);};
 void()	enf_die6	=[	$death6,	enf_die7	] {};
@@ -269,8 +254,11 @@ void()	enf_die14	=[	$death14,	enf_die14	] {};
 
 void()	enf_fdie1	=[	$fdeath1,	enf_fdie2	] {};
 void()	enf_fdie2	=[	$fdeath2,	enf_fdie3	] {};
-void()	enf_fdie3	=[	$fdeath3,	enf_fdie4	] 
-{self.solid = SOLID_NOT;self.ammo_cells = 5;DropBackpack();};
+void()	enf_fdie3	=[	$fdeath3,	enf_fdie4	] {
+	self.solid = SOLID_NOT;
+	self.ammo_cells = 5;
+	DropBackpack();
+};
 void()	enf_fdie4	=[	$fdeath4,	enf_fdie5	] {};
 void()	enf_fdie5	=[	$fdeath5,	enf_fdie6	] {};
 void()	enf_fdie6	=[	$fdeath6,	enf_fdie7	] {};
@@ -283,9 +271,8 @@ void()	enf_fdie11	=[	$fdeath11,	enf_fdie11	] {};
 
 void() enf_die =
 {
-// check for gib
-	if (self.health < -35)
-	{
+	// check for gib
+	if (self.health < -35) {
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_mega.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -294,7 +281,7 @@ void() enf_die =
 		return;
 	}
 
-// regular death
+	// regular death
 	sound (self, CHAN_VOICE, "enforcer/death1.wav", 1, ATTN_NORM);
 	if (random() > 0.5)
 		enf_die1 ();
@@ -308,9 +295,8 @@ void() enf_die =
 */
 void() monster_enforcer =
 {
-	if (deathmatch)
-	{
-		remove(self);
+	if (deathmatch) {
+		remove (self);
 		return;
 	}
 	precache_model2 ("progs/enforcer.mdl");

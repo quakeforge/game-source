@@ -16,7 +16,6 @@ void() finale_2;
 void() finale_3;
 void() finale_4;
 
-
 entity	shub;
 
 $frame old1 old2 old3 old4 old5 old6 old7 old8 old9 
@@ -108,8 +107,7 @@ void() old_thrash20       =[      $shake20, old_thrash20      ] {finale_4();};
 
 void() finale_1 =
 {
-	local entity	pos, pl;
-	local entity	timer;
+	local entity	pos, pl, timer;
 
 	intermission_exittime = time + 10000000;	// never allow exit
 	intermission_running = 1;
@@ -127,8 +125,7 @@ void() finale_1 =
 	WriteString (MSG_ALL, "");
 
 	pl = find (world, classname, "player");
-	while (pl != world)
-	{
+	while (pl != world) {
 		pl.view_ofs = '0 0 0';
 		pl.angles = other.v_angle = pos.mangle;
 		pl.fixangle = TRUE;		// turn this way immediately
@@ -146,7 +143,7 @@ void() finale_1 =
 	// players to the intermission spot
 	
 	// wait for 1 second
-	timer = spawn();
+	timer = spawn ();
 	timer.nextthink = time + 1;
 	timer.think = finale_2;	
 };
@@ -158,11 +155,8 @@ void() finale_2 =
 	// start a teleport splash inside shub
 
 	o = shub.origin - '0 100 0';
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_TELEPORT);
-	WriteCoord (MSG_BROADCAST, o_x);
-	WriteCoord (MSG_BROADCAST, o_y);
-	WriteCoord (MSG_BROADCAST, o_z);
+	WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_TELEPORT);
+	WriteCoordV (MSG_BROADCAST, o);
 
 	sound (shub, CHAN_VOICE, "misc/r_tele1.wav", 1, ATTN_NORM);
 	
@@ -175,15 +169,14 @@ void() finale_3 =
 	// start shub thrashing wildly
 	shub.think = old_thrash1;
 	sound (shub, CHAN_VOICE, "boss2/death.wav", 1, ATTN_NORM);
-	lightstyle(0, "abcdefghijklmlkjihgfedcb");	
+	lightstyle (0, "abcdefghijklmlkjihgfedcb");	
 };
 
 void() finale_4 =
 {
 	// throw tons of meat chunks	
-	local	vector	oldo;
-	local	float	x, y, z;
-	local	float	r;
+	local float		r, x, y, z;
+	local vector	oldo;
 	local entity	n;
 
 	sound (self, CHAN_VOICE, "boss2/pop2.wav", 1, ATTN_NORM);
@@ -191,14 +184,11 @@ void() finale_4 =
 	oldo = self.origin;
 
 	z = 16;
-	while (z <= 144)
-	{
+	while (z <= 144) {
 		x = -64;
-		while (x <= 64)
-		{
+		while (x <= 64) {
 			y = -64;
-			while (y <= 64)
-			{
+			while (y <= 64) {
 				self.origin_x = oldo_x + x;
 				self.origin_y = oldo_y + y;
 				self.origin_z = oldo_z + z;
@@ -210,17 +200,17 @@ void() finale_4 =
 					ThrowGib ("progs/gib2.mdl", -999);
 				else
 					ThrowGib ("progs/gib3.mdl", -999);
-				y = y + 32;
+				y += 32;
 			}
-			x = x + 32;
+			x += 32;
 		}
-		z = z + 96;
+		z += 96;
 	}
 	// start the end text
 	WriteByte (MSG_ALL, SVC_FINALE);
 	WriteString (MSG_ALL, "Congratulations and well done! You have\nbeaten the hideous Shub-Niggurath, and\nher hundreds of ugly changelings and\nmonsters. You have proven that your\nskill and your cunning are greater than\nall the powers of Quake. You are the\nmaster now. Id Software salutes you.");
 
-// put a player model down
+	// put a player model down
 	n = spawn();
 	setmodel (n, "progs/player.mdl");
 	oldo = oldo - '32 264 0';
@@ -230,11 +220,9 @@ void() finale_4 =
 
 	remove (self);
 
-// switch cd track
-	WriteByte (MSG_ALL, SVC_CDTRACK);
-	WriteByte (MSG_ALL, 3);
-	WriteByte (MSG_ALL, 3);
-	lightstyle(0, "m");	
+	// switch cd track
+	WriteBytes (MSG_ALL, SVC_CDTRACK, 3, 3);
+	lightstyle (0, "m");
 };
 
 //============================================================================
@@ -251,9 +239,8 @@ void (entity attacker, float damage) nopain =
 */
 void() monster_oldone =
 {
-	if (deathmatch)
-	{
-		remove(self);
+	if (deathmatch) {
+		remove (self);
 		return;
 	}
 
@@ -278,6 +265,6 @@ void() monster_oldone =
 	self.th_die = finale_1;
 	shub = self;
 	
-	total_monsters = total_monsters + 1;
+	total_monsters++;
 };
 
