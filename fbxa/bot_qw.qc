@@ -161,6 +161,7 @@ float coop = 0; // hack
 
 entity () SV_AllocClient = #0;
 void (entity e) SV_FreeClient = #0;
+void (entity e, string str) SV_SetUserinfo = #0;
 
 //----------------------------------------------------------------------------
 
@@ -203,7 +204,7 @@ void() ClientInRankings =
 
 	players[cl_no] = self;
 	self.b_clientno = cl_no + 1;
-	userid = userid + 1;
+	userid++;
 	self.b_userid = userid;
 	
 	self.phys_obj = phys_objects[cl_no];
@@ -214,7 +215,6 @@ void() ClientInRankings =
 		return;
 	}
    	cno = self.colormap - 1;
-	BotInvalidClientNo (cno);
 	self.b_clientno = (integer) cno;
 	self.ishuman = TRUE;
 	self.switch_wallhug = time + 1;
@@ -360,6 +360,9 @@ signs on to the server.
 
 void(entity who) UpdateClient =
 {
+	local string bottomcolor = ftos (who.b_pants);
+	local string topcolor = ftos (who.b_shirt);
+	dprint (who.netname + "\n");
 	WriteByte(2, 14 );
 	WriteByte(2, (float)who.b_clientno);
 	WriteShort(2, who.frags);
@@ -369,74 +372,10 @@ void(entity who) UpdateClient =
 	WriteByte(2, 37);                // update entertime
 	WriteByte(2, (float)who.b_clientno);          // client number
 	WriteLong(2, time - who.b_entertime);   // client entertime
-	WriteByte(2, 40 );            // update userinfo
-	WriteByte(2, (float)who.b_clientno);      // client number
-	WriteLong(2, who.b_userid);      // client userid
-	WriteByte(2, 92); // '\'
-	WriteByte(2, 98); // 'b'
-	WriteByte(2, 111); // 'o'
-	WriteByte(2, 116); // 't'
-	WriteByte(2, 116); // 't'
-	WriteByte(2, 111); // 'o'
-	WriteByte(2, 109); // 'm'
-	WriteByte(2, 99); // 'c'
-	WriteByte(2, 111); // 'o'
-	WriteByte(2, 108); // 'l'
-	WriteByte(2, 111); // 'o'
-	WriteByte(2, 114); // 'r'
-	WriteByte(2, 92); // '\'
-	if(who.b_pants > 9)
-	{
-		WriteByte(2, 49);
-		WriteByte(2, 38 + who.b_pants);
-	}
-	else
-		WriteByte(2, 48 + who.b_pants);
-	WriteByte(2, 92);  // '\'
-	WriteByte(2, 116); // 't'
-	WriteByte(2, 111); // 'o'
-	WriteByte(2, 112); // 'p'
-	WriteByte(2, 99);  // 'c'
-	WriteByte(2, 111); // 'o'
-	WriteByte(2, 108); // 'l'
-	WriteByte(2, 111); // 'o'
-	WriteByte(2, 114); // 'r'
-	WriteByte(2, 92);  // '\'
-	if(who.b_shirt > 9)
-	{
-		WriteByte(2, 49);
-		WriteByte(2, 38 + who.b_shirt);
-	}
-	else
-		WriteByte(2, 48 + who.b_shirt);
-	WriteByte(2, 92);  // '\'
-	WriteByte(2, 116); // 't'
-	WriteByte(2, 101); // 'e'
-	WriteByte(2, 97);  // 'a'
-	WriteByte(2, 109); // 'm'
-	WriteByte(2, 92);  // '\'
-	WriteByte(2, 98);  // 'b'
-	WriteByte(2, 111); // 'o'
-	WriteByte(2, 116); // 't'
+	SV_SetUserinfo (who, "\\bottomcolor\\" + bottomcolor
+					+ "\\topcolor\\" + topcolor
+					+ "\\team\\bot\\skin\\base\\name\\" + who.netname);
 	// FIXME: do teams properly
-	// note this has no effect on infokey
-	WriteByte(2, 92 );  // '\'
-	WriteByte(2, 115); // 's'
-	WriteByte(2, 107); // 'k'
-	WriteByte(2, 105); // 'i'
-	WriteByte(2, 110); // 'n'
-	WriteByte(2, 92);  // '\'
-	WriteByte(2, 98);  // 'b'
-	WriteByte(2, 97);  // 'a'
-	WriteByte(2, 115); // 's'
-	WriteByte(2, 101); // 'e'
-	WriteByte(2, 92);  // '\'
-	WriteByte(2, 110); // 'n'
-	WriteByte(2, 97);  // 'a'
-	WriteByte(2, 109); // 'm'
-	WriteByte(2, 101); // 'e'
-	WriteByte(2, 92);  // '\'
-	WriteString( 2, who.netname);
 };
 
 float(integer clientno) ClientBitFlag =
@@ -570,31 +509,6 @@ void(entity bot) BotDisconnect =
 		self.b_clientno = -1;
    	}
 	self = uself;
-};
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-BotInvalidClientNo
-kicks a bot if a player connects and takes the bot's space
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-void(float clientno) BotInvalidClientNo =
-{
-	local entity bot;
-
-	bot = GetClientEntity(clientno);
-	if(bot.b_clientno > 0)
-	{
-		if (!bot.ishuman)
-		{
-			bot.b_clientno = -1;
-			BotDisconnect(bot);
-			//BotConnect(bot.b_num, bot.b_skill); 
-			return;
-		}
-	}
 };
 
 void() BotFrame =
