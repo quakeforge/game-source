@@ -1725,10 +1725,10 @@ void(entity targ, entity attacker) ClientObituary =
  								bprint("'s flag carrier\n");
  							}
  						}
-						if (((attacker.team == TEAM_COLOR1) &&
-							(head.classname == "item_flag_team1")) ||
-							((attacker.team == TEAM_COLOR2) &&
-							(head.classname == "item_flag_team2"))
+						if ((((attacker.team == TEAM_COLOR1)
+						      && (head.classname == "item_flag_team1"))
+							 || ((attacker.team == TEAM_COLOR2)
+								 && (head.classname == "item_flag_team2")))
 							&& (!flag_radius)) { // prevents redundant points awarded
 							// target was near attacker's flag
 							attacker.frags = attacker.frags + 
