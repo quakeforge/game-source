@@ -45,23 +45,7 @@ file). For Normal Quake, please refer to bot.qc
 --------------------------------------
 To install on a new mod, do all this:
 --------------------------------------
-Place all included bot*.qc files in the subdirectory "frikbot"
-in your source folder, then...
-
-* Add the following lines to progs.src right after the defs.qc line
-frikbot/map_dm1.qc
-frikbot/map_dm2.qc
-frikbot/map_dm3.qc
-frikbot/map_dm4.qc
-frikbot/map_dm5.qc
-frikbot/map_dm6.qc
-frikbot/bot_qw.qc
-frikbot/bot_way.qc
-frikbot/bot_fight.qc 
-frikbot/bot_ai.qc
-frikbot/bot_misc.qc
-frikbot/bot_phys.qc
-frikbot/bot_move.qc
+FIXME installing and linking instrunctions here
 --------------------------------------
 * Comment out the following functions in defs.qc
 sound, aim, setspawnparms
