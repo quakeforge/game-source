@@ -463,7 +463,7 @@ void() weapon_touch =
 {
 	local	float	hadammo, best, new = 0, old;
 	local	entity	stemp;
-	local	float	leave;
+	//local	float	leave;
 
 	// For client weapon_switch
 	local	float	w_switch;
@@ -574,8 +574,8 @@ void() weapon_touch =
 
 	self = stemp;
 
-	if (leave)
-		return;
+	//if (leave)
+	//	return;
 
 	//if (deathmatch!=3 || deathmatch !=5)
 	//{
