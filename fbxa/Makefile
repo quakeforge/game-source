@@ -42,7 +42,7 @@ clean:
 	rm -rf .deps
 
 install: libfrikbot.a
-	cp frikbot.h $(prefix)/include/QF/ruamoko
-	cp libfrikbot.a $(prefix)/lib/ruamoko
+	cp frikbot.h $(DESTDIR)$(prefix)/include/QF/ruamoko
+	cp libfrikbot.a $(DESTDIR)$(prefix)/lib/ruamoko
 
 -include $(libfrikbot_dep)
