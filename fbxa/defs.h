@@ -240,18 +240,18 @@
 @extern float   FL_JUMPRELEASED; // for jump debouncing
 
 // edict.movetype values
-@extern float   MOVETYPE_NONE;    // never moves
-//float MOVETYPE_ANGLENOCLIP;
-//float MOVETYPE_ANGLECLIP;
-@extern float   MOVETYPE_WALK;    // players only
-@extern float   MOVETYPE_STEP;    // discrete, not real time unless fall
-@extern float   MOVETYPE_FLY;
-@extern float   MOVETYPE_TOSS;    // gravity
-@extern float   MOVETYPE_PUSH;    // no clip to world, push and crush
-@extern float   MOVETYPE_NOCLIP;
-@extern float   MOVETYPE_FLYMISSILE;    // fly with extra size against monsters
-@extern float   MOVETYPE_BOUNCE;
-@extern float   MOVETYPE_BOUNCEMISSILE;   // bounce with extra size
+#define MOVETYPE_NONE			0    // never moves
+//#define MOVETYPE_ANGLENOCLIP	1
+//#define MOVETYPE_ANGLECLIP	2
+#define MOVETYPE_WALK			3    // players only
+#define MOVETYPE_STEP			4    // discrete, not real time unless fall
+#define MOVETYPE_FLY			5
+#define MOVETYPE_TOSS			6    // gravity
+#define MOVETYPE_PUSH			7    // no clip to world, push and crush
+#define MOVETYPE_NOCLIP			8
+#define MOVETYPE_FLYMISSILE		9    // fly with extra size against monsters
+#define MOVETYPE_BOUNCE			10
+#define MOVETYPE_BOUNCEMISSILE	11   // bounce with extra size
 
 // edict.solid values
 @extern float   SOLID_NOT;    // no interaction with other objects
