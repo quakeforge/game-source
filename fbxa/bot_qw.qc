@@ -72,6 +72,7 @@ ClientFixRankings(); // FrikBot
 */
 
 #include "libfrikbot.h"
+#include "cmd.h"
 
 integer []bot_way_ref;
 integer []bot_move_ref;
@@ -229,31 +230,6 @@ ClientDisconnected =
 	players[cl_no] = NIL;
 };
 
-// BotInit ====================================================================
-
-void ()
-BotInit =
-{
-	[Waypoint clearAll];
-	bot_way_ref = &bot_way_linker;
-	bot_move_ref = &bot_move_linker;
-	bot_chat_ref = &bot_chat_linker;
-	stagger_think_ref = &stagger_think;
-	bot_fight_ref = &bot_fight_linker;
-	bot_map_load ();
-};
-
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-Rankings 'utilities'. Written by Alan Kivlin,
-this code just fools clients by sending precisely
-the same network messages as when a real player
-signs on to the server.
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-
-void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
-
 // BotConnect and related functions. -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 integer (entity cl)
@@ -310,6 +286,57 @@ void () BotImpulses =
 		return;
 	@self.impulse = 0;
 };
+
+void ()
+bot_add_f =
+{
+	local integer whatbot = 0;
+	local integer skill;
+	local integer c = Cmd_Argc ();
+
+	if (c == 1) {
+		skill = (integer) stof (infokey (NIL, "skill"));
+	} else if (c == 2) {
+		skill = (integer) stof (Cmd_Argv (1));
+	} else {
+		whatbot = (integer) stof (Cmd_Argv (1));
+		skill = (integer) stof (Cmd_Argv (2));
+	}
+	BotConnect (whatbot, skill);
+};
+
+void ()
+bot_kick_f =
+{
+	[Bot kick];
+};
+
+// BotInit ====================================================================
+
+void ()
+BotInit =
+{
+	[Waypoint clearAll];
+	bot_way_ref = &bot_way_linker;
+	bot_move_ref = &bot_move_linker;
+	bot_chat_ref = &bot_chat_linker;
+	stagger_think_ref = &stagger_think;
+	bot_fight_ref = &bot_fight_linker;
+	bot_map_load ();
+	Cmd_AddCommand ("bot_add", bot_add_f);
+	Cmd_AddCommand ("bot_kick", bot_kick_f);
+};
+
+/*
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+Rankings 'utilities'. Written by Alan Kivlin,
+this code just fools clients by sending precisely
+the same network messages as when a real player
+signs on to the server.
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+*/
+
+void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
 
 @implementation Bot
 - (id) init

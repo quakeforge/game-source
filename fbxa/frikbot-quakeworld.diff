@@ -13,7 +13,7 @@ diff -u -r1.3 Makefile
 -qwprogs.dat: progs.src *.qc
 -	qfcc -Werror -Wall -g
 +qwprogs.dat: qwprogs.o
-+	qfcc -g -o qwprogs.dat qwprogs.o -lfrikbot -lr
++	qfcc -g -o qwprogs.dat qwprogs.o -lfrikbot -lcsqc -lr
 +qwprogs.o: progs.src *.qc
 +	qfcc -Dself=@self -g -c -o qwprogs.o
  clean:
