@@ -250,7 +250,7 @@ W_FireShotgun =
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
 	
 	if (deathmatch != 4 )
-		self.currentammo = self.ammo_shells--;
+		self.currentammo = --self.ammo_shells;
 
 	dir = aim (self, 100000);
 	FireBullets (6, dir, '0.04 0.04 0');
@@ -334,7 +334,7 @@ void ()
 W_FireRocket =
 {
 	if (deathmatch != 4)
-		self.currentammo = self.ammo_rockets--;
+		self.currentammo = -self.ammo_rockets;
 
 	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
 
@@ -456,7 +456,7 @@ W_FireLightning =
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
 
 	if (deathmatch != 4)
-		self.currentammo = self.ammo_cells--;
+		self.currentammo = --self.ammo_cells;
 
 	org = self.origin + '0 0 16';
 	
@@ -509,7 +509,7 @@ void ()
 W_FireGrenade =
 {       
 	if (deathmatch != 4)
-		self.currentammo = self.ammo_rockets--;
+		self.currentammo = --self.ammo_rockets;
 	
 	sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
 
@@ -630,7 +630,7 @@ W_FireSpikes =
 	sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
 	if (deathmatch != 4)
-		self.currentammo = self.ammo_nails--;
+		self.currentammo = --self.ammo_nails;
 	dir = aim (self, 1000);
 	launch_spike (self.origin + '0 0 16' + v_right * ox, dir);
 
