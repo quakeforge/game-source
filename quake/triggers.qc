@@ -388,7 +388,7 @@ local vector	org;
 	t = find (world, targetname, self.target);
 	if (!t)
 		objerror ("couldn't find target");
-		
+
 // spawn a tfog flash in front of the destination
 	makevectors (t.mangle);
 	org = t.origin + 32 * v_forward;
