@@ -70,4 +70,9 @@ this notice in its entirety.
 	else 
 		return FALSE;
 }
+
+-(void)setOrigin:(vector)org
+{
+}
+
 @end

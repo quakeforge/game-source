@@ -289,22 +289,17 @@ Temporary Marker code
 
 -(void)spawnTempWaypoint:(vector)org
 {	
-/*XXX
-	local entity tep;
+	local Waypoint tep;
 
 	if (!temp_way)
-		temp_way = tep = spawn();
+		temp_way = tep = [[Waypoint alloc] init];
 	else
 		tep = temp_way;
 
-	tep.classname = "temp_waypoint";
+	[tep setOrigin:org];
 	tep.search_time = 0;
-	tep.solid = SOLID_TRIGGER;
-	tep.movetype = MOVETYPE_NOCLIP;
-	setorigin(tep, org);
-	target_add(tep);
-	setsize(tep, VEC_HULL_MIN, VEC_HULL_MAX); // FIXME: convert these to numerical
-*/
+
+	[self target_add:tep];
 }
 
 /*

@@ -268,20 +268,6 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
 
 // BotConnect and related functions. -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-entity (float num)
-GetClientEntity =
-{
-	local entity upsy;
-
-	upsy = NIL;
-	num++;
-	while (num > 0) {
-		num--;
-		upsy = nextent (upsy);
-	} 
-	return upsy;
-};
-
 integer (entity cl)
 ClientNumber =
 {
@@ -298,30 +284,23 @@ ClientNumber =
 void (integer whatbot, integer whatskill)
 BotConnect =
 {
-	local entity uself;
+	local entity cl;
 	local Bot bot;
+	local bot_data_t [] name;
 	
-	uself = @self;
-	@self = SV_AllocClient ();
-	if (!@self) {
+	cl = SV_AllocClient ();
+	if (!cl) {
 		bprint (PRINT_HIGH, "Unable to connect a bot, server is full.\n");
-		@self = uself;
 		return;
 	}
-	bot = [[Bot alloc] initWithEntity: @self];
+
 	if (whatbot)
-		@self.netname = [bot name:whatbot];
+		name = [Bot name:whatbot];
 	else
-		@self.netname = [bot randomName];
-	bot_count++;
-	// players can set skill all weird, so leave these checks in
-	if (whatskill > 3)
-		whatskill = 3;
-	else if (whatskill < 0)
-		whatskill = 0;
-	bot.b_skill = whatskill;
+		name = [Bot randomName];
+
+	bot = [[Bot alloc] initWithEntity: cl named:name skill:whatskill];
 	[bot start_topic:1];
-	@self = uself;
 };
 
 /*
@@ -350,9 +329,10 @@ void () BotImpulses =
 	return [super init];
 }
 
-- (id) initWithEntity:(entity) e
+- (id) initWithEntity:(entity) e named:(bot_data_t [])name skill:(integer)skill
 {
 	local integer cl_no = ClientNumber (@self);
+	local entity uself;
 
 	if (!(self = [super initWithEntity:e]))
 		return NIL;
@@ -365,10 +345,26 @@ void () BotImpulses =
 	b_entertime = time;
 	ent.team = b_pants + 1;
 	[self updateClient];
-	SetNewParms ();
+
+	ent.netname = name.name;
+	b_pants = name.pants;
+	b_shirt = name.shirt;
+	//b_num = I
+	bot_count++;
+	if (skill > 3)
+		skill = 3;
+	else if (skill < 0)
+		skill = 0;
+	b_skill = skill;
 	ishuman = 2;
+
+	uself = @self;
+	@self = ent;
+	SetNewParms ();
 	ClientConnect ();
 	PutClientInServer ();
+	@self = uself;
+
 	return self;
 }
 

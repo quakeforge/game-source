@@ -60,6 +60,12 @@ Array waypoint_array;
 		waypoint_thinker = spawn ();
 		waypoint_thinker.classname = "waypoint_thinker";
 	}
+/*XXX
+	ent.classname = "temp_waypoint";
+	ent.solid = SOLID_TRIGGER;
+	ent.movetype = MOVETYPE_NOCLIP;
+	setsize(ent, VEC_HULL_MIN, VEC_HULL_MAX); // FIXME: convert these to numerical
+*/
 	return [super init];
 }
 
@@ -73,6 +79,11 @@ Array waypoint_array;
 -(id)initFromEntity:(entity)ent
 {
 	[self initAt:ent.origin];
+}
+
+-(void)setOrigin:(vector)org
+{
+	origin = org;
 }
 /*
 entity (vector org)
@@ -90,17 +101,7 @@ make_waypoint =
 	setorigin (point, org);
 	
 	setsize (point, VEC_HULL_MIN, VEC_HULL_MAX);
-	waypoints++;
-	if (!way_head) {
-		way_head = point;
-		way_foot = point;
-	} else {
-		way_foot._next = point;
-		point._last = way_foot;
-		way_foot = point;
-	}
 
-	point.count = waypoints;
 	if (waypoint_mode > WM_LOADED) // editor modes
 		setmodel (point, "progs/s_bubble.spr"); 
 	return point;

@@ -3,11 +3,18 @@
 @class Bot;
 @class Waypoint;
 
+struct bot_data_t = {
+	string name;
+	float pants, shirt;
+};
+typedef struct bot_data_t bot_data_t;
+
 @interface Target: Entity
 {
 }
 -(vector)realorigin;
 -(integer)canSee:(Target)targ ignoring:(entity)ignore;
+-(void)setOrigin:(vector) org;
 @end
 
 @interface Waypoint: Target
@@ -95,7 +102,7 @@
 	float teleport_time, portal_time;
 }
 - (id) init;
-- (id) initWithEntity: (entity) e;
+- (id) initWithEntity: (entity) e named:(bot_data_t [])name skill:(integer)skill;
 - (id) initFromPlayer: (entity) e;
 - (integer) preFrame;
 - (integer) postFrame;
@@ -106,8 +113,8 @@
 @end
 
 @interface Bot (Misc)
--(string)name:(integer)r;
--(string)randomName;
++(bot_data_t [])name:(integer)r;
++(bot_data_t [])randomName;
 -(integer)fov:(entity)targ;
 
 +(void)kick;

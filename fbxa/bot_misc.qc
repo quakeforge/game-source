@@ -41,13 +41,9 @@ this notice in its entirety.
 */
 
 #include "libfrikbot.h"
+#include "Array.h"
 
-struct bot_data_t = {
-	string name;
-	float pants, shirt;
-};
-
-struct bot_data_t [32] bot_data = {
+bot_data_t [32] bot_data = {
 	{"Vincent",   11,  0},
 	{"Bishop",     1,  3},
 	{"Nomad",     13,  2},
@@ -82,53 +78,43 @@ struct bot_data_t [32] bot_data = {
 	{"Mercury",   10,  5},
 };
 
+Array bot_array;
+
 @implementation Bot (Misc)
 /*
 BotName
 
 Sets bot's name and colors
 */
--(string)name:(integer)r
++(bot_data_t [])name:(integer)r
 {
-	b_num = r;
 	if (r < 0 || r >= 32)
 		return NIL;
-	b_pants = bot_data[r].pants;
-	b_shirt = bot_data[r].shirt;
-	return bot_data[r].name;
+	return &bot_data[r];
 }
 
--(string)randomName
++(bot_data_t [])randomName
 {
-	local integer y, test;
-	local string h;
+	local integer test;
+	local bot_data_t [] h;
 	local entity t;
-	y = TRUE;
-	while (y) {
+
+	while (1) {
 		test = (integer) (32 * random ());
-		h = [self name:test];
-		t = find (NIL, netname, h);
+		h = [Bot name:test];
+		t = find (NIL, netname, h.name);
 		if (t == NIL)
-			y = FALSE;
+			return h;
 	}
-	return h;
 }
 
 +(void)kick
 {
-	local entity ty;
+	local Bot ty;
 
-	ty = find (NIL, classname, "player");
-	while (ty != NIL) {
-		/*XXX
-		if (!(ty.ishuman)) {
-			BotDisconnect (ty);
-			ty.ishuman = TRUE;
-			ty = NIL;
-		} else
-			ty = find (ty, classname, "player");
-		*/
-	}
+	ty = [bot_array removeItemAt:0];
+	if (ty)
+		[ty disconnect];
 }
 
 /*
