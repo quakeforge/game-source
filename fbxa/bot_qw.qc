@@ -500,23 +500,8 @@ void(entity bot) BotDisconnect =
 
 	ClientDisconnect();
 
-	if (self.b_clientno != -1) {
-      		// the bot's client number is not in use by a real player so we
-		// must remove it's entry in the rankings
-		// Quake engine sets all fields to 0, can only do the most important here
-		self.b_frags = self.frags = 0;
-		self.netname = "";
-		self.classname = "";
-		self.health = 0;
-		self.items = 0;
-		self.armorvalue = 0;
-		self.weaponmodel = "";
-		self.b_pants = 0;
-		self.b_shirt = 0;
-		self.ammo_shells = self.ammo_nails = self.ammo_rockets = self.ammo_cells = 0;
-		UpdateClient(self);
-		self.b_clientno = -1;
-   	}
+	setmodel (self.phys_obj, "");
+	SV_FreeClient (self);
 	self = uself;
 };
 
