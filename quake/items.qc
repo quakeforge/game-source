@@ -236,7 +236,7 @@ void() armor_touch;
 
 void() armor_touch =
 {
-	local	float	type, value, bit;
+	local	float	type = 0, value = 0, bit = 0;
 	
 	if (other.health <= 0)
 		return;
@@ -390,7 +390,7 @@ float() W_BestWeapon;
 
 void() weapon_touch =
 {
-	local	float	hadammo, best, new, old;
+	local	float	hadammo, best, new = 0, old;
 	local	entity	stemp;
 	local	float	leave;
 
