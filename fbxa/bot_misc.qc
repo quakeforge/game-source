@@ -82,43 +82,8 @@ bot_data_t [32] bot_data = {
 	{"Mercury",   10,  5},
 };
 
-/*
-BotName
-
-Sets bot's name and colors
-*/
-string (integer r)
-BotName =
-{
-	self.b_num = r;
-	if (r < 0 || r >= 32)
-		return NIL;
-	self.b_pants = bot_data[r].pants;
-	self.b_shirt = bot_data[r].shirt;
-	return bot_data[r].name;
-};
-
-string ()
-PickARandomName =
-{
-	local integer y, test;
-	local string h;
-	local entity t;
-	y = TRUE;
-	while (y) {
-		test = (integer) (32 * random ());
-		h = BotName (test);
-		t = find (NIL, netname, h);
-		if (t == NIL)
-			y = FALSE;
-	}
-	return h;
-};
-
-// I didn't like the old code so this is very stripped down
-
-entity b_originator;
-float b_topic;
+Bot b_originator;
+integer b_topic;
 /* FBX Topics
 
 b_originator == self
@@ -137,18 +102,50 @@ b_originator == self
  11 - lag
 b_originator == targ
 */
-void (float tpic)
-bot_start_topic =
+
+@implementation Bot (Misc)
+/*
+BotName
+
+Sets bot's name and colors
+*/
+-(string)name:(integer)r
+{
+	b_num = r;
+	if (r < 0 || r >= 32)
+		return NIL;
+	b_pants = bot_data[r].pants;
+	b_shirt = bot_data[r].shirt;
+	return bot_data[r].name;
+}
+
+-(string)randomName
+{
+	local integer y, test;
+	local string h;
+	local entity t;
+	y = TRUE;
+	while (y) {
+		test = (integer) (32 * random ());
+		h = [self name:test];
+		t = find (NIL, netname, h);
+		if (t == NIL)
+			y = FALSE;
+	}
+	return h;
+}
+
+// I didn't like the old code so this is very stripped down
+-(void)start_topic:(integer)topic
 {
 	if (random() < 0.2) {
-		b_topic = tpic;
+		b_topic = topic;
 		b_originator = self;
 	} else
 		b_topic = 0;
-};
+}
 
-void ()
-bot_chat =
+-(void)chat
 {
 	local float r;
 
@@ -157,11 +154,12 @@ bot_chat =
 
 	r = ceil (6 * random ());
 	
-	if (self.b_chattime > time) {
-		if (self.b_skill < 2)
-			self.keys = self.button0 = self.button2 = 0;
+	if (b_chattime > time) {
+		if (b_skill < 2)
+			keys = 0;
+			ent.button0 = ent.button2 = 0;
 		return;
-	} else if (self.b_chattime) {
+	} else if (b_chattime) {
 		switch (b_topic) {
 		case 1:
 			if (b_originator == self) {
@@ -312,14 +310,14 @@ bot_chat =
 				case 3:
 					BotSayInit ();
 					BotSay2 (": hi ");
-					BotSay2 (b_originator.netname);
+					BotSay2 (b_originator.ent.netname);
 					BotSay2 ("\n");
 					bot_start_topic (0);
 					break;
 				case 5:
 					BotSayInit ();
 					BotSay2 (": hey ");
-					BotSay2 (b_originator.netname);
+					BotSay2 (b_originator.ent.netname);
 					BotSay2 ("\n");
 					bot_start_topic (0);
 					break;
@@ -346,13 +344,13 @@ bot_chat =
 				case 3:
 					BotSayInit ();
 					BotSay2 (": good work ");
-					BotSay2 (b_originator.netname);
+					BotSay2 (b_originator.ent.netname);
 					BotSay2 ("\n");
 					break;
 				case 4:
 					BotSayInit ();
 					BotSay2 (": nice1 ");
-					BotSay2 (b_originator.netname);
+					BotSay2 (b_originator.ent.netname);
 					BotSay2 ("\n");
 					break;
 				case 5:
@@ -377,13 +375,13 @@ bot_chat =
 				case 3:
 					BotSayInit();
 					BotSay2 (": good job ");
-					BotSay2 (b_originator.netname);
+					BotSay2 (b_originator.ent.netname);
 					BotSay2 ("\n");
 					break;
 				case 4:
 					BotSayInit ();
 					BotSay2 (": nice backflip ");
-					BotSay2 (b_originator.netname);
+					BotSay2 (b_originator.ent.netname);
 					BotSay2 ("\n");
 					break;
 				case 5:
@@ -402,7 +400,7 @@ bot_chat =
 				case 1:
 					BotSayInit ();
 					BotSay2 (": yeah right ");
-					BotSay2 (b_originator.netname);
+					BotSay2 (b_originator.ent.netname);
 					BotSay2 ("\n");
 					bot_start_topic (0);
 					break;
@@ -431,34 +429,65 @@ bot_chat =
 		default:
 			break;
 		}
-		self.b_chattime = 0;
+		b_chattime = 0;
 	} else if (b_topic) {
 		if (random () < 0.5) {
 			if (self == b_originator) {
 				if (b_topic <= 7)
-					self.b_chattime = time + 2;
+					b_chattime = time + 2;
 			} else {
 				if (b_topic >= 7)
-					self.b_chattime = time + 2;
+					b_chattime = time + 2;
 			}
 		}
 	}
-};
+}
 
-void ()
-KickABot =
++(void)kick
 {
 	local entity ty;
 
 	ty = find (NIL, classname, "player");
 	while (ty != NIL) {
+		/*XXX
 		if (!(ty.ishuman)) {
 			BotDisconnect (ty);
 			ty.ishuman = TRUE;
 			ty = NIL;
 		} else
 			ty = find (ty, classname, "player");
+		*/
 	}
+}
+
+/*
+fov
+
+is the entity in the bot's field of view
+*/
+-(integer)fov:(entity)targ
+{
+	local float		g;
+	local vector	yawn;
+
+	yawn = realorigin (targ);
+	yawn = (yawn + targ.view_ofs) - (ent.origin + ent.view_ofs);
+	yawn = normalize (yawn);
+	yawn = vectoangles (yawn);
+	g = angcomp (ent.v_angle_x, yawn_x);
+	if (fabs (g) > 45)
+		return FALSE;
+	g = angcomp (ent.v_angle_y, yawn_y);
+	if (fabs (g) > 60)
+		return FALSE;
+	return TRUE;
+}
+@end
+
+float (float v)
+frik_anglemod =
+{
+	return v - floor (v / 360) * 360;
 };
 
 /*
@@ -474,97 +503,15 @@ realorigin =
 };
 
 /*
-fisible
-
-a version of visible that checks for corners
-of the bounding boxes
-*/
-float (entity targ)
-fisible =
-{
-	local float		thruwater = 0, pc1 = 0, pc2 = 0;
-	local vector	spot1, org;
-
-	org = realorigin (targ);
-	spot1 = self.origin + self.view_ofs;
-	
-	if (targ.solid == SOLID_BSP) {
-		traceline (spot1, org, TRUE, self);
-		if (trace_ent == targ)
-			return TRUE;
-		else if (trace_fraction == 1)
-			return TRUE;
-		return FALSE;
-	} else {
-		pc1 = pointcontents (org);
-		pc2 = pointcontents (spot1);
-		if (targ.classname == "player")
-			thruwater = FALSE;
-		else if (pc1 == CONTENT_LAVA)
-			return FALSE;
-		else	
-			thruwater = TRUE;
-	}
-	
-	if (pc1 < -1) {
-		// targ's origin is in water or other liquid
-		if (pc2 != pc1) {
-			// look for their head
-			traceline (spot1, org + targ.mins, TRUE, self);
-			// cross the water check
-			if (trace_inopen)
-				if (trace_inwater)
-					if (!thruwater)
-						return FALSE;
-			if (trace_ent == targ)
-				return TRUE;
-			else if (trace_fraction == 1)
-				return TRUE;
-			return FALSE;
-		}
-	} else {
-		if (pc2 != pc1) {
-			traceline (spot1, org + targ.maxs, TRUE, self);
-			if (trace_inopen)
-				if (trace_inwater)
-					if (!thruwater)
-						return FALSE;
-			if (trace_ent == targ)
-				return TRUE;
-			else if (trace_fraction == 1)
-				return TRUE;
-			return FALSE;
-		}
-	}
-	traceline (spot1, org, TRUE, self);
-	if (trace_ent == targ)
-		return TRUE;
-	else if (trace_fraction == 1)
-		return TRUE;
-	traceline (spot1, org + targ.maxs, TRUE, self);
-	if (trace_ent == targ)
-		return TRUE;
-	else if (trace_fraction == 1)
-		return TRUE;
-	traceline (spot1, org + targ.mins, TRUE, self);
-	if (trace_ent == targ)
-		return TRUE;
-	else if (trace_fraction == 1)
-		return TRUE;
-	return FALSE;
-};
-
-
-/*
 sisible
 
 Now this is getting ridiculous. Simple visible,
 used when we need just a simple traceline nothing else
 */
-float (entity targ)
+float (entity ent, entity targ)
 sisible =
 {
-	traceline (self.origin, targ.origin, TRUE, self);
+	traceline (ent.origin, targ.origin, TRUE, ent);
 	if (trace_ent == targ)
 		return TRUE;
 	else if (trace_fraction == 1)
@@ -590,34 +537,4 @@ angcomp =
 	else if (answer < -180)
 		answer += 360;
 	return answer;
-};
-
-/*
-fov
-
-is the entity in the bot's field of view
-*/
-float (entity targ)
-fov =
-{
-	local float		g;
-	local vector	yawn;
-
-	yawn = realorigin (targ);
-	yawn = (yawn + targ.view_ofs) - (self.origin + self.view_ofs);
-	yawn = normalize (yawn);
-	yawn = vectoangles (yawn);
-	g = angcomp (self.v_angle_x, yawn_x);
-	if (fabs (g) > 45)
-		return FALSE;
-	g = angcomp (self.v_angle_y, yawn_y);
-	if (fabs (g) > 60)
-		return FALSE;
-	return TRUE;
-};
-
-float (float v)
-frik_anglemod =
-{
-	return v - floor (v / 360) * 360;
 };

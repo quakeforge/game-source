@@ -153,13 +153,14 @@ integer		max_clients;
 float       real_frametime;
 float		bot_count, b_options, lasttime;
 float		waypoint_mode, dump_mode; 
-float		waypoints, direct_route, userid;
+integer		waypoints;
+float		direct_route, userid;
 float		sv_friction, sv_gravity;
 float		sv_accelerate, sv_maxspeed, sv_stopspeed;
 entity		fixer;
-entity		route_table;
+Bot			route_table;
 entity		b_temp1, b_temp2, b_temp3;
-entity 		way_head;
+WayPoint	way_head;
 float		busy_waypoints;
 
 float coop = 0; // hack
@@ -299,7 +300,7 @@ BotPreFrame =
 			bot_start_topic (2);
 		self.b_frags = self.frags;
 	}
-	DynamicWaypoint();
+	[self.@this dynamicWaypoint];
 	return FALSE;
 };
 float ()
@@ -409,17 +410,10 @@ UpdateClient =
 	// FIXME: do teams properly
 };
 
-float (integer clientno)
+integer (integer clientno)
 ClientBitFlag =
 {
-	local float bitflag;
-
-	bitflag = 1;
-	while (clientno > 0) {
-		bitflag *= 2;
-		clientno--;
-	}
-	return bitflag;
+	return 1 << clientno;
 };
 
 integer ()
@@ -438,7 +432,7 @@ ClientNextAvailable =
 	return -1;
 };
 
-void(entity e1, entity e2, float flag) DeveloperLightning = {};
+void(WayPoint e1, WayPoint e2, integer flag) DeveloperLightning = {};
 
 // BotConnect and related functions. -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -489,9 +483,9 @@ BotConnect =
 	self.b_clientno = f;
 	self.colormap = (float) f;
 	if (whatbot)
-		self.netname = BotName (whatbot);
+		@self.netname = [((Bot)@self.@this) name:whatbot];
 	else
-		self.netname = PickARandomName ();
+		@self.netname = [((Bot)@self.@this) randomName];
 
 	// players can set skill all weird, so leave these checks in
 	if (whatskill > 3)
@@ -586,7 +580,7 @@ void () BotImpulses =
 		f = (integer) stof (h);
 		BotConnect (0, f);
 	} else if (self.impulse == 102)
-		KickABot ();
+		[Bot kick];
 	else
 		return;
 	self.impulse = 0;

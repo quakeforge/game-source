@@ -46,6 +46,32 @@ this notice in its entirety.
 
 WayPoint way_foot; // Ugh. Do I need a foot for this or not?
 
+@implementation Target
+
+-(vector)realorigin
+{
+	return realorigin (ent);
+}
+
+-(integer)canSee:(Target)targ ignoring:(entity)ignore
+{
+	local vector	spot1, spot2;
+
+	spot1 = ent.origin;
+	spot2 = [targ realorigin];
+	
+	do {
+		traceline (spot1, spot2, TRUE, ignore);
+		spot1 = realorigin(trace_ent);
+                ignore = trace_ent;
+	} while ((trace_ent != world) && (trace_fraction != 1));
+	if (trace_endpos == spot2)
+		return TRUE;
+	else 
+		return FALSE;
+}
+@end
+
 // Waypoint Linking code ======================================================
 
 @implementation WayPoint
@@ -301,7 +327,7 @@ tripping the runaway loop counter
 			busy_waypoints = busy_waypoints + 1;
 		e2.keys = TRUE;
 		e2.items = dist;
-		e2.ent.think = WaypointThink;
+		(IMP)e2.ent.think = [self methodFor: @selector (waypointThink)];
 		e2.ent.nextthink = time;
 		e2.enemy = self;
 	}
@@ -339,24 +365,6 @@ tripping the runaway loop counter
 			direct_route = FALSE;
 		}
 	}
-}
-
--(integer)canSee:(WayPoint)way ignoring:(entity)ignore
-{
-	local vector	spot1, spot2;
-
-	spot1 = origin;
-	spot2 = realorigin (way.ent);
-	
-	do {
-		traceline (spot1, spot2, TRUE, ignore);
-		spot1 = realorigin(trace_ent);
-                ignore = trace_ent;
-	} while ((trace_ent != world) && (trace_fraction != 1));
-	if (trace_endpos == spot2)
-		return TRUE;
-	else 
-		return FALSE;
 }
 
 @end
@@ -574,7 +582,7 @@ different bot.
 	local integer flag;
 	local Bot bot = (Bot)this.@this;
 
-	ClearMyRoute();
+	[WayPoint clearMyRoute:self];
 
 	t = [this.@this findWayPoint:bot.current_way];
 	// FIXME
@@ -637,7 +645,7 @@ Boy it's confusing.
 	if (last_way != NIL) {
 		last_way.items = vlen(self.last_way.origin - ent.origin);
 		last_way.ent.nextthink = time;
-		last_way.ent.think = WaypointThink;
+		(IMP)last_way.ent.think = [self methodFor: @selector(waypointThink)];
 		last_way.keys = TRUE;
 		busy_waypoints = 1;
 		return TRUE;
@@ -866,5 +874,79 @@ very good all things considered.
 		if (trace_ent.classname == "door")
 			t.flags |= AI_DOORFLAG;
 	}
+}
+
+-(integer)canSee:(Target)targ
+{
+	local float		thruwater = 0, pc1 = 0, pc2 = 0;
+	local vector	spot1, org;
+
+	org = [targ realorigin];
+	spot1 = ent.origin + ent.view_ofs;
+	
+	if (targ.ent.solid == SOLID_BSP) {
+		traceline (spot1, org, TRUE, ent);
+		if (trace_ent == targ.ent)
+			return TRUE;
+		else if (trace_fraction == 1)
+			return TRUE;
+		return FALSE;
+	} else {
+		pc1 = pointcontents (org);
+		pc2 = pointcontents (spot1);
+		if (targ.ent.classname == "player")
+			thruwater = FALSE;
+		else if (pc1 == CONTENT_LAVA)
+			return FALSE;
+		else	
+			thruwater = TRUE;
+	}
+	
+	if (pc1 < -1) {
+		// targ's origin is in water or other liquid
+		if (pc2 != pc1) {
+			// look for their head
+			traceline (spot1, org + targ.ent.mins, TRUE, ent);
+			// cross the water check
+			if (trace_inopen)
+				if (trace_inwater)
+					if (!thruwater)
+						return FALSE;
+			if (trace_ent == targ.ent)
+				return TRUE;
+			else if (trace_fraction == 1)
+				return TRUE;
+			return FALSE;
+		}
+	} else {
+		if (pc2 != pc1) {
+			traceline (spot1, org + targ.ent.maxs, TRUE, ent);
+			if (trace_inopen)
+				if (trace_inwater)
+					if (!thruwater)
+						return FALSE;
+			if (trace_ent == targ.ent)
+				return TRUE;
+			else if (trace_fraction == 1)
+				return TRUE;
+			return FALSE;
+		}
+	}
+	traceline (spot1, org, TRUE, ent);
+	if (trace_ent == targ.ent)
+		return TRUE;
+	else if (trace_fraction == 1)
+		return TRUE;
+	traceline (spot1, org + targ.ent.maxs, TRUE, ent);
+	if (trace_ent == targ.ent)
+		return TRUE;
+	else if (trace_fraction == 1)
+		return TRUE;
+	traceline (spot1, org + targ.ent.mins, TRUE, ent);
+	if (trace_ent == targ.ent)
+		return TRUE;
+	else if (trace_fraction == 1)
+		return TRUE;
+	return FALSE;
 }
 @end

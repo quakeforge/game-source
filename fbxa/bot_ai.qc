@@ -236,25 +236,25 @@ removed.
 					bot_start_topic (4);
 				}
 				ent.search_time = time + 5; // never time out
-			} else if (!fisible(targ))
+			} else if (![self canSee:targ])
 				[self lost:targ :FALSE];	
 		} else if (waypoint_mode > WM_LOADED) {
 			if (vlen (targ.origin - ent.origin) < 128) {
 				[self lost:targ :TRUE];	
 			}
 		}
-	} else if (targ.classname == "func_button") {
+	} else if (targ.ent.classname == "func_button") {
 		// buttons are lost of their frame changes
-		if (targ.frame) {
+		if (targ.ent.frame) {
 			[self lost:targ :TRUE];
-			if (ent.enemy == targ)
+			if (ent.enemy == targ.ent)
 				ent.enemy = NIL;
 //			if (target[0])
 //				bot_get_path (target[0], TRUE);
 		}
-	} else if ((targ.movetype == MOVETYPE_NONE) && (targ.solid == SOLID_TRIGGER)) {
+	} else if ((targ.ent.movetype == MOVETYPE_NONE) && (targ.ent.solid == SOLID_TRIGGER)) {
 		// trigger_multiple style triggers are lost if their thinktime changes
-		if (targ.nextthink >= time) {
+		if (targ.ent.nextthink >= time) {
 			[self lost:targ :TRUE];
 //			if (target[0])
 //				bot_get_path (target[0], TRUE);
@@ -262,14 +262,14 @@ removed.
 	}
 	// lose any target way above the bot's head
 	// FIXME: if the bot can fly in your mod..
-	if ((targ.origin_z - ent.origin_z) > 64) {
-		dist = targ.origin - ent.origin;
+	if ((targ.ent.origin_z - ent.origin_z) > 64) {
+		dist = targ.ent.origin - ent.origin;
 		dist_z = 0;
 		if (vlen (dist) < 32)
 			if (ent.flags & FL_ONGROUND)
 				if (![self recognize_plat:FALSE])
 					[self lost:targ :FALSE];
-	} else if (targ.classname == "train") {
+	} else if (targ.ent.classname == "train") {
 		if ([self recognize_plat:FALSE])
 			[self lost:targ :TRUE];
 	}
@@ -305,7 +305,7 @@ based b_aiflags.
 		// was on a door when spawned
 		// if there is nothing there now
 		if (![ent.@this recognize_plat:FALSE]) {
-			newt = FindThing (ent, "door"); // this is likely the door responsible (crossfingers)
+			newt = [self findThing: "door"]; // this is likely the door responsible (crossfingers)
 
 			if (b_aiflags & AI_DOOR_NO_OPEN) {
 				if (newt.nextthink)
@@ -376,7 +376,7 @@ based b_aiflags.
 		}
 	}
 	if (b_aiflags & AI_PLAT_BOTTOM) {
-		newt = FindThing (ent, "plat");
+		newt = [self findThing:"plat"];
 		if (newt.state != 1) {
 			v =  ent.origin - realorigin (newt);
 			v_z = 0;
@@ -432,7 +432,7 @@ confused
 	if ([self target_onstack:last_way])
 		return; // old waypoint still being hunted
 
-	jj = FindRoute (last_way);
+	jj = [self findRoute:last_way];
 	if (!jj) {
 		// this is an ugly hack
 		/*XXX
@@ -456,7 +456,7 @@ confused
 	if (last_way) {
 		if ([last_way isLinkedTo:jj] == 2) {
 			// waypoints are telelinked
-			tele = FindThing (ent, "trigger_teleport").@this; // this is probbly the teleport responsible
+			tele = [self findThing:"trigger_teleport"].@this; // this is probbly the teleport responsible
 			[self target_add:tele];
 		}
 		traceline (last_way.origin, jj.origin, FALSE, ent); // check for blockage
@@ -520,8 +520,8 @@ the bot finds things it wants to kill/grab.
 	// This is the most executed function in the bot. Careful what you do here.
 	if ((thing.flags & FL_ITEM) && thing.model && thing.search_time < time) {
 		// ugly hack
-		if (thing._last != ent)
-			thisp = 20;
+		//XXX if (thing._last != ent)
+		//XXX 	thisp = 20;
 		if (thing.classname == "item_artifact_super_damage")
 			thisp = 65;
 		else if (thing.classname == "item_artifact_invulnerability")
@@ -568,26 +568,27 @@ the bot finds things it wants to kill/grab.
 					thisp = 2;
 				else if (coop) {
 					thisp = 100;
-					if (thing.target1.classname == "player")
-						if (!thing.target1.ishuman)
-							return 0;
+					//XXX if (thing.targets[0].classname == "player")
+					//XXX 	if (!thing.targets[0].ishuman)
+					//XXX 		return 0;
 				} else if (teamplay && thing.team == ent.team) {
 					thisp = 100;
-					if (thing.target1.classname == "player")
-						return 0;
+					//XXX if (thing.targets[0].classname == "player")
+					//XXX 	return 0;
 				} else
 					thisp = 30;
 			}
 		}
 	} else if (thing.classname == "waypoint") {
-		if (thing.b_aiflags & AI_SNIPER)
-			thisp = 30;
-		else if (thing.b_aiflags & AI_AMBUSH)
-			thisp = 30;
+		//XXX if (thing.b_aiflags & AI_SNIPER)
+		//XXX 	thisp = 30;
+		//XXX else if (thing.b_aiflags & AI_AMBUSH)
+		//XXX 	thisp = 30;
 	}
 	if (pointcontents (thing.origin) < -3)
 		return 0;
 	if (thisp) {
+		/*XXX
 		if (thing.current_way) {
 			// check to see if it's unreachable
 			if (thing.current_way.items == -1)
@@ -595,6 +596,7 @@ the bot finds things it wants to kill/grab.
 			else
 				thisp += (13000 - thing.current_way.items) * 0.05; 
 		}
+		*/
 	} 		
 	return thisp;
 }
@@ -614,7 +616,7 @@ the bot finds things it wants to kill/grab.
 		thatp = [self priority_for_thing:foe];
 		if (thatp)
 			if (!scope)
-				if (!sisible (foe))
+				if (!sisible (ent, foe))
 					thatp = 0;
 		if (thatp > bestp) {
 			bestp = thatp;
@@ -628,7 +630,7 @@ the bot finds things it wants to kill/grab.
 	if (![self target_onstack:best]) {	
 		[self target_add:best];
 		if (scope) {
-			bot_get_path (best, FALSE);
+			[self get_path:best :FALSE];
 			b_aiflags |= AI_WAIT;
 		}
 	}
@@ -743,7 +745,7 @@ frame, the ai_time limits it's actual updating
 		ent.button2 = 0;
 		keys = 0;
 		b_aiflags = 0;
-		ClearMyRoute ();
+		[WayPoint clearMyRoute:self];
 		targets[0] = targets[1] = targets[2] = targets[3] = ent.enemy = NIL;
 		last_way = NIL;
 		return;
@@ -787,7 +789,7 @@ frame, the ai_time limits it's actual updating
 			if (route_failed) {
 				[self roam];
 				route_failed = 0;
-			} else if (!begin_route()) {	
+			} else if (![self begin_route]) {	
 				[self look_for_crap:FALSE];
 			}
 			keys = 0;

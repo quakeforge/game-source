@@ -184,7 +184,7 @@ weapon_range =
 						if (flen < foedist) {
 							tsz = [self size_player:foe];
 							if (tsz < foesz) {
-								if (fisible (foe)) {
+								if ([self canSee:foe]) {
 									ent.enemy = foe;
 									foedist = flen;
 									foesz = tsz;
@@ -209,12 +209,14 @@ weapon_range =
 							if (flen < foedist) {
 								tsz = [self size_player:foe];
 								if (tsz < foesz) {
+									/*XXX
 									if (fov(foe) || foe.b_sound > time || self.b_skill == 3) {
-										if (fisible (foe)) {
+										if ([self canSee:foe]) {
 											ent.enemy = foe;
 											foedist = vlen (foe.origin - ent.origin);
 										}
 									}
+									*/
 								}
 							}
 						}
@@ -313,7 +315,7 @@ attacking an enemy.
 	} else if (!ent.enemy.takedamage) {
 		ent.enemy = NIL;
 		return;
-	} else if (!fisible (ent.enemy)) {
+	} else if (![self canSee:ent.enemy]) {
 		ent.enemy = NIL;
 		return;
 	}

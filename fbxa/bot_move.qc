@@ -331,11 +331,11 @@ I have no idea how well it will work
 		if (b_aiflags & AI_DANGER) {
 			way = '0 0 0' - obs_dir;
 		} else if (wallhug) {
-			way_x = ent.obs_dir_y * -1;
-			way_y = ent.obs_dir_x;
+			way.x = obs_dir.y * -1;
+			way.y = obs_dir.x;
 		} else {
-			way_x = ent.obs_dir_y;
-			way_y = ent.obs_dir_x * -1;
+			way.x = obs_dir.y;
+			way.y = obs_dir.x * -1;
 		}
 		way_z = 0;
 		keys &= 960;
@@ -440,7 +440,7 @@ own waypoints.
 					org = org1 + (ang * dist);
 					traceline(org, org - '0 0 48', TRUE, ent);
 					if (trace_fraction != 1) {
-						SpawnTempWaypoint (org);
+						[self spawnTempWaypoint:org];
 						flag = TRUE;
 					}
 				}

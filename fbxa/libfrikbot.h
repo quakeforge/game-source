@@ -1,8 +1,16 @@
 #include "Entity.h"
 
 @class Bot;
+@class WayPoint;
 
-@interface WayPoint: Entity
+@interface Target: Entity
+{
+}
+-(vector)realorigin;
+-(integer)canSee:(Target)targ ignoring:(entity)ignore;
+@end
+
+@interface WayPoint: Target
 {
 @public
 	WayPoint [4] targets;
@@ -36,11 +44,9 @@
 
 -(void)followLink:(WayPoint)e2 :(integer)b_bit;
 -(void)waypointThink;
-
--(integer)canSee:(WayPoint)way ignoring:(entity)ignore;
 @end
 
-@interface Bot: Entity
+@interface Bot: Target
 {
 @public
 	//model modelindex
@@ -76,7 +82,6 @@
 	WayPoint temp_way, last_way, current_way;
 	entity [4] targets;
 	entity avoid;
-	entity _next, _last;
 	vector obs_dir;
 	vector b_dir;
 	vector dyn_dest;
@@ -86,6 +91,16 @@
 }
 - (id) init;
 - (id) initWithEntity: (entity) e;
+@end
+
+@interface Bot (Misc)
+-(string)name:(integer)r;
+-(string)randomName;
+-(void)start_topic:(integer)topic;
+-(void)chat;
+-(integer)fov:(entity)targ;
+
++(void)kick;
 @end
 
 @interface Bot (Physics)
@@ -137,6 +152,8 @@
 -(integer)begin_route;
 -(void)spawnTempWaypoint:(vector)org;
 -(void)dynamicWaypoint;
+
+-(integer)canSee:(Target)targ;
 @end
 
 #define FALSE 0
@@ -257,16 +274,11 @@
 @extern void() 				CL_KeyMove;
 
 // ai & misc
-@extern void() BotAI;
-@extern string()				PickARandomName;
 @extern float(entity targ)		fov;
 @extern float(float y1, float y2)	angcomp;
-@extern float(entity targ)		sisible;
-@extern float(entity targ)		fisible;
+@extern float(entity ent, entity targ)		sisible;
 @extern vector(entity ent)		realorigin;
-@extern void()				KickABot;
 @extern void()				BotImpulses;
-@extern string(integer r)			BotName;
 @extern float(float v)			frik_anglemod;
 @extern void() bot_chat;
 @extern void(float tpic) bot_start_topic;
