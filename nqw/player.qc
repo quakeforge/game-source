@@ -493,7 +493,7 @@ void(string gibname, float dm) ThrowHead =
 	setsize (self, '-16 -16 0', '16 16 56');
 	self.velocity = VelocityForDamage (dm);
 	self.origin_z = self.origin_z - 24;
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
+	self.flags &= FL_ONGROUND;
 	self.avelocity = (random () - 0.5) * '0 1200 0';
 };
 
@@ -526,7 +526,7 @@ void() PlayerDie =
 {
 	local   float   i;
 	local	string	s;	
-	self.items = self.items - (self.items & IT_INVISIBILITY);
+	self.items &= ~IT_INVISIBILITY;
 
 	if ((stof (infokey (world, "dq"))) != 0) {
 		if (self.super_damage_finished > 0) {
@@ -565,7 +565,7 @@ void() PlayerDie =
 	self.view_ofs = '0 0 -8';
 	self.deadflag = DEAD_DYING;
 	self.solid = SOLID_NOT;
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
+	self.flags &= ~FL_ONGROUND;
 	self.movetype = MOVETYPE_TOSS;
 	if (self.velocity_z < 10)
 		self.velocity_z = self.velocity_z + random () * 300;

@@ -37,7 +37,7 @@ void() q_touch =
 	sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	self.solid = SOLID_NOT;
-	other.items = other.items | IT_QUAD;
+	other.items |= IT_QUAD;
 	self.model = string_null;
 	if (deathmatch == 4) {
 		other.armortype = 0;
@@ -102,7 +102,7 @@ void() r_touch =
 	sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	self.solid = SOLID_NOT;
-	other.items = other.items | IT_INVISIBILITY;
+	other.items |= IT_INVISIBILITY;
 	self.model = string_null;
 
 	// do the apropriate action
@@ -282,7 +282,7 @@ void() health_touch =
 
 	// Megahealth = rot down the player's super health
 	if (self.healtype == 2) {
-		other.items = other.items | IT_SUPERHEALTH;
+		other.items |= IT_SUPERHEALTH;
 		if (deathmatch != 4)
 		{
 			self.nextthink = time + 5;
@@ -312,7 +312,7 @@ void() item_megahealth_rot =
 
 	// it is possible for a player to die and respawn between rots, so don't
 	// just blindly subtract the flag off
-	other.items = other.items - (other.items & IT_SUPERHEALTH);
+	other.items &= ~IT_SUPERHEALTH;
 	
 	if (deathmatch && deathmatch != 2) {   // deathmatch 2 is silly old rules
 		self.nextthink = time + 20;
@@ -357,8 +357,8 @@ void() armor_touch =
 		
 	other.armortype = type;
 	other.armorvalue = value;
-	other.items = other.items - (other.items & (IT_ARMOR1 | IT_ARMOR2 |
-												IT_ARMOR3)) + bit;
+	other.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+	other.items |= bit;
 	self.solid = SOLID_NOT;
 	self.model = string_null;
 	if (deathmatch && deathmatch != 2) {
@@ -581,7 +581,7 @@ void() weapon_touch =
 
 	// change to the weapon
 	old = other.items;
-	other.items = other.items | new;
+	other.items |= new;
 	
 	stemp = self;
 	self = other;
@@ -963,7 +963,7 @@ void() key_touch =
 
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
-	other.items = other.items | self.items;
+	other.items |= self.items;
 
 	if (!coop) {
 		self.solid = SOLID_NOT;
@@ -1079,7 +1079,7 @@ void() sigil_touch =
 	stuffcmd (other, "bf\n");
 	self.solid = SOLID_NOT;
 	self.model = string_null;
-	serverflags = serverflags | (self.spawnflags & 15);
+	serverflags |= self.spawnflags & 15;
 	self.classname = "";			// so rune doors won't find it
 	
 	activator = other;
@@ -1147,7 +1147,7 @@ void() powerup_touch =
 	sound (other, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 	self.solid = SOLID_NOT;
-	other.items = other.items | self.items;
+	other.items |= self.items;
 	self.model = string_null;
 
 	// do the apropriate action
@@ -1192,7 +1192,7 @@ void() item_artifact_invulnerability =
 	setmodel (self, "progs/invulner.mdl");
 	self.netname = "Pentagram of Protection";
 	if (deathmatch)	// Tonik
-		self.effects = self.effects | EF_RED;
+		self.effects |= EF_RED;
 	self.items = IT_INVULNERABILITY;
 	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
@@ -1254,7 +1254,7 @@ void() item_artifact_super_damage =
 		self.netname = "Quad Damage";
 	self.items = IT_QUAD;
 	if (deathmatch)	// Tonik
-		self.effects = self.effects | EF_BLUE;
+		self.effects |= EF_BLUE;
 	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
 };
@@ -1298,11 +1298,11 @@ void() BackpackTouch =
 			if (other.invincible_time != 1) {
 				other.invincible_time = 1;
 				other.invincible_finished = time + 30;
-				other.items = other.items | IT_INVULNERABILITY;
+				other.items |= IT_INVULNERABILITY;
 
 				other.super_time = 1;
 				other.super_damage_finished = time + 30;
-				other.items = other.items | IT_QUAD;
+				other.items |= IT_QUAD;
 
 				other.ammo_cells = 0;		
 
@@ -1338,7 +1338,7 @@ void() BackpackTouch =
 	if (!new)
 		new = other.weapon;
 	old = other.items;
-	other.items = other.items | self.items;
+	other.items |= self.items;
 
 	bound_other_ammo ();
 

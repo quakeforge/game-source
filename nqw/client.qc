@@ -980,7 +980,7 @@ PlayerPreThink =
 	if (self.button2)
 		PlayerJump ();
 	else
-		self.flags = self.flags | FL_JUMPRELEASED;
+		self.flags |= FL_JUMPRELEASED;
 
 	// teleporters can force a non-moving pause time        
 	if (time < self.pausetime)

@@ -699,7 +699,7 @@ void() W_SetCurrentAmmo =
 {
 	player_run ();          // get out of any weapon firing states
 
-	self.items = self.items - (self.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS));
+	self.items &= ~(IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS);
 	
 	switch (self.weapon) {
 	case IT_AXE:
@@ -711,43 +711,43 @@ void() W_SetCurrentAmmo =
 		self.currentammo = self.ammo_shells;
 		self.weaponmodel = "progs/v_shot.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_SHELLS;
+		self.items |= IT_SHELLS;
 		break;
 	case IT_SUPER_SHOTGUN:
 		self.currentammo = self.ammo_shells;
 		self.weaponmodel = "progs/v_shot2.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_SHELLS;
+		self.items |= IT_SHELLS;
 		break;
 	case IT_NAILGUN:
 		self.currentammo = self.ammo_nails;
 		self.weaponmodel = "progs/v_nail.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_NAILS;
+		self.items |= IT_NAILS;
 		break;
 	case IT_SUPER_NAILGUN:
 		self.currentammo = self.ammo_nails;
 		self.weaponmodel = "progs/v_nail2.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_NAILS;
+		self.items |= IT_NAILS;
 		break;
 	case IT_GRENADE_LAUNCHER:
 		self.currentammo = self.ammo_rockets;
 		self.weaponmodel = "progs/v_rock.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_ROCKETS;
+		self.items |= IT_ROCKETS;
 		break;
 	case IT_ROCKET_LAUNCHER:
 		self.currentammo = self.ammo_rockets;
 		self.weaponmodel = "progs/v_rock2.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_ROCKETS;
+		self.items |= IT_ROCKETS;
 		break;
 	case IT_LIGHTNING:
 		self.currentammo = self.ammo_cells;
 		self.weaponmodel = "progs/v_light.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_CELLS;
+		self.items |= IT_CELLS;
 		break;
 	default:
 		self.currentammo = 0;
@@ -880,13 +880,9 @@ void() CheatCommand =
 	self.ammo_rockets = 100;
 	self.ammo_nails = 200;
 	self.ammo_shells = 100;
-	self.items = self.items |
-		IT_AXE |
-		IT_SHOTGUN | IT_SUPER_SHOTGUN |
-		IT_NAILGUN | IT_SUPER_NAILGUN |
-		IT_GRENADE_LAUNCHER | IT_ROCKET_LAUNCHER |
-		IT_LIGHTNING |
-		IT_KEY1 | IT_KEY2;
+	self.items |= (IT_AXE | IT_SHOTGUN | IT_SUPER_SHOTGUN | IT_NAILGUN
+				   | IT_SUPER_NAILGUN | IT_GRENADE_LAUNCHER
+				   | IT_ROCKET_LAUNCHER | IT_LIGHTNING | IT_KEY1 | IT_KEY2);
 
 	self.weapon = IT_ROCKET_LAUNCHER;
 	self.impulse = 0;
