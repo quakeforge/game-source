@@ -240,10 +240,11 @@ void() SUB_UseTargets =
 //
 	if (self.killtarget)
 	{
+		local string kt = self.killtarget;
 		t = world;
 		do
 		{
-			t = find (t, targetname, self.killtarget);
+			t = find (t, targetname, kt);
 			if (!t)
 				return;
 			remove (t);
