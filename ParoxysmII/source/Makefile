@@ -21,7 +21,7 @@ DEP = $(addprefix .deps/,$(addsuffix .d,$(basename $(SRC))))
 all: qwprogs.dat
 
 qwprogs.dat: $(OBJ)
-	qfcc -o qwprogs.dat $(OBJ)
+	qfcc $(RFLAGS) -o qwprogs.dat $(OBJ)
 
 clean:
 	-rm -f *.dat *.sym progdefs.h *.o
