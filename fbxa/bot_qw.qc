@@ -160,7 +160,7 @@ float		sv_accelerate, sv_maxspeed, sv_stopspeed;
 entity		fixer;
 Bot			route_table;
 entity		b_temp1, b_temp2, b_temp3;
-WayPoint	way_head;
+Waypoint	way_head;
 float		busy_waypoints;
 
 float coop = 0; // hack
@@ -432,7 +432,7 @@ ClientNextAvailable =
 	return -1;
 };
 
-void(WayPoint e1, WayPoint e2, integer flag) DeveloperLightning = {};
+void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
 
 // BotConnect and related functions. -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 

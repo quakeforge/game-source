@@ -44,7 +44,7 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 
-WayPoint way_foot; // Ugh. Do I need a foot for this or not?
+Waypoint way_foot; // Ugh. Do I need a foot for this or not?
 
 @implementation Target
 
@@ -74,9 +74,9 @@ WayPoint way_foot; // Ugh. Do I need a foot for this or not?
 
 // Waypoint Linking code ======================================================
 
-@implementation WayPoint
+@implementation Waypoint
 
--(integer)isLinkedTo:(WayPoint)way
+-(integer)isLinkedTo:(Waypoint)way
 {
 	local integer i;
 
@@ -93,7 +93,7 @@ WayPoint way_foot; // Ugh. Do I need a foot for this or not?
 	return 0;
 }
 
--(integer)linkWay:(WayPoint)way
+-(integer)linkWay:(Waypoint)way
 {
 	local integer i;
 
@@ -112,7 +112,7 @@ WayPoint way_foot; // Ugh. Do I need a foot for this or not?
 }
 
 // Link Ways part 2, used only for teleporters
--(integer)teleLinkWay:(WayPoint)way
+-(integer)teleLinkWay:(Waypoint)way
 {
 	local integer i;
 
@@ -131,7 +131,7 @@ WayPoint way_foot; // Ugh. Do I need a foot for this or not?
 	return 0;
 }
 
--(void)unlinkWay:(WayPoint)way
+-(void)unlinkWay:(Waypoint)way
 {
 	local integer i;
 
@@ -212,7 +212,7 @@ Waypoint Loading from file
 +(void)clearAll
 {
 
-	local WayPoint t, n;
+	local Waypoint t, n;
 
 	t = way_head;
 	while(t) {
@@ -225,9 +225,9 @@ Waypoint Loading from file
 	waypoints = 0;
 }
 
-+(WayPoint)waypointForNum:(integer)num
++(Waypoint)waypointForNum:(integer)num
 {
-	local WayPoint t;
+	local Waypoint t;
 	if (!num)
 		return NIL;
 
@@ -242,15 +242,15 @@ Waypoint Loading from file
 
 -(void)fix
 {
-	targets[0] = [WayPoint waypointForNum:b_pants];
-	targets[1] = [WayPoint waypointForNum:b_skill];
-	targets[2] = [WayPoint waypointForNum:b_shirt];
-	targets[3] = [WayPoint waypointForNum:b_frags];
+	targets[0] = [Waypoint waypointForNum:b_pants];
+	targets[1] = [Waypoint waypointForNum:b_skill];
+	targets[2] = [Waypoint waypointForNum:b_shirt];
+	targets[3] = [Waypoint waypointForNum:b_frags];
 }
 
 +(void) fixWaypoints
 {
-	local WayPoint way;
+	local Waypoint way;
 
 	for (way = way_head; way; way = way.next)
 		[way fix];
@@ -268,7 +268,7 @@ Route & path table management
 {
 	// cleans up route table
 
-	local WayPoint t;
+	local Waypoint t;
 	t = way_head;
 	while (t) {
 		t.keys = FALSE;
@@ -281,7 +281,7 @@ Route & path table management
 +(void)clearMyRoute:(Bot) bot
 {
 	local integer flag;
-	local WayPoint t;
+	local Waypoint t;
 
 	flag = ClientBitFlag(bot.b_clientno);
 
@@ -303,7 +303,7 @@ tripping the runaway loop counter
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
--(void)followLink:(WayPoint)e2 :(integer)b_bit
+-(void)followLink:(Waypoint)e2 :(integer)b_bit
 {
 	local float dist;
 	
@@ -380,7 +380,7 @@ BSP/QC Waypoint loading
 
 void() waypoint =
 {	
-	local WayPoint way = [[WayPoint alloc] initFromEntity: @self];
+	local Waypoint way = [[Waypoint alloc] initFromEntity: @self];
 /*
 	self.search_time = time;
 	self.solid = SOLID_TRIGGER;
@@ -409,7 +409,7 @@ void() waypoint =
 
 void(vector org, vector bit1, integer bit4, integer flargs) make_way =
 {
-	local WayPoint y = [[WayPoint alloc] initAt:org];
+	local Waypoint y = [[Waypoint alloc] initAt:org];
 	//local entity y;
 	//waypoint_mode = WM_LOADED;
 	//y = make_waypoint(org);
@@ -436,9 +436,9 @@ functions big lag causer
 
 Finds the closest, fisible, waypoint to e
 */
--(WayPoint)findWayPoint:(WayPoint)start
+-(Waypoint)findWaypoint:(Waypoint)start
 {
-	local WayPoint best, t;
+	local Waypoint best, t;
 	local float dst, tdst;
 	local vector org;
 
@@ -472,9 +472,9 @@ Finds the closest, fisible, waypoint to e
 	return best;
 }
 
--(void)deleteWaypoint:(WayPoint)what
+-(void)deleteWaypoint:(Waypoint)what
 {
-	local WayPoint t;
+	local Waypoint t;
 
 	if (way_head == what)
 		way_head = what.next;
@@ -539,10 +539,10 @@ an object.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
--(WayPoint)findRoute:(WayPoint)lastone
+-(Waypoint)findRoute:(Waypoint)lastone
 {
 	// kinda like FindWaypoint, only of this bots route though
-	local WayPoint t, best;
+	local Waypoint t, best;
 	local float dst, tdst;
 	local integer flag;
 
@@ -578,13 +578,13 @@ different bot.
 
 -(void)mark_path:(entity)this
 {
-	local WayPoint t;
+	local Waypoint t;
 	local integer flag;
 	local Bot bot = (Bot)this.@this;
 
-	[WayPoint clearMyRoute:self];
+	[Waypoint clearMyRoute:self];
 
-	t = [this.@this findWayPoint:bot.current_way];
+	t = [this.@this findWaypoint:bot.current_way];
 	// FIXME
 	// ugh, better way to find players please!!!
 	if (this.classname != "player")
@@ -639,8 +639,8 @@ Boy it's confusing.
 	}
 
 	route_table = self;
-	[WayPoint clearRouteTable];
-	last_way = [self findWayPoint:current_way];
+	[Waypoint clearRouteTable];
+	last_way = [self findWaypoint:current_way];
 
 	if (last_way != NIL) {
 		last_way.items = vlen(self.last_way.origin - ent.origin);
@@ -656,7 +656,7 @@ Boy it's confusing.
 	}
 }
 
--(void)get_path:(WayPoint)this :(integer)direct
+-(void)get_path:(Waypoint)this :(integer)direct
 {
 	if (this == NIL)
 		return;
@@ -711,7 +711,7 @@ very good all things considered.
 */
 -(void)dynamicWaypoint
 {
-	local WayPoint t;
+	local Waypoint t;
 	local float dist, dynlink = 0, dynpoint = 0, editor = 0;
 
 	if (teleport_time > portal_time) {
@@ -786,7 +786,7 @@ very good all things considered.
 	// display the links for editor mode
 	if (editor) {
 		if (self.current_way) {
-			local WayPoint way = self.current_way;
+			local Waypoint way = self.current_way;
 			local integer i;
 
 			for (i = 0; i < 4; i++) {
@@ -800,7 +800,7 @@ very good all things considered.
 			return;
 	}
 
-	t = [self findWayPoint:current_way];
+	t = [self findWaypoint:current_way];
 	if (t) {
 		dist = vlen (ent.origin - t.origin);
 		if (dist < 192) {
@@ -849,7 +849,7 @@ very good all things considered.
 		dyn_dest = ent.origin + ent.view_ofs;
 	if (!dynpoint)
 		return;
-	t = [[WayPoint alloc] initAt:dyn_dest];
+	t = [[Waypoint alloc] initAt:dyn_dest];
 
 	if (!dyn_flags) {
 		if ([t canSee:current_way ignoring:ent])

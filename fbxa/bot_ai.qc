@@ -144,7 +144,7 @@ Bot has lost its target.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)lost:(WayPoint)targ :(integer)success
+-(void)lost:(Waypoint)targ :(integer)success
 {
 	if (!targ)
 		return;
@@ -156,8 +156,8 @@ Bot has lost its target.
 	// find a new route
 	if (!success) {
 		targets[0] = targets[1] = targets[2] = targets[3] = NIL;
-		last_way = [self findWayPoint:current_way];
-		[WayPoint clearMyRoute:self];
+		last_way = [self findWaypoint:current_way];
+		[Waypoint clearMyRoute:self];
 		b_aiflags = 0;
 	} else {
 		if (targ.ent.classname == "item_artifact_invisibility")
@@ -188,7 +188,7 @@ removed.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)check_lost:(WayPoint)targ
+-(void)check_lost:(Waypoint)targ
 {
 	local vector dist;
 
@@ -421,7 +421,7 @@ confused
 -(void)path
 {
 
-	local WayPoint jj, tele;
+	local Waypoint jj, tele;
 	local entity e;
 
 	[self check_lost:targets[0]];
@@ -745,7 +745,7 @@ frame, the ai_time limits it's actual updating
 		ent.button2 = 0;
 		keys = 0;
 		b_aiflags = 0;
-		[WayPoint clearMyRoute:self];
+		[Waypoint clearMyRoute:self];
 		targets[0] = targets[1] = targets[2] = targets[3] = ent.enemy = NIL;
 		last_way = NIL;
 		return;

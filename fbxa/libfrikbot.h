@@ -1,7 +1,7 @@
 #include "Entity.h"
 
 @class Bot;
-@class WayPoint;
+@class Waypoint;
 
 @interface Target: Entity
 {
@@ -10,11 +10,11 @@
 -(integer)canSee:(Target)targ ignoring:(entity)ignore;
 @end
 
-@interface WayPoint: Target
+@interface Waypoint: Target
 {
 @public
-	WayPoint [4] targets;
-	WayPoint next, prev;
+	Waypoint [4] targets;
+	Waypoint next, prev;
 	integer flags;
 	vector origin;
 	integer count;
@@ -22,11 +22,11 @@
 	integer b_pants, b_skill, b_shirt, b_frags, b_sound;
 	integer keys;
 	float items;
-	WayPoint enemy;
+	Waypoint enemy;
 	float search_time;
 }
 +(void)clearAll;
-+(WayPoint)waypointForNum:(integer)num;
++(Waypoint)waypointForNum:(integer)num;
 +(void)fixWaypoints;
 
 +(void)clearRouteTable;
@@ -37,12 +37,12 @@
 -(id)initAt:(vector)org;
 -(id)initFromEntity:(entity)ent;
 
--(integer)isLinkedTo:(WayPoint)way;
--(integer)linkWay:(WayPoint)way;
--(integer)teleLinkWay:(WayPoint)way;
--(void)unlinkWay:(WayPoint)way;
+-(integer)isLinkedTo:(Waypoint)way;
+-(integer)linkWay:(Waypoint)way;
+-(integer)teleLinkWay:(Waypoint)way;
+-(void)unlinkWay:(Waypoint)way;
 
--(void)followLink:(WayPoint)e2 :(integer)b_bit;
+-(void)followLink:(Waypoint)e2 :(integer)b_bit;
 -(void)waypointThink;
 @end
 
@@ -79,7 +79,7 @@
 	integer route_failed;
 	integer dyn_flags, dyn_plat;
 	float dyn_time;
-	WayPoint temp_way, last_way, current_way;
+	Waypoint temp_way, last_way, current_way;
 	entity [4] targets;
 	entity avoid;
 	vector obs_dir;
@@ -124,8 +124,8 @@
 -(integer)target_onstack:(entity)scot;
 -(void)target_add:(entity)e;
 -(void)target_drop:(entity)e;
--(void)lost:(WayPoint)targ :(integer)success;
--(void)check_lost:(WayPoint)targ;
+-(void)lost:(Waypoint)targ :(integer)success;
+-(void)check_lost:(Waypoint)targ;
 -(void)handle_ai;
 -(void)path;
 -(float)priority_for_thing:(entity)thing;
@@ -143,12 +143,12 @@
 @end
 
 @interface Bot (Way)
--(WayPoint)findWayPoint:(WayPoint)start;
--(void)deleteWaypoint:(WayPoint)what;
+-(Waypoint)findWaypoint:(Waypoint)start;
+-(void)deleteWaypoint:(Waypoint)what;
 -(entity)findThing:(string)s;
--(WayPoint)findRoute:(WayPoint)lastone;
+-(Waypoint)findRoute:(Waypoint)lastone;
 -(void)mark_path:(entity)this;
--(void)get_path:(WayPoint)this :(integer)direct;
+-(void)get_path:(Waypoint)this :(integer)direct;
 -(integer)begin_route;
 -(void)spawnTempWaypoint:(vector)org;
 -(void)dynamicWaypoint;
@@ -239,7 +239,7 @@
 @extern entity		fixer;
 @extern Bot			route_table;
 @extern entity		b_temp1, b_temp2, b_temp3;
-@extern WayPoint	way_head;
+@extern Waypoint	way_head;
 @extern float		busy_waypoints;
 
 @extern float coop;
@@ -287,7 +287,7 @@
 @extern void() BotSayInit;
 @extern void(string h) BotSay2;
 @extern void(string h) BotSayTeam;
-@extern void(WayPoint e1, WayPoint e2, integer flag) DeveloperLightning;
+@extern void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning;
 
 /*
 	angles is pitch yaw roll

@@ -244,7 +244,7 @@ void()				FixWaypoints;
 float()				begin_route;
 void(entity this, float direct)			bot_get_path;
 void()				WaypointThink;
-entity(entity start)				FindWayPoint;
+entity(entity start)				FindWaypoint;
 
 // physics & movement
 float(entity e)			bot_can_rj;
