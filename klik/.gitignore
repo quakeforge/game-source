@@ -3,3 +3,4 @@
 Makefile.deps
 equipid.qc
 equipid.qh
+progdefs.h
