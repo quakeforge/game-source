@@ -284,11 +284,6 @@ BotPreFrame =
 		} else
 			bot_start_topic (2);
 		self.b_frags = self.frags;
-		if (!self.ishuman) {
-			WriteByte (2, 14);
-			WriteByte (2, (float)self.b_clientno);
-			WriteShort (2, self.frags);
-		}
 	}
 	DynamicWaypoint();
 	return FALSE;

@@ -1,3 +1,41 @@
+#include "Entity.h"
+
+@interface Bot: Entity
+{
+	integer wallhug;
+	integer keys, oldkeys;
+	integer ishuman;
+	float b_frags;
+	integer b_clientno;
+	float b_shirt, b_pants;
+	float ai_time;
+	float b_sound;
+	float missile_speed;
+	float portal_time;
+	integer b_skill;
+	float switch_wallhug;
+	integer b_aiflags;
+	integer b_num;
+	float b_chattime;
+	float b_entertime;
+	float b_menu, b_menu_time, b_menu_value;
+	integer route_failed;
+	integer dyn_flags, dyn_time, dyn_plat;
+	entity temp_way, last_way, current_way;
+	entity [4] target;
+	entity _next, _last;
+	vector b_angle;
+	vector mouse_emu;
+	vector obs_dir;
+	vector movevect;
+	vector b_dir;
+	vector dyn_dest;
+	vector punchangle;
+}
+- (id) init;
+- (id) initWithEntity: (entity) e;
+@end
+
 #define FALSE 0
 #define TRUE 1
 
