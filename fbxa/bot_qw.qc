@@ -266,7 +266,7 @@ BotConnect =
 	local entity cl;
 	local Bot bot;
 	local bot_data_t [] name;
-	
+
 	cl = SV_AllocClient ();
 	if (!cl) {
 		bprint (PRINT_HIGH, "Unable to connect a bot, server is full.\n");
@@ -385,7 +385,6 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
 	b_pants = name.pants;
 	b_shirt = name.shirt;
 
-	[self updateClient];
 	//b_num = I
 	bot_count++;
 	if (skill > 3)
@@ -394,6 +393,7 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
 		skill = 0;
 	b_skill = skill;
 	ishuman = FALSE;
+	[self updateClient];
 
 	uself = @self;
 	@self = ent;

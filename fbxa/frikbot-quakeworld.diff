@@ -79,6 +79,15 @@ diff -u -r1.4 defs.qc
  vector(vector v) normalize                      = #9;
  void(string e) error                            = #10;
  void(string e) objerror                         = #11;
+@@ -534,7 +535,7 @@
+ // a forent of world is ignored
+ void(vector v1, vector v2, float nomonsters, entity forent) traceline = #16;    
+ entity() checkclient                            = #17;  // returns a client to look for
+-entity(entity start, .string fld, string match) find = #18;
++entity(entity start, ...) find = #18;
+ string(string s) precache_sound         = #19;
+ string(string s) precache_model         = #20;
+ void(entity client, string s)stuffcmd = #21;
 @@ -557,7 +558,7 @@
  float(entity e) checkbottom                     = #40;          // true if self is on ground
  float(vector v) pointcontents           = #41;          // returns a CONTENT_*
