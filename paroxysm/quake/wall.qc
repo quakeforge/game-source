@@ -221,7 +221,7 @@ void () wall_killed =
       remove(self);
 };
 
-void() wall_pain =
+void(entity attacker, float damage) wall_pain =
 {
 	if(self.health > 0)
 		self.health = self.max_health;

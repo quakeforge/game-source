@@ -1,7 +1,7 @@
 // prototypes
 void () W_WeaponFrame;
 void() W_SetCurrentAmmo;
-void() player_pain;
+void(entity attacker, float damage) player_pain;
 void() player_stand1;
 void (vector org) spawn_tfog;
 void (vector org, entity death_owner) spawn_tdeath;
@@ -257,8 +257,6 @@ void() execute_changelevel =
 
 void() changelevel_touch =
 {
-	local entity	pos;
-
 	if (other.classname != "player")
 		return;
 
@@ -843,7 +841,6 @@ void() CheckRules =
 
 void() PlayerDeathThink =
 {
-	local entity	old_self;
 	local float		forward;
 
 	if ((self.flags & FL_ONGROUND))
@@ -880,8 +877,6 @@ void() PlayerDeathThink =
 
 void() PlayerJump =
 {
-	local vector start, end;
-	
 	if (self.flags & FL_WATERJUMP)
 		return;
 	
@@ -1099,9 +1094,6 @@ Called every frame before physics are run
 */
 void() PlayerPreThink =
 {
-	local	float	mspeed, aspeed;
-	local	float	r;
-	
 	if (intermission_running)
 	{
 		IntermissionThink ();	// otherwise a button could be missed between
@@ -1349,9 +1341,6 @@ Called every frame after physics are run
 */
 void() PlayerPostThink =
 {
-	local	float	mspeed, aspeed;
-	local	float	r;
-	
 	if (time < 1.5) 
 		stuffcmd (self, "bf\n");//POX v1.2 - clear overrun v_cshifts!
 	
@@ -1458,7 +1447,7 @@ void() ClientConnect =
 	
 	//POX v.11 FINALLY nailed this one
 	//Players have 30 seconds to join an LMS game, or they are put into observer till changelevel
-		if (!deathmatch & DM_LMS)
+		if (!(deathmatch & DM_LMS))
 		{
 			bprint (self.netname);
 			bprint (" entered the game\n");
@@ -1567,7 +1556,6 @@ void(entity targ, entity attacker) ClientObituary =
 {
 	local	float rnum;
 	local	string deathstring, deathstring2;
-	local	entity nar;
 	rnum = random();
 	
 	//POX v1.2 - Changed this so obituary taunts work in DM_LMS

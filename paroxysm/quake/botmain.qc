@@ -344,7 +344,7 @@ local	float		bold;
 	
 	//POX - touching a player can null him out (?)
 	//POX - This was an early problem and this check is probably nolonger necessary due to increased item discrimination
-	if (!self.goalentity.flags & FL_ITEM)
+	if (!(self.goalentity.flags & FL_ITEM))
 		return;
 	
 	//POX - Shouldn't happen but...
@@ -571,8 +571,8 @@ This function also doubles as an Attack Style Selection based on botprefs
 float() better_weapon =
 // -----------------------------------------
 {
-local	float		sweap;
-local	float		eweap;
+local	float		sweap = 0;
+local	float		eweap = 0;
 	
 	
 	//Attack Style - Rush
@@ -1271,7 +1271,7 @@ void() bot_walk =
 //POX - This if statement fixed a few problems I have seen with	 these bots ignoring enemies, firing at walls...
 //POX - It just tells them to look for stuff if they aren't going after a bot, player, or item
 //POX - There must be something I missed elsewhere causing these guys to target junk they can't reach
-	if (self.goalentity.classname != "bot" || self.goalentity.classname != "player" || !self.goalentity.flags & FL_ITEM || self.goalentity.model == string_null)
+	if (self.goalentity.classname != "bot" || self.goalentity.classname != "player" || !(self.goalentity.flags & FL_ITEM) || self.goalentity.model == string_null)
 	{
 		self.goalentity = world;
 		self.enemy = world;
@@ -1445,7 +1445,7 @@ void() bot_run =
 		return;
 	
 //POX - A hacky fix to make sure these guys have a real target
-	if (self.goalentity.classname != "bot" || self.goalentity.classname != "player" || !self.goalentity.flags & FL_ITEM || self.goalentity.model == string_null)
+	if (self.goalentity.classname != "bot" || self.goalentity.classname != "player" || !(self.goalentity.flags & FL_ITEM) || self.goalentity.model == string_null)
 	{
 		self.goalentity = world;
 		self.enemy = world;
@@ -1610,8 +1610,6 @@ void() bot_set_currentammo =
 void() bot_check_ammo =
 // -------------------------
 {
-local float chance;
-
 	//if (self.currentammo > 0)
 	//	return;
 
@@ -1869,7 +1867,6 @@ void() bot_fire_nailgun = //POX - Actually, this is the PlasmaGun
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
 local vector dir;
-local float	r;
 	
 	if (self.weapon == IT_SUPER_NAILGUN)
 		{
@@ -2448,7 +2445,7 @@ void() bot_attack =
 	
 	if (time < self.attack_finished)
 	{
-		bot_run1;
+		bot_run1 ();
 		return;
 	}
 
@@ -2463,13 +2460,13 @@ void() bot_attack =
 	else if (self.weapon == IT_COMBOGUN && random() > 0.4 && self.ammo_rockets > 1 && self.pball_finish < time && range(self.enemy) == RANGE_NEAR)
 		{
 		self.pball_finish = time + 0.9;
-		self.which_ammo == 1;//POX - needed for proper obituary
+		self.which_ammo = 1;//POX - needed for proper obituary
 		bot_gren1();
 		}
 	else if (self.weapon == IT_COMBOGUN)
 		{
 		self.attack_finished = time + 0.5;
-		self.which_ammo == 0;//POX - needed for proper obituary
+		self.which_ammo = 0;//POX - needed for proper obituary
 		bot_shot1();
 		}
 	//POX - MegaPlasma Burst (Plasma Gun Second Trigger)

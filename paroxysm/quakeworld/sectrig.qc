@@ -606,8 +606,6 @@ void(vector org) launch_shrapnel =
 
 void() ShrapnelExplode =
 {	
-	local float n;
-	
 	if (self.voided) {
 		return;
 	}
@@ -808,12 +806,12 @@ void() W_SecondTrigger =
 	{
 		//already primed
 		if (self.prime_tshot == TRUE)
-			SUB_Null;
+			SUB_Null ();
 		
 		//not enough ammo
 		else if (self.ammo_shells < 3)
 		{
-			SUB_Null;
+			SUB_Null ();
 		}
 		else
 		{	
@@ -833,12 +831,12 @@ void() W_SecondTrigger =
 	{
 		//already reloaded
 		if (self.reload_rocket == 0)
-			SUB_Null;
+			SUB_Null ();
 		
 		//if no rockets go away
 		else if (self.ammo_rockets < 1)
 		{
-			SUB_Null;
+			SUB_Null ();
 		}
 		else
 		{	
@@ -883,7 +881,7 @@ void() W_SecondTrigger =
 			
 		}
 		else
-		 SUB_Null;
+		 SUB_Null ();
 	}
 
 // check for Super Shotgun second Trigger

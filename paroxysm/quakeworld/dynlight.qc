@@ -91,8 +91,6 @@ void() dynlight_use =
 
 void() dyn_light =
 {	
-local float eff;
-
 	precache_model ("progs/null.spr");
 
 	if (!self.speed)

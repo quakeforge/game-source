@@ -87,8 +87,6 @@ void() dynlight_use =
 
 void() dyn_light =
 {	
-local float eff;
-
 	precache_model ("progs/null.spr");
 	
 	if ((self.dynlight_style < 1) || (self.dynlight_style > 3))

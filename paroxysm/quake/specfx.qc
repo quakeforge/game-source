@@ -485,7 +485,7 @@ void() colour_light =
 	//Can be made active by use of a targetname
 	//Must be triggered by touch
 	
-	if((!self.targetname) || (!self.spawnflags & CLSTART_OFF))
+	if((!self.targetname) || !(self.spawnflags & CLSTART_OFF))
 		self.touch = colourlight_use;
 	else
 	{

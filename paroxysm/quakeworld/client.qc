@@ -2,7 +2,7 @@
 // prototypes
 void () W_WeaponFrame;
 void() W_SetCurrentAmmo;
-void() player_pain;
+void(entity attacker, float damage) player_pain;
 void() player_stand1;
 void (vector org) spawn_tfog;
 void (vector org, entity death_owner) spawn_tdeath;
@@ -192,8 +192,6 @@ void() execute_changelevel =
 
 void() changelevel_touch =
 {
-	local entity	pos;
-
 	if (other.classname != "player")
 		return;
 
@@ -320,10 +318,9 @@ Returns the entity to spawn at
 */
 entity() SelectSpawnPoint =
 {
-	local	entity spot, newspot, thing;
+	local	entity spot, thing;
 	local	float	numspots, totalspots;
-	local	float	rnum, pcount;
-	local	float	rs;
+	local	float	pcount;
 	local entity spots;
 
 	numspots = 0;
@@ -460,7 +457,6 @@ called each time a player enters a new level
 void() PutClientInServer =
 {
 	local	entity spot;
-	local	string	s;
 	
 	//POX v1.2 - remove items
 	self.items = self.items - (self.items & 
@@ -726,7 +722,6 @@ go to the next level for deathmatch
 void() NextLevel =
 {
 	local entity o;
-	local string newmap;
 	
 	// + POX
 	if (deathmatch & DM_LMS)
@@ -796,7 +791,7 @@ Exit deathmatch games upon conditions
 void() CheckRules =
 {     
 	//POX - LMS next level is taken care of in ClientObituary and ClientDisconnect
-	if  (!deathmatch & DM_LMS)
+	if  (!(deathmatch & DM_LMS))
 	{
 		if (timelimit && time >= timelimit)
 			NextLevel ();
@@ -821,7 +816,6 @@ void() CheckRules =
 
 void() PlayerDeathThink =
 {
-	local entity	old_self;
 	local float		forward;
 
 	if ((self.flags & FL_ONGROUND))
@@ -864,8 +858,6 @@ void() PlayerDeathThink =
 
 void() PlayerJump =
 {
-	local vector start, end;
-
 	if (self.flags & FL_WATERJUMP)
 		return;
 		
@@ -1095,9 +1087,6 @@ Called every frame before physics are run
 */
 void() PlayerPreThink =
 {
-	local	float	mspeed, aspeed;
-	local	float	r;
-
 	if (intermission_running)
 	{
 		IntermissionThink ();	// otherwise a button could be missed between
@@ -1419,9 +1408,6 @@ Called every frame after physics are run
 */
 void() PlayerPostThink =
 {
-	local	float	mspeed, aspeed;
-	local	float	r;
-	
 	//POX v1.2 - clear overrun v_cshifts!
 	if (time < 1.5) 
 		stuffcmd (self, "bf\n");
@@ -1507,7 +1493,7 @@ void() ClientConnect =
 	//sprint (self, PRINT_HIGH, "\n\n---------------\nPOXworld v1.11b\n---------------\n\n");
 
 // + POX LMS late joiners get booted to spectate
-	if (!deathmatch & DM_LMS)
+	if (!(deathmatch & DM_LMS))
 	{
 			bprint (PRINT_HIGH, self.netname);
 			bprint (PRINT_HIGH, " entered the game\n");
@@ -1594,7 +1580,6 @@ void(entity targ, entity attacker) ClientObituary =
 {
 	local	float rnum;
 	local	string deathstring, deathstring2;
-	local	string s;
 	local	string	attackerteam, targteam;
 
 	rnum = random();

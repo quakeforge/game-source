@@ -33,7 +33,6 @@ ObserverTeleportTouch
 void(string destination) ObserverTeleportTouch =
 {
 local entity	t;
-local vector	org;
 	
 	if (self.teleport_time > time)
 		return;

@@ -63,7 +63,7 @@ float(entity weap)	bot_has_weapon =
 
 void()	bot_grab_weapon =
 {
-	local	float		weap;
+	local	float		weap = 0;
 
 	if (self.goalentity.weapon == IT_PLASMAGUN)
 		{

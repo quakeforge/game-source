@@ -110,8 +110,7 @@ SpawnMeatSpray
 */
 void(vector org, vector vel) SpawnMeatSpray =
 {
-	local	entity missile, mpuff;
-	local	vector	org;
+	local	entity missile;
 
 	missile = spawn ();
 	missile.owner = self;
@@ -735,8 +734,6 @@ Start Plasma Gun Fire
 
 void() plasma_touch =
 {
-local float rand;
-	
 	if (other == self.owner)
 		return;
 	
@@ -947,7 +944,6 @@ void(vector org, vector dir) launch_spike =
 void(float ox) W_FireNails =
 {
 	local vector	dir;
-	local entity	old;
 	
 	self.weaponmodel = "progs/v_nailgl.mdl"; // light up nailgun barrels
 	
@@ -968,7 +964,6 @@ void(float ox) W_FireNails =
 void() W_FireSuperSpikes =
 {
 	local vector	dir;
-	local entity	old;
 	
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
 	//self.attack_finished = time + 0.15;
@@ -985,7 +980,6 @@ void() W_FireSuperSpikes =
 void(float ox) W_FireSpikes =
 {
 	local vector	dir;
-	local entity	old;
 	
 	makevectors (self.v_angle);
 	
@@ -1305,7 +1299,7 @@ void() W_Attack =
 		}
 		else if (self.st_rocketload > time) // still reloading so do nothing
 		{
-			SUB_Null;
+			SUB_Null ();
 		}
 		else
 		{
@@ -1323,7 +1317,7 @@ W_ChangeWeapon
 */
 void() W_ChangeWeapon =
 {
-	local	float	it, am, fl;
+	local	float	it, am, fl = 0;
 	
 	it = self.items;
 	am = 0;
@@ -1347,7 +1341,7 @@ void() W_ChangeWeapon =
 		{
 			am = 1;
 			//POX v1.1 - fix for dm_autoswitch
-			if (self.ammo_rockets > 0 && !deathmatch & DM_AUTOSWITCH) // allow player to select SuperShotgun if he has rockets
+			if (self.ammo_rockets > 0 && !(deathmatch & DM_AUTOSWITCH)) // allow player to select SuperShotgun if he has rockets
 			{
 				self.which_ammo = 1; // tell W_SetCurrentAmmo to use rockets - not shells
 				am = 0;
@@ -1465,7 +1459,7 @@ void() CycleWeaponCommand =
 			{
 				am = 1;
 				//POX v1.1 - fix for dm_autoswitch
-				if (self.ammo_rockets > 0 && !deathmatch & DM_AUTOSWITCH) // allow player to select SuperShotgun if he has rockets
+				if (self.ammo_rockets > 0 && !(deathmatch & DM_AUTOSWITCH)) // allow player to select SuperShotgun if he has rockets
 				{
 					self.which_ammo = 1; // tell W_SetCurrentAmmo to use rockets - not shells
 					am = 0;
@@ -1552,7 +1546,7 @@ void() CycleWeaponReverseCommand =
 			if (self.ammo_shells < 2)
 			{
 				am = 1;
-				if (self.ammo_rockets > 0 && !deathmatch & DM_AUTOSWITCH)
+				if (self.ammo_rockets > 0 && !(deathmatch & DM_AUTOSWITCH))
 				{
 					self.which_ammo = 1; // tell W_SetCurrentAmmo to use rockets - not shells
 					am = 0;
@@ -1661,8 +1655,6 @@ void() DisplayRules =
 //POX - stuff added here, bot & camera impulses
 void() ImpulseCommands =
 {
-	local	float	cells; // used for underwater MegaPlasmaBurst
-	
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon ();
 	if (self.impulse == 9)

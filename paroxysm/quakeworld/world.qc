@@ -174,6 +174,8 @@ void() worldspawn =
 	lastspawn = world;
 	InitBodyQue ();
 
+	rj = 1;
+
 // custom map attributes
 
 	if (self.model == "maps/e1m8.bsp")
@@ -431,8 +433,6 @@ void() bodyque =
 
 void() InitBodyQue =
 {
-	local entity	e;
-	
 	bodyque_head = spawn();
 	bodyque_head.classname = "bodyque";
 	bodyque_head.owner = spawn();

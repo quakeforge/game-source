@@ -190,7 +190,7 @@ entity() CamShoot =
 
 float(float d, float a) CamHurry =
 {
- local float dd,t,tt;
+ local float t,tt;
 
  if (d<0) a = 0 - a;
  t = frametime;
@@ -394,8 +394,7 @@ vector(entity ent) CamFlybyTarget =
 void(entity newtarg) CamInitFlybyMode =
 {
  local float f, max;
- local vector vec, vec2, trg;
- local entity ent;
+ local vector vec;
 
 // Keep camera at this point for some time...
  self.pausetime = time + 0.4;
@@ -658,7 +657,6 @@ void() CamImpulses =
 {
  local float c;
  local entity ent;
- local string s;
 
 //POX - Added so server rules are accessable in autocam mode
 	if (self.impulse == 253)
@@ -1005,7 +1003,6 @@ void() CamFlyByThink =
  local float p0,p1,grad,p;
  local vector vec;
  local entity ent;
- local float ok;
 
 // self.dest1 is set to player
 // Check if the player is not dead
@@ -1094,9 +1091,6 @@ void() CamFlyByThink =
 
 void() CamFollowThink =
 {
- local entity ent;
- local vector vec;
-
 // Check player death
  if (self.enemy.deadflag != DEAD_NO) {
    if (time < 31) {
@@ -1133,8 +1127,8 @@ void() CamFixedThink =
  local float maxlo; // maximum angle of lowers
  local float minhi; // minimum angle of highers
  local vector scrv; // onscreen origin sum
- local vector hiv; // lower optimum
- local vector lov; // higher optimum
+ local vector hiv = '0 0 0'; // lower optimum
+ local vector lov = '0 0 0'; // higher optimum
  local float c;
 
  cang = self.v_angle_y;
@@ -1294,8 +1288,6 @@ void() CamThink =
 
 void() CamClientInit =
 {
- local entity ent;
-
  self.classname = "KasCam";
  setmodel (self, string_null);
  self.weaponmodel = string_null;

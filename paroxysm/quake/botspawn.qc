@@ -241,7 +241,7 @@ local entity spot;
 void(float teem) create_bot =
 // ------------------------------------------------
 {
-local entity bot, spot, plr;
+local entity bot, spot;
 local float r, cno, sn, pn;
 
 //POX - NoBots option
@@ -560,17 +560,17 @@ local float	r;
 		r = floor(random() * 3);
 		
 		if (r == 1 && random() > 0.5)
-			bot.botpref_attack == AS_RUSH;
+			bot.botpref_attack = AS_RUSH;
 		else if (r == 2)
-			bot.botpref_attack == AS_RETREAT;
+			bot.botpref_attack = AS_RETREAT;
 		else
-			bot.botpref_attack == AS_SMART;
+			bot.botpref_attack = AS_SMART;
 		
 		if (skill == 2 && random() >0.2)
-			bot.botpref_attack == AS_SMART;
+			bot.botpref_attack = AS_SMART;
 		
 		if (skill > 2)
-			bot.botpref_attack == AS_SMART;
+			bot.botpref_attack = AS_SMART;
 
 //POX - Best Weapon Pref
 		r = random();
@@ -597,7 +597,7 @@ local float	r;
 		}
 		
 		if (skill > 2)
-			bot.botpref_react == 0.01;
+			bot.botpref_react = 0.01;
 
 	
 };
