@@ -55,7 +55,7 @@ integer bot_way_linker;
 	if (current_way == what)
 		current_way = NIL;
 	[waypoint_array removeItem:what];
-	[what free];
+	[what dealloc];
 }
 
 /*

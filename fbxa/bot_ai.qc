@@ -47,6 +47,7 @@ this notice in its entirety.
 float stagger_think;
 
 @implementation Bot (AI)
+
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -519,7 +520,6 @@ the bot finds things it wants to kill/grab.
 // 50 - 90 bot will hunt these as vital items
 
 // *!* Make sure you add code to checkLost to remove the target *!*
-
 -(integer)priority:(Bot)bot
 {
 	local integer p;

@@ -256,7 +256,9 @@ ClientNumber =
 	do {
 		f++;
 		e = nextent (e);
-	} while (e != cl);
+	} while (f < 33 && e != cl);
+	if (f == 33)
+		Break ();
 	return f;
 };
 
