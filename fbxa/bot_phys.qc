@@ -119,10 +119,10 @@ void() DropPunchAngle =
 {
 	local float len;
 
-	len = vlen (self.punchangle);
-	self.punchangle = normalize (self.punchangle);
+	len = vlen (@self.punchangle);
+	@self.punchangle = normalize (@self.punchangle);
 	len -= 10 * real_frametime;
 	if (len < 0)
 		len = 0;
-	self.punchangle *= len;
+	@self.punchangle *= len;
 };

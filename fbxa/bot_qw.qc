@@ -218,7 +218,7 @@ ClientInRankings =
 void ()
 ClientDisconnected =
 {
-	local integer cl_no = ClientNumber (self);
+	local integer cl_no = ClientNumber (@self);
 	players[cl_no] = NIL;
 };
 
@@ -257,7 +257,7 @@ BotSay = // simulate talking by composing a 'chat' message
 	WriteByte (MSG_ALL, 8);
 	WriteByte (MSG_ALL, 3);
 	WriteByte (MSG_ALL, 1);
-	WriteString (MSG_ALL, self.netname);
+	WriteString (MSG_ALL, @self.netname);
 	WriteByte (MSG_ALL, 8);
 	WriteByte (MSG_ALL, 3);
 	WriteByte (MSG_ALL, 2);
@@ -270,7 +270,7 @@ BotSayInit =
 	WriteByte (MSG_ALL, 8);
 	WriteByte (MSG_ALL, 3);
 	WriteByte (MSG_ALL, 1);
-	WriteString (MSG_ALL, self.netname);
+	WriteString (MSG_ALL, @self.netname);
 };
 void (string h)
 BotSay2 =
@@ -395,15 +395,15 @@ void () BotImpulses =
 	local integer f;
 	local string h;
 	
-	if (self.impulse == 100) {
+	if (@self.impulse == 100) {
 		h = infokey (NIL, "skill");
 		f = (integer) stof (h);
 		BotConnect (0, f);
-	} else if (self.impulse == 102)
+	} else if (@self.impulse == 102)
 		[Bot kick];
 	else
 		return;
-	self.impulse = 0;
+	@self.impulse = 0;
 };
 
 @implementation Bot
