@@ -3,7 +3,7 @@
 // void bringback ();  declared in ogre.qc ( first file its referanced in);
 // void savecritter ();  ""
 
-integer respawn_enabled = 1;
+integer respawn_enabled;
 
 @static {
 
@@ -32,25 +32,28 @@ void () im_alive =
 	setmodel(self, self.weaponmodel);
 	self.health = self.max_health;
 
-	// about 3/4 of quakes critters use this size
-	setsize (self, '-16 -16 -24', '16 16 40');
-
-	if (self.classname == "monster_demon1")
-		setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	if (self.classname == "monster_ogre")
-		setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	if (self.classname == "monster_shalrath")
-		setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	if (self.classname == "monster_shambler")
-		setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	if (self.classname == "monster_dog")
-		setsize (self, '-32 -32 -24', '32 32 40');
-	if (self.classname == "monster_fish") {
-		setsize (self, '-16 -16 -24', '16 16 24');
-		self.flags = self.flags + FL_SWIM;
+	switch (self.classname) {
+		case "monster_demon1":
+		case "monster_ogre":
+		case "monster_shalrath":
+		case "monster_shambler":
+			setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+			break;
+		case "monster_dog":
+			setsize (self, '-32 -32 -24', '32 32 40');
+			break;
+		case "monster_fish":
+			setsize (self, '-16 -16 -24', '16 16 24');
+			self.flags = self.flags + FL_SWIM;
+			break;
+		case "monster_wizard":
+			self.flags = self.flags + FL_FLY;
+			break;
+		default:
+			// about 3/4 of quakes critters use this size
+			setsize (self, '-16 -16 -24', '16 16 40');
+			break;
 	}
-	if (self.classname == "monster_wizard")
-		self.flags = self.flags + FL_FLY;
 	
 	spawn_tfog (self.origin);
 	spawn_tdeath (self.origin, self);
