@@ -62,25 +62,22 @@ entity		msg_entity;		// destination of single entity writes
 #ifndef QW_SYSTEM_qh
 @system {
 #endif
-void()		main;			// only for testing
+void ()		main;			// only for testing
 
-void()		StartFrame;
+void ()		StartFrame;
 
-void()		PlayerPreThink;
-void()		PlayerPostThink;
+void ()		PlayerPreThink;
+void ()		PlayerPostThink;
 
-void()		ClientKill;
-void()		ClientConnect;
-void()		PutClientInServer;	// call after setting the parm1... parms
-void()		ClientDisconnect;
+void ()		ClientKill;
+void ()		ClientConnect;
+void ()		PutClientInServer;	// call after setting the parm1... parms
+void ()		ClientDisconnect;
 
-void()		SetNewParms;		// called when a client first connects to
-					// a server. sets parms so they can be
-					// saved off for restarts
-
-void()          SetChangeParms;		// call to set parms for self so they can
-					// be saved for a level transition
-
+void ()		SetNewParms;	// called when a client first connects to a server.
+							// sets parms so they can be saved off for restarts
+void ()		SetChangeParms;		// call to set parms for self so they can
+								// be saved for a level transition
 
 void		end_sys_globals;	// flag for structure dumping
 #ifndef QW_SYSTEM_qh
@@ -88,8 +85,8 @@ void		end_sys_globals;	// flag for structure dumping
 #endif
 /* End of system globals */
 
-// ========================================================================== //
-// ========================================================================== //
+// ========================================================================= //
+// ========================================================================= //
 
 /* Do not change.  These are the system fields required by C code */
 /* (*** = do not set in prog code, maintained by C code) */
@@ -117,14 +114,13 @@ void		end_sys_globals;	// flag for structure dumping
 .vector		mins, maxs;		// bounding box extents reletive to origin
 .vector		size;			// *** maxs - mins, use setsize
 
-.void()		touch;
-.void()		use;
-.void()		think;
-.void()		blocked;		// for doors or plats, called when can't push other
+.void ()	touch;
+.void ()	use;
+.void ()	think;
+.void ()	blocked;		// for doors or plats, called when can't push other
 
 .float		nextthink;
 .entity		groundentity;
-
 
 
 // stats
@@ -143,7 +139,6 @@ void		end_sys_globals;	// flag for structure dumping
 .float		deadflag;
 
 .vector		view_ofs;		// add to origin to get eye point
-
 
 .float		button0;		// fire
 .float		button1;		// use
@@ -203,5 +198,5 @@ void		end_sys_globals;	// flag for structure dumping
 void		end_sys_fields;	// flag for structure dumping
 /* End of system fields */
 
-// ========================================================================== //
-// ========================================================================== //
+// ========================================================================= //
+// ========================================================================= //

@@ -17,8 +17,10 @@
 
 #define STOP_EPSILON	0.1
 
-void() dead_prethink = {
-	if (vlen(self.movedir) > vlen(self.velocity)) {
+void ()
+dead_prethink =
+{
+	if (vlen (self.movedir) > vlen (self.velocity)) {
 		self.velocity = '0 0 0';
 	} else {
 		/* FIXME: Use e, decay per frame. */
@@ -27,11 +29,14 @@ void() dead_prethink = {
 			self.pain_finished = time + 0.1;
 		}
 
-		if (self.velocity_x > -STOP_EPSILON && self.velocity_x < STOP_EPSILON)
+		if ((self.velocity_x > -STOP_EPSILON)
+			&& (self.velocity_x < STOP_EPSILON))
 			self.velocity_x = 0;
-		if (self.velocity_y > -STOP_EPSILON && self.velocity_y < STOP_EPSILON)
+		if ((self.velocity_y > -STOP_EPSILON)
+			&& (self.velocity_y < STOP_EPSILON))
 			self.velocity_y = 0;
-		if (self.velocity_z > -STOP_EPSILON && self.velocity_z < STOP_EPSILON)
+		if ((self.velocity_z > -STOP_EPSILON)
+			&& (self.velocity_z < STOP_EPSILON))
 			self.velocity_z = 0;
 	}
 
@@ -48,28 +53,42 @@ void() dead_prethink = {
 	self.movedir = self.velocity;
 };
 
-void() dead_postthink = {
+void ()
+dead_postthink =
+{
 	local vector vieworg;
 
 	self.dmg_take = 0;
 	self.dmg_save = 0;
 
-	vieworg = vieworigin(self);
+	vieworg = vieworigin (self);
 
-	if (pointcontents(vieworg + self.velocity*sv_maxtic) != pointcontents(vieworg)) {
+	if (pointcontents (vieworg + self.velocity * sv_maxtic)
+		!= pointcontents (vieworg)) {
 		self.movetype = MOVETYPE_NONE;
 		self.velocity = '0 0 0';
 		setorigin(self, self.origin);
 	}
 };
 
-float() dead_takeitem = { return FALSE; };
-float(float d) dead_takedamage = { return FALSE; };
+float ()
+dead_takeitem =
+{
+	return FALSE;
+};
 
-void() act_setup_dead = {
-	act_setup();
+float (float d)
+dead_takedamage =
+{
+	return FALSE;
+};
 
-	weapon_select_by_impulse(0);
+void ()
+act_setup_dead =
+{
+	act_setup ();
+
+	weapon_select_by_impulse (0);
 
 	self.solid = SOLID_NOT;
 	self.takedamage = DAMAGE_NO;
@@ -105,16 +124,16 @@ void() act_setup_dead = {
 	self.mass = 0;
 
 	self.movedir = self.velocity;
-	self.movedir_z -= sv_gravity * sv_maxtic;	/* Gravity hack. */
+	self.movedir_z -= sv_gravity * sv_maxtic;	// Gravity hack.
 	self.pain_finished = time + 0.1;
 	self.air_finished = time + 2;
 
-	override_set_th_takeitem(self, dead_takeitem);
-	override_set_th_takedamage(self, dead_takedamage);
+	override_set_th_takeitem (self, dead_takeitem);
+	override_set_th_takedamage (self, dead_takedamage);
 
-	override_set_prethink(self, dead_prethink);
-	override_set_actthink(self, NOTHING_function);
-	override_set_postthink(self, dead_postthink);
+	override_set_prethink (self, dead_prethink);
+	override_set_actthink (self, NOTHING_function);
+	override_set_postthink (self, dead_postthink);
 
-	dead_postthink();	/* make sure we don't noclip when near walls */
+	dead_postthink ();	// make sure we don't noclip when near walls
 };

@@ -2,15 +2,13 @@
 #define SZ_WATCH_qh 1
 
 @extern {
+	float sv_spawning;
 
-float sv_spawning;
+	void () SZ_init;
+	void () SZ_frame;
 
-void() SZ_init;
-void() SZ_frame;
-
-void(entity e) makestatic;
-void(vector pos, string samp, float vol, float atten) ambientsound;
-
+	void (entity e) makestatic;
+	void (vector pos, string samp, float vol, float atten) ambientsound;
 };
 
 #endif

@@ -395,7 +395,7 @@ void (string str)
 xprint_str =
 {
 	msg_entity = _xprint_client;
-	WriteBytes (MSG_ONE, (float) SVC_PRINT, _xprint_level);
+	WriteBytes (MSG_ONE, SVC_PRINT, _xprint_level);
 	WriteString (MSG_ONE, str);
 };
 

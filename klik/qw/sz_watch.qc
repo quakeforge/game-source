@@ -21,11 +21,10 @@ float sv_spawning;
 #define	SV_SIGNON_BUFFERS	8
 #define	SV_SIGNON_BUFFER_SWAP	512
 
-// QF == 1, twilight/stock == 0
-#define	SV_FLUSHSIGNON_BREAKS	1
+#define	SV_FLUSHSIGNON_BREAKS	1		// QF == 1, twilight/stock == 0
 
 #define	SV_MAX_DATAGRAM		1450
-#define	SV_FRAME_OVERHEAD	725	/* Wild guess. */
+#define	SV_FRAME_OVERHEAD	725			// Wild guess.
 
 #define	SIZEOF_BASELINE		22
 #define	SIZEOF_AMBIENTSOUND	16
@@ -39,7 +38,9 @@ float sv_frame_remaining;
 
 // =================
 
-float(float space) SZ_GetSpace_frame = {
+float (float space)
+SZ_GetSpace_frame =
+{
 	if (sv_frame_remaining < space)
 		return FALSE;
 
@@ -48,7 +49,10 @@ float(float space) SZ_GetSpace_frame = {
 };
 
 entity SZ_self;
-float(float space) SZ_GetSpace_signon = {
+
+float (float space)
+SZ_GetSpace_signon =
+{
 	if (sv_spawning || !SV_FLUSHSIGNON_BREAKS) {
 		if (self != SZ_self) {
 			SZ_self = self;
@@ -72,66 +76,62 @@ float(float space) SZ_GetSpace_signon = {
 
 // =================
 
-void() SZ_init = {
+void ()
+SZ_init =
+{
 	sv_signon_buf_remaining = SV_SIGNON_BUFFERS;
 	sv_signon_remaining = SV_MAX_DATAGRAM;
 
-	while ((self = nextent(self)))
-		SZ_GetSpace_signon(SIZEOF_BASELINE);
+	while ((self = nextent (self)))
+		SZ_GetSpace_signon (SIZEOF_BASELINE);
 	self = world;
 };
 
-void() SZ_frame = {
+void ()
+SZ_frame =
+{
 	sv_frame_remaining = SV_MAX_DATAGRAM - SV_FRAME_OVERHEAD;
 };
 
 // =================
 
-void(entity e) makestatic = {
+void (entity e)
+makestatic =
+{
 	e.solid = SOLID_NOT;
 	e.movetype = MOVETYPE_NONE;
 	e.velocity = '0 0 0';
 	e.avelocity = '0 0 0';
 	e.nextthink = -1;
 
-	/* No more space?  Just let it be... */
-	if (!SZ_GetSpace_signon(SIZEOF_MAKESTATIC))
+	// No more space?  Just let it be...
+	if (!SZ_GetSpace_signon (SIZEOF_MAKESTATIC))
 		return;
 
 	if (!sv_spawning) {
-		if (!SZ_GetSpace_frame(SIZEOF_MAKESTATIC)) {
+		if (!SZ_GetSpace_frame (SIZEOF_MAKESTATIC)) {
 			self.think = SUB_makestatic;
 			self.nextthink = time + sv_mintic;
 			return;
 		}
 
-		WriteByte(MSG_ALL, SVC_MAKESTATIC);
-
-		WriteByte(MSG_ALL, e.modelindex);
-
-		WriteByte(MSG_ALL, e.frame);
-		WriteByte(MSG_ALL, e.colormap);
-		WriteByte(MSG_ALL, e.skin);
-		
-		WriteCoord(MSG_ALL, e.origin_x);
-		WriteCoord(MSG_ALL, e.origin_y);
-		WriteCoord(MSG_ALL, e.origin_z);
-
-		WriteAngle(MSG_ALL, e.angles_x);
-		WriteAngle(MSG_ALL, e.angles_y);
-		WriteAngle(MSG_ALL, e.angles_z);
+		WriteBytes (MSG_ALL, SVC_MAKESTATIC, e.modelindex, e.frame,
+					e.colormap, e.skin);
+		WriteCoordV (MSG_ALL, e.origin);
+		WriteAngleV (MSG_ALL, e.angles);
 	}
 
-	BUILTIN_makestatic(e);
+	BUILTIN_makestatic (e);
 };
 
-void(vector pos, string samp, float vol, float atten) ambientsound = {
+void (vector pos, string samp, float vol, float atten)
+ambientsound =
+{
 	if (!sv_spawning)
-		error("ambientsound after spawn functions\n");
+		error ("ambientsound after spawn functions\n");
 
-	SZ_GetSpace_signon(SIZEOF_AMBIENTSOUND);
+	SZ_GetSpace_signon (SIZEOF_AMBIENTSOUND);
 
-	/* Do it anyway */
-	BUILTIN_ambientsound(pos, samp, vol, atten);
+	// Do it anyway
+	BUILTIN_ambientsound (pos, samp, vol, atten);
 };
-

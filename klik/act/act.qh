@@ -5,13 +5,11 @@
 #include "damage.qh"
 
 @extern {
+	.void () prethink;
+	.void () actthink;
+	.void () postthink;
 
-.void() prethink;
-.void() actthink;
-.void() postthink;
-
-void() act_setup;
-
+	void () act_setup;
 };
 
 #endif
