@@ -394,7 +394,7 @@ blah
 
 	[self dodge_obstruction];
 	[self recognize_plat: TRUE];
-	if (self.b_aiflags & AI_OBSTRUCTED)
+	if (b_aiflags & AI_OBSTRUCTED)
 		return FALSE;
 	else
 		return TRUE;

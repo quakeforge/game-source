@@ -423,7 +423,7 @@ void () BotImpulses =
 				[self start_topic:9];
 		} else
 			[self start_topic:2];
-		self.b_frags = ent.frags;
+		b_frags = ent.frags;
 	}
 	[self dynamicWaypoint];
 	return FALSE;
@@ -431,9 +431,9 @@ void () BotImpulses =
 
 - (integer) postFrame
 {
-	if (self.b_clientno == -1)
+	if (b_clientno == -1)
 		return TRUE;
-	if (self.ishuman)
+	if (ishuman)
 		BotImpulses ();
 	return FALSE;
 }

@@ -127,7 +127,7 @@ weapon_range =
 	if (waypoint_mode > WM_LOADED)
 		return;
 
-	self.avoid = NIL;
+	avoid = NIL;
 
 	if (ent.enemy) {
 		v = ent.origin - realorigin (ent.enemy);
@@ -144,30 +144,30 @@ weapon_range =
 		flen = vlen (foe.origin - ent.origin);
 		if (flen < avdist) {
 			avdist = flen;
-			self.avoid = foe;
+			avoid = foe;
 		}
 		foe = find (foe, classname, "grenade");
 	}
-	if (!self.avoid) {
+	if (!avoid) {
 		foe = find (NIL, classname, "missile");
 		while (foe) {
 			if (foe.owner != ent) {
 				flen = vlen (foe.origin - ent.origin);
 				if (flen < avdist) {
 					avdist = flen;
-					self.avoid = foe;
+					avoid = foe;
 				}
 			}
 			foe = find(foe, classname, "missile");
 		}
-		if (!self.avoid) {
+		if (!avoid) {
 			foe = find(NIL, classname, "spike");
 			while (foe) {
 				if (foe.owner != ent) {
 					flen = vlen(foe.origin - ent.origin);
 					if (flen < avdist) {
 						avdist = flen;
-						self.avoid = foe;
+						avoid = foe;
 					}
 				}
 				foe = find (foe, classname, "spike");
@@ -211,7 +211,7 @@ weapon_range =
 								tsz = [self size_player:foe];
 								if (tsz < foesz) {
 									/*XXX
-									if (fov(foe) || foe.b_sound > time || self.b_skill == 3) {
+									if (fov(foe) || foe.b_sound > time || b_skill == 3) {
 										if ([self canSee:foe]) {
 											ent.enemy = foe;
 											foedist = vlen (foe.origin - ent.origin);
@@ -322,7 +322,7 @@ attacking an enemy.
 	}
 
 	org = realorigin (ent.enemy);
-	makevectors (self.v_angle);
+	makevectors (v_angle);
 
 	// decide if I should shoot
 	foedist = vlen (org - ent.origin);
@@ -339,7 +339,7 @@ attacking an enemy.
 	} else
 		[self weapon_switch:foedist];
 
-	if (!(self.b_aiflags & (AI_PRECISION | AI_BLIND | AI_OBSTRUCTED))) {
+	if (!(b_aiflags & (AI_PRECISION | AI_BLIND | AI_OBSTRUCTED))) {
 		foesz = [self size_player:ent.enemy];
 		mysz = [self size_player:self] + 5;
 
@@ -347,23 +347,23 @@ attacking an enemy.
 			if (teamplay) {
 				if (random () < 0.02) {
 					[self start_topic:5];
-					self.b_chattime = 1;
+					b_chattime = 1;
 				}
 			}
 			return;
 		} else if (mysz < 140)
 			return;
-		else if (self.avoid) {
-			if (self.avoid.velocity)
-				v = self.avoid.velocity;
+		else if (avoid) {
+			if (avoid.velocity)
+				v = avoid.velocity;
 			else
-				v = normalize (self.avoid.origin - ent.origin);
+				v = normalize (avoid.origin - ent.origin);
 			v1_x = v_y;
 			v1_y = v_y * -1;
 			v2_x = v_y;
 			v2_y = v_y * -1;
-			foedist = vlen (self.avoid.origin - (ent.origin + v1));
-			if (foedist < vlen (self.avoid.origin - (ent.origin + v2)))
+			foedist = vlen (avoid.origin - (ent.origin + v1));
+			if (foedist < vlen (avoid.origin - (ent.origin + v2)))
 				[self walkmove:v2];
 			else
 				[self walkmove:v1];
@@ -372,7 +372,7 @@ attacking an enemy.
 				[self walkmove:ent.origin - org];
 			else if (foedist - 32 >  v_x)
 				[self walkmove:org - ent.origin];
-			else if (self.wallhug)
+			else if (wallhug)
 				[self walkmove:v_right];
 			else
 				[self walkmove:v_right * -1];
@@ -385,7 +385,7 @@ attacking an enemy.
 			return;
 		else if (mysz < 140)
 			return;
-		self.keys &= 960;
+		keys &= 960;
 	}
 }
 @end
