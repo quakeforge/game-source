@@ -1250,6 +1250,9 @@ void(entity targ, entity attacker) ClientObituary =
 			{
 				attacker.frags = attacker.frags + 1;
 
+				deathstring = " dies misteriously from ";
+				deathstring2 = " progs bug\n";
+
 				rnum = attacker.weapon;
 				if (rnum == IT_AXE)
 				{
