@@ -32,7 +32,7 @@ void(entity player,entity door) ObserverDoor =
   local entity d,d_master;
   local vector dmin,dmax;
     local float is_x,is_y,is_z,set;
-    local vector dir,or;
+    local vector dir = '0 0 0',or;
   
   d_master = d = door.owner;
   if (d_master) {
@@ -169,14 +169,13 @@ float() DoObserverImpulse =
 void () ObserverThink =
 {
     local entity e;
-    local float cont;
 
 	self.weaponmodel = "";
 	self.weaponframe = 0;
 	self.flags = self.flags | FL_ONGROUND;
 
   { 
-    local float invcos,nv,nvp,nvpmax,nvs,nsp,sp,svz;
+    local float invcos,nvp,nvpmax,sp,svz;
     local vector f,vp,vs;
     
     svz = self.velocity_z * 0.75;

@@ -712,7 +712,7 @@ void() TossBackpack =
 
 void() Team_weapon_touch =
 {
-	local	float	hadammo, best, new, old;
+	local	float	hadammo, best, new = 0, old;
 	local entity stemp;
 
 	if (!(other.flags & FL_CLIENT))
@@ -912,7 +912,6 @@ void () TeamCaptureRegenFlags =
 
 void(entity flg) TeamDropFlag =
 {
-	local entity item, f, oself;
 	local entity p;
 
 	p = flg.owner;
@@ -961,7 +960,7 @@ void(entity player) TeamCaptureDropFlagOfPlayer =
 
 void() TeamCaptureFlagTouch =
 {
-	local entity p, oself;
+	local entity p;
 
 	if (other.classname != "player")
 		return;
@@ -1107,7 +1106,6 @@ void() TeamCaptureFlagThink =
 	local entity e;
 	local vector v;
 	local float f;
-	local string s;
 
 	self.nextthink = time + 0.1;
 
