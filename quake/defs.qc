@@ -38,6 +38,7 @@ float		total_monsters;
 
 float		found_secrets;		// number of secrets found
 float		killed_monsters;	// number of monsters killed
+float		killed_monsters_oldcount;//number of monsters killed in last sweep.
 float 		respawn_enabled;	// is respawn allowed
 
 // spawnparms are used to encode information about clients across server

@@ -398,11 +398,15 @@ void() ogre_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		killed_monsters++;
 		return;
 	}
 
 	sound (self, CHAN_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM);
-	
+
+	if (!respawn_enabled)
+		killed_monsters++;
+
 	if (random() < 0.5)
 		ogre_die1 ();
 	else

@@ -230,11 +230,16 @@ void() army_die =
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		killed_monsters++;
 		return;
 	}
 
 // regular death
 	sound (self, CHAN_VOICE, "soldier/death1.wav", 1, ATTN_NORM);
+
+	if (!respawn_enabled)
+		killed_monsters++;
+
 	if (random() < 0.5)
 		army_die1 ();
 	else

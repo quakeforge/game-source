@@ -348,8 +348,12 @@ void() wiz_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
+		killed_monsters++;
 		return;
 	}
+
+	if (!respawn_enabled)
+		killed_monsters++;
 
 	wiz_death1 ();
 };

@@ -140,9 +140,13 @@ void () f_death =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		killed_monsters++;
 		remove (self);
 		return;
 	}
+
+	if (!respawn_enabled)
+		killed_monsters++;
 
 	f_death1 ();
 };

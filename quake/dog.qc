@@ -236,12 +236,16 @@ void() dog_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowHead ("progs/h_dog.mdl", self.health);
+		killed_monsters++;
 		return;
 	}
 
 // regular death
 	sound (self, CHAN_VOICE, "dog/ddeath.wav", 1, ATTN_NORM);
 	self.solid = SOLID_NOT;
+
+	if (!respawn_enabled)
+		killed_monsters++;
 
 	if (random() > 0.5)
 		dog_die1 ();

@@ -108,10 +108,15 @@ void() shalrath_die =
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		killed_monsters++;
 		return;
 	}
 
 	sound (self, CHAN_VOICE, "shalrath/death.wav", 1, ATTN_NORM);
+
+	if (!respawn_enabled)
+		killed_monsters++;
+
 	shal_death1 ();
 	self.solid = SOLID_NOT;
 	// insert death sounds here

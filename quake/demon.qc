@@ -160,10 +160,15 @@ void() demon_die =
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
+		killed_monsters++;
 		return;
 	}
 
 // regular death
+
+	if (!respawn_enabled)
+		killed_monsters++;
+
 	demon1_die1 ();
 };
 
