@@ -133,7 +133,9 @@ entity [32] phys_objects;
 .float	portal_time;
 .integer b_skill;
 .float	switch_wallhug;
-.float	b_aiflags, b_num, b_chattime;
+.float	b_aiflags;
+.integer b_num;
+.float	b_chattime;
 .float	b_entertime; // QW shtuff
 .float	b_menu, b_menu_time, b_menu_value;
 .float route_failed, dyn_flags, dyn_time;
@@ -468,7 +470,7 @@ ClientNumber =
 	return f;
 };
 
-void (float whatbot, integer whatskill)
+void (integer whatbot, integer whatskill)
 BotConnect =
 {
 	local integer f;
@@ -520,7 +522,8 @@ BotDisconnect =
 
 	ClientDisconnect ();
 
-	setmodel (self.phys_obj, "");
+	setmodel (self.phys_obj, NIL);
+	self.netname = NIL;
 	SV_FreeClient (self);
 	self = uself;
 };

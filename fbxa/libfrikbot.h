@@ -122,7 +122,7 @@
 /* b_num
  *	bot	bot number
  */
-@extern .float	b_num;
+@extern .integer	b_num;
 /* b_chattime
  *	bot	control of bot chatting and movement (can't talk and walk:)
  */
@@ -292,7 +292,7 @@
 @extern integer (entity e) ClientNumber;
 @extern float(integer clientno)		ClientBitFlag;
 @extern integer()				ClientNextAvailable;
-@extern void(float whatbot, integer whatskill) BotConnect;
+@extern void(integer whatbot, integer whatskill) BotConnect;
 @extern void(entity bot)			BotDisconnect;
 @extern void(float clientno)		BotInvalidClientNo;
 @extern void(entity who)			UpdateClient;
@@ -348,7 +348,7 @@
 @extern void()				KickABot;
 @extern void()				BotImpulses;
 @extern void(entity targ, float success) bot_lost;
-@extern string(float r)			BotName;
+@extern string(integer r)			BotName;
 @extern float(float v)			frik_anglemod;
 @extern void() bot_chat;
 @extern void(float tpic) bot_start_topic;

@@ -42,97 +42,71 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 
+struct bot_data_t = {
+	string name;
+	float pants, shirt;
+};
+
+bot_data_t [32] bot_data = {
+	{"Vincent",   11,  0},
+	{"Bishop",     1,  3},
+	{"Nomad",     13,  2},
+	{"Hudson",     7,  6},
+	{"Lore",      12,  6},
+	{"Servo",      4,  4},
+	{"Gort",       2,  5},
+	{"Kryten",    10,  3},
+	{"Pimp Bot",   9,  4},
+	{"Max",        4,  7},
+	{"Marvin",     3, 11},
+	{"Erwin",     13, 12},
+	{"FrikBot",   11,  2},
+	{"Krosis",     0,  2},
+	{"Gypsy",      8,  9},
+	{"Hal",        5, 10},
+	{"Orion",      0, 11},
+	{"Centauri",   3,  1},
+	{"Draco",      2, 13},
+	{"Casseopia",  6,  7},
+	{"Herculese",  6, 12},
+	{"Zeus",       4,  4},
+	{"Shiva",      5,  2},
+	{"Charon",     3, 10},
+	{"Apollo",     4,  9},
+	{"Jupiter",    7,  4},
+	{"Saturn",    11,  3},
+	{"Uranus",    12, 13},
+	{"Neptune",    2, 11},
+	{"Pluto",      2,  0},
+	{"Mars",       9,  8},
+	{"Mercury",   10,  5},
+};
+
 /*
 BotName
 
 Sets bot's name and colors
 */
-string (float r)
+string (integer r)
 BotName =
 {
 	self.b_num = r;
-	switch (r) {
-	case 1:
-		self.b_pants = 11;
-		self.b_shirt = 0; 
-		return "Vincent";
-	case 2:
-		self.b_pants = 1;
-		self.b_shirt = 3;
-		return "Bishop";
-	case 3:
-		self.b_pants = 13;
-		self.b_shirt = 2;
-		return "Nomad";
-	case 4:
-		self.b_pants = 7;
-		self.b_shirt = 6;
-		return "Hudson";
-	case 5:
-		self.b_pants = 12;
-		self.b_shirt = 6;
-		return "Lore";
-	case 6:
-		self.b_pants = 4;
-		self.b_shirt = 4;
-		return "Servo";
-	case 7:
-		self.b_pants = 2;
-		self.b_shirt = 5;
-		return "Gort";
-	case 8:
-		self.b_pants = 10;
-		self.b_shirt = 3;
-		return "Kryten";
-	case 9:
-		self.b_pants = 9;
-		self.b_shirt = 4;
-		return "Pimp Bot";
-	case 10:
-		self.b_pants = 4;
-		self.b_shirt = 7;
-		return "Max";
-	case 11:
-		self.b_pants = 3;
-		self.b_shirt = 11;
-		return "Marvin";
-	case 12:
-		self.b_pants = 13;
-		self.b_shirt = 12;
-		return "Erwin";
-	case 13:
-		self.b_pants = 11;
-		self.b_shirt = 2;
-		return "FrikBot";
-	case 14:
-		self.b_pants = 0;
-		self.b_shirt = 2;
-		return "Krosis";
-	case 15:
-		self.b_pants = 8;
-		self.b_shirt = 9;
-		return "Gypsy";
-	case 16:
-		self.b_pants = 5;
-		self.b_shirt = 10;
-		return "Hal";
-	default:
-		break;
-	}
+	if (r < 0 || r >= 32)
+		return NIL;
+	self.b_pants = bot_data[r].pants;
+	self.b_shirt = bot_data[r].shirt;
+	return bot_data[r].name;
 };
 
 string ()
 PickARandomName =
 {
-	if (bot_count > 16)
-		return "player";
-
-	local float y, test;
+	local integer y, test;
 	local string h;
 	local entity t;
 	y = TRUE;
 	while (y) {
-		test = ceil (16 * random ());
+		test = (integer) (32 * random ());
 		h = BotName (test);
 		t = find (NIL, netname, h);
 		if (t == NIL)
