@@ -48,7 +48,7 @@ integer bot_move_linker;
 - (void) jump
 {
 	// TODO check for precision, etc.
-	ent.button2 = TRUE;
+	buttons |= 4;
 }
 
 - (integer) canRJ

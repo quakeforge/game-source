@@ -298,7 +298,7 @@ Pick a weapon based on range / ammo
 	g = angcomp (v_angle.y, b_angle.y);
 	if (fabs (g) > 30)
 		return; // not again!
-	ent.button0 = TRUE;
+	buttons |= 1;
 }
 
 /*

@@ -140,6 +140,7 @@ void (entity e) SV_FreeClient = #0;
 void (entity e, string str) SV_SetUserinfo = #0;
 void (entity e, integer ping) SV_SetPing = #0;
 void (entity cl, float sec, vector angles, vector move, integer buttons, integer impulse) SV_UserCmd = #0;
+void (entity cl) SV_Spawn = #0;
 
 
 //----------------------------------------------------------------------------
@@ -325,16 +326,18 @@ void () BotImpulses =
 	local integer cl_no = ClientNumber (@self);
 	local entity uself;
 
+	SV_Spawn (e);
+
 	if (!(self = [super initWithEntity:e]))
 		return NIL;
 
 	b_clientno = cl_no + 1;
 	b_clientflag = 1 << cl_no;
 	
-	ent.colormap = (float) (cl_no + 1);
+	//ent.colormap = (float) (cl_no + 1);
+	//ent.team = b_pants + 1;
 
 	b_entertime = time;
-	ent.team = b_pants + 1;
 
 	ent.netname = name.name;
 	b_pants = name.pants;

@@ -122,7 +122,7 @@ b_originator == targ
 	if (b_chattime > time) {
 		if (b_skill < 2)
 			keys = 0;
-			ent.button0 = ent.button2 = 0;
+			buttons = 0;
 		return;
 	} else if (b_chattime) {
 		switch (b_topic) {

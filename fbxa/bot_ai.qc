@@ -343,7 +343,7 @@ based b_aiflags.
 			if ([self canRJ]) {
 				[self jump];
 				v_angle.x = b_angle.x = 80;
-				ent.button0 = TRUE;
+				buttons |= 1;
 			} else
 				[self lost: targets[0] :FALSE];
 		}
@@ -351,7 +351,7 @@ based b_aiflags.
 	if (b_aiflags & AI_SURFACE) {
 		if (ent.waterlevel > 2) {
 			keys = KEY_MOVEUP;
-			ent.button2 = TRUE; // swim!
+			buttons |= 4; // swim!
 		} else
 			b_aiflags &= ~AI_SURFACE;
 	}
@@ -742,8 +742,7 @@ frame, the ai_time limits it's actual updating
 	// status bars, and the mod probably already compensated for that
 
 	if (ent.health < 1) { 
-		ent.button0 = floor (random() * 2);
-		ent.button2 = 0;
+		buttons = (integer) (random() * 2);
 		keys = 0;
 		b_aiflags = 0;
 		[Waypoint clearMyRoute:self];
@@ -771,8 +770,7 @@ frame, the ai_time limits it's actual updating
 	stagger_think = time;
 
 	// shut the bot's buttons off, various functions will turn them on by AI end
-	ent.button2 = 0;
-	ent.button0 = 0;
+	buttons = 0;
 
 	// target1 is like goalentity in normal Quake monster AI.
 	// it's the bot's most immediate target
@@ -820,7 +818,7 @@ frame, the ai_time limits it's actual updating
 			traceline (ent.origin, ent.origin + '0 0 6800', TRUE, ent);
 			if (trace_inopen) {
 				keys = KEY_MOVEUP;
-				ent.button2 = TRUE; // swim!
+				buttons |= 4;		// swim!
 				return; // skip ai flags for now - this is life or death
 			}
 		}
