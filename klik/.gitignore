@@ -1,4 +1,5 @@
 *.qfo
+.deps
 Makefile.deps
 equipid.qc
 equipid.qh
