@@ -92,6 +92,11 @@
 }
 - (id) init;
 - (id) initWithEntity: (entity) e;
+- (id) initFromPlayer: (entity) e;
+- (integer) preFrame;
+- (integer) postFrame;
+- (void) frame;
+- (void) disconnect;
 @end
 
 @interface Bot (Misc)
@@ -228,7 +233,7 @@
 #define OPT_NOCHAT	2
 
 // -------globals-----
-@extern entity [32] players;
+@extern Bot [32] players;
 @extern integer		max_clients;
 @extern float		real_frametime;
 @extern float		bot_count, b_options, lasttime;
@@ -238,7 +243,7 @@
 @extern float		sv_accelerate, sv_maxspeed, sv_stopspeed;
 @extern entity		fixer;
 @extern Bot			route_table;
-@extern entity		b_temp1, b_temp2, b_temp3;
+@extern entity		b_temp1, b_temp3;
 @extern float		busy_waypoints;
 
 @extern float coop;

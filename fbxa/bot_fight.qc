@@ -198,14 +198,15 @@ weapon_range =
 		}		
 	} else {
 		local integer i = 0;
+		local Bot foe;
 		for (i = 0; i < 32; i++) {
 			if (!(foe = players[i]))
 				continue;
-			if(foe != ent) {
-				if (foe.modelindex != 0) {
-					if (foe.health > 0) {
-						if (!(teamplay && ent.team == foe.team)) {
-							flen = vlen (foe.origin - ent.origin);
+			if(foe != self) {
+				if (foe.ent.modelindex != 0) {
+					if (foe.ent.health > 0) {
+						if (!(teamplay && ent.team == foe.ent.team)) {
+							flen = vlen (foe.ent.origin - ent.origin);
 							if (flen < foedist) {
 								tsz = [self size_player:foe];
 								if (tsz < foesz) {

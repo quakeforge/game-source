@@ -75,18 +75,6 @@ ClientFixRankings(); // FrikBot
 
 #include "libfrikbot.h"
 
-@implementation Bot
-- (id) init
-{
-	return [super init];
-}
-
-- (id) initWithEntity:(entity) e
-{
-	return [super initWithEntity:e];
-}
-@end
-
 void ()
 bot_map_load =
 {
@@ -122,31 +110,7 @@ for all variable in the bot...
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
-entity [32] players;
-entity [32] phys_objects;
-
-// ----- entity fields ---
-.float	wallhug, keys, oldkeys, ishuman;
-.float	b_frags, b_shirt, b_pants; 
-.integer b_clientno;
-.float	ai_time, b_sound, missile_speed;
-.float	portal_time;
-.integer b_skill;
-.float	switch_wallhug;
-.integer b_num;
-.float	b_chattime;
-.float	b_entertime; // QW shtuff
-.float	b_menu, b_menu_time, b_menu_value;
-.float route_failed, dyn_flags, dyn_time;
-.float dyn_plat;
-.entity	temp_way, last_way, phys_obj;
-.entity	target1, target2, target3, target4;
-.entity	_next, _last;
-.entity	current_way;
-.vector	b_angle, mouse_emu, obs_dir;
-.vector	movevect, b_dir;
-.vector dyn_dest;
-.vector	punchangle; // HACK - Don't want to screw with bot_phys
+Bot [32] players;
 
 // -------globals-----
 integer		max_clients;
@@ -159,7 +123,7 @@ float		sv_friction, sv_gravity;
 float		sv_accelerate, sv_maxspeed, sv_stopspeed;
 entity		fixer;
 Bot			route_table;
-entity		b_temp1, b_temp2, b_temp3;
+entity		b_temp1, b_temp3;
 Waypoint	way_head;
 float		busy_waypoints;
 
@@ -192,7 +156,7 @@ direct messages to the bots, it crashes quake :-(
 void (entity e)
 setspawnparms =
 {
-   if (e.ishuman)
+   if (((Bot)e.@this).ishuman)
 	   frik_setspawnparms (e);
    else
 	   SetNewParms ();
@@ -201,7 +165,7 @@ setspawnparms =
 vector (entity e, float sped)
 aim =
 {
-   e.missile_speed = sped;
+   ((Bot)e.@this).missile_speed = sped;
    return frik_aim (e, sped);
 };
 
@@ -212,9 +176,9 @@ sound =
    if (samp == "items/inv3.wav")
 	   return;
    else if (e.classname == "player")
-	   e.b_sound = time + 1;
+	   ((Bot)e.@this).b_sound = time + 1;
    else if (other.classname == "player")
-	   other.b_sound = time + 1;
+	   ((Bot)other.@this).b_sound = time + 1;
 };
 
 /*
@@ -228,43 +192,34 @@ void ()
 ClientFixRankings =
 {
 	local integer cno;
-	if (self.switch_wallhug > time)
-		return;
-	self.switch_wallhug = 0;
+	local Bot bot = @self.@this;
+	local entity btmp;
+	local Bot btmp_bot;
 
-	b_temp2 = nextent (NIL);
+	if (bot.switch_wallhug > time)
+		return;
+	bot.switch_wallhug = 0;
+
+	btmp = nextent (NIL);
 	cno = 0;
 
 	while (cno < max_clients) {
-		if (!b_temp2.ishuman) {
+		btmp_bot = btmp.@this;
+		if (!btmp_bot.ishuman) {
 			if (players[cno])
-				UpdateClient (b_temp2);
+				UpdateClient (btmp);
 		}
 		cno++;
-		b_temp2 = nextent (b_temp2);
+		btmp = nextent (btmp);
 	}
 };
 		
 void ()
 ClientInRankings =
 {
-	local float cno;
-	local integer cl_no = ClientNumber (self);
+	local integer cl_no = ClientNumber (@self);
 
-	players[cl_no] = self;
-	self.b_clientno = cl_no + 1;
-	userid++;
-	
-	self.phys_obj = phys_objects[cl_no];
-
-	if (self.ishuman == 2) {
-		self.ishuman = FALSE;
-		return;
-	}
-   	cno = self.colormap - 1;
-	self.b_clientno = (integer) cno;
-	self.ishuman = TRUE;
-	self.switch_wallhug = time + 1;
+	players[cl_no] = [[Bot alloc] initWithEntity:@self];
 };
 
 void ()
@@ -285,32 +240,13 @@ bot easier to install
 float ()
 BotPreFrame =
 {
-	if (self.b_clientno == -1)
-		return TRUE;
-	if (self.ishuman)
-		if (self.switch_wallhug)
-			ClientFixRankings ();
-	if (self.b_frags != self.frags) {
-		if (self.b_frags > self.frags) {
-			if (pointcontents (self.origin) == CONTENT_LAVA)
-				bot_start_topic (10);
-			else
-				bot_start_topic (9);
-		} else
-			bot_start_topic (2);
-		self.b_frags = self.frags;
-	}
-	[self.@this dynamicWaypoint];
-	return FALSE;
+	return (float)[((Bot)@self.@this) preFrame];
 };
+
 float ()
 BotPostFrame =
 {
-	if (self.b_clientno == -1)
-		return TRUE;
-	if (self.ishuman)
-		BotImpulses ();
-	return FALSE;
+	return (float)[((Bot)@self.@this) postFrame];
 };
 
 /*
@@ -375,14 +311,6 @@ BotInit =
 	}
 
 	ent = nextent (NIL);
-	while (numents < max_clients) {
-
-		phys_objects[numents] = spawn ();
-		phys_objects[numents].classname = "phys_obj";
-		phys_objects[numents].owner = ent;
-		numents++;
-		ent = nextent (ent);
-	}
 	bot_map_load ();
 };
 
@@ -398,6 +326,7 @@ signs on to the server.
 void (entity who)
 UpdateClient =
 {
+	/* XXX
 	local string bottomcolor = ftos (who.b_pants);
 	local string topcolor = ftos (who.b_shirt);
 
@@ -408,28 +337,13 @@ UpdateClient =
 					+ "\\topcolor\\" + topcolor
 					+ "\\team\\bot\\skin\\base\\name\\" + who.netname);
 	// FIXME: do teams properly
+	*/
 };
 
 integer (integer clientno)
 ClientBitFlag =
 {
 	return 1 << clientno;
-};
-
-integer ()
-ClientNextAvailable =
-{
-	local integer clientno;
-
-	// I want to do this top down, but QW won't let me
-	clientno = 0;
-	while (clientno < max_clients) {
-		clientno++;
-
-		//FIXME if (!ClientIsActive (clientno))
-			return clientno;
-	}
-	return -1;
 };
 
 void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
@@ -466,104 +380,30 @@ ClientNumber =
 void (integer whatbot, integer whatskill)
 BotConnect =
 {
-	local integer f;
 	local entity uself;
+	local Bot bot;
 	
-	//f = ClientNextAvailable();
-	uself = self;
-	self = SV_AllocClient ();
-	if (!self) {
+	uself = @self;
+	@self = SV_AllocClient ();
+	if (!@self) {
 		bprint (PRINT_HIGH, "Unable to connect a bot, server is full.\n");
-		self = uself;
+		@self = uself;
 		return;
 	}
-	bot_count++;
-	bot_start_topic (1);
-	f = ClientNumber (self) + 1;
-	self.b_clientno = f;
-	self.colormap = (float) f;
+	bot = [[Bot alloc] initWithEntity: @self];
 	if (whatbot)
-		@self.netname = [((Bot)@self.@this) name:whatbot];
+		@self.netname = [bot name:whatbot];
 	else
-		@self.netname = [((Bot)@self.@this) randomName];
-
+		@self.netname = [bot randomName];
+	bot_count++;
 	// players can set skill all weird, so leave these checks in
 	if (whatskill > 3)
 		whatskill = 3;
 	else if (whatskill < 0)
 		whatskill = 0;
-	self.b_skill = whatskill;
-	self.b_entertime = time;
-	self.team = self.b_pants + 1;
-	UpdateClient (self);
-	SetNewParms ();
-	self.ishuman = 2;
-	ClientConnect ();
-	PutClientInServer ();
-	self = uself;
-};
-
-void (entity bot)
-BotDisconnect =
-{
-	local entity uself;
-
-	uself = self;
-	self = bot;
-
-	bot_count--;
-
-	ClientDisconnect ();
-
-	setmodel (self.phys_obj, NIL);
-	self.netname = NIL;
-	SV_FreeClient (self);
-	self = uself;
-};
-
-void ()
-BotFrame =
-{
-	local integer num;
-	local string h;
-	
-	h = infokey (NIL, "bot_options");
-	b_options = stof (h);
-	
-	// for the sake of speed
-	sv_maxspeed = cvar ("sv_maxspeed");
-	sv_gravity = cvar ("sv_gravity");
-	sv_friction = cvar ("sv_friction");
-	sv_accelerate = cvar ("sv_accelerate");
-	sv_stopspeed = cvar ("sv_stopspeed");
-	real_frametime = time - lasttime; // in QW frametime is fuxx0red
-	lasttime = time;
-	
-	self = nextent (NIL);
-	num = 0;
-	while (num < max_clients) {
-		if (self.ishuman == FALSE) {
-			if (self.b_clientno > 0) {
-				[self.@this _obstacles];
-				CL_KeyMove ();
-				SV_ClientThink ();
-				SV_Physics_Client ();
-				// this is sickening	
-				if (self.phys_obj) {
-					if (self.phys_obj.modelindex != self.modelindex) {
-						setmodel(self.phys_obj, "progs/player.mdl");
-						self.phys_obj.modelindex = self.modelindex;
-					}
-					self.phys_obj.frame = self.frame;
-					self.phys_obj.angles = self.angles;
-					self.phys_obj.colormap = self.colormap;
-					self.phys_obj.effects = self.effects;
-				}
-			}
-		}
-		self = nextent (self);
-		num++;
-	}
+	bot.b_skill = whatskill;
+	bot_start_topic (1);
+	@self = uself;
 };
 
 /*
@@ -585,3 +425,112 @@ void () BotImpulses =
 		return;
 	self.impulse = 0;
 };
+
+@implementation Bot
+- (id) init
+{
+	return [super init];
+}
+
+- (id) initWithEntity:(entity) e
+{
+	local integer cl_no = ClientNumber (@self);
+
+	if (!(self = [super initWithEntity:e]))
+		return NIL;
+
+	b_clientno = cl_no + 1;
+	userid++;
+	
+	ent.colormap = (float) (cl_no + 1);
+
+	b_entertime = time;
+	ent.team = b_pants + 1;
+	UpdateClient (ent);
+	SetNewParms ();
+	ishuman = 2;
+	ClientConnect ();
+	PutClientInServer ();
+	return self;
+}
+
+- (id) initFromPlayer: (entity) e
+{
+	local integer cno;
+
+	if (!(self = [super initWithEntity:e]))
+		return NIL;
+
+   	cno = (integer)e.colormap - 1;
+	b_clientno = cno;
+	ishuman = TRUE;
+	switch_wallhug = time + 1;
+	return self;
+}
+
+- (integer) preFrame
+{
+	if (b_clientno == -1)
+		return TRUE;
+	if (ishuman)
+		if (switch_wallhug)
+			ClientFixRankings ();
+	if (b_frags != ent.frags) {
+		if (b_frags > ent.frags) {
+			if (pointcontents (ent.origin) == CONTENT_LAVA)
+				bot_start_topic (10);
+			else
+				bot_start_topic (9);
+		} else
+			bot_start_topic (2);
+		self.b_frags = ent.frags;
+	}
+	[self dynamicWaypoint];
+	return FALSE;
+}
+
+- (integer) postFrame
+{
+	if (self.b_clientno == -1)
+		return TRUE;
+	if (self.ishuman)
+		BotImpulses ();
+	return FALSE;
+}
+
+-(void)disconnect
+{
+	local entity uself;
+
+	uself = @self;
+	@self = ent;
+	ClientDisconnect ();
+	@self = uself;
+
+	bot_count--;
+
+	SV_FreeClient (ent);
+}
+
+-(void)frame
+{
+	local string h;
+	
+	h = infokey (NIL, "bot_options");
+	b_options = stof (h);
+	
+	// for the sake of speed
+	sv_maxspeed = cvar ("sv_maxspeed");
+	sv_gravity = cvar ("sv_gravity");
+	sv_friction = cvar ("sv_friction");
+	sv_accelerate = cvar ("sv_accelerate");
+	sv_stopspeed = cvar ("sv_stopspeed");
+	real_frametime = time - lasttime; // in QW frametime is fuxx0red
+	lasttime = time;
+	
+	[self obstacles];
+	CL_KeyMove ();
+	SV_ClientThink ();
+	SV_Physics_Client ();
+}
+@end
