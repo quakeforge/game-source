@@ -59,6 +59,10 @@
 			//Flyer/Fish
 			setorigin (self, self.origin);
 		}
+		if (!walkmove(0,0)) {
+			//Die if we get stuck in a wall/object
+			T_Damage (self, self, self, 50000);
+		}
 	}
 };
 
