@@ -13,6 +13,7 @@ typedef struct bot_data_t bot_data_t;
 {
 @public
 	Waypoint current_way;
+	Target _last;
 }
 +(Target)forEntity:(entity)e;
 -(vector)realorigin;
@@ -23,6 +24,9 @@ typedef struct bot_data_t bot_data_t;
 -(integer)ishuman;
 -(integer)priority:(Bot)bot;
 -(Waypoint)findWaypoint:(Waypoint)start;
+-(float)searchTime;
+-(void)setSearchTime:(float)st;
+-(string)classname;
 @end
 
 @interface Waypoint: Target
@@ -32,8 +36,10 @@ typedef struct bot_data_t bot_data_t;
 	integer flags;
 	vector origin;
 
+	integer is_temp;
+
 	integer b_sound;
-	integer keys;
+	integer busy;	//???
 	float items;
 	Waypoint enemy;
 	float search_time;

@@ -145,8 +145,8 @@ struct target_s = {
 {
 	if ((ent.flags & FL_ITEM) && ent.model && ent.search_time < time) {
 		// ugly hack
-		//XXX if (ent._last != bot)
-		//XXX 	thisp = 20;
+		if (_last != bot)
+			return 20;
 		if (ent.classname == "item_artifact_super_damage")
 			return 65;
 		else if (ent.classname == "item_artifact_invulnerability")
@@ -229,6 +229,21 @@ Finds the closest, fisible, waypoint to e
 		}
 	} 
 	return best;
+}
+
+-(float)searchTime
+{
+	return ent.search_time;
+}
+
+-(void)setSearchTime:(float)st
+{
+	ent.search_time = st;
+}
+
+-(string)classname
+{
+	return ent.classname;
 }
 
 @end

@@ -204,26 +204,19 @@ weapon_range =
 		local integer i = 0;
 		local Bot foe;
 		for (i = 0; i < 32; i++) {
-			if (!(foe = players[i]))
-				continue;
-			if(foe != self) {
-				if (foe.ent.modelindex != 0) {
-					if (foe.ent.health > 0) {
-						if (!(teamplay && ent.team == foe.ent.team)) {
-							flen = vlen (foe.ent.origin - ent.origin);
-							if (flen < foedist) {
-								tsz = [self sizePlayer:foe];
-								if (tsz < foesz) {
-									if ([self fov:foe.ent] || foe.b_sound > time || b_skill == 3) {
-										if ([self canSee:foe]) {
-											ent.enemy = foe.ent;
-											foedist = vlen ([foe origin] - ent.origin);
-										}
-									}
-								}
-							}
-						}
-					}
+			if (!(foe = players[i])) continue;
+			if (foe == self) continue;
+			if (foe.ent.modelindex == 0) continue;
+			if (foe.ent.health <= 0) continue;
+			if (teamplay && ent.team == foe.ent.team) continue;
+			flen = vlen (foe.ent.origin - ent.origin);
+			if (flen >= foedist) continue;
+			tsz = [self sizePlayer:foe];
+			if (tsz > foesz) continue;
+			if ([self fov:foe.ent] || foe.b_sound > time || b_skill == 3) {
+				if ([self canSee:foe]) {
+					ent.enemy = foe.ent;
+					foedist = vlen ([foe origin] - ent.origin);
 				}
 			}
 		}

@@ -60,12 +60,6 @@ Array waypoint_array;
 		waypoint_thinker = spawn ();
 		waypoint_thinker.classname = "waypoint_thinker";
 	}
-/*XXX
-	ent.classname = "temp_waypoint";
-	ent.solid = SOLID_TRIGGER;
-	ent.movetype = MOVETYPE_NOCLIP;
-	setsize(ent, VEC_HULL_MIN, VEC_HULL_MAX); // FIXME: convert these to numerical
-*/
 	return [super init];
 }
 
@@ -74,6 +68,8 @@ Array waypoint_array;
 	[self init];
 	[waypoint_array addItem: self];
 	origin = org;
+	search_time = time;
+	items = -1;
 	if ([waypoint_array count] == 1) {
 		local id obj = [Waypoint class];
 		local IMP imp = [obj methodForSelector: @selector (fixWaypoints)];
@@ -86,6 +82,7 @@ Array waypoint_array;
 -(id)initFromEntity:(entity)ent
 {
 	[self initAt:ent.origin];
+	//FIXME do entity based init
 }
 
 -(void)setOrigin:(vector)org
@@ -97,28 +94,6 @@ Array waypoint_array;
 {
 	return origin;
 }
-/*
-entity (vector org)
-make_waypoint = 
-{
-	local entity point;
-
-	point = spawn ();
-	point.classname = "waypoint";
-
-	point.search_time = time; // don't double back for me;
-	point.solid = SOLID_TRIGGER;
-	point.movetype = MOVETYPE_NONE;
-	point.items = -1;
-	setorigin (point, org);
-	
-	setsize (point, VEC_HULL_MIN, VEC_HULL_MAX);
-
-	if (waypoint_mode > WM_LOADED) // editor modes
-		setmodel (point, "progs/s_bubble.spr"); 
-	return point;
-};
-*/
 
 -(integer)isLinkedTo:(Waypoint)way
 {
@@ -261,7 +236,7 @@ Route & path table management
 
 -(void)clearRoute
 {
-	keys = FALSE;
+	busy = FALSE;
 	enemy = NIL;
 	items = -1; // not in table
 }
@@ -316,9 +291,9 @@ tripping the runaway loop counter
 	dist = dist + random() * 100; // add a little chaos
 
 	if ((dist < e2.items) || (e2.items == -1)) {
-		if (!e2.keys)
+		if (!e2.busy)
 			busy_waypoints = busy_waypoints + 1;
-		e2.keys = TRUE;
+		e2.busy = TRUE;
 		e2.items = dist;
 		e2.enemy = self;
 		[e2 queueForThink];
@@ -349,7 +324,7 @@ tripping the runaway loop counter
 	}
 
 	busy_waypoints--;
-	keys = FALSE;
+	busy = FALSE;
 
 	if (busy_waypoints <= 0) {
 		if (direct_route) {
@@ -387,6 +362,21 @@ tripping the runaway loop counter
 		return 0;
 }
 
+-(float)searchTime
+{
+	return search_time;
+}
+
+-(void)setSearchTime:(float)st
+{
+	search_time = st;
+}
+
+-(string)classname
+{
+	return is_temp ? "temp_waypoint" : "waypoint";
+}
+
 @end
 
 
@@ -401,30 +391,6 @@ BSP/QC Waypoint loading
 void() waypoint =
 {	
 	local Waypoint way = [[Waypoint alloc] initFromEntity: @self];
-/*
-	search_time = time;
-	solid = SOLID_TRIGGER;
-	movetype = MOVETYPE_NONE;
-	setorigin(self, origin);
-	
-	setsize(self, VEC_HULL_MIN, VEC_HULL_MAX);
-	waypoints = waypoints + 1;
-	if (!way_head) {
-		way_head = self;
-		way_foot = self;
-	} else {
-		way_foot._next = self;
-		_last = way_foot;
-		way_foot = self;
-	}
-
-	count = waypoints;
-	waypoint_mode = WM_LOADED;
-	if (count == 1) {
-		think = FixWaypoints; // wait until all bsp loaded points are spawned
-		nextthink = time;
-	}
-*/
 };
 
 void(vector org, vector bit1, integer bit4, integer flargs) make_way =

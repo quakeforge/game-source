@@ -78,7 +78,7 @@ checks to see if an entity is on the bot's stack
 targetAdd
 
 adds a new entity to the stack, since it's a
-LIFO stack, this will be the bot's new target1
+LIFO stack, this will be the bot's new targets[0]
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
@@ -93,7 +93,7 @@ LIFO stack, this will be the bot's new target1
 	targets[2] = targets[1];
 	targets[1] = targets[0];
 	targets[0] = e;
-	ent.search_time = time + 5;
+	[self setSearchTime:time + 5];
 }
 
 /*
@@ -103,7 +103,7 @@ targetDrop
 
 Removes an entity from the bot's target stack.
 The stack will empty everything up to the object
-So if you have target2 item_health, target1
+So if you have target2 item_health, targets[0]
 waypoint, and you drop the health, the waypoint
 is gone too.
 
@@ -132,7 +132,7 @@ is gone too.
 	default:
 		break;
 	}
-	ent.search_time = time + 5;
+	[self setSearchTime:time + 5];
 }
 
 /*
@@ -165,17 +165,15 @@ Bot has lost its target.
 				[self startTopic:3];
                 
                 if (targ.ent.flags & FL_ITEM) {
-					/*XXX
 					if (!targ.ent.model)
-						targ.prev = NIL;
+						targ._last = NIL;
 					else
-						targ.prev = ent;
-					*/
+						targ._last = self;
                 }
         }
 
-	//XXX if (targ.ent.classname != "player")
-	//XXX 	targ.search_time = time + 5;
+	if (targ.ent.classname != "player")
+		[self setSearchTime:time + 5];
 }
 
 /*
@@ -232,7 +230,7 @@ removed.
 					keys &= ~KEY_MOVE;
 					[self startTopic:4];
 				}
-				ent.search_time = time + 5; // never time out
+				[self setSearchTime:time + 5]; // never time out
 			} else if (![self canSee:bot])
 				[self lost:bot :FALSE];	
 		} else if (waypoint_mode > WM_LOADED) {
@@ -280,7 +278,7 @@ removed.
 			[self lost:targ :TRUE];
 	}
 	// targets are lost if the bot's search time has expired
-	if (time > ent.search_time)
+	if (time > [self searchTime])
 		[self lost:targ :FALSE];
 }
 
@@ -441,13 +439,12 @@ confused
 	jj = [self findRoute:last_way];
 	if (!jj) {
 		// this is an ugly hack
-		/*XXX
 		if (targets[0].current_way != last_way) {
-			if (targets[0].classname != "temp_waypoint")
-				if (targets[0].classname != "player")
+			local string cn = [targets[0] classname];
+			if (cn != "temp_waypoint")
+				if (cn != "player")
 					[self lost:targets[0] :FALSE];
 		}
-		*/
 
 		return;
 	}
@@ -457,7 +454,8 @@ confused
 	// Readahed types are AI conditions to perform while heading to a waypoint
 	// point types are AI flags that should be executed once reaching a waypoint
 
-	b_aiflags = (jj.flags & AI_READAHEAD_TYPES) | (last_way.flags & AI_POINT_TYPES);
+	b_aiflags = (jj.flags & AI_READAHEAD_TYPES)
+				| (last_way.flags & AI_POINT_TYPES);
 	[self targetAdd:jj];
 	if (last_way) {
 		if ([last_way isLinkedTo:jj] == 2) {
@@ -467,7 +465,8 @@ confused
 		}
 		traceline (last_way.origin, jj.origin, FALSE, ent); // check for blockage
    		if (trace_fraction != 1) {
-			if (trace_ent.classname == "door" && !(b_aiflags & AI_DOOR_NO_OPEN)) {
+			if (trace_ent.classname == "door"
+				&& !(b_aiflags & AI_DOOR_NO_OPEN)) {
 				// a door blocks the way
 				// linked doors fix
 				if (trace_ent.owner)
@@ -537,23 +536,26 @@ the bot finds things it wants to kill/grab.
 		p = 100;
 	} else
 		p = 30;
-
-	if (current_way) {
-		// check to see if it's unreachable
-		if (current_way.items == -1)
-			return 0;
-		else
-			p += (integer) ((13000 - current_way.items) * 0.05);
-	}
 	return p;
 }
 
 -(integer)priorityForThing:(Target)thing
 {
+	local integer p;
 	// This is the most executed function in the bot. Careful what you do here.
 	if (pointcontents ([thing origin]) < -3)
 		return 0;
-	return [thing priority:self];
+
+	p = [thing priority:self];
+
+	if (thing.current_way) {
+		// check to see if it's unreachable
+		if (thing.current_way.items == -1)
+			return 0;
+		else
+			p += (integer) ((13000 - thing.current_way.items) * 0.05);
+	}
+	return p;
 }
 
 -(void)lookForCrap:(integer)scope
@@ -584,6 +586,7 @@ the bot finds things it wants to kill/grab.
 		}
 		foe = [Target forEntity:foe.ent.chain];
 	}
+
 	way = [Waypoint find:ent.origin radius:radius];
 	while (way) {
 		thatp = [self priorityForThing:way];
@@ -597,6 +600,7 @@ the bot finds things it wants to kill/grab.
 		}
 		way = way.chain;
 	}
+
 	if (best == NIL)
 		return;
 	if (![self targetOnstack:best]) {	
@@ -672,7 +676,7 @@ generally making the bot look good.
 		while (ent.v_angle.x > 180)
 			ent.v_angle.x -= 360;
 	} else if ((ent.enemy == NIL || ent.enemy.movetype == MOVETYPE_PUSH)
-			   && (targets[0] ? targets[0].ent.classname != "player" : 1)) {
+			   && (targets[0] ? [targets[0] classname] != "player" : 1)) {
 		keys &= ~KEY_LOOK;
 		ent.v_angle = b_angle;
 		while (ent.v_angle.x < -180)
@@ -710,8 +714,8 @@ frame, the ai_time limits it's actual updating
 -(void)AI
 {
 	// am I dead? Fire randomly until I respawn
-	// health < 1 is used because fractional healths show up as 0 on normal player
-	// status bars, and the mod probably already compensated for that
+	// health < 1 is used because fractional healths show up as 0 on normal
+	// playerstatus bars, and the mod probably already compensated for that
 
 	if (ent.health < 1) { 
 		buttons = (integer) (random() * 2);
@@ -724,8 +728,8 @@ frame, the ai_time limits it's actual updating
 		return;
 	}
 		
-	// stagger the bot's AI out so they all don't think at the same time, causing game
-	// 'spikes'
+	// stagger the bot's AI out so they all don't think at the same time,
+	// causing game 'spikes'
 	if (b_skill < 2) {
 		if (ai_time > time)
 			return;
@@ -737,14 +741,16 @@ frame, the ai_time limits it's actual updating
 		} else
 			return;
 	}
+
 	if (ent.view_ofs == '0 0 0')
 		[self startTopic:7];
 	stagger_think = time;
 
-	// shut the bot's buttons off, various functions will turn them on by AI end
+	// shut the bot's buttons off, various functions will turn them on by AI
+	// end
 	buttons = 0;
 
-	// target1 is like goalentity in normal Quake monster AI.
+	// targets[0] is like goalentity in normal Quake monster AI.
 	// it's the bot's most immediate target
 	if (route_table == self) {
 		if (busy_waypoints <= 0) {
@@ -771,7 +777,7 @@ frame, the ai_time limits it's actual updating
 		}
 	}
 
-	// angleSet points the bot at it's goal (ent.enemy or target1)
+	// angleSet points the bot at it's goal (ent.enemy or targets[0])
 	[self angleSet];
 
 	// fight my enemy. Enemy is probably a field QC coders will most likely
@@ -797,10 +803,11 @@ frame, the ai_time limits it's actual updating
 	}
 
 	// b_aiflags handling
+	// don't want chat to screw him up if he's concentrating
 	if (b_aiflags)
 		[self handleAI]; 
 	else
-		[self chat]; // don't want chat to screw him up if he's rjing or something
+		[self chat];
 }
 
 @end

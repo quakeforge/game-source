@@ -206,7 +206,7 @@ Boy it's confusing.
 	if (last_way != NIL) {
 		last_way.items = vlen(last_way.origin - ent.origin);
 		[last_way queueForThink];
-		last_way.keys = TRUE;
+		last_way.busy = TRUE;
 		busy_waypoints = 1;
 		return TRUE;
 	} else {
@@ -256,6 +256,7 @@ Temporary Marker code
 
 	[tep setOrigin:org];
 	tep.search_time = 0;
+	tep.is_temp = 1;
 
 	[self targetAdd:tep];
 }
