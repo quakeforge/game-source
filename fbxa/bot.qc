@@ -48,6 +48,12 @@ Place all included bot*.qc files in the subdirectory "frikbot"
 in your source folder, then...
 
 * Add the following lines to progs.src right after the defs.qc line
+frikbot/map_dm1.qc
+frikbot/map_dm2.qc
+frikbot/map_dm3.qc
+frikbot/map_dm4.qc
+frikbot/map_dm5.qc
+frikbot/map_dm6.qc
 frikbot/bot.qc
 frikbot/bot_way.qc
 frikbot/bot_fight.qc 
