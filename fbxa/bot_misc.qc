@@ -117,6 +117,13 @@ Sets bot's name and colors
 		[ty disconnect];
 }
 
+-(void)add
+{
+	if (!bot_array)
+		bot_array = [[Array alloc] init];
+	[bot_array addItem: self];
+}
+
 /*
 fov
 

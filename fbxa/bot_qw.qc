@@ -327,6 +327,8 @@ void () BotImpulses =
 	if (!(self = [super initWithEntity:e]))
 		return NIL;
 
+	[self add];
+
 	players[cl_no] = self;
 
 	b_clientno = cl_no + 1;

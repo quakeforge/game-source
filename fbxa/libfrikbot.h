@@ -137,6 +137,7 @@ typedef struct bot_data_t bot_data_t;
 -(integer)fov:(entity)targ;
 
 +(void)kick;
+-(void)add;
 @end
 
 @interface Bot (Move)
