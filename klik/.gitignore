@@ -1,4 +1,6 @@
+*.dat
 *.qfo
+*.sym
 .deps
 Makefile.deps
 equipid.qc
