@@ -1,5 +1,5 @@
 QFCC=qfcc
-QCFLAGS=-qq -g -Werror
+QCFLAGS=-z -qq -g -Werror
 QCPPFLAGS=-DLIBFRIKBOT
 
 libfrikbot_source = \
@@ -17,15 +17,17 @@ libfrikbot_source = \
 	map_dm5.qc		\
 	map_dm6.qc
 
-libfrikbot_obj = $(addsuffix .qfo,$(basename $(libfrikbot_source)))
+libfrikbot_obj = $(addsuffix .o,$(basename $(libfrikbot_source)))
 libfrikbot_dep = $(addprefix .deps/,$(addsuffix .d,$(basename $(libfrikbot_source))))
 
-%.qfo: %.r
+%.o: %.r
 	@mkdir -p .deps
-	@$(QFCC) -M -q $(QCPPFLAGS) -c $< | sed -e 's/\(\.r\)\?\.o\>/.qfo/' > .deps/`basename $@ .qfo`.d
+	@$(QFCC) -M -q $(QCPPFLAGS) -c $< | sed -e 's/\(\.r\)\?\.o\>/.o/' > .deps/`basename $@ .o`.d
 	$(QFCC) $(QCFLAGS) $(QCPPFLAGS) -c -o $@ $<
 
-%.qfo: %.qc
+%.o: %.qc
+	@mkdir -p .deps
+	@$(QFCC) -M -q $(QCPPFLAGS) -c $< | sed -e 's/\(\.qc\)\?\.o\>/.o/' > .deps/`basename $@ .o`.d
 	$(QFCC) $(QCFLAGS) $(QCPPFLAGS) -c -o $@ $<
 
 all: libfrikbot.a
@@ -34,7 +36,7 @@ libfrikbot.a: $(libfrikbot_obj)
 	pak -cf $@ $^
 
 clean:
-	rm -f *.qfo *.a *.d
+	rm -f *.o *.qfo *.a *.d
 	rm -rf .deps
 
 -include $(libfrikbot_dep)
