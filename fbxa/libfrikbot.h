@@ -3,7 +3,9 @@
 
 // ----- entity fields ---
 @extern .float	wallhug, keys, oldkeys, ishuman;
-@extern .float	b_frags, b_clientno, b_shirt, b_pants; 
+@extern .float	b_frags;
+@extern .integer b_clientno;
+@extern .float  b_shirt, b_pants; 
 @extern .float	priority, ai_time, b_sound, missile_speed;
 @extern .float	portal_time, b_skill, switch_wallhug;
 @extern .float	b_aiflags, b_num, b_chattime;
@@ -83,8 +85,9 @@
 #define OPT_NOCHAT	2
 
 // -------globals-----
-@extern float		active_clients1, active_clients2;
-@extern float		max_clients, real_frametime;
+@extern entity [32] players;
+@extern integer		max_clients;
+@extern float		real_frametime;
 @extern float		bot_count, b_options, lasttime;
 @extern float		waypoint_mode, dump_mode; 
 @extern float		waypoints, direct_route, userid;
@@ -93,7 +96,7 @@
 @extern entity		fixer;
 @extern entity		route_table;
 @extern entity		b_temp1, b_temp2, b_temp3;
-@extern entity 		player_head, player_tail, phys_head, way_head;
+@extern entity 		way_head;
 @extern float		busy_waypoints;
 
 @extern float coop;
@@ -110,8 +113,9 @@
 @extern void() bot_dodge_stuff;
 
 // rankings
-@extern float(float clientno)		ClientBitFlag;
-@extern float()				ClientNextAvailable;
+@extern integer (entity e) ClientNumber;
+@extern float(integer clientno)		ClientBitFlag;
+@extern integer()				ClientNextAvailable;
 @extern void(float whatbot, float whatskill) BotConnect;
 @extern void(entity bot)			BotDisconnect;
 @extern void(float clientno)		BotInvalidClientNo;

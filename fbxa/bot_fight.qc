@@ -179,9 +179,10 @@ void() bot_dodge_stuff =
 	}
 	else
 	{
-		foe = player_head;
-		while(foe)
-		{
+		local integer i = 0;
+		for (i = 0; i < 32; i++) {
+			if (!(foe = players[i]))
+				continue;
 			if(foe != self)
 			{
 				if (foe.modelindex != 0)

@@ -63,11 +63,6 @@ frikbot/bot_misc.qc
 frikbot/bot_phys.qc
 frikbot/bot_move.qc
 --------------------------------------
-* Comment out the following functions in defs.qc
-sound, stuffcmd, sprint, aim, centerprint, setspawnparms
-WriteByte, WriteChar, WriteShort, WriteLong, WriteCoord
-WriteAngle, WriteString, WriteEntity
---------------------------------------
 * Add this to worldspawn() in world.qc, right at the very top, before InitBodyQue();
 BotInit();  // FrikBot
 --------------------------------------
@@ -124,9 +119,13 @@ for all variable in the bot...
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
+entity [32] players;
+entity [32] phys_objects;
+
 // ----- entity fields ---
 .float	wallhug, keys, oldkeys, ishuman;
-.float	b_frags, b_clientno, b_shirt, b_pants; 
+.float	b_frags, b_shirt, b_pants; 
+.integer b_clientno;
 .float	priority, ai_time, b_sound, missile_speed;
 .float	portal_time, b_skill, switch_wallhug;
 .float	b_aiflags, b_num, b_chattime;
@@ -145,8 +144,8 @@ for all variable in the bot...
 
 
 // -------globals-----
-float		active_clients1, active_clients2;
-float		max_clients, real_frametime;
+integer		max_clients;
+float       real_frametime;
 float		bot_count, b_options, lasttime;
 float		waypoint_mode, dump_mode; 
 float		waypoints, direct_route, userid;
@@ -155,150 +154,16 @@ float		sv_accelerate, sv_maxspeed, sv_stopspeed;
 entity		fixer;
 entity		route_table;
 entity		b_temp1, b_temp2, b_temp3;
-entity 		player_head, player_tail, phys_head, way_head;
+entity 		way_head;
 float		busy_waypoints;
 
 float coop = 0; // hack
 
-// ----------Commands---------
-void(entity e, float chan, string samp, float vol, float atten) frik_sound = #8;
-void(entity client, string s)		frik_stuffcmd	= #21;
-void(entity client, float level, string s)	frik_sprint	= #24;
-vector(entity e, float sped)		frik_aim = #44;	
-void(entity client, string s)		frik_centerprint	= #73;
-void(entity e)				frik_setspawnparms	= #78;
-void(float to, float f)			frik_WriteByte	= #52;
-void(float to, float f)			frik_WriteChar	= #53;
-void(float to, float f)			frik_WriteShort	= #54;
-void(float to, float f)			frik_WriteLong	= #55;
-void(float to, float f)			frik_WriteCoord	= #56;
-void(float to, float f)			frik_WriteAngle	= #57;
-void(float to, string s)		frik_WriteString	= #58;
-void(float to, entity s)		frik_WriteEntity	= #59;
+entity () SV_AllocClient = #0;
+void (entity e) SV_FreeClient = #0;
 
 //----------------------------------------------------------------------------
 
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-Function redclarations. These allow function 
-designed to work for clients (sprint, so forth)
-to mainly not complain when working with a bot
-
-Although these shouldn't be needed anymore,
-as the bots truly are clients now, if you don't
-stop the SZ_ buffer from filling up by disabling
-direct messages to the bots, it crashes quake :-(
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-void(entity	client, string s) stuffcmd =
-{
-	if (client.ishuman)
-		frik_stuffcmd(client, s);
-};
-
-void(entity	e) setspawnparms =
-{
-	if (e.ishuman)
-		frik_setspawnparms(e);
-	else
-		SetNewParms();
-};
-void(entity	client, float level, string s) sprint =
-{
-	if (client.ishuman)
-		frik_sprint(client, level, s);
-};
-void(entity	client, string s) centerprint =
-{
-	if (client.ishuman)
-		frik_centerprint(client, s);
-};
-
-vector(entity e, float sped) aim =
-{
-	e.missile_speed = sped;
-	return frik_aim(e, sped);
-};
-
-void(entity e, float chan, string samp, float vol, float atten) sound = 
-{
-	frik_sound(e, chan, samp, vol, atten);
-	if (samp == "items/inv3.wav")
-		return;
-	else if (e.classname == "player")
-		e.b_sound = time + 1;
-	else if (other.classname == "player")
-		other.b_sound = time + 1;
-};
-void(float to, float f) WriteByte =
-{
-	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
-		return;
-	frik_WriteByte(to, f);
-};
-void(float to, float f) WriteChar =		
-{
-	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
-		return;
-	frik_WriteChar(to, f);
-};
-void(float to, float f) WriteShort =	
-{
-	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
-		return;
-	frik_WriteShort(to, f);
-};
-void(float to, float f) WriteLong = 
-{
-	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
-		return;
-	frik_WriteLong(to, f);
-};
-void(float to, float f) WriteCoord = 
-{
-	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
-		return;
-	frik_WriteCoord(to, f);
-};
-void(float to, float f) WriteAngle = 
-{
-	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
-		return;
-	frik_WriteAngle(to, f);
-};
-void(float to, string s) WriteString = 
-{
-	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
-		return;
-	frik_WriteString(to, s);
-};
-void(float to, entity s) WriteEntity = 
-{
-	if ((to == MSG_ONE) && (msg_entity.ishuman != TRUE))
-		return;
-	frik_WriteEntity(to, s);
-};
-
-
-float(float clientno) ClientIsActive =
-{
-	if(clientno > 16)
-	{
-		if(active_clients2 & ClientBitFlag(clientno - 16))
-			return TRUE;
-		else
-			return FALSE;
-	}
-	else
-	{
-		if(active_clients1 & ClientBitFlag(clientno))
-			return TRUE;
-		else
-			return FALSE;
-	}
-};
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -311,7 +176,7 @@ it just links the bot into the mod
 
 void() ClientFixRankings =
 {
-	local float cno;
+	local integer cno;
 	if (self.switch_wallhug > time)
 		return;
 	self.switch_wallhug = 0;
@@ -323,10 +188,10 @@ void() ClientFixRankings =
 	{
 		if (!b_temp2.ishuman)
 		{
-			if (ClientIsActive(cno))
+			if (players[cno])
 				UpdateClient(b_temp2);
 		}
-		cno = cno + 1;
+		cno++;
 		b_temp2 = nextent(b_temp2);
 	}
 };
@@ -334,62 +199,14 @@ void() ClientFixRankings =
 void() ClientInRankings =
 {
 	local float cno;
+	local integer cl_no = ClientNumber (self);
 
-	if (!self.phys_obj) {
-		// oh no, the server killed our data. THE BASTARD!
-		// ie, incoming player
-		local entity e;
-
-		// repair the link
-		if (player_head != self) {
-			e = player_head;
-			while (e) {
-				if (e._next == self) {
-					self._last = e;
-					e = NIL;
-				} else {
-					e = e._next;
-				}
-			}
-		}
-		if (player_tail != self) {
-			e = player_tail;
-			while (e) {
-				if (e._last == self) {
-					self._next = e;
-					e = NIL;
-				} else {
-					e = e._last;
-				}
-			}
-		}
-		// unlink it again
-		if (self._last)
-			self._last._next = self._next;
-		else if (self._next)
-			player_head = self._next;
-		if (self._next)
-			self._next._last = self._last;
-		else if (self._last)
-			player_tail = self._last;
-		self._last = self._next = NIL;
-	}
-	if (player_head)
-		player_head._last = self;
-	self._next = player_head;
-	player_head = self;
-	if (!player_tail)
-		player_tail = self;
+	players[cl_no] = self;
+	self.b_clientno = cl_no + 1;
 	userid = userid + 1;
 	self.b_userid = userid;
 	
-	if (!self.phys_obj)
-	{
-		b_temp2 = phys_head;
-		while (b_temp2 != NIL && b_temp2.owner != self)
-			b_temp2 = b_temp2._next;
-		self.phys_obj = b_temp2;
-	}
+	self.phys_obj = phys_objects[cl_no];
 
 	if (self.ishuman == 2)
 	{
@@ -398,11 +215,7 @@ void() ClientInRankings =
 	}
    	cno = self.colormap - 1;
 	BotInvalidClientNo (cno);
-	if(cno > 16)
-		active_clients2 = active_clients2 | ClientBitFlag(cno - 16);
-	else
-		active_clients1 = active_clients1 | ClientBitFlag(cno);
-	self.b_clientno = cno;
+	self.b_clientno = (integer) cno;
 	self.ishuman = TRUE;
 	self.switch_wallhug = time + 1;
 };
@@ -410,18 +223,8 @@ void() ClientInRankings =
 
 void() ClientDisconnected =
 {
-	if (player_head == self)
-		player_head = self._next;
-	if (player_tail == self)
-		player_tail = self._last;
-	if (self._next)
-		self._next._last = self._last;
-	if (self._last)
-		self._last._next = self._next;
-	if(self.b_clientno > 16)
-		active_clients2 = active_clients2 - (active_clients2 & ClientBitFlag(self.b_clientno - 16));
-	else
-		active_clients1 = active_clients1 - (active_clients1 & ClientBitFlag(self.b_clientno));
+	local integer cl_no = ClientNumber (self);
+	players[cl_no] = NIL;
 };
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -453,7 +256,7 @@ float () BotPreFrame =
 		if (!self.ishuman)
 		{
 			WriteByte(2, 14);
-			WriteByte(2, self.b_clientno);
+			WriteByte(2, (float)self.b_clientno);
 			WriteShort(2, self.frags);
 		}
 	}
@@ -517,8 +320,8 @@ BotInit
 
 void() BotInit =
 {
-	local entity ent, fisent;
-	local float numents = 0;
+	local entity ent;
+	local integer numents = 0;
 	
 	// spawn entities for the physics
 	ent = nextent(NIL);
@@ -531,19 +334,13 @@ void() BotInit =
 	}
 
 	ent = nextent(NIL);
-	fisent = NIL;
 	while (numents < max_clients)
 	{
 
-		phys_head = spawn();
-		if (fisent)
-			fisent._next = phys_head;
-		phys_head._last = fisent;
-		fisent = phys_head;
-		ent.phys_obj = phys_head;
-		phys_head.classname = "phys_obj";
-		phys_head.owner = ent;
-		numents = numents + 1;
+		phys_objects[numents] = spawn();
+		phys_objects[numents].classname = "phys_obj";
+		phys_objects[numents].owner = ent;
+		numents++;
 		ent = nextent(ent);
 	}
 	bot_map_load();
@@ -564,16 +361,16 @@ signs on to the server.
 void(entity who) UpdateClient =
 {
 	WriteByte(2, 14 );
-	WriteByte(2, who.b_clientno);
+	WriteByte(2, (float)who.b_clientno);
 	WriteShort(2, who.frags);
 	WriteByte(2, 36);
-	WriteByte(2, who.b_clientno);
+	WriteByte(2, (float)who.b_clientno);
 	WriteShort(2, 100 * (3 - who.b_skill));
 	WriteByte(2, 37);                // update entertime
-	WriteByte(2, who.b_clientno);          // client number
+	WriteByte(2, (float)who.b_clientno);          // client number
 	WriteLong(2, time - who.b_entertime);   // client entertime
 	WriteByte(2, 40 );            // update userinfo
-	WriteByte(2, who.b_clientno);      // client number
+	WriteByte(2, (float)who.b_clientno);      // client number
 	WriteLong(2, who.b_userid);      // client userid
 	WriteByte(2, 92); // '\'
 	WriteByte(2, 98); // 'b'
@@ -642,7 +439,7 @@ void(entity who) UpdateClient =
 	WriteString( 2, who.netname);
 };
 
-float(float clientno) ClientBitFlag =
+float(integer clientno) ClientBitFlag =
 {
 	local float bitflag;
 	bitflag = 1;
@@ -654,16 +451,16 @@ float(float clientno) ClientBitFlag =
 	return bitflag;
 };
 
-float() ClientNextAvailable =
+integer() ClientNextAvailable =
 {
-	local float clientno;
+	local integer clientno;
 	// I want to do this top down, but QW won't let me
 	clientno = 0;
 	while(clientno < max_clients)
 	{
 		clientno = clientno + 1;
 
-		if(!ClientIsActive(clientno))
+		//FIXME if(!ClientIsActive(clientno))
 			return clientno;
 	}
 	return -1;
@@ -692,27 +489,36 @@ entity(float num) GetClientEntity =
 	return upsy;
 };
 
+integer (entity cl) ClientNumber =
+{
+	local entity e = NIL;
+	local integer f = -1;
+
+	do {
+		f++;
+		e = nextent (e);
+	} while (e != cl);
+	return f;
+};
+
 void(float whatbot, float whatskill) BotConnect =
 {
-	local float f;
+	local integer f;
 	local entity uself;
 	
-	f = ClientNextAvailable();
+	//f = ClientNextAvailable();
 	uself = self;
-	if(f == -1)
-	{
+	self = SV_AllocClient ();
+	if (!self) {
 		bprint(PRINT_HIGH, "Unable to connect a bot, server is full.\n");
+		self = uself;
 		return;
 	}
-	if(f > 16)
-		active_clients2 = active_clients2 | ClientBitFlag(f - 16);
-	else
-		active_clients1 = active_clients1 | ClientBitFlag(f);
-	bot_count = bot_count + 1;
-	self = GetClientEntity(f);
+	bot_count++;
 	bot_start_topic(1);
+	f = ClientNumber (self) + 1;
 	self.b_clientno = f;
-	self.colormap = f + 1;
+	self.colormap = (float) f + 1;
 	if (whatbot)
 		self.netname = BotName(whatbot);
 	else
@@ -761,10 +567,6 @@ void(entity bot) BotDisconnect =
 		self.b_shirt = 0;
 		self.ammo_shells = self.ammo_nails = self.ammo_rockets = self.ammo_cells = 0;
 		UpdateClient(self);
-		if(self.b_clientno > 16)
-			active_clients2 = active_clients2 - (active_clients2 & ClientBitFlag(self.b_clientno - 16));
-		else
-			active_clients1 = active_clients1 | (active_clients1 & ClientBitFlag(self.b_clientno));
 		self.b_clientno = -1;
    	}
 	self = uself;
@@ -789,10 +591,6 @@ void(float clientno) BotInvalidClientNo =
 		{
 			bot.b_clientno = -1;
 			BotDisconnect(bot);
-			if(self.b_clientno > 16)
-      				active_clients2 = active_clients2 | ClientBitFlag(self.b_clientno - 16);
-			else
-      				active_clients1 = active_clients1 | ClientBitFlag(self.b_clientno);
 			//BotConnect(bot.b_num, bot.b_skill); 
 			return;
 		}
@@ -801,7 +599,7 @@ void(float clientno) BotInvalidClientNo =
 
 void() BotFrame =
 {
-	local float num;
+	local integer num;
 	local string h;
 	
 	h = infokey(NIL, "bot_options");
