@@ -24,7 +24,7 @@ void () im_alive = [ 0, (self.th_run), 0.2 ]
 	self.movetype = MOVETYPE_STEP;
 	self.takedamage = DAMAGE_AIM;
 
-	if (mapname != "end")	
+	if ((mapname != "end") && (random() < 0.5))
 		self.origin = self.oldorigin;
 	
 	setmodel(self, self.weaponmodel);
