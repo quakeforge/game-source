@@ -82,6 +82,7 @@ void(float timeleft) DropQuad =
 	item.flags = FL_ITEM;
 	item.solid = SOLID_TRIGGER;
 	item.movetype = MOVETYPE_TOSS;
+	item.effects = item.effects | EF_BLUE;
 	item.noise = "items/damage.wav";
 	setmodel (item, "progs/quaddama.mdl");
 	setsize (item, '-16 -16 -24', '16 16 32');
