@@ -265,7 +265,7 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 {
 	local   vector direction;
 	local   vector  src;
-	
+
 	makevectors(self.v_angle);
 
 	src = self.origin + v_forward*10;
