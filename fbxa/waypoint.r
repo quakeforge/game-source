@@ -50,16 +50,23 @@ Array waypoint_array;
 @static entity waypoint_thinker;
 @static List waypoint_queue;
 
+@static void () waypoint_init =
+{
+	waypoint_array = [[Array alloc] init];
+	if (!waypoint_queue)
+		waypoint_queue = [[List alloc] init];
+	if (!waypoint_thinker) {
+		waypoint_thinker = spawn ();
+		waypoint_thinker.classname = "waypoint_thinker";
+	}
+};
+
 @implementation Waypoint
 
 -(id)init
 {
-	if (!waypoint_array) {
-		waypoint_array = [[Array alloc] init];
-		waypoint_queue = [[List alloc] init];
-		waypoint_thinker = spawn ();
-		waypoint_thinker.classname = "waypoint_thinker";
-	}
+	if (!waypoint_array)
+		waypoint_init ();
 	return [super init];
 }
 
@@ -179,7 +186,7 @@ Waypoint Loading from file
 {
 	if (waypoint_array)
 		[waypoint_array free];
-	waypoint_array = [[Array alloc] init];
+	waypoint_init ();
 }
 
 +(Waypoint)waypointForNum:(integer)num
@@ -193,7 +200,7 @@ Waypoint Loading from file
 {
 	local integer i, tmp;
 
-	for (i = 0; i < 3; i++) {
+	for (i = 0; i < 4; i++) {
 		tmp = (integer)links[i];
 		links[i] = [Waypoint waypointForNum:tmp];
 	}

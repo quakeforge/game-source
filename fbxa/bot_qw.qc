@@ -227,7 +227,21 @@ void ()
 ClientDisconnected =
 {
 	local integer cl_no = ClientNumber (@self);
+	local Bot p = NIL;
+
+	p = players[cl_no];
 	players[cl_no] = NIL;
+	if (p) {
+		local entity e = p.ent;
+		local integer i;
+		for (i = 0; i < 32; i++) {
+			if (!players[i])
+				continue;
+			if (players[i].ent.enemy == e)
+				[players[i] lost:p:0];
+		}
+	}
+	[p dealloc];
 };
 
 // BotConnect and related functions. -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
