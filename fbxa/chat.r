@@ -120,9 +120,10 @@ b_originator == targ
 	r = ceil (6 * random ());
 
 	if (b_chattime > time) {
-		if (b_skill < 2)
+		if (b_skill < 2) {
 			keys = 0;
 			buttons = 0;
+		}
 		return;
 	} else if (b_chattime) {
 		switch (b_topic) {
