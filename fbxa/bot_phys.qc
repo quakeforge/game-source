@@ -229,15 +229,15 @@ void(vector wishvel) SV_Accelerate =
 };
 void() SV_WaterMove =
 {
-        local vector wishvel;
-        local float wishspeed, addspeed, cspeed, newspeed;
+	local vector wishvel;
+	local float wishspeed, addspeed, cspeed, newspeed;
 	makevectors(self.v_angle);
 	wishvel = v_right * self.movevect_y + v_forward * self.movevect_x;
 	
 	if (self.movevect == '0 0 0')
-                wishvel_z = wishvel_z - 60;
+		wishvel_z = wishvel_z - 60;
 	else
-                wishvel_z = wishvel_z + self.movevect_z;
+		wishvel_z = wishvel_z + self.movevect_z;
 	wishspeed = vlen(wishvel);
 
 	if (wishspeed > sv_maxspeed) {
@@ -245,7 +245,7 @@ void() SV_WaterMove =
 		wishspeed = sv_maxspeed;
 	}
 	wishspeed = wishspeed * 0.7;
-        cspeed = vlen(self.velocity);
+	cspeed = vlen(self.velocity);
 	if (cspeed) {
 		newspeed = cspeed - (real_frametime * cspeed * sv_friction);
 		if (newspeed < 0)
@@ -258,13 +258,13 @@ void() SV_WaterMove =
 	if (!wishspeed)
 		return;
 	addspeed = wishspeed - newspeed;
-        if (addspeed <= 0)
+	if (addspeed <= 0)
 		return;
 	wishvel = normalize(wishvel);
-        cspeed = sv_accelerate * wishspeed * real_frametime;
-        if (cspeed > addspeed)
-                cspeed = addspeed;
-        self.velocity = self.velocity + cspeed * wishvel;
+	cspeed = sv_accelerate * wishspeed * real_frametime;
+	if (cspeed > addspeed)
+		cspeed = addspeed;
+	self.velocity = self.velocity + cspeed * wishvel;
 };
 void() SV_AirMove =
 {

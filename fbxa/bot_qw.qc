@@ -129,7 +129,7 @@ entity [32] phys_objects;
 .float	wallhug, keys, oldkeys, ishuman;
 .float	b_frags, b_shirt, b_pants; 
 .integer b_clientno;
-.float	priority, ai_time, b_sound, missile_speed;
+.float	ai_time, b_sound, missile_speed;
 .float	portal_time, b_skill, switch_wallhug;
 .float	b_aiflags, b_num, b_chattime;
 .float	b_entertime; // QW shtuff
@@ -140,7 +140,7 @@ entity [32] phys_objects;
 .entity	target1, target2, target3, target4;
 .entity	_next, _last;
 .entity	current_way;
-.vector	b_angle, b_dest, mouse_emu, obs_dir;
+.vector	b_angle, mouse_emu, obs_dir;
 .vector	movevect, b_dir;
 .vector dyn_dest;
 .vector	punchangle; // HACK - Don't want to screw with bot_phys

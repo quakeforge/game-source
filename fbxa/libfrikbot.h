@@ -2,6 +2,9 @@
 #define TRUE 1
 
 // ----- entity fields ---
+/* wallhug
+ *	bot	follow walls on left (false) or right (true)
+ */
 @extern .float	wallhug;
 /* keys
  *	wp	if true, waypoint isn't busy (?)
@@ -35,24 +38,45 @@
  *	bot	pants color
  */
 @extern .float	b_pants; 
-@extern .float	priority;
+/* ai_time
+ *	bot	ai thinking framerate control
+ */
 @extern .float	ai_time;
 /* b_sound
  *	wp	if this waypoint is on a bot's route, the bit corresponding to the bot
  *		client number will be set
- *	bot	end time of current playing soud (for bots hearing enemies)
+ *	bot	end time of current playing sound (for bots hearing enemies)
  */
 @extern .float	b_sound;
+/* missile_speed
+ *	?	?
+ */
 @extern .float	missile_speed;
+/* portal_time
+ *	?	dynamic waypoints?
+ */
 @extern .float	portal_time;
 /* b_skill
  *	wp	target2 waypoint number
  *	bot	skill level: 0 = easy, 3 = nightmare
  */
 @extern .float	b_skill;
+/* switch_wallhug
+ *	bot	client linking stuff (bad name!!)
+ */
 @extern .float	switch_wallhug;
+/* b_aiflags
+ *	wp
+ *	bot
+ */
 @extern .float	b_aiflags;
+/* b_num
+ *	bot	bot number
+ */
 @extern .float	b_num;
+/* b_chattime
+ *	bot	control of bot chatting and movement (can't talk and walk:)
+ */
 @extern .float	b_chattime;
 /* b_entertime
  *	bot	used for keeping track of bot play time
@@ -62,12 +86,25 @@
  *	?	waypoint editing stuff
  */
 @extern .float	b_menu, b_menu_time, b_menu_value;
+/* route_failed
+ *	bot	if waypoint routing fails, go into roam mode
+ */
 @extern .float	route_failed;
-@extern .float	dyn_flags;
-@extern .float	dyn_time;
-@extern .float	dyn_plat;
+/* dyn_flags, dyn_time, dyn_plat
+ *	?	dynamic waypoint stuff
+ */
+@extern .float	dyn_flags, dyn_time, dyn_plat;
+/* temp_way
+ *	bot	roam mode stuff
+ */
 @extern .entity	temp_way;
+/* last_way
+ *	bot	previous waypoint ?
+ */
 @extern .entity	last_way;
+/* phys_obj
+ *	bot	actual physical entity of bot
+ */
 @extern .entity	phys_obj;
 /* targetN
  *	bot	LIFO stack of goals for the bot to achieve
@@ -78,14 +115,38 @@
  *	bot	linked list of possible foes
  */
 @extern .entity	_next, _last;
+/* current_way
+ *	wp	?
+ *	bot	currently saught waypoint?
+ */
 @extern .entity	current_way;
+/* b_angle
+ *	bot	desired view angle
+ */
 @extern .vector	b_angle;
-@extern .vector	b_dest;
+/* mouse_emu
+ *	bot	mouse movement emulation for mousing bots :)
+ */
 @extern .vector	mouse_emu;
+/* obs_dir
+ *	bot	obstruction direction?
+ */
 @extern .vector	obs_dir;
+/* movevect
+ *	bot	desired motion vector
+ */
 @extern .vector	movevect;
+/* b_dir
+ *	bot	direction to waypoint
+ */
 @extern .vector	b_dir;
+/* dyn_dest
+ *	?	dynamic waypoint stuff
+ */
 @extern .vector	dyn_dest;
+/* punchangle
+ *	bot	fake kick?
+ */
 @extern .vector	punchangle; // HACK - Don't want to screw with bot_phys
 
 // --------defines-----
