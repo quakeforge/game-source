@@ -60,7 +60,7 @@
  *	wp	target2 waypoint number
  *	bot	skill level: 0 = easy, 3 = nightmare
  */
-@extern .float	b_skill;
+@extern .integer b_skill;
 /* switch_wallhug
  *	bot	client linking stuff (bad name!!)
  */
@@ -243,7 +243,7 @@
 @extern integer (entity e) ClientNumber;
 @extern float(integer clientno)		ClientBitFlag;
 @extern integer()				ClientNextAvailable;
-@extern void(float whatbot, float whatskill) BotConnect;
+@extern void(float whatbot, integer whatskill) BotConnect;
 @extern void(entity bot)			BotDisconnect;
 @extern void(float clientno)		BotInvalidClientNo;
 @extern void(entity who)			UpdateClient;

@@ -469,7 +469,7 @@ entity(float num) WaypointForNum =
 void() FixThisWaypoint = 
 {
 	self.enemy.target1 = WaypointForNum(self.enemy.b_pants);
-	self.enemy.target2 = WaypointForNum(self.enemy.b_skill);
+	self.enemy.target2 = WaypointForNum((float)self.enemy.b_skill);
 	self.enemy.target3 = WaypointForNum(self.enemy.b_shirt);
 	self.enemy.target4 = WaypointForNum(self.enemy.b_frags);
 	self.enemy = self.enemy._next;
@@ -867,7 +867,7 @@ void(vector org, vector bit1, float bit4, float flargs) make_way =
 	y = make_waypoint(org);
 	y.b_aiflags = flargs;
 	y.b_pants = bit1_x;
-	y.b_skill = bit1_y;
+	y.b_skill = (integer)bit1_y;
 	y.b_shirt = bit1_z;
 	y.b_frags = bit4;
 	if (y.count == 1) {

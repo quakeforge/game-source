@@ -130,7 +130,9 @@ entity [32] phys_objects;
 .float	b_frags, b_shirt, b_pants; 
 .integer b_clientno;
 .float	ai_time, b_sound, missile_speed;
-.float	portal_time, b_skill, switch_wallhug;
+.float	portal_time;
+.integer b_skill;
+.float	switch_wallhug;
 .float	b_aiflags, b_num, b_chattime;
 .float	b_entertime; // QW shtuff
 .float	b_menu, b_menu_time, b_menu_value;
@@ -169,6 +171,7 @@ void(entity e)             frik_setspawnparms  = #78;
 entity () SV_AllocClient = #0;
 void (entity e) SV_FreeClient = #0;
 void (entity e, string str) SV_SetUserinfo = #0;
+void (entity e, integer ping) SV_SetPing = #0;
 
 //----------------------------------------------------------------------------
 
@@ -397,16 +400,8 @@ void(entity who) UpdateClient =
 {
 	local string bottomcolor = ftos (who.b_pants);
 	local string topcolor = ftos (who.b_shirt);
-
-	WriteByte(2, 14 );
-	WriteByte(2, (float)who.b_clientno);
-	WriteShort(2, who.frags);
-	WriteByte(2, 36);
-	WriteByte(2, (float)who.b_clientno);
-	WriteShort(2, 100 * (3 - who.b_skill));
-	WriteByte(2, 37);                // update entertime
-	WriteByte(2, (float)who.b_clientno);          // client number
-	WriteLong(2, time - who.b_entertime);   // client entertime
+dprint (who.netname); dprint ("\n");
+	SV_SetPing (who, 100 * (3 - who.b_skill));
 	SV_SetUserinfo (who, "\\bottomcolor\\" + bottomcolor
 					+ "\\topcolor\\" + topcolor
 					+ "\\team\\bot\\skin\\base\\name\\" + who.netname);
@@ -472,7 +467,7 @@ integer (entity cl) ClientNumber =
 	return f;
 };
 
-void(float whatbot, float whatskill) BotConnect =
+void(float whatbot, integer whatskill) BotConnect =
 {
 	local integer f;
 	local entity uself;
@@ -496,7 +491,6 @@ void(float whatbot, float whatskill) BotConnect =
 		self.netname = PickARandomName();
 
 	// players can set skill all weird, so leave these checks in
-	whatskill = rint(whatskill);
 	if (whatskill > 3)
 		whatskill = 3;
 	else if (whatskill < 0)
@@ -597,12 +591,12 @@ related functions.
 
 void() BotImpulses =
 {
-	local float f;
+	local integer f;
 	local string h;
 	
 	if (self.impulse == 100) {
 		h = infokey(NIL, "skill");
-		f = stof(h);
+		f = (integer) stof(h);
 		BotConnect(0, f);
 	} else if (self.impulse == 102)
 		KickABot();
