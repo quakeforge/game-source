@@ -44,6 +44,7 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 
+@implementation Bot (AI)
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -830,3 +831,5 @@ void() BotAI =
 	else
 		bot_chat (); // don't want chat to screw him up if he's rjing or something
 };
+
+@end

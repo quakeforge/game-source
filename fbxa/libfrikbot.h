@@ -47,6 +47,22 @@
 - (void)sendMove;
 @end
 
+@interface Bot (Move)
+- (void)jump;
+- (integer)can_rj;
+- (integer)recognize_plat: (integer) flag;
+- (integer)keysForDir: (vector) sdir;
+- (void)obstructed: (vector) whichway : (integer) danger;
+- (void)obstacles;
+- (void)dodge_obstruction;
+- (void)movetogoal;
+- (integer)walkmove: (vector) weird;
+- (void)roam;
+@end
+
+@interface Bot (AI)
+@end
+
 #define FALSE 0
 #define TRUE 1
 
@@ -320,15 +336,6 @@
 @extern void () map_dm6;
 
 // physics & movement
-@extern float(entity e)			bot_can_rj;
-@extern void()				bot_jump;
-@extern void()				frik_bot_roam;
-@extern float(vector weird)		frik_walkmove;
-@extern void()				frik_movetogoal;
-@extern void()				frik_obstacles;
-@extern float(float flag)			frik_recognize_plat;
-@extern float(vector sdir)		frik_KeysForDir;
-@extern void(vector whichway, float danger) frik_obstructed;
 @extern void()				SV_Physics_Client;
 @extern void()				SV_ClientThink;
 @extern void() 				CL_KeyMove;
