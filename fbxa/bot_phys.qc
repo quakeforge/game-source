@@ -61,6 +61,64 @@ float(float key) CL_KeyState =
 	return ((self.keys & key) > 0) ? 1.0 : 0.0;
 };
 
+float (integer keys, integer key) key_state =
+{
+	return ((keys & key) != 0) ? 1.0 : 0.0;
+};
+
+@implementation Bot (Physics)
+
+-(void)sendMove
+{
+	local vector movevect = '0 0 0';
+	local float anglespeed;
+	local vector view;
+
+	if (keys != oldkeys) {
+		movevect.y += (350 * key_state (keys, KEY_MOVERIGHT));
+		movevect.y -= (350 * key_state (keys, KEY_MOVELEFT));
+
+		movevect.x += (200 * key_state (keys, KEY_MOVEFORWARD));
+		movevect.x -= (200 * key_state (keys, KEY_MOVEBACK));
+
+		movevect.z += (200 * key_state (keys, KEY_MOVEUP));
+		movevect.z -= (200 * key_state (keys, KEY_MOVEDOWN));
+
+		if (!(b_aiflags & AI_PRECISION))
+			movevect *= 2;
+	}
+
+	if (b_skill != 2) {
+		// use mouse emulation
+		anglespeed = 1.5 * real_frametime;
+		// 1.5 is the default cl_anglespeedkey & bot always has +speed
+		v_angle.y += anglespeed * key_state (keys, KEY_LOOKLEFT) * 140;
+		// 140 is default cl_yawspeed
+		v_angle.y -= anglespeed * key_state (keys, KEY_LOOKRIGHT) * 140;
+		// 140 is default cl_yawspeed
+		v_angle.x -= anglespeed * key_state (keys, KEY_LOOKUP) * 150;
+		// 150 is default cl_pitchspeed
+		v_angle.x += anglespeed * key_state (keys, KEY_LOOKDOWN) * 150;
+		// 150 is default cl_pitchspeed
+	} else {
+		view.x = angcomp (b_angle.x, v_angle.x);
+		view.y = angcomp (b_angle.y, v_angle.y);
+		view.z = 0;
+		if (vlen (view) > 30) {
+			mouse_emu += (view * 30);
+			if (vlen(mouse_emu) > 180)
+				mouse_emu = normalize (mouse_emu) * 180;
+		} else
+			mouse_emu = view * (1 / real_frametime);
+		v_angle += mouse_emu * real_frametime;
+
+		
+	}
+	oldkeys = keys;
+	SV_UserCmd (ent, real_frametime, v_angle, movevect, buttons, impulse);
+}
+@end
+
 void() CL_KeyMove = // CL_BaseMove + CL_AdjustAngles
 {
 	local float anglespeed;

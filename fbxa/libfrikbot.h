@@ -2,8 +2,12 @@
 
 @interface Bot: Entity
 {
-	integer wallhug;
 	integer keys, oldkeys;
+	integer buttons, impulse;
+	vector v_angle, b_angle;
+	vector mouse_emu;
+
+	integer wallhug;
 	integer ishuman;
 	float b_frags;
 	integer b_clientno;
@@ -24,16 +28,17 @@
 	entity temp_way, last_way, current_way;
 	entity [4] target;
 	entity _next, _last;
-	vector b_angle;
-	vector mouse_emu;
 	vector obs_dir;
-	vector movevect;
 	vector b_dir;
 	vector dyn_dest;
 	vector punchangle;
 }
 - (id) init;
 - (id) initWithEntity: (entity) e;
+@end
+
+@interface Bot (Physics)
+- (void)sendMove;
 @end
 
 #define FALSE 0
