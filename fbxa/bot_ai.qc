@@ -321,7 +321,7 @@ based b_aiflags.
 						[self weaponSwitch:1];
 					} else {
 					//	targetDrop (last_way);
-						[self targetAdd:newt]; //FIXME newt wrong type
+						[self targetAdd:[Target forEntity:newt]];
 					//	[self getPath:newt :TRUE];
 					}
 				}
@@ -421,8 +421,8 @@ confused
 -(void)path
 {
 
-	local Waypoint jj, tele;
-	local entity e;
+	local Waypoint jj;
+	local entity e, tele;
 
 	[self checkLost:targets[0]];
 	if (!targets[0]) {
@@ -456,8 +456,8 @@ confused
 	if (last_way) {
 		if ([last_way isLinkedTo:jj] == 2) {
 			// waypoints are telelinked
-			tele = [self findThing:"trigger_teleport"].@this; // this is probbly the teleport responsible FIXME shouldn't use @this here
-			[self targetAdd:tele];
+			tele = [self findThing:"trigger_teleport"]; // this is probbly the teleport responsible
+			[self targetAdd:[Target forEntity:tele]];
 		}
 		traceline (last_way.origin, jj.origin, FALSE, ent); // check for blockage
    		if (trace_fraction != 1) {
@@ -477,7 +477,7 @@ confused
 						[self weaponSwitch:1];
 					} else {
 //						targetDrop (jj);
-						[self targetAdd:e]; //FIXME e wrong type
+						[self targetAdd:[Target forEntity:e]];
 //						[self getPath:tele :TRUE];
 						b_aiflags |= AI_BLIND; // give a bot a bone	
 						return;
@@ -628,7 +628,7 @@ the bot finds things it wants to kill/grab.
 	if (best == NIL)
 		return;
 	if (![self targetOnstack:best]) {	
-		[self targetAdd:best]; //FIXME best wrong type
+		[self targetAdd:[Target forEntity:best]];
 		if (scope) {
 			[self getPath:best :FALSE];
 			b_aiflags |= AI_WAIT;

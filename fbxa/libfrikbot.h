@@ -12,6 +12,7 @@ typedef struct bot_data_t bot_data_t;
 @interface Target: Entity
 {
 }
++(Target)forEntity:(entity)ent;
 -(vector)realorigin;
 -(vector)origin;
 -(integer)canSee:(Target)targ ignoring:(entity)ignore;

@@ -44,9 +44,49 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 #include "Array.h"
+#include "hash.h"
 #include "List.h"
 
+@static hashtab_t target_tab;
+
+struct target_s = {
+	@defs (Target)
+};
+
+@static unsigned (void []ele, void []unused) target_get_hash =
+{
+	local Target t = ele;
+	return ((unsigned[])&t.ent)[0];
+};
+
+@static integer (void []e1, void[]e2, void []unused) target_compare =
+{
+	local Target t1 = e1;
+	local Target t2 = e2;
+	return t1.ent == t2.ent;
+};
+
 @implementation Target
+
++(Target)forEntity:(entity)ent
+{
+	local Target t;
+	local struct target_s ele;
+
+	if (!target_tab) {
+		target_tab = Hash_NewTable (1021, NIL, NIL, NIL);
+		Hash_SetHashCompare (target_tab, target_get_hash, target_compare);
+	}
+	ele.ent = ent;
+	t = Hash_FindElement (target_tab, &ele);
+	if (t)
+		return t;
+
+	t = [[Target alloc] init];
+	t.ent = ent;
+	Hash_AddElement (target_tab, t);
+	return t;
+}
 
 -(vector)realorigin
 {
