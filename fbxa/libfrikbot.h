@@ -104,8 +104,6 @@
 @interface Bot (Misc)
 -(string)name:(integer)r;
 -(string)randomName;
--(void)start_topic:(integer)topic;
--(void)chat;
 -(integer)fov:(entity)targ;
 
 +(void)kick;
@@ -162,6 +160,15 @@
 -(void)dynamicWaypoint;
 
 -(integer)canSee:(Target)targ;
+@end
+
+@interface Bot (Chat)
+-(void)start_topic:(integer)topic;
+-(void)say:(string)msg;
+-(void)say2:(string)msg;
+-(void)sayTeam:(string)msg;
+-(void)sayInit;
+-(void)chat;
 @end
 
 #define FALSE 0
@@ -279,13 +286,7 @@
 @extern float(entity ent, entity targ)		sisible;
 @extern vector(entity ent)		realorigin;
 @extern float(float v)			frik_anglemod;
-@extern void() bot_chat;
-@extern void(float tpic) bot_start_topic;
 
-@extern void(string h) BotSay;
-@extern void() BotSayInit;
-@extern void(string h) BotSay2;
-@extern void(string h) BotSayTeam;
 @extern void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning;
 
 /*

@@ -58,6 +58,7 @@ this notice in its entirety.
 		waypoint_array = [[Array alloc] init];
 		waypoint_queue = [[List alloc] init];
 		waypoint_thinker = spawn ();
+		waypoint_thinker.classname = "waypoint_thinker";
 	}
 	return [super init];
 }

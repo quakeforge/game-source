@@ -346,7 +346,7 @@ attacking an enemy.
 		if (foesz > mysz) {
 			if (teamplay) {
 				if (random () < 0.02) {
-					bot_start_topic (5);
+					[self start_topic:5];
 					self.b_chattime = 1;
 				}
 			}

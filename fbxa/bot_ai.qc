@@ -162,7 +162,7 @@ Bot has lost its target.
 	} else {
 		if (targ.ent.classname == "item_artifact_invisibility")
 			if (ent.items & 524288)
-				bot_start_topic (3);
+				[self start_topic:3];
                 
 				/*XXX
                 if (targ.ent.flags & FL_ITEM) {
@@ -233,7 +233,7 @@ removed.
 					[self walkmove: ent.origin - targ.origin];
 				else {
 					keys &= 960;
-					bot_start_topic (4);
+					[self start_topic:4];
 				}
 				ent.search_time = time + 5; // never time out
 			} else if (![self canSee:targ])
@@ -765,7 +765,7 @@ frame, the ai_time limits it's actual updating
 			return;
 	}
 	if (ent.view_ofs == '0 0 0')
-		bot_start_topic (7);
+		[self start_topic:7];
 	stagger_think = time;
 
 	// shut the bot's buttons off, various functions will turn them on by AI end
@@ -828,7 +828,7 @@ frame, the ai_time limits it's actual updating
 	if (b_aiflags)
 		[self handle_ai]; 
 	else
-		bot_chat (); // don't want chat to screw him up if he's rjing or something
+		[self chat]; // don't want chat to screw him up if he's rjing or something
 }
 
 @end

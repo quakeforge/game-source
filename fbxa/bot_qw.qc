@@ -247,50 +247,6 @@ BotPostFrame =
 	return (float)[((Bot)@self.@this) postFrame];
 };
 
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-Bot Chat code
-
-The rest of this code is in bot_rank.qc
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-void (string h)
-BotSay = // simulate talking by composing a 'chat' message
-{
-	WriteByte (MSG_ALL, 8);
-	WriteByte (MSG_ALL, 3);
-	WriteByte (MSG_ALL, 1);
-	WriteString (MSG_ALL, @self.netname);
-	WriteByte (MSG_ALL, 8);
-	WriteByte (MSG_ALL, 3);
-	WriteByte (MSG_ALL, 2);
-	WriteString (MSG_ALL, h);
-};
-
-void ()
-BotSayInit =
-{
-	WriteByte (MSG_ALL, 8);
-	WriteByte (MSG_ALL, 3);
-	WriteByte (MSG_ALL, 1);
-	WriteString (MSG_ALL, @self.netname);
-};
-void (string h)
-BotSay2 =
-{
-	WriteByte (MSG_ALL, 8);
-	WriteByte (MSG_ALL, 3);
-	WriteByte (MSG_ALL, 2);
-	WriteString (MSG_ALL, h);
-};
-void (string h)
-BotSayTeam = 
-{
-	// FBX QW doesn't support teamplay...yet
-};
-
 // BotInit ====================================================================
 
 void ()
@@ -387,7 +343,7 @@ BotConnect =
 	else if (whatskill < 0)
 		whatskill = 0;
 	bot.b_skill = whatskill;
-	bot_start_topic (1);
+	[bot start_topic:1];
 	@self = uself;
 };
 
@@ -462,11 +418,11 @@ void () BotImpulses =
 	if (b_frags != ent.frags) {
 		if (b_frags > ent.frags) {
 			if (pointcontents (ent.origin) == CONTENT_LAVA)
-				bot_start_topic (10);
+				[self start_topic:10];
 			else
-				bot_start_topic (9);
+				[self start_topic:9];
 		} else
-			bot_start_topic (2);
+			[self start_topic:2];
 		self.b_frags = ent.frags;
 	}
 	[self dynamicWaypoint];

@@ -18,6 +18,7 @@ libfrikbot_source = \
 	map_dm4.qc		\
 	map_dm5.qc		\
 	map_dm6.qc		\
+	chat.r			\
 	waypoint.r
 
 libfrikbot_obj = $(addsuffix .o,$(basename $(libfrikbot_source)))
