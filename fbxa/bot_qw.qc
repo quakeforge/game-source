@@ -133,7 +133,6 @@ entity [32] phys_objects;
 .float	portal_time;
 .integer b_skill;
 .float	switch_wallhug;
-.float	b_aiflags;
 .integer b_num;
 .float	b_chattime;
 .float	b_entertime; // QW shtuff
@@ -551,7 +550,7 @@ BotFrame =
 	while (num < max_clients) {
 		if (self.ishuman == FALSE) {
 			if (self.b_clientno > 0) {
-				frik_obstacles ();
+				[self.@this _obstacles];
 				CL_KeyMove ();
 				SV_ClientThink ();
 				SV_Physics_Client ();

@@ -143,7 +143,7 @@ manuever around.
 // TODO: something
 	if (b_aiflags & AI_BLIND)
 		return;
-	org = realorigin(ent.target1);
+	org = realorigin(targets[0]);
 
 	if (danger) {
 		b_aiflags |= AI_DANGER;
@@ -153,7 +153,7 @@ manuever around.
 		return;
 
 
-	if (ent.target1) {
+	if (targets[0]) {
 		if (b_aiflags & AI_OBSTRUCTED) {
 			if (!(b_aiflags & AI_DANGER)) {
 				b_aiflags &= ~AI_OBSTRUCTED;
@@ -243,8 +243,8 @@ Also responsible for jumping gaps.
 			[self obstructed: ang :TRUE];
 			return;
 		} else {
-			if (ent.target1) {
-				stop = realorigin(ent.target1);
+			if (targets[0]) {
+				stop = realorigin(targets[0]);
 				if ((stop_z - ent.origin_z) < -32)
 					return; // safe to fall
 			}
@@ -261,8 +261,8 @@ Also responsible for jumping gaps.
 				[self obstructed: ang :TRUE];
 				return;
 			} else {
-				if (ent.target1) {
-					stop = realorigin(ent.target1);
+				if (targets[0]) {
+					stop = realorigin(targets[0]);
 					if ((stop_z - ent.origin_z) < -32)
 						return; // safe to fall
 				}
@@ -271,10 +271,10 @@ Also responsible for jumping gaps.
 			}
 		}
 
-		if (ent.target1) {
+		if (targets[0]) {
 			// getting furter away from my target?
-			test = vlen (ent.target1.origin - (ang + ent.origin));
-			if (test > vlen (ent.target1.origin - ent.origin)) {
+			test = vlen (targets[0].origin - (ang + ent.origin));
+			if (test > vlen (targets[0].origin - ent.origin)) {
 				if (conts < -3) {
 					// bad stuff down dare
 					[self obstructed: ang :TRUE];
@@ -287,8 +287,8 @@ Also responsible for jumping gaps.
 		}
 	}
 	if (hgt < -18) {
-		if (ent.target1) {
-			stop = realorigin (ent.target1);
+		if (targets[0]) {
+			stop = realorigin (targets[0]);
 			if ((stop_z - ent.origin_z) < -32)
 				return; // safe to fall
 		}
@@ -357,12 +357,12 @@ blah
 	local vector way;
 	local float g;
 
-	if (ent.target1 == NIL) {
+	if (targets[0] == NIL) {
 		makevectors(v_angle);
 		[self walkmove: v_forward];
 		return;
 	}
-	way = realorigin(ent.target1) - ent.origin;
+	way = realorigin(targets[0]) - ent.origin;
 	if (vlen(way) < 25) {
 		keys = keys & 960;
 		return;

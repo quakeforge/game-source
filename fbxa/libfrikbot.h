@@ -32,7 +32,8 @@
 	integer route_failed;
 	integer dyn_flags, dyn_time, dyn_plat;
 	entity temp_way, last_way, current_way;
-	entity [4] target;
+	entity [4] targets;
+	entity avoid;
 	entity _next, _last;
 	vector obs_dir;
 	vector b_dir;
@@ -61,6 +62,25 @@
 @end
 
 @interface Bot (AI)
+-(integer)target_onstack:(entity)scot;
+-(void)target_add:(entity)e;
+-(void)target_drop:(entity)e;
+-(void)lost:(entity)targ :(integer)success;
+-(void)check_lost:(entity)targ;
+-(void)handle_ai;
+-(void)path;
+-(float)priority_for_thing:(entity)thing;
+-(void)look_for_crap:(integer)scope;
+-(void)angle_set;
+-(void)AI;
+@end
+
+@interface Bot (Fight)
+-(float)size_player:(entity)e;
+-(void)dodge_stuff;
+-(void)weapon_switch:(float)brange;
+-(void)shoot;
+-(void)fight_style;
 @end
 
 #define FALSE 0
@@ -134,7 +154,7 @@
  *	wp
  *	bot
  */
-@extern .float	b_aiflags;
+@extern .integer	b_aiflags;
 /* b_num
  *	bot	bot number
  */
@@ -299,11 +319,6 @@
 @extern void()				ClientDisconnect;
 @extern void()				SetNewParms;
 
-// fight
-@extern void(float brange) bot_weapon_switch;
-@extern void() bot_fight_style;
-@extern void() bot_dodge_stuff;
-
 // rankings
 @extern integer (entity e) ClientNumber;
 @extern float(integer clientno)		ClientBitFlag;
@@ -339,7 +354,7 @@
 @extern void()				SV_Physics_Client;
 @extern void()				SV_ClientThink;
 @extern void() 				CL_KeyMove;
-@extern entity(string s) FindThing;
+@extern entity(entity ent, string s) FindThing;
 
 // ai & misc
 @extern void() BotAI;
@@ -350,11 +365,8 @@
 @extern float(entity targ)		sisible;
 @extern float(entity targ)		fisible;
 @extern vector(entity ent)		realorigin;
-@extern void(entity ent)			target_drop;
-@extern void(entity ent)			target_add;
 @extern void()				KickABot;
 @extern void()				BotImpulses;
-@extern void(entity targ, float success) bot_lost;
 @extern string(integer r)			BotName;
 @extern float(float v)			frik_anglemod;
 @extern void() bot_chat;

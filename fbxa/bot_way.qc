@@ -504,7 +504,7 @@ in bot_ai.qc
 */
 
 
-entity(string s) FindThing =
+entity(entity ent, string s) FindThing =
 {
 	local entity t;
 	local float tdst, dst;
@@ -513,7 +513,7 @@ entity(string s) FindThing =
 	best = NIL;
 	t = find (NIL, classname, s);
 	while (t != NIL) {
-		tdst = vlen(((t.absmin + t.absmax) * 0.5) - self.origin);
+		tdst = vlen(((t.absmin + t.absmax) * 0.5) - ent.origin);
 		if (tdst < dst) {
 			dst = tdst;
 			best = t;
