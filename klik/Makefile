@@ -65,7 +65,8 @@ CPPFLAGS+=-DDEBUG=1
 SOURCES+=$(DEBUG_SOURCES)
 endif
 
-OBJECTS=$(SOURCES:.qc=.qfo)
+OBJECTS=$(addsuffix .o,$(basename $(SOURCES)))
+DEPENDS=$(addprefix .deps/,$(addsuffix .d,$(basename $(SOURCES))))
 
 GENERATED_SOURCES = equipid.qh equipid.qc weapons/weapon_g.qc
 
@@ -76,7 +77,7 @@ all: $(PROGS)
 $(PROGS): $(OBJECTS)
 	$(QFCC) $(QFCCFLAGS) -o $@ $^
 
-WEAPON_G_SOURCES=$(filter w_%.qc,$(SOURCES))
+WEAPON_G_SOURCES=$(filter weapons/w_%.qc,$(SOURCES))
 weapons/weapon_g.qc: weapons/weapon_gen.sh $(WEAPON_G_SOURCES)
 	bash weapons/weapon_gen.sh $(WEAPON_G_SOURCES) > $@
 
@@ -86,23 +87,26 @@ equipid.qh equipid.qc: equipid_gen.pl Makefile $(EQUIPID_SOURCES)
 
 clean:
 	rm -f $(OBJECTS) $(GENERATED_SOURCES)
+	rm -rf .deps
 
 #########################
 
-%.qfo: %.qc
-	$(QFCC) $(QFCCFLAGS) -c $<
+
+%.o: %.r
+	@mkdir -p .deps
+	@$(QFCC) -M -q $(QFCCFLAGS) -c $< | sed -e 's/\(\.r\)\?\.o\>/.o/' > .deps/`basename $@ .o`.d
+	$(QFCC) $(QFCCFLAGS) -c -o $@ $<
+
+%.o: %.qc
+	@mkdir -p .deps
+	@$(QFCC) -M -q $(QFCCFLAGS) -c $< | sed -e 's/\(\.qc\)\?\.o\>/.o/' > .deps/`basename $@ .o`.d
+	$(QFCC) $(QCFLAGS) $(QFCCFLAGS) -c -o $@ $<
+
 
 #########################
 
 unused:
 	@echo $(filter-out $(SOURCES),$(wildcard *.qc))
-
-dep: Makefile.deps
-Makefile.deps: $(SOURCES)
-	echo "# Use 'make dep' to generate this file" > $@
-	for i in $(SOURCES); do \
-		$(CPP) $(CPPFLAGS) -MM "$$i" | sed -e 's:^.*\::$(PROGS)\::' >> $@; \
-	done
 
 #########################
 
@@ -118,4 +122,4 @@ Makefile.deps: $(SOURCES)
 #	$(QFCC) $(QFCCFLAGS)
 
 
--include Makefile.deps
+-include $(DEPENDS)
