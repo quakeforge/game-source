@@ -468,7 +468,7 @@ void(float whatbot, integer whatskill) BotConnect =
 	bot_start_topic(1);
 	f = ClientNumber (self) + 1;
 	self.b_clientno = f;
-	self.colormap = (float) f + 1;
+	self.colormap = (float) f;
 	if (whatbot)
 		self.netname = BotName(whatbot);
 	else
