@@ -39,7 +39,7 @@ void() main = {
 	/* Must be first. */
 	max_clients = 0;
 	walk = world;
-	while (walk = nextent(walk)) max_clients++;
+	while ((walk = nextent(walk))) max_clients++;
 
 	sv_spawning = SV_FRAMES_BEFORE_SPAWN;
 

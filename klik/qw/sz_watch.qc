@@ -76,7 +76,7 @@ void() SZ_init = {
 	sv_signon_buf_remaining = SV_SIGNON_BUFFERS;
 	sv_signon_remaining = SV_MAX_DATAGRAM;
 
-	while (self = nextent(self))
+	while ((self = nextent(self)))
 		SZ_GetSpace_signon(SIZEOF_BASELINE);
 	self = world;
 };

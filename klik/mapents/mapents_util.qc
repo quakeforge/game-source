@@ -59,7 +59,7 @@ void() util_map_entity_cull = {
 			oldself = self;
 
 			self = world;
-			while (self = find(self, targetname, self.target)) {
+			while ((self = find(self, targetname, self.target))) {
 				if (self == oldself)
 					continue;
 

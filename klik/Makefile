@@ -9,7 +9,7 @@ CPP=cpp
 CPPFLAGS=-I. -Iweapons -Imdl -Iact -Imapents
 
 QFCC=qfcc
-QFCCFLAGS=-q --warn all --code v6only $(CPPFLAGS)
+QFCCFLAGS=-q --warn all,error --code v6only $(CPPFLAGS)
 
 ###############################################
 

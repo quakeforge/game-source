@@ -344,7 +344,7 @@ tripping the runaway loop counter
 			direct_route = FALSE;
 		}
 	}
-	if (waypoint_thinker.@this = [waypoint_queue removeItemAtHead]) {
+	if ((waypoint_thinker.@this = [waypoint_queue removeItemAtHead])) {
 		local id obj = waypoint_thinker.@this;
 		local IMP imp = [obj methodForSelector: @selector (waypointThink)];
 		waypoint_thinker.think = (void ()) imp;
