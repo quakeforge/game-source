@@ -153,12 +153,12 @@ void(vector org, float damage) SpawnBlood =
 
 	if (trace_ent.nobleed) {
 		type = TE_GUNSHOT;
-		count = 5.0
+		count = 5.0;
 	} else {
 		type = TE_BLOOD;
 		count = 1.0;
 	}
-	WriteBytes (MSG_MULTICAST, SVC_TEMPENTIty, type, count);
+	WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, type, count);
 	WriteCoordV (MSG_MULTICAST, org);
 	multicast (org, MULTICAST_PVS);
 };
@@ -231,7 +231,7 @@ void() Multi_Finish =
 		WriteCoordV (MSG_MULTICAST, puff_org);
 	}
 	if (blood_count) {
-		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY, TE_BLOOD, blood_count);
+		WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_BLOOD, blood_count);
 		WriteCoordV (MSG_MULTICAST, blood_org);
 	}
 	multicast (puff_org, MULTICAST_PVS);
