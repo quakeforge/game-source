@@ -1,4 +1,7 @@
 #include "common.qh"
+#include "server.qh"
+#include "weapon.qh"
+#include "misc.qh"
 
 #include "mapents_util.qh"
 #include "damage.qh"
@@ -234,8 +237,8 @@ float(float d) _movewall_door_takedamage = {
 				/* Use target if you need it to go more
 				   than once */
 				self.message = "";
-				self.noise1 = NULL_string;
-				self.noise2 = NULL_string;
+				self.noise1 = NIL;
+				self.noise2 = NIL;
 			}
 
 			self = self.enemy;
@@ -272,8 +275,8 @@ void() _movewall_door_touch = {
 				/* Use target if you need it to go more
 				   than once */
 				self.message = "";
-				self.noise1 = NULL_string;
-				self.noise2 = NULL_string;
+				self.noise1 = NIL;
+				self.noise2 = NIL;
 			}
 			self = self.enemy;
 		}
@@ -323,12 +326,12 @@ void() _door_link = {
 
 		tail.message = "";
 
-		tail.noise1 = NULL_string;
-		tail.noise2 = NULL_string;
-		tail.noise3 = NULL_string;
-		tail.noise4 = NULL_string;
-		tail.noise5 = NULL_string;
-		tail.noise6 = NULL_string;
+		tail.noise1 = NIL;
+		tail.noise2 = NIL;
+		tail.noise3 = NIL;
+		tail.noise4 = NIL;
+		tail.noise5 = NIL;
+		tail.noise6 = NIL;
 	}
 
 	tail.enemy = world;
@@ -673,8 +676,8 @@ void() _movewall_secret_use = {
 void() _movewall_secret_think = {
 	if (floor(self.state) != self.state) {
 		if (self.count == 0 && self.state == 0.5) {
-			self.message = NULL_string;
-			self.noise2 = NULL_string;
+			self.message = NIL;
+			self.noise2 = NIL;
 
 			if (!util_use_targets()) {
 				self.velocity = '0 0 0';

@@ -1,7 +1,10 @@
+#include "act.qh"
+
 #include "common.qh"
 
 #include "items.qh"
 #include "damage.qh"
+#include "misc.qh"
 #include "teleport.qh"
 
 #include "override.qh"

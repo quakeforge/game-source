@@ -1,10 +1,10 @@
 #ifndef ITEMS_qh
 #define ITEMS_qh 1
 
-void() item_generic_touch;
-void() item_generic;
-void() item_remove_regen;
+@extern void() item_generic_touch;
+@extern void() item_generic;
+@extern void() item_remove_regen;
 
-.float() th_takeitem;
+@extern .float() th_takeitem;
 
 #endif

@@ -1,4 +1,5 @@
 #include "math.qh"
+#include "builtins.qh"
 
 /* Ugh.  QuakeC doesn't include these ops. */
 float(float num, float bits) shl = {

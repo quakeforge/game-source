@@ -1,4 +1,5 @@
 #include "common.qh"
+#include "effect.qh"
 
 #include "weapon.qh"
 #include "equip.qh"

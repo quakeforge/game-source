@@ -3,6 +3,7 @@
 #include "damage.qh"
 #include "mdl.qh"
 #include "client.qh"
+#include "server.qh"
 #include "misc.qh"
 #include "items.qh"
 
@@ -593,8 +594,8 @@ float() player_takeitem = {
 	local float eid;
 
 	nitem = 0;
-	str1 = NULL_string;
-	str2 = NULL_string;
+	str1 = NIL;
+	str2 = NIL;
 
 	while ((eid = equip_iter(other)) != -1) {
 		if (equip_query(self, eid))
@@ -619,7 +620,7 @@ float() player_takeitem = {
 			self.armortype = other.armortype;
 
 			_item_xprint_strs(nitem, str1, str2);
-			str2 = NULL_string;
+			str2 = NIL;
 			if (self.armortype >= 0.8)
 				str1 = "strong armor";
 			else if (self.armortype >= 0.6)

@@ -1,9 +1,14 @@
 #include "common.qh"
+#include "effect.qh"
+#include "weapon.qh"
+#include "misc.qh"
 
 #include "mapents_util.qh"
 #include "damage.qh"
 
 #include "mapents_triggers.qh"
+#include "mapents.qh"
+#include "teleport.qh"
 
 float(float d) _takedamage_use = {
 	if (time < self.attack_finished)
@@ -148,7 +153,7 @@ void() trigger_teleport = {
 		self.noise = "ambience/hum1.wav";
 	setmodel(self, self.model);
 
-	self.model = NULL_string;
+	self.model = NIL;
 	self.modelindex = 0;
 
 	util_map_entity_init();

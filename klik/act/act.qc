@@ -1,6 +1,10 @@
 #include "common.qh"
+#include "misc.qh"
 #include "act.qh"
 #include "server.qh"
+#include "menu.qh"
+#include "mdl.qh"
+#include "weapon.qh"
 
 void() PlayerPreThink = {
 	if (is_cl(self))

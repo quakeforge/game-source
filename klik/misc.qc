@@ -1,7 +1,9 @@
 #include "common.qh"
 #include "protocol.qh"
 #include "misc.qh"
+#include "server.qh"
 #include "teleport.qh"
+#include "weapon.qh"
 
 // ===================================================================== //
 
@@ -21,7 +23,7 @@ void() SUB_remove = { remove(self); };
 void(entity e) safe_remove = {
 	e.takedamage = DAMAGE_NO;
 	e.solid = SOLID_NOT;
-	e.model = NULL_string;
+	e.model = NIL;
 	e.modelindex = 0;
 
 	e.think = SUB_remove;

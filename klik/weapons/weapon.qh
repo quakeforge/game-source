@@ -4,8 +4,14 @@
 #include "weapon_g.qh"
 #include "mdl.qh"
 
+@extern {
+
+.void() w_think;
 .float(float action) w_func;
 .float attack_finished;
+.float weapon_imp;
+.float weapons;
+.float w_thought;
 
 #define WEAPON_INIT		0
 #define WEAPON_AMMO		1
@@ -33,5 +39,8 @@ float(float impluse) util_impulse_to_IT;
 
 float(.float ammo_field, float ammo) util_weapon_use_ammo;
 float(.float ammo_field, float max_ammo, float ammo) util_weapon_give_ammo;
+void(float imp, float idx, float(float action) func) _weapon_select;
+
+};
 
 #endif

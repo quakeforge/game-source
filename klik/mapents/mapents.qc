@@ -1,4 +1,6 @@
 #include "common.qh"
+#include "misc.qh"
+#include "effect.qh"
 
 #include "mapents_util.qh"
 #include "damage.qh"

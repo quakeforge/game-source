@@ -1,12 +1,15 @@
 #ifndef MDL_qh
 #define MDL_qh 1
 
+@extern {
 .void(float func, float extra) mdl_func;
 .float mdl_mod;
 
 .void() mdl_think;
 .float mdl_thought;
 .float mdl_var;
+
+};
 
 #define MDL_FUNC_IDLE	0
 #define MDL_FUNC_JUMP	1
@@ -29,8 +32,9 @@
 #define MDL_MOD_SWIM_IN			512
 #define MDL_MOD_SWIM			(MDL_MOD_SWIM_IN|MDL_MOD_SWIM_OVER)
 
+@extern {
 void(float func, float extra) mdl_func_void;
 
 entity(float func, float extra) mdl_bodyque_and_func;
-
+};
 #endif

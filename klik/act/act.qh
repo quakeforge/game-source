@@ -12,6 +12,6 @@
 
 void() act_setup;
 
-}
+};
 
 #endif

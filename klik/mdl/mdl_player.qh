@@ -1,7 +1,11 @@
 #ifndef MDL_PLAYER_qh
 #define MDL_PLAYER_qh 1
 
+@extern {
+
 void() mdl_player_init;
 void() mdl_setup_player;
+
+};
 
 #endif

@@ -1,5 +1,6 @@
 #include "common.qh"
 #include "misc.qh"
+#include "server.qh"
 
 #include "mapents_util.qh"
 
@@ -118,9 +119,9 @@ float() util_use_targets = {
 	if (self.count > 0) {
 		self.count--;
 		if (!self.count) {
-			self.targetname = NULL_string;
-			self.target = NULL_string;
-			self.killtarget = NULL_string;
+			self.targetname = NIL;
+			self.target = NIL;
+			self.killtarget = NIL;
 
 			self.use = NOTHING_function;
 			self.touch = NOTHING_function;

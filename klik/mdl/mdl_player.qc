@@ -1,4 +1,7 @@
 #include "common.qh"
+#include "effect.qh"
+
+#include "misc.qh"
 
 #include "mdl.qh"
 #include "mdl_player.qh"

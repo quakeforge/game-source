@@ -30,6 +30,8 @@
 .void() th_die;
 .void() th_kill;
 
+.float(entity missile) th_projectile;
+
 /* ghost_inflictor is for radius and bullets...
    Only guaranteed to have:
 	classname
@@ -50,6 +52,8 @@ float(entity ent, entity attacker, entity inflictor, float d, void() deathmessag
 
 /* Fill in appropriate fields, inflictor _WILL_ be modified. */
 void(entity ignore, entity attacker, entity inflictor, void() deathmessage) damage_radius;
+
+float(vector org, entity e) _damage_radius_can_hit;
 
 };
 

@@ -1,6 +1,11 @@
 #include "common.qh"
 #include "mapents_util.qh"
 #include "items.qh"
+#include "weapon.qh"
+#include "act.qh"
+#include "misc.qh"
+#include "mdl_player.qh"
+#include "mdl_eyes.qh"
 
 #include "override.qh"
 #include "damage.qh"
@@ -77,7 +82,7 @@ void() _powerup_think = {
 
 		if (powerup.noise) {
 			sound(self, CHAN_AUTO, powerup.noise, 1, ATTN_NORM);
-			powerup.noise = NULL_string;
+			powerup.noise = NIL;
 		}
 
 		powerup.air_finished += 1;
@@ -405,7 +410,7 @@ void() _ring_think = {
 
 		if (powerup.noise) {
 			sound(self, CHAN_AUTO, powerup.noise, 1, ATTN_NORM);
-			powerup.noise = NULL_string;
+			powerup.noise = NIL;
 		}
 
 		powerup.air_finished += 1;

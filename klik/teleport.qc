@@ -2,6 +2,7 @@
 #include "mapents_util.qh"
 #include "damage.qh"
 #include "effect.qh"
+#include "misc.qh"
 #include "teleport.qh"
 
 void() _deathmsg_teleport = {

@@ -3,6 +3,8 @@
 #include "misc.qh"
 #include "damage.qh"
 
+#include "server.qh"
+
 void() damage_init = {
 	ghost_inflictor = spawn("GHOST_INFLICTOR");
 };
@@ -41,8 +43,8 @@ void() _deathmsg_custom = {
 };
 
 void() deathmsg_nodisplay = {
-	refcount_dec(self.dmg_attacker);
-	refcount_dec(self.dmg_inflictor);
+	//XXX refcount_dec(self.dmg_attacker);
+	//XXX refcount_dec(self.dmg_inflictor);
 	self.dmg_attacker = world;
 	self.dmg_inflictor = world;
 
@@ -127,8 +129,8 @@ damage = {
 	ent.dmg_attacker = attacker;
 	ent.dmg_inflictor = inflictor;
 
-	refcount_inc(ent.dmg_attacker);
-	refcount_inc(ent.dmg_inflictor);
+	//XXX refcount_inc(ent.dmg_attacker);
+	//XXX refcount_inc(ent.dmg_inflictor);
 
 	if (inflictor.deathmsg1)
 		ent.deathmsg = _deathmsg_custom;

@@ -1,4 +1,5 @@
 #include "common.qh"
+#include "misc.qh"
 
 #include "weapon.qh"
 #include "damage.qh"

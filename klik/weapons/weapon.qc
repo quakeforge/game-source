@@ -1,5 +1,7 @@
 #include "common.qh"
 
+#include "misc.qh"
+
 #include "weapon.qh"
 
 .float weapon_imp;

@@ -4,6 +4,8 @@
 #define SPAWNFLAGS_CHECK_ITEMS		16384
 #define SPAWNFLAGS_TAKE_ITEMS		32768
 
+@extern {
+
 .void() th_activate;
 
 void() util_map_entity_init;
@@ -20,5 +22,7 @@ float(entity e) is_solid;
 float(entity e) is_teleportable;
 
 float(entity ent1, entity ent2) util_entities_touch;
+
+};
 
 #endif

@@ -4,6 +4,8 @@
 #include "effect.qh"
 #include "mdl.qh"
 
+#include "misc.qh"
+
 #include "bodyque.qh"
 
 float _bodyque_current;

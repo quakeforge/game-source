@@ -1,5 +1,7 @@
+#include "client.qh"
 #include "common.qh"
 #include "menu.qh"
+#include "misc.qh"
 
 /*
 void() menu_team = {

@@ -89,13 +89,13 @@ void() trap_spikeshooter = {
 	} else if (self.spawnflags & SPAWNFLAG_SUPERSPIKE) {
 		self.weaponmodel = "progs/s_spike.mdl";
 		self.noise1 = "weapons/spike2.wav";
-		self.noise2 = NULL_string;
+		self.noise2 = NIL;
 		self.speed = 1000;
 		self.dmg = 18;
 	} else {
 		self.weaponmodel = "progs/spike.mdl";
 		self.noise1 = "weapons/spike2.wav";
-		self.noise2 = NULL_string;
+		self.noise2 = NIL;
 		self.speed = 1000;
 		self.dmg = 9;
 	}

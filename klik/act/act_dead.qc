@@ -1,6 +1,11 @@
 
 #include "common.qh"
 #include "client.qh"
+#include "server.qh"
+
+#include "equip.qh"
+
+#include "misc.qh"
 
 #include "weapon.qh"
 #include "damage.qh"

@@ -3,6 +3,8 @@
 #include "misc.qh"
 #include "override.qh"
 
+#include "mapents.qh"
+
 #include "mdl.qh"
 #include "mdl_player.qh"
 #include "mdl_void.qh"
@@ -225,6 +227,6 @@ void() ClientDisconnect = {
 	bprint(PRINT_HIGH, name(self), " disconnected with ", ftos(self.frags), " frags\n");
 
 	override_set_th_kill(self, NOTHING_function);
-	self.deathmsg1 = NULL_string;
+	self.deathmsg1 = NIL;
 	damage(self, self, self, DAMAGE_MUSTDIE, NOTHING_function);
 };

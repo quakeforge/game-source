@@ -1,5 +1,7 @@
 #include "common.qh"
+#include "misc.qh"
 
+#include "mapents.qh"
 #include "mapents_util.qh"
 #include "items.qh"
 #include "mapents_triggers.qh"
@@ -256,7 +258,7 @@ Wait decrease count by 1 until it reaches 0, then activate targets.
 void() trigger_counter = {
 	util_map_entity_init();
 
-	self.model = NULL_string;
+	self.model = NIL;
 	self.modelindex = 0;
 
 	if (!self.count)
