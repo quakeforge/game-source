@@ -214,7 +214,7 @@ ClientFixRankings =
 		btmp = nextent (btmp);
 	}
 };
-		
+
 void ()
 ClientInRankings =
 {
@@ -321,13 +321,15 @@ void () BotImpulses =
 
 - (id) initWithEntity:(entity) e named:(bot_data_t [])name skill:(integer)skill
 {
-	local integer cl_no = ClientNumber (@self);
+	local integer cl_no = ClientNumber (e);
 	local entity uself;
 
 	SV_Spawn (e);
 
 	if (!(self = [super initWithEntity:e]))
 		return NIL;
+
+	players[cl_no] = self;
 
 	b_clientno = cl_no + 1;
 	b_clientflag = 1 << cl_no;
@@ -357,8 +359,6 @@ void () BotImpulses =
 	ClientConnect ();
 	PutClientInServer ();
 	@self = uself;
-
-	players[cl_no] = self;
 
 	return self;
 }

@@ -68,28 +68,28 @@ struct target_s = {
 
 @implementation Target
 
-+(Target)forEntity:(entity)ent
++(Target)forEntity:(entity)e
 {
 	local Target t;
 	local struct target_s ele;
 
-	if (!ent)
+	if (!e)
 		return NIL;
 
-	if (ent.classname == "player")
-		return ent.@this;
+	if (e.classname == "player")
+		return e.@this;
 
 	if (!target_tab) {
 		target_tab = Hash_NewTable (1021, NIL, NIL, NIL);
 		Hash_SetHashCompare (target_tab, target_get_hash, target_compare);
 	}
-	ele.ent = ent;
+	ele.ent = e;
 	t = Hash_FindElement (target_tab, &ele);
 	if (t)
 		return t;
 
 	t = [[Target alloc] init];
-	t.ent = ent;
+	t.ent = e;
 	Hash_AddElement (target_tab, t);
 	return t;
 }

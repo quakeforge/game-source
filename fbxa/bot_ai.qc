@@ -571,14 +571,16 @@ the bot finds things it wants to kill/grab.
 	foe = [Target forEntity:findradius (ent.origin, radius)];
 	bestp = 1;
 	while (foe) {
-		thatp = [self priorityForThing:foe];
-		if (thatp)
-			if (!scope)
-				if (!sisible (ent, foe.ent, foe.ent.origin))
-					thatp = 0;
-		if (thatp > bestp) {
-			bestp = thatp;
-			best = foe;
+		if (foe != self) {
+			thatp = [self priorityForThing:foe];
+			if (thatp)
+				if (!scope)
+					if (!sisible (ent, foe.ent, foe.ent.origin))
+						thatp = 0;
+			if (thatp > bestp) {
+				bestp = thatp;
+				best = foe;
+			}
 		}
 		foe = [Target forEntity:foe.ent.chain];
 	}
@@ -670,7 +672,7 @@ generally making the bot look good.
 		while (ent.v_angle.x > 180)
 			ent.v_angle.x -= 360;
 	} else if ((ent.enemy == NIL || ent.enemy.movetype == MOVETYPE_PUSH)
-			   && targets[0].ent.classname != "player") {
+			   && (targets[0] ? targets[0].ent.classname != "player" : 1)) {
 		keys &= ~KEY_LOOK;
 		ent.v_angle = b_angle;
 		while (ent.v_angle.x < -180)

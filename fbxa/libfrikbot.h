@@ -14,7 +14,7 @@ typedef struct bot_data_t bot_data_t;
 @public
 	Waypoint current_way;
 }
-+(Target)forEntity:(entity)ent;
++(Target)forEntity:(entity)e;
 -(vector)realorigin;
 -(vector)origin;
 -(integer)canSee:(Target)targ ignoring:(entity)ignore;
