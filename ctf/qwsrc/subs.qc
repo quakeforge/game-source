@@ -120,7 +120,7 @@ SUB_CalcMove =
 	self.nextthink = self.ltime + traveltime;
 
 	// scale the destdelta vector by the time spent traveling to get velocity
-	self.velocity = vdestdelta * (1 / traveltime);	// qcc won't take vec/float	
+	self.velocity = vdestdelta * (1 / traveltime);	// qcc won't take vec/float
 };
 
 /*

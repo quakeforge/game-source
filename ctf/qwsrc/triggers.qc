@@ -77,7 +77,7 @@ multi_trigger =
 		self.nextthink = time + self.wait;
 	} else {
 		// we can't just remove (self) here, because this is a touch function
-		// called wheil C code is looping through area links...
+		// called while C code is looping through area links...
 		self.touch = SUB_Null;
 		self.nextthink = time + 0.1;
 		self.think = SUB_Remove;
@@ -110,7 +110,7 @@ multi_touch =
 		if (v_forward * self.movedir < 0)
 			return;		// not facing the right way
 	}
-	
+
 	self.enemy = other;
 	multi_trigger ();
 };
@@ -368,7 +368,7 @@ spawn_tdeath =
 	death.nextthink = time + 0.1;
 	death.think = SUB_Remove;
 	death.owner = death_owner;
-	
+
 	force_retouch = 2;		// make sure even still objects get hit
 };
 

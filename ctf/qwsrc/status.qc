@@ -256,7 +256,7 @@ TeamCapturePlayerUpdate =
 		s3 = "B…";
 	else
 		s3 = "Â…";
-		
+
 	if (teamscr1 == 0 && teamscr2 == 0) {
 		// CTFBOT
 		centerprint5 (self, res, s1, s2, s3, "         Capture The Flag");

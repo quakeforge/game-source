@@ -79,7 +79,6 @@ float TEAM_CAPTURE_FLAG_RETURN_TIME = 40; // seconds until auto return
 // XXX EXPERT CTF Additional scoring system
 
 // bonuses
-
 float TEAM_CAPTURE_CARRIER_DANGER_PROTECT_BONUS = 2; // bonus for fraggin someone
 // who has recently hurt your flag carrier
 float TEAM_CAPTURE_CARRIER_PROTECT_BONUS = 1; // bonus for fraggin someone while
@@ -92,14 +91,12 @@ float TEAM_CAPTURE_FRAG_CARRIER_ASSIST_BONUS = 2; // award for fragging a flag c
 // capture happens almost immediately
 
 // radii
-
 float TEAM_CAPTURE_TARGET_PROTECT_RADIUS = 400; // the radius around an object being
 // defended where a target will be worth extra frags
 float TEAM_CAPTURE_ATTACKER_PROTECT_RADIUS = 400; // the radius around an object being
 // defended where an attacker will get extra frags when making kills
 
 // timeouts
-
 float TEAM_CAPTURE_CARRIER_DANGER_PROTECT_TIMEOUT = 4;
 float TEAM_CAPTURE_CARRIER_FLAG_SINCE_TIMEOUT = 2;
 float TEAM_CAPTURE_FRAG_CARRIER_ASSIST_TIMEOUT = 6;
@@ -650,7 +647,6 @@ TeamCheckLock =
 
 		// If teams are static and we've been on some team already,
 		// put us back on the team we were on.
-
 		if ((teamplay & TEAM_STATIC_TEAMS) && (self.steam >= 0)) {
 			if (TeamColorIsLegal (self.steam)) {
 				// changing teams sucks, kill him
@@ -719,7 +715,7 @@ TossBackpack =
 
 	// If we don't have any ammo, return (except AXE/GRAPPLE) 
 	if (self.currentammo <= 0) {
-		if (self.weapon != IT_AXE &&  self.weapon != IT_GRAPPLE)
+		if ((self.weapon != IT_AXE) && (self.weapon != IT_GRAPPLE))
 			return;
 	}
 
@@ -1305,8 +1301,7 @@ TeamCaptureSpawn =
 	impulse. I think he may have mailed you, but I wrote a quick version
 	myself, which your welcome to use if you like the feature (it offsets
 	some of the problems with the chat capabilities in Quake so it seems
-	like a worthwhile feature). Feel free to change it
-	as necessary.
+	like a worthwhile feature). Feel free to change it as necessary.
 */
 
 // *Capture The Flag - Status report by Wonko

@@ -108,13 +108,13 @@ vector()
 wall_velocity =
 {
 	local vector	vel;
-	
+
 	vel = normalize (self.velocity);
 	vel = normalize (vel + v_up * (random () - 0.5) +
 					 v_right * (random () - 0.5));
 	vel += 2 * trace_plane_normal;
 	vel *= 200;
-	
+
 	return vel;
 };
 
@@ -200,7 +200,7 @@ AddMultiDamage =
 {
 	if (!hit)
 		return;
-	
+
 	if (hit != multi_ent) {
 		ApplyMultiDamage ();
 		multi_damage = damage;
@@ -231,7 +231,7 @@ void (float damage, vector dir)
 TraceAttack =
 {
 	local vector	vel, org;
-	
+
 	vel = normalize (dir + v_up * crandom () + v_right * crandom ());
 	vel += 2 * trace_plane_normal;
 	vel *= 200;
@@ -259,17 +259,17 @@ void (float shotcount, vector dir, vector spread)
 FireBullets =
 {
 	local vector	direction, src;
-	
+
 	makevectors (self.v_angle);
 
 	src = self.origin + v_forward * 10;
 	src_z = self.absmin_z + self.size_z * 0.7;
 
 	ClearMultiDamage ();
- 
+
  	traceline (src, src + dir * 2048, FALSE, self);
  	puff_org = trace_endpos - dir * 4;
- 
+
 	while (shotcount > 0) {
  		direction = dir + crandom () * spread_x * v_right +
 			crandom () * spread_y * v_up;
@@ -293,7 +293,7 @@ W_FireShotgun =
 
 	msg_entity = self;
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
-	
+
 	self.currentammo = --self.ammo_shells;
 	dir = aim (self, 100000);
 	FireBullets (6, dir, '0.04 0.04 0');
@@ -313,7 +313,7 @@ W_FireSuperShotgun =
 
 	msg_entity = self;
 	WriteByte (MSG_ONE, SVC_BIGKICK);
-	
+
 	self.currentammo = self.ammo_shells -= 2;
 	dir = aim (self, 100000);
 	FireBullets (14, dir, '0.14 0.08 0');
@@ -338,7 +338,7 @@ T_MissileTouch =
 	}
 
 	damg = 100 + 20 * random ();
-	
+
 	if (other.health) {
 		if (other.classname == "monster_shambler")
 			damg = damg * 0.5;	// mostly immune
@@ -410,7 +410,7 @@ LightningDamage =
 {
 	local entity	e1, e2;
 	local vector	f;
-	
+
 	f = p2 - p1;
 	normalize (f);
 	f_x = 0 - f_y;
@@ -441,7 +441,6 @@ LightningDamage =
 		LightningHit (from, damage);
 	}
 };
-
 
 void ()
 W_FireLightning =
@@ -474,7 +473,7 @@ W_FireLightning =
 	self.currentammo = --self.ammo_cells;
 
 	org = self.origin + '0 0 16';
-	
+
 	traceline (org, org + v_forward * 600, TRUE, self);
 
 	WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_LIGHTNING2);
@@ -602,7 +601,7 @@ void ()
 W_FireSuperSpikes =
 {
 	local vector	dir;
-	
+
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
 	self.currentammo = self.ammo_nails = self.ammo_nails - 2;
@@ -716,7 +715,6 @@ superspike_touch =
 	}
 
 	remove (self);
-
 };
 
 // PLAYER WEAPON USE ==========================================================
@@ -793,23 +791,24 @@ float ()
 W_BestWeapon =
 {
 	local float		it;
-	
+
 	it = self.items;
 
-	if (self.waterlevel <= 1 && self.ammo_cells >= 1 && (it & IT_LIGHTNING))
+	if ((self.waterlevel <= 1) && (self.ammo_cells >= 1)
+		&& (it & IT_LIGHTNING))
 		return IT_LIGHTNING;
-	else if (self.ammo_nails >= 2 && (it & IT_SUPER_NAILGUN))
+	else if ((self.ammo_nails >= 2) && (it & IT_SUPER_NAILGUN))
 		return IT_SUPER_NAILGUN;
-	else if (self.ammo_shells >= 2 && (it & IT_SUPER_SHOTGUN))
+	else if ((self.ammo_shells >= 2) && (it & IT_SUPER_SHOTGUN))
 		return IT_SUPER_SHOTGUN;
-	else if (self.ammo_nails >= 1 && (it & IT_NAILGUN))
+	else if ((self.ammo_nails >= 1) && (it & IT_NAILGUN))
 		return IT_NAILGUN;
-	else if (self.ammo_shells >= 1 && (it & IT_SHOTGUN))
+	else if ((self.ammo_shells >= 1) && (it & IT_SHOTGUN))
 		return IT_SHOTGUN;
 /*
-	if (self.ammo_rockets >= 1 && (it & IT_ROCKET_LAUNCHER) )
+	if ((self.ammo_rockets >= 1) && (it & IT_ROCKET_LAUNCHER))
 		return IT_ROCKET_LAUNCHER;
-	else if (self.ammo_rockets >= 1 && (it & IT_GRENADE_LAUNCHER) )
+	else if ((self.ammo_rockets >= 1) && (it & IT_GRENADE_LAUNCHER))
 		return IT_GRENADE_LAUNCHER;
 */
 	return IT_AXE;
@@ -823,7 +822,7 @@ float() W_CheckNoAmmo =
 		return TRUE;
 	if (self.weapon == IT_GRAPPLE)
 		return TRUE;
-	
+
 	self.weapon = W_BestWeapon ();
 
 	W_SetCurrentAmmo ();
@@ -1050,7 +1049,7 @@ void ()
 CycleWeaponReverseCommand =
 {
 	local float		it, am;
-	
+
 	it = self.items;
 	self.impulse = 0;
 
@@ -1299,7 +1298,7 @@ void ()
 PreviousWeaponCommand =
 {
 	local float		fl, am;
-	
+
 	self.impulse = 0;
 	am = 0;
 
@@ -1307,7 +1306,7 @@ PreviousWeaponCommand =
 		sprint (self, PRINT_HIGH, "no weapon.\n");
 		return;
 	}
-	
+
 	fl = self.weapon;
 	self.weapon = self.previous_weapon;
 	self.previous_weapon = fl;

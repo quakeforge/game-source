@@ -1,5 +1,5 @@
 /*
-	#FILENAME#
+	telefrag.qc
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -61,9 +61,9 @@ entity(entity spot) TelefragSelectSpawnPoint =
 
 	while (search_spot) {
 		e = findradius(spot.origin, 50);
-		if (!e)
+		if (!e) {
 			search_spot = 0;
-		else {
+		} else {
 			local float occupied;
 			occupied = 0;
 			while (!occupied && !(!e)) {
