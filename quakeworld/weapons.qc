@@ -1084,19 +1084,18 @@ void() ImpulseCommands =
 	}
 	self.impulse = 0;
 
-	if (!(self.items & fl)) {
-		// don't have the weapon or the ammo
-		sprint (self, PRINT_HIGH, "no weapon.\n");
-		return;
-	}
-
-	if (am) {
-		// don't have the ammo
-		sprint (self, PRINT_HIGH, "not enough ammo.\n");
-		return;
-	}
-
 	if (fl) {
+		if (!(self.items & fl)) {
+			// don't have the weapon or the ammo
+			sprint (self, PRINT_HIGH, "no weapon.\n");
+			return;
+		}
+
+		if (am) {
+			// don't have the ammo
+			sprint (self, PRINT_HIGH, "not enough ammo.\n");
+			return;
+		}
 		// set weapon, set ammo
 		self.weapon = fl;
 		W_SetCurrentAmmo ();
