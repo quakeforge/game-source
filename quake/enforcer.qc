@@ -95,7 +95,6 @@ void(vector org, vector vec) LaunchLaser =
 	newmis.nextthink = time + 5;
 	newmis.think = SUB_Remove;
 	newmis.touch = Laser_Touch;
-traceoff();
 };
 
 
@@ -108,7 +107,7 @@ void() enforcer_fire =
 	makevectors (self.angles);
 	
 	org = self.origin + v_forward * 30 + v_right * 8.5 + '0 0 16';
-traceon();
+
 	LaunchLaser(org, self.enemy.origin - self.origin);
 };
 
