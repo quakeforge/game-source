@@ -190,7 +190,7 @@ Waypoint Loading from file
 +(void)clearAll
 {
 	if (waypoint_array)
-		[waypoint_array free];
+		[waypoint_array dealloc];
 	waypoint_init ();
 }
 
