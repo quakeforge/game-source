@@ -1185,7 +1185,7 @@ void(entity targ, entity attacker) ClientObituary =
 					else
 						deathstring2 = "'s shaft\n";
 				} else {
-					deathstring = " dies misteriously ";
+					deathstring = " dies mysteriously ";
 					deathstring2 = " progs bug\n";
 				}
 				bprint (PRINT_MEDIUM, targ.netname);
