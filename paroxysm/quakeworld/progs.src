@@ -1,0 +1,39 @@
+qwprogs.dat
+
+defs.qc
+
+poxdefs.qc		// POX - some extra prototypes and variables
+
+subs.qc
+combat.qc
+items.qc
+
+sectrig.qc		// POX - Second Trigger Functions
+targid.qc		// POX - Target Identifier
+
+weapons.qc
+world.qc
+
+flash.qc		// POX - Flashlight code (for DarkMode)
+observe.qc		// POX - Last Man Standing Observer
+
+client.qc
+spectate.qc
+player.qc
+doors.qc
+buttons.qc
+triggers.qc
+plats.qc
+misc.qc
+
+server.qc
+
+// POX - new files below...
+sheilds.qc		//Regen Station
+wall.qc			//Gibbable object
+dynlight.qc		//Dynamic Lighting
+hiprot.qc		//Rotating BSP model
+
+specfx.qc		//Misc Special Entities
+
+

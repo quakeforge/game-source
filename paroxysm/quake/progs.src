@@ -1,0 +1,55 @@
+//NOTE THIS CHANGE!
+//in MacOS, '/' is a valid filename character and ':' is used for directory paths,
+//So... I just compiled the progs.dat to the same directory as the source and moved
+//it manually afterwards - this is EASY in MacOS but may not be in DOS/Win/LINUX so throw
+//a '/' infront of 'progs.dat' if you feel neglected
+
+progs.dat
+
+defs.qc
+
+kascam.qc		//Auto Camera
+poxmenu.qc		//Dm setup Menu
+ccam.qc			//ChaseCam
+
+subs.qc
+fight.qc
+ai.qc
+combat.qc
+items.qc
+
+sectrig.qc		//v1.1 - Separated second trigger stuff
+targid.qc		//v1.1 - Target Identifier
+
+weapons.qc
+
+
+rankings.qc		//Bot ranking
+botpup.qc		//Bot powerup checking
+
+world.qc
+
+flash.qc		//Flashlight code (for DarkMode)
+
+client.qc
+player.qc
+
+doors.qc
+buttons.qc
+triggers.qc
+plats.qc
+misc.qc
+
+specfx.qc		//Misc. Special effects
+sheilds.qc		//Regen station code
+wall.qc			//Breakable object code
+dynlight.qc		//Dynamic Lighting code
+
+hiprot.qc		//Hipnotic's Rotate code
+
+botliq.qc		//Bot liquid level detection
+botgrab.qc		//Bot item usage
+botmain.qc		//Bot main routines
+botspawn.qc		//Bot spawning routines
+
+old.qc			//Old entity removal code (Monsters)
