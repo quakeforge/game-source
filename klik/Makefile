@@ -9,7 +9,7 @@ CPP=cpp
 CPPFLAGS=-I. -Iweapons -Imdl -Iact -Imapents
 
 QFCC=qfcc
-QFCCFLAGS=-q -g --warn all,error $(CPPFLAGS)
+QFCCFLAGS=-qg -Wall -Werror $(CPPFLAGS)
 
 ###############################################
 
@@ -37,7 +37,6 @@ COMMON_SOURCES=system.qc	\
 	equipid.qc	\
 	server.qc	worldspawn.qc	\
 	client.qc	spectate.qc	\
-	math.qc		\
 	misc.qc		\
 	teleport.qc	delays.qc	\
 	bodyque.qc	damage.qc	\
