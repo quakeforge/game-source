@@ -14,37 +14,37 @@
 // edict.flags
 #define	FL_FLY			1
 #define	FL_SWIM			2
-#define	FL_CLIENT		8	/* set for all client edicts	*/
-#define	FL_INWATER		16	/* for enter / leave water splash	*/
+#define	FL_CLIENT		8	/* set for all client edicts */
+#define	FL_INWATER		16	/* for enter / leave water splash */
 #define	FL_MONSTER		32
-#define	FL_GODMODE		64	/* player cheat	*/
-#define	FL_NOTARGET		128	/* player cheat	*/
-#define	FL_ITEM			256	/* extra wide size for bonus items	*/
-#define	FL_ONGROUND		512	/* standing on something	*/
-#define	FL_PARTIALGROUND	1024	/* not all corners are valid	*/
-#define	FL_WATERJUMP		2048	/* player jumping out of water	*/
-#define	FL_JUMPRELEASED		4096	/* for jump debouncing	*/
+#define	FL_GODMODE		64	/* player cheat */
+#define	FL_NOTARGET		128	/* player cheat */
+#define	FL_ITEM			256	/* extra wide size for bonus items */
+#define	FL_ONGROUND		512	/* standing on something */
+#define	FL_PARTIALGROUND	1024	/* not all corners are valid */
+#define	FL_WATERJUMP		2048	/* player jumping out of water */
+#define	FL_JUMPRELEASED		4096	/* for jump debouncing */
 
 // edict.movetype values
-#define	MOVETYPE_NONE		0	/* never moves	*/
+#define	MOVETYPE_NONE		0	/* never moves */
 #define	MOVETYPE_ANGLENOCLIP	1	/* NO LONGER SUPPORTED. */
 #define	MOVETYPE_ANGLECLIP	2	/* NO LONGER SUPPORTED. */
-#define	MOVETYPE_WALK		3	/* players only	*/
-#define	MOVETYPE_STEP		4	/* discrete, not real time unless fall	*/
+#define	MOVETYPE_WALK		3	/* players only */
+#define	MOVETYPE_STEP		4	/* discrete, not real time unless fall */
 #define	MOVETYPE_FLY		5
-#define	MOVETYPE_TOSS		6	/* gravity	*/
-#define	MOVETYPE_PUSH		7	/* no clip to world, push and crush	*/
+#define	MOVETYPE_TOSS		6	/* gravity */
+#define	MOVETYPE_PUSH		7	/* no clip to world, push and crush */
 #define	MOVETYPE_NOCLIP		8
-#define	MOVETYPE_FLYMISSILE	9	/* fly with extra size against monsters	*/
+#define	MOVETYPE_FLYMISSILE	9	/* fly with extra size against monsters */
 #define	MOVETYPE_BOUNCE		10
-#define	MOVETYPE_BOUNCEMISSILE	11	/* bounce with extra size	*/
+#define	MOVETYPE_BOUNCEMISSILE	11	/* bounce with extra size */
 
 // edict.solid values
-#define	SOLID_NOT		0	/* no interaction with other objects	*/
-#define	SOLID_TRIGGER		1	/* touch on edge, but not blocking	*/
-#define	SOLID_BBOX		2	/* touch on edge, block	*/
-#define	SOLID_SLIDEBOX		3	/* touch on edge, but not an onground	*/
-#define	SOLID_BSP		4	/* bsp clip, touch on edge, block	*/
+#define	SOLID_NOT		0	/* no interaction with other objects */
+#define	SOLID_TRIGGER		1	/* touch on edge, but not blocking */
+#define	SOLID_BBOX		2	/* touch on edge, block */
+#define	SOLID_SLIDEBOX		3	/* touch on edge, but not an onground */
+#define	SOLID_BSP		4	/* bsp clip, touch on edge, block */
 
 // items
 #define	IT_AXE			4096
@@ -99,7 +99,7 @@
 #define	CHAN_VOICE		2
 #define	CHAN_ITEM		3
 #define	CHAN_BODY		4
-#define	CHAN_NO_PHS_ADD		8	/* ie: CHAN_BODY | CHAN_NO_PHS_ADD	*/
+#define	CHAN_NO_PHS_ADD		8	/* ie: CHAN_BODY | CHAN_NO_PHS_ADD */
 
 #define	ATTN_NONE		0
 #define	ATTN_NORM		1
@@ -114,33 +114,33 @@
 #define	EF_FLAG1		16
 #define	EF_FLAG2		32
 // GLQuakeWorld Stuff
-#define	EF_BLUE			64	/* Blue Globe effect for Quad	*/
-#define	EF_RED			128	/* Red Globe effect for Pentagram	*/
+#define	EF_BLUE			64	/* Blue Globe effect for Quad */
+#define	EF_RED			128	/* Red Globe effect for Pentagram */
 
 // messages
-#define	MSG_BROADCAST		0	/* unreliable to all	*/
-#define	MSG_ONE			1	/* reliable to one (msg_entity)	*/
-#define	MSG_ALL			2	/* reliable to all	*/
-#define	MSG_INIT		3	/* write to the init string	*/
-#define	MSG_MULTICAST		4	/* for multicast() call	*/
+#define	MSG_BROADCAST		0	/* unreliable to all */
+#define	MSG_ONE			1	/* reliable to one (msg_entity) */
+#define	MSG_ALL			2	/* reliable to all */
+#define	MSG_INIT		3	/* write to the init string */
+#define	MSG_MULTICAST		4	/* for multicast () call */
 
 // message levels
-#define	PRINT_LOW		0	/* pickup messages	*/
+#define	PRINT_LOW		0	/* pickup messages */
 #define	PRINT_MEDIUM		1
-#define	PRINT_DEATH		1	/* death messages	*/
-#define	PRINT_HIGH		2	/* critical messages	*/
-#define	PRINT_CHAT		3	/* also goes to chat console	*/
+#define	PRINT_DEATH		1	/* death messages */
+#define	PRINT_HIGH		2	/* critical messages */
+#define	PRINT_CHAT		3	/* also goes to chat console */
 
 // multicast sets
-#define	MULTICAST_ALL	0	/* every client	*/
-#define	MULTICAST_PHS	1	/* within hearing	*/
-#define	MULTICAST_PVS	2	/* within sight	*/
-#define	MULTICAST_ALL_R	3	/* every client, reliable	*/
-#define	MULTICAST_PHS_R	4	/* within hearing, reliable	*/
-#define	MULTICAST_PVS_R	5	/* within sight, reliable	*/
+#define	MULTICAST_ALL	0	/* every client */
+#define	MULTICAST_PHS	1	/* within hearing */
+#define	MULTICAST_PVS	2	/* within sight */
+#define	MULTICAST_ALL_R	3	/* every client, reliable */
+#define	MULTICAST_PHS_R	4	/* within hearing, reliable */
+#define	MULTICAST_PVS_R	5	/* within sight, reliable */
 
-// ========================================================================== //
-// ========================================================================== //
+// ========================================================================= //
+// ========================================================================= //
 
 // takedamage values
 #define	DAMAGE_NO		0

@@ -2,11 +2,9 @@
 #define TELEPORT_qh 1
 
 @extern {
+	.float(vector org) th_teleport;
 
-.float(vector org) th_teleport;
-
-void(entity e, entity spot) teleport;
-
+	void (entity e, entity spot) teleport;
 };
 
 #endif

@@ -10,7 +10,9 @@
 .float itemfield_3;
 .float itemfield_4;
 
-float(entity e, float eid) equip_flag = {
+float (entity e, float eid)
+equip_flag =
+{
 	if (eid < 24) {
 		e.itemfield = itemfield_1;
 	} else if (eid < 48) {
@@ -24,11 +26,13 @@ float(entity e, float eid) equip_flag = {
 		eid -= 72;
 	}
 
-	return shl(1, eid);	/* FIXME: use (1 << eid) when the compiler isn't b0rk */
+	return (1 << eid);
 };
 
-float(entity e, float eid) equip_query = {
-	eid = equip_flag(e, eid);
+float (entity e, float eid)
+equip_query =
+{
+	eid = equip_flag (e, eid);
 
 	if (e.(e.itemfield) & eid)
 		return TRUE;
@@ -36,8 +40,10 @@ float(entity e, float eid) equip_query = {
 		return FALSE;
 };
 
-float(entity e, float eid) equip_grant = {
-	eid = equip_flag(e, eid);
+float (entity e, float eid)
+equip_grant =
+{
+	eid = equip_flag (e, eid);
 
 	if (e.(e.itemfield) & eid)
 		return FALSE;
@@ -47,8 +53,10 @@ float(entity e, float eid) equip_grant = {
 	return TRUE;
 };
 
-float(entity e, float eid) equip_remove = {
-	eid = equip_flag(e, eid);
+float (entity e, float eid)
+equip_remove =
+{
+	eid = equip_flag (e, eid);
 
 	if (e.(e.itemfield) & eid) {
 		e.(e.itemfield) -= eid;
@@ -60,7 +68,9 @@ float(entity e, float eid) equip_remove = {
 
 float _equip_iter_id;
 /* Returns EQUIPID_* or -1 when done */
-float(entity iteme) equip_iter = {
+float (entity iteme)
+equip_iter =
+{
 	local float ret, flag;
 
 	while (1) {
@@ -69,7 +79,7 @@ float(entity iteme) equip_iter = {
 			return -1;
 		}
 
-		flag = equip_flag(iteme, _equip_iter_id);
+		flag = equip_flag (iteme, _equip_iter_id);
 
 		ret = _equip_iter_id;
 		_equip_iter_id++;

@@ -9,10 +9,12 @@
 
 // ===================================================================== //
 
-entity(string clname) spawn = {
+entity (string clname)
+spawn =
+{
 	local entity e;
 
-	e = BUILTIN_spawn();
+	e = BUILTIN_spawn ();
 	e.classname = clname;
 
 	return e;
@@ -20,9 +22,15 @@ entity(string clname) spawn = {
 
 // ===================================================================== //
 
-void() SUB_remove = { remove(self); };
+void ()
+SUB_remove =
+{
+	remove (self);
+};
 
-void(entity e) safe_remove = {
+void (entity e)
+safe_remove =
+{
 	e.takedamage = DAMAGE_NO;
 	e.solid = SOLID_NOT;
 	e.model = NIL;
@@ -34,11 +42,17 @@ void(entity e) safe_remove = {
 
 // ===================================================================== //
 
-void() SUB_makestatic = { makestatic(self); };
+void ()
+SUB_makestatic =
+{
+	makestatic (self);
+};
 
-void(entity e) safe_makestatic = {
+void (entity e)
+safe_makestatic =
+{
 	if (sv_spawning) {
-		makestatic(self);
+		makestatic (self);
 		return;
 	}
 
@@ -51,11 +65,16 @@ void(entity e) safe_makestatic = {
 
 // ===================================================================== //
 
-void() _sound_vector_think = {
-	sound(self, CHAN_VOICE, self.noise1, self.volume, self.attenuation);
-	remove(self);
+void ()
+_sound_vector_think =
+{
+	sound (self, CHAN_VOICE, self.noise1, self.volume, self.attenuation);
+	remove (self);
 };
-void(vector org, string samp, float vol, float atten) sound_vector = {
+
+void (vector org, string samp, float vol, float atten)
+sound_vector =
+{
 	local entity e;
 
 	e = spawn("SOUND");
@@ -70,47 +89,60 @@ void(vector org, string samp, float vol, float atten) sound_vector = {
 
 // ===================================================================== //
 
-float(vector org) _missile_th_teleport = {
+float (vector org)
+_missile_th_teleport =
+{
 	self.owner = world;
 	return TRUE;
 };
 
-void(entity mis) missile_check_teleport;
-void() _missile_always_trigger = {
+void (entity mis) missile_check_teleport;
+
+void ()
+_missile_always_trigger =
+{
 	self.think = SUB_remove;
 	self.nextthink = self.attack_finished;
 
-	if (self.movetype != MOVETYPE_FLYMISSILE && self.movetype != MOVETYPE_FLY)
+	if ((self.movetype != MOVETYPE_FLYMISSILE)
+		&& (self.movetype != MOVETYPE_FLY))
 		return;
 
-	tl_proj_begin();
+	tl_proj_begin ();
 	/* Make sure we're still going to hit the thing */
-	traceline(self.origin, self.origin + self.velocity * sv_maxtic*2, FALSE, self);
-	if (trace_ent == self.enemy)	tl_touch(trace_ent, self);
-	else				self.enemy = world;
-	tl_proj_end();
+	traceline (self.origin, self.origin + self.velocity * sv_maxtic * 2, FALSE,
+			   self);
+	if (trace_ent == self.enemy)
+		tl_touch (trace_ent, self);
+	else
+		self.enemy = world;
+	tl_proj_end ();
 
-	missile_check_teleport(self);
+	missile_check_teleport (self);
 };
 
-void(entity mis) missile_check_teleport = {
+void (entity mis)
+missile_check_teleport =
+{
 	local float duration;
 
-	tl_proj_begin();
+	tl_proj_begin ();
 
 	trace_ent = mis;
 	trace_endpos = mis.origin;
 	duration = mis.attack_finished - time;
 
 	while (duration > sv_maxtic) {
-		traceline(trace_endpos, trace_endpos + mis.velocity*duration, FALSE, trace_ent);
+		traceline (trace_endpos, trace_endpos + mis.velocity * duration,
+				   FALSE, trace_ent);
 
 		if (!trace_ent || trace_ent.solid == SOLID_BSP) {
 			/* Don't bother tracing through BSP, it won't happen. */
 			break;
 		}
 
-		if (tl_issolid(trace_ent) || mis.enemy == trace_ent || (duration*trace_fraction) <= sv_maxtic) {
+		if (tl_issolid (trace_ent) || mis.enemy == trace_ent
+			|| (duration * trace_fraction) <= sv_maxtic) {
 			/* We hit a triggered trigger,
 			   a solid ent, or something we _just_ hit */
 			if (trace_fraction == 0) {
@@ -118,22 +150,24 @@ void(entity mis) missile_check_teleport = {
 				break;
 			}
 			/* Trace on past it. */
-			duration -= duration*trace_fraction;
+			duration -= duration * trace_fraction;
 			continue;
 		}
 
 		/* Reached a [new] trigger */
 		mis.enemy = trace_ent;
 		mis.think = _missile_always_trigger;
-		mis.nextthink = time + duration*trace_fraction - sv_maxtic;
+		mis.nextthink = time + duration * trace_fraction - sv_maxtic;
 		break;
 	}
 
-	tl_proj_end();
+	tl_proj_end ();
 };
 
-entity(string clname, string mod, vector org, vector dir, float spd) spawn_missile = {
-	newmis = spawn(clname);
+entity (string clname, string mod, vector org, vector dir, float spd)
+spawn_missile =
+{
+	newmis = spawn (clname);
 
 	newmis.owner = self;
 	newmis.goalentity = self;
@@ -144,11 +178,11 @@ entity(string clname, string mod, vector org, vector dir, float spd) spawn_missi
 
 	newmis.th_teleport = _missile_th_teleport;
 
-	setmodel(newmis, mod);
-	setsize(newmis, '0 0 0', '0 0 0');
-	setorigin(newmis, org);
+	setmodel (newmis, mod);
+	setsize (newmis, '0 0 0', '0 0 0');
+	setorigin (newmis, org);
 
-	newmis.angles = vectoangles(dir);
+	newmis.angles = vectoangles (dir);
 	newmis.speed = spd;
 	newmis.velocity = dir * spd;
 
@@ -157,7 +191,7 @@ entity(string clname, string mod, vector org, vector dir, float spd) spawn_missi
 	newmis.think = SUB_remove;
 	newmis.nextthink = newmis.attack_finished;
 
-	missile_check_teleport(newmis);
+	missile_check_teleport (newmis);
 
 	return newmis;
 };
@@ -166,11 +200,13 @@ entity(string clname, string mod, vector org, vector dir, float spd) spawn_missi
 
 entity tl_first;
 .entity tl_next;
-void() tl_proj_begin = {
+void ()
+tl_proj_begin =
+{
 	local entity walk;
 
 	tl_first = world;
-	for (walk = nextent(world); walk; walk = nextent(walk)) {
+	for (walk = nextent (world); walk; walk = nextent (walk)) {
 		if (walk.solid != SOLID_TRIGGER)
 			continue;
 
@@ -179,27 +215,31 @@ void() tl_proj_begin = {
 
 		walk.solid = SOLID_BBOX;
 		walk.tl_notsolid = TRUE;
-		setorigin(walk, walk.origin); // relink
+		setorigin (walk, walk.origin); // relink
 	}
 };
 
-void() tl_proj_end = {
+void ()
+tl_proj_end =
+{
 	local entity walk;
 
 	for (walk = tl_first; walk; walk = walk.tl_next) {
 		walk.solid = SOLID_TRIGGER;
 		walk.tl_notsolid = FALSE;
-		setorigin(walk, walk.origin); // relink
+		setorigin (walk, walk.origin); // relink
 	}
 };
 
-void(entity trigger, entity fake_proj) tl_touch = {
+void (entity trigger, entity fake_proj)
+tl_touch =
+{
 	local entity oldself, oldother;
 
 	if (!trigger.touch)
 		return;
 
-	tl_proj_end();
+	tl_proj_end ();
 
 	oldself = self;
 	oldother = other;
@@ -207,19 +247,23 @@ void(entity trigger, entity fake_proj) tl_touch = {
 	self = trigger;
 	other = fake_proj;
 
-	self.touch();
+	self.touch ();
 
 	self = oldself;
 	other = oldother;
 
-	tl_proj_begin();
+	tl_proj_begin ();
 };
 
 // ===================================================================== //
 
-string(entity e) name = {
-	if (e.netname) return e.netname;
-	if (e.classname) return e.classname;
+string (entity e)
+name =
+{
+	if (e.netname)
+		return e.netname;
+	if (e.classname)
+		return e.classname;
 
 	if (e.velocity)
 		return "an unidentified flying object";
@@ -228,33 +272,39 @@ string(entity e) name = {
 
 // ===================================================================== //
 
-void(.string fld, string match, void(entity e) func) foreach = {
+void (.string fld, string match, void (entity e) func)
+foreach =
+{
 	local entity ent;
 
 	ent = world;
-	while ((ent = find(ent, fld, match))) {
+	while ((ent = find (ent, fld, match))) {
 		if (!func) {
-			dprint("NULL function in foreach, classname: ", ent.classname, "\n");
+			dprint ("NULL function in foreach, classname: ", ent.classname,
+					"\n");
 			continue;
 		}
 
-		func(ent);
+		func (ent);
 	}
 };
 
-void(.string fld, string match, .void() func) foreach_field = {
+void (.string fld, string match, .void () func)
+foreach_field =
+{
 	local entity oldself;
 
 	oldself = self;
 
 	self = world;
-	while ((self = find(self, fld, match))) {
+	while ((self = find (self, fld, match))) {
 		if (!self.func) {
-			dprint("NULL function in foreach_field, classname: ", self.classname, "\n");
+			dprint ("NULL function in foreach_field, classname: ",
+					self.classname, "\n");
 			continue;
 		}
 
-		self.func();
+		self.func ();
 	}
 
 	self = oldself;
@@ -262,7 +312,8 @@ void(.string fld, string match, .void() func) foreach_field = {
 
 // ===================================================================== //
 
-float(entity newself, entity newother, float() func) switcheroo = {
+float (entity newself, entity newother, float () func)
+switcheroo = {
 	local entity oldself, oldother;
 	local float ret;
 
@@ -272,7 +323,7 @@ float(entity newself, entity newother, float() func) switcheroo = {
 	self = newself;
 	other = newother;
 
-	ret = func();
+	ret = func ();
 
 	self = oldself;
 	other = oldother;
@@ -282,19 +333,25 @@ float(entity newself, entity newother, float() func) switcheroo = {
 
 // ===================================================================== //
 
-float(float current, float increment, float max) increase_bound = {
+float (float current, float increment, float max)
+increase_bound =
+{
 	local float diff;
 
 	diff = max - current;
-	if (diff <= 0) return current;
-	if (diff > increment) diff = increment;
+	if (diff <= 0)
+		return current;
+	if (diff > increment)
+		diff = increment;
 	return current + diff;
 };
 
-float(.float fld, float increment, float max) increase_field = {
+float (.float fld, float increment, float max)
+increase_field =
+{
 	local float new;
 
-	new = increase_bound(self.fld, increment, max);
+	new = increase_bound (self.fld, increment, max);
 	if (new == self.fld)
 		return FALSE;
 
@@ -306,7 +363,9 @@ float(.float fld, float increment, float max) increase_field = {
 // ===================================================================== //
 
 /* Not to be confused with maxspeed */
-float(entity e) calc_max_speed = {
+float (entity e)
+calc_max_speed =
+{
 	local float spd;
 
 	spd = e.maxspeed;
@@ -325,41 +384,48 @@ float(entity e) calc_max_speed = {
 
 entity _xprint_client;
 float _xprint_level;
-void(entity client, float level) xprint_start = {
+void (entity client, float level)
+xprint_start =
+{
 	_xprint_client = client;
 	_xprint_level = level;
 };
 
-void(string str) xprint_str = {
+void (string str)
+xprint_str =
+{
 	msg_entity = _xprint_client;
-	WriteByte(MSG_ONE, SVC_PRINT);
-	WriteByte(MSG_ONE, _xprint_level);
-	WriteString(MSG_ONE, str);
+	WriteBytes (MSG_ONE, (float) SVC_PRINT, _xprint_level);
+	WriteString (MSG_ONE, str);
 };
 
 // ===================================================================== //
 
-entity(.string fld, string str) find_random = {
+entity (.string fld, string str)
+find_random =
+{
 	local float r, numents;
 	local entity ent;
 
 	numents = 0;
-	r = floor(random() * 512);
+	r = floor (random () * 512);
 
 	while (1) {
-		ent = find(world, fld, str);
-		if (!ent) return world;
+		ent = find (world, fld, str);
+		if (!ent)
+			return world;
 
 		while (ent) {
 			numents++;
 
 			r--;
-			if (r <= 0) return ent;
+			if (r <= 0)
+				return ent;
 
-			ent = find(ent, fld, str);
+			ent = find (ent, fld, str);
 		}
 
-		r -= numents * floor(r / numents);
+		r -= numents * floor (r / numents);
 	}
 
 	return world;
@@ -367,11 +433,13 @@ entity(.string fld, string str) find_random = {
 
 // ===================================================================== //
 
-entity(entity ech) random_enemy_chain = {
+entity (entity ech)
+random_enemy_chain =
+{
 	local entity walk;
 	local float tot, r;
 
-	r = floor(random()*64) + 1;
+	r = floor (random () * 64) + 1;
 
 	tot = 1;
 	for (walk = ech.enemy; walk != ech; walk = walk.enemy) {
@@ -386,7 +454,7 @@ entity(entity ech) random_enemy_chain = {
 		return ech;
 
 	/* Ok, only look at half the remaining ones */
-	tot = floor(tot * 0.5);
+	tot = floor (tot * 0.5);
 	if (!tot)
 		return ech.enemy;
 
@@ -401,6 +469,3 @@ entity(entity ech) random_enemy_chain = {
 
 	return world;
 };
-
-// ===================================================================== //
-

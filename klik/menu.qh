@@ -5,9 +5,9 @@
 
 @extern .float menu_state;
 @extern .float menu_time;
-@extern .void() menu_think;
+@extern .void () menu_think;
 
-@extern void(void() menu_func) menu_set;
-@extern float() util_menu_needs_print;
+@extern void (void() menu_func) menu_set;
+@extern float () util_menu_needs_print;
 
 #endif

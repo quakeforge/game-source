@@ -1,6 +1,6 @@
 #ifndef MENUS_qh
 #define MENUS_qh 1
 
-@extern void() menu_intro;
+@extern void () menu_intro;
 
 #endif

@@ -2,13 +2,11 @@
 #define MATH_qh 1
 
 @extern {
+	float (float num, float bits) shl;
+	float (float num, float bits) shr;
 
-float(float num, float bits) shl;
-float(float num, float bits) shr;
-
-#define min(a, b) ((a)>(b)?(b):(a))
-#define max(a, b) ((a)>(b)?(a):(b))
-
+	#define min(a, b) ((a)>(b)?(b):(a))
+	#define max(a, b) ((a)>(b)?(a):(b))
 };
 
 #endif

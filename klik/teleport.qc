@@ -5,21 +5,27 @@
 #include "misc.qh"
 #include "teleport.qh"
 
-.float(vector org) th_teleport;
+.float (vector org) th_teleport;
 
-void() _deathmsg_teleport = {
+void ()
+_deathmsg_teleport =
+{
 	local string att_nname, def_nname;
 
-	def_nname = name(self);
-	att_nname = name(self.dmg_attacker);
+	def_nname = name (self);
+	att_nname = name (self.dmg_attacker);
 
 	if (self.dmg_inflictor.owner == self)
-		bprint(PRINT_DEATH, "Satan's power deflects ", att_nname, "'s telefrag.\n");
+		bprint (PRINT_DEATH, "Satan's power deflects ", att_nname,
+				"'s telefrag.\n");
 	else
-		bprint(PRINT_DEATH, def_nname, " was telefragged by ", att_nname, ".\n");
+		bprint (PRINT_DEATH, def_nname, " was telefragged by ", att_nname,
+				".\n");
 };
 
-void() _teleport_death_touch = {
+void ()
+_teleport_death_touch =
+{
 	if (self.owner == other)
 		return;
 
@@ -33,17 +39,20 @@ void() _teleport_death_touch = {
 	ghost_inflictor.speed = 1000;
 	ghost_inflictor.owner = self.owner;
 
-	damage(other, self.owner, ghost_inflictor, DAMAGE_SHOULDDIE, _deathmsg_teleport);
+	damage (other, self.owner, ghost_inflictor, DAMAGE_SHOULDDIE,
+			_deathmsg_teleport);
 };
 
-void(vector org, entity death_owner) _teleport_death_spawn = {
+void (vector org, entity death_owner)
+_teleport_death_spawn =
+{
 	local entity death;
 	
-	death = spawn("TELEDEATH");
+	death = spawn ("TELEDEATH");
 	death.owner = death_owner;
 	death.solid = SOLID_TRIGGER;
-	setsize(death, death_owner.mins - '1 1 1', death_owner.maxs + '1 1 1');
-	setorigin(death, org);
+	setsize (death, death_owner.mins - '1 1 1', death_owner.maxs + '1 1 1');
+	setorigin (death, org);
 
 	death.touch = _teleport_death_touch;
 
@@ -53,7 +62,9 @@ void(vector org, entity death_owner) _teleport_death_spawn = {
 	force_retouch = 2;
 };
 
-void(entity e, entity spot) teleport = {
+void (entity e, entity spot)
+teleport =
+{
 	local float spd;
 
 	if (e.th_teleport) {
@@ -66,7 +77,7 @@ void(entity e, entity spot) teleport = {
 		self = e;
 		other = spot;
 
-		do_teleport = self.th_teleport(other.origin);
+		do_teleport = self.th_teleport (other.origin);
 
 		self = oldself;
 		other = oldother;
@@ -75,20 +86,20 @@ void(entity e, entity spot) teleport = {
 			return;
 	}
 
-	spd = vlen(e.velocity);
+	spd = vlen (e.velocity);
 	if (spd < 200)
 		spd = 200;
 
-	setorigin(e, spot.origin);
+	setorigin (e, spot.origin);
 	e.angles = spot.angles;
 	e.fixangle = TRUE;
 	e.teleport_time = 0.1;
 
-	makevectors(e.angles);
+	makevectors (e.angles);
 	e.velocity = v_forward*spd;
 
-	if (is_living(e))
-		_teleport_death_spawn(spot.origin, e);
+	if (is_living (e))
+		_teleport_death_spawn (spot.origin, e);
 
-	effect_teleport_fog(spot.origin);
+	effect_teleport_fog (spot.origin);
 };

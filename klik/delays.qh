@@ -2,16 +2,14 @@
 #define DELAYS_qh 1
 
 @extern {
+	void () delays_swapin_stats;
+	void () delays_swapout_stats;
 
-void() delays_swapin_stats;
-void() delays_swapout_stats;
+	void () delays_force_update;
 
-void() delays_force_update;
-
-void() delays_swapin_stats_all;
-void() delays_swapout_stats_all;
-void() delays_force_update_all;
-
+	void () delays_swapin_stats_all;
+	void () delays_swapout_stats_all;
+	void () delays_force_update_all;
 };
 
 #endif

@@ -33,73 +33,81 @@ float cl_rollangle, cl_rollspeed;
 
 #define	SV_FRAMES_BEFORE_SPAWN	3
 
-void() main = {
+void ()
+main =
+{
 	local entity walk;
 
 	/* Must be first. */
 	max_clients = 0;
 	walk = world;
-	while ((walk = nextent(walk))) max_clients++;
+	while ((walk = nextent(walk)))
+		max_clients++;
 
 	sv_spawning = SV_FRAMES_BEFORE_SPAWN;
 
-	damage_init();
-	bodyque_init();
-	weapon_init();
-	client_init();
-	SZ_init();
+	damage_init ();
+	bodyque_init ();
+	weapon_init ();
+	client_init ();
+	SZ_init ();
 
-	mdl_player_init();
-	mdl_eyes_init();
+	mdl_player_init ();
+	mdl_eyes_init ();
 
-	act_player_init();
+	act_player_init ();
 };
 
 float players_frame_started;
-void() StartFrame = {
+void ()
+StartFrame =
+{
 	if (sv_spawning) {
-		sv_spawning = sv_spawning - 1;
+		sv_spawning--;
 		if (!sv_spawning) {
 			if (!intermission_head)
 				intermission_head = spawn_head;
 
 			if (!spawn_head)
-				error("Unable to find a spawn point.\n");
+				error ("Unable to find a spawn point.\n");
 		}
 	}
 
-	SZ_frame();
+	SZ_frame ();
 
-	rocket_jump = stof(infokey(world, "rj"));
-	if (rocket_jump <= 1) rocket_jump = 0;
+	rocket_jump = stof (infokey (world, "rj"));
+	if (rocket_jump <= 1)
+		rocket_jump = 0;
 
-	sv_mintic = cvar("sv_mintic");
-	sv_maxtic = cvar("sv_maxtic");
+	sv_mintic = cvar ("sv_mintic");
+	sv_maxtic = cvar ("sv_maxtic");
 
-	sv_gravity = cvar("sv_gravity");
+	sv_gravity = cvar ("sv_gravity");
 
-	sv_stopspeed = cvar("sv_stopspeed");
-	sv_maxspeed = cvar("sv_maxspeed");
-	sv_spectatormaxspeed = cvar("sv_spectatormaxspeed");
+	sv_stopspeed = cvar ("sv_stopspeed");
+	sv_maxspeed = cvar ("sv_maxspeed");
+	sv_spectatormaxspeed = cvar ("sv_spectatormaxspeed");
 
-	sv_accelerate = cvar("sv_accelerate");
-	sv_airaccelerate = cvar("sv_airaccelerate");
-	sv_wateraccelerate = cvar("sv_wateraccelerate");
+	sv_accelerate = cvar ("sv_accelerate");
+	sv_airaccelerate = cvar ("sv_airaccelerate");
+	sv_wateraccelerate = cvar ("sv_wateraccelerate");
 
-	sv_friction = cvar("sv_friction");
-	sv_waterfriction = cvar("sv_waterfriction");
+	sv_friction = cvar ("sv_friction");
+	sv_waterfriction = cvar ("sv_waterfriction");
 
-	cl_rollangle = cvar("cl_rollangle");
-	cl_rollspeed = cvar("cl_rollspeed");
+	cl_rollangle = cvar ("cl_rollangle");
+	cl_rollspeed = cvar ("cl_rollspeed");
 
-	PlayerStartFrame();
+	PlayerStartFrame ();
 	players_frame_started = -1;
 };
 
 /* This is really called by QSG engines */
-// void() EndFrame = { };
+// void () EndFrame = {};
 
-void() PlayerStartFrame = {
+void ()
+PlayerStartFrame =
+{
 	if (players_frame_started == -1) {
 		/* First player after StartFrame */
 		players_frame_started = TRUE;
@@ -111,17 +119,19 @@ void() PlayerStartFrame = {
 
 	players_frame_started = TRUE;
 
-	delays_swapin_stats_all();
+	delays_swapin_stats_all ();
 };
 
-void() PlayerEndFrame = {
+void ()
+PlayerEndFrame =
+{
 	/* Unfortunately, a newmis can us damage this frame,
 	   after our postthink has been called.  Damn. */
 	/* We just force an update this frame for now. */
 	if (newmis) {
-		delays_force_update_all();
+		delays_force_update_all ();
 	} else {
 		players_frame_started = FALSE;
-		delays_swapout_stats_all();
+		delays_swapout_stats_all ();
 	}
 };
