@@ -9,8 +9,8 @@
 
 void() _item_regen_think = {
 	self.solid = SOLID_TRIGGER;
-	setmodel(self, self.model);
-	sound(self, CHAN_VOICE, self.noise7, 1, ATTN_NORM);
+	setmodel (self, self.model);
+	sound (self, CHAN_VOICE, self.noise7, 1, ATTN_NORM);
 };
 
 void() item_remove_regen = {
@@ -19,7 +19,7 @@ void() item_remove_regen = {
 	self.solid = SOLID_NOT;
 	self.modelindex = 0;
 	
-	del = self.wait + random()*self.delay;
+	del = self.wait + random () * self.delay;
 	if (del <= 0) {
 		safe_remove(self);
 		return;
@@ -32,15 +32,14 @@ void() item_remove_regen = {
 void() item_generic_touch = {
 	if (!other.th_takeitem)
 		return;
-
-	if (!util_check_targets()) return;
-
-	if (!switcheroo(other, self, other.th_takeitem))
+	if (!util_check_targets ())
+		return;
+	if (!switcheroo (other, self, other.th_takeitem))
 		return;
 
-	util_use_targets();
+	util_use_targets ();
 
-	item_remove_regen();
+	item_remove_regen ();
 };
 
 void() item_generic = {
@@ -48,12 +47,12 @@ void() item_generic = {
 		self.noise7 = "items/itembk2.wav";
 
 	if (sv_spawning)
-		precache_sound(self.noise7);
+		precache_sound (self.noise7);
 
 	self.solid = SOLID_TRIGGER;
 	self.touch = item_generic_touch;
 
-	util_map_entity_init();
+	util_map_entity_init ();
 
 	self.flags |= FL_ITEM;
 
