@@ -1,0 +1,5 @@
+#ifdef QUAKEWORLD
+# include "config.qw"
+#else
+# include "config.nq"
+#endif
