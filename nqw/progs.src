@@ -1,0 +1,40 @@
+spprogs.dat
+
+defs.qc
+subs.qc
+q_subs.qc	// single
+fight.qc	// single
+ai.qc		// single
+combat.qc
+items.qc
+weapons.qc
+world.qc
+client.qc
+spectate.qc
+player.qc
+doors.qc
+buttons.qc
+triggers.qc
+plats.qc
+misc.qc
+
+// single:
+
+q_defs.qc
+monsters.qc
+
+ogre.qc
+demon.qc
+shambler.qc
+knight.qc
+soldier.qc
+wizard.qc
+dog.qc
+zombie.qc
+boss.qc
+tarbaby.qc		// registered
+hknight.qc		// registered
+fish.qc			// registered
+shalrath.qc		// registered
+enforcer.qc		// registered
+oldone.qc		// registered

@@ -1,0 +1,2 @@
+//float	skill;
+//float	coop;

@@ -1,0 +1,21 @@
+Single Player Game for ZQuake, v.0.04 --- version history
+
+0.04
+	- Fixed the bug with keys disappearing on pickup in coop games.
+	- Renaded qwprogs.dat to spprogs.dat (new ZQuake versions
+	automatically load spprogs.dat instead of qwprogs.dat for when
+	deathmatch is 0).
+
+0.03
+	- Fixed the old QW bug that caused monster gibs to disappear when
+	completing the e1m7 map.
+	- Corrected the amount of damage taken by Shambler when you attack him
+	with shaft or rockets.
+
+0.02
+	- Fixed the bug on map end (the client was dropping to console with
+	a "CL_SetStat: 42 is invalid" message).
+	- Added single player death messages.
+
+0.01
+	The first release.
