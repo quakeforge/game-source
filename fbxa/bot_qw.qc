@@ -54,13 +54,8 @@ BotInit();  // FrikBot
 * add this line to StartFrame() in world.qc, at the very top
 BotFrame(); // FrikBot
 --------------------------------------
-* Add these two lines to PlayerPreThink in client.qc at the very top
-if (BotPreFrame()) // FrikBot
-	return;
---------------------------------------
 * Add this line to PlayerPostThink in client.qc at the very top
-if (BotPostFrame()) // FrikBot
-	return;
+BotImpulses (); // FrikBot
 --------------------------------------
 * Add the following line to the very top of Client Connect in client.qc
 ClientInRankings(); // FrikBot
