@@ -7,7 +7,7 @@
 
 	void () hes_dead_jim = [ self.frame, im_alive, 10 ] { }
 
-	void () im_alive = [ 0, (self.th_walk), 0.2 ]
+	void () im_alive =
 	{
 		self.solid = SOLID_SLIDEBOX;
 		self.movetype = MOVETYPE_STEP;
@@ -49,6 +49,8 @@
 		//Don't stay angry at everyone.
 		//Side note. NIL is the same as WORLD.
 		self.enemy = NIL;
+		//This HAS TO BE SET HERE, or the creature WILL NOT survive the motion test.
+		self.th_walk();
 
 		//We have to set the origin no matter what kind of creature it is, so the
 		//thing becomes solid again. (Maybe, maybe not? Can't hurt anyway...)
