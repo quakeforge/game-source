@@ -46,6 +46,7 @@ this notice in its entirety.
 #include "Array.h"
 
 @static Array waypoint_array;
+@static entity waypoint_thinker;
 
 @implementation Target
 
@@ -79,8 +80,10 @@ this notice in its entirety.
 
 -(id)init
 {
-	if (!waypoint_array)
+	if (!waypoint_array) {
 		waypoint_array = [[Array alloc] init];
+		waypoint_thinker = spawn ();
+	}
 	return [super init];
 }
 
@@ -284,7 +287,7 @@ tripping the runaway loop counter
 	if (flags & b_bit)
 		dist = items;
 	else
-		dist = vlen(self.origin - e2.origin) + self.items;
+		dist = vlen(origin - e2.origin) + items;
 
 	// check if this is an RJ link
 	if (e2.flags & AI_SUPER_JUMP) {
@@ -301,8 +304,8 @@ tripping the runaway loop counter
 			busy_waypoints = busy_waypoints + 1;
 		e2.keys = TRUE;
 		e2.items = dist;
-		(IMP)e2.ent.think = [self methodFor: @selector (waypointThink)];
-		e2.ent.nextthink = time;
+		(IMP)waypoint_thinker.think = [self methodFor: @selector (waypointThink)];
+		waypoint_thinker.nextthink = time;
 		e2.enemy = self;
 	}
 }
@@ -311,7 +314,7 @@ tripping the runaway loop counter
 {
 	local integer i;
 
-	if (self.items == -1)
+	if (items == -1)
 		return;
 	// can you say ugly?
 	if (flags & AI_TRACE_TEST) {
@@ -356,10 +359,10 @@ void() waypoint =
 {	
 	local Waypoint way = [[Waypoint alloc] initFromEntity: @self];
 /*
-	self.search_time = time;
-	self.solid = SOLID_TRIGGER;
-	self.movetype = MOVETYPE_NONE;
-	setorigin(self, self.origin);
+	search_time = time;
+	solid = SOLID_TRIGGER;
+	movetype = MOVETYPE_NONE;
+	setorigin(self, origin);
 	
 	setsize(self, VEC_HULL_MIN, VEC_HULL_MAX);
 	waypoints = waypoints + 1;
@@ -368,15 +371,15 @@ void() waypoint =
 		way_foot = self;
 	} else {
 		way_foot._next = self;
-		self._last = way_foot;
+		_last = way_foot;
 		way_foot = self;
 	}
 
-	self.count = waypoints;
+	count = waypoints;
 	waypoint_mode = WM_LOADED;
-	if (self.count == 1) {
-		self.think = FixWaypoints; // wait until all bsp loaded points are spawned
-		self.nextthink = time;
+	if (count == 1) {
+		think = FixWaypoints; // wait until all bsp loaded points are spawned
+		nextthink = time;
 	}
 */
 };
@@ -447,8 +450,8 @@ Finds the closest, fisible, waypoint to e
 
 -(void)deleteWaypoint:(Waypoint)what
 {
-	if (self.current_way == what)
-		self.current_way = NIL;
+	if (current_way == what)
+		current_way = NIL;
 	[waypoint_array removeItem:what];
 	[what free];
 }
@@ -600,9 +603,10 @@ Boy it's confusing.
 	last_way = [self findWaypoint:current_way];
 
 	if (last_way != NIL) {
-		last_way.items = vlen(self.last_way.origin - ent.origin);
-		last_way.ent.nextthink = time;
-		(IMP)last_way.ent.think = [self methodFor: @selector(waypointThink)];
+		last_way.items = vlen(last_way.origin - ent.origin);
+		waypoint_thinker.@this = last_way;
+		waypoint_thinker.nextthink = time;
+		(IMP)waypoint_thinker.think = [last_way methodFor: @selector(waypointThink)];
 		last_way.keys = TRUE;
 		busy_waypoints = 1;
 		return TRUE;
@@ -647,10 +651,10 @@ Temporary Marker code
 /*XXX
 	local entity tep;
 
-	if (!self.temp_way)
-		self.temp_way = tep = spawn();
+	if (!temp_way)
+		temp_way = tep = spawn();
 	else
-		tep = self.temp_way;
+		tep = temp_way;
 
 	tep.classname = "temp_waypoint";
 	tep.search_time = 0;
@@ -686,7 +690,7 @@ very good all things considered.
 
 	// convert waypoint_mode to something more usable..
 	if (waypoint_mode > WM_LOADED) {
-		if (self.ishuman) {
+		if (ishuman) {
 			if (waypoint_mode == WM_EDITOR_DYNLINK)
 				dynlink = 1;
 			else if (waypoint_mode == WM_EDITOR_DYNAMIC)
@@ -702,7 +706,7 @@ very good all things considered.
 			return;
 	}
 	// for speed sake, I won't have bots dynamic waypoint in coop
-	if (!self.ishuman)
+	if (!ishuman)
 		if (coop)
 			return;
 	// don't waypoint in single player
@@ -713,16 +717,16 @@ very good all things considered.
 		if (dynpoint) {
 			if (current_way) {
 				if (pointcontents(ent.origin) < -4) {
-					if (self.current_way.flags & AI_BLIND)
-						self.current_way.flags |= AI_PRECISION;
+					if (current_way.flags & AI_BLIND)
+						current_way.flags |= AI_PRECISION;
 					else
-						self.current_way.flags |= AI_BLIND;
+						current_way.flags |= AI_BLIND;
 				}
 			}
 		}
-		self.dyn_dest = '0 0 0';
-		self.current_way = NIL;
-		self.dyn_flags = 0;
+		dyn_dest = '0 0 0';
+		current_way = NIL;
+		dyn_flags = 0;
 		return;
 	}
 
@@ -736,14 +740,14 @@ very good all things considered.
 		}
 	}
 	// keep from doing the rest of this every frame
-	if (self.dyn_time > time)
+	if (dyn_time > time)
 		return;
-	self.dyn_time = time + 0.2;
+	dyn_time = time + 0.2;
 
 	// display the links for editor mode
 	if (editor) {
-		if (self.current_way) {
-			local Waypoint way = self.current_way;
+		if (current_way) {
+			local Waypoint way = current_way;
 			local integer i;
 
 			for (i = 0; i < 4; i++) {
@@ -753,7 +757,7 @@ very good all things considered.
 				}
 			}
 		}
-		if (self.b_aiflags & AI_HOLD_SELECT)
+		if (b_aiflags & AI_HOLD_SELECT)
 			return;
 	}
 
@@ -762,9 +766,9 @@ very good all things considered.
 		dist = vlen (ent.origin - t.origin);
 		if (dist < 192) {
 			if (dist < 64) {
-				if (t != self.current_way) {
+				if (t != current_way) {
 					if (dynlink) {
-						if (!self.dyn_flags) {
+						if (!dyn_flags) {
 							if ([t canSee:current_way ignoring:ent])
 								[t linkWay:current_way];
 						}
@@ -779,8 +783,8 @@ very good all things considered.
 							setmodel(current_way.ent, "progs/s_bubble.spr");
 					}
 				}
-				self.current_way = t;
-				self.dyn_flags = 0;
+				current_way = t;
+				dyn_flags = 0;
 			}
 			dyn_dest = ent.origin + ent.view_ofs;
 			return;
@@ -789,20 +793,20 @@ very good all things considered.
 
 	if ([self recognize_plat:FALSE]) {
 		if (vlen(trace_ent.velocity) > 0) {
-			if (self.dyn_plat)
+			if (dyn_plat)
 				return;
-			self.dyn_plat = TRUE;
-			if (!self.dyn_flags)
-				self.dyn_flags = 1;
+			dyn_plat = TRUE;
+			if (!dyn_flags)
+				dyn_flags = 1;
 			//bprint("on a plat!!!!!\n");
 		} else
-			self.dyn_plat = FALSE;
+			dyn_plat = FALSE;
 	} else
 		dyn_plat = FALSE;
 
 	if (dyn_flags == 2)
 		dyn_dest = ent.origin + ent.view_ofs;
-	else if (self.dyn_dest == '0 0 0')
+	else if (dyn_dest == '0 0 0')
 		dyn_dest = ent.origin + ent.view_ofs;
 	if (!dynpoint)
 		return;
