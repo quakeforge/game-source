@@ -109,6 +109,8 @@ clean:
 unused:
 	@echo $(filter-out $(SOURCES),$(wildcard *.qc))
 
+$(shell find . -name '*.qc' | xargs grep -l equip.qh | sed -e 's/\.qc/.o/'): equipid.qh
+
 #########################
 
 .PHONY: unused
