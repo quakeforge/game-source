@@ -11,11 +11,11 @@ diff -u -r1.3 Makefile
 @@ -1,5 +1,7 @@
  all: qwprogs.dat
 -qwprogs.dat: progs.src *.qc
--	qfcc -Werror -Wall -g
+-	qfcc -Werror -Wall -g --advanced
 +qwprogs.dat: qwprogs.o
 +	qfcc -g -o qwprogs.dat qwprogs.o -lfrikbot -lcsqc -lr
 +qwprogs.o: progs.src *.qc
-+	qfcc -Dself=@self -g -c -o qwprogs.o
++	qfcc --advanced -Dself=@self -g -c -o qwprogs.o
  clean:
 -	rm -f core *.dat *.sym progdefs.h
 +	rm -f core *.dat *.sym progdefs.h *.o
