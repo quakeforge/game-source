@@ -159,6 +159,7 @@ entity () SV_AllocClient = #0;
 void (entity e) SV_FreeClient = #0;
 void (entity e, string str) SV_SetUserinfo = #0;
 void (entity e, integer ping) SV_SetPing = #0;
+void (entity cl, float sec, vector angles, vector move, integer buttons, integer impulse) SV_UserCmd = #0;
 
 //----------------------------------------------------------------------------
 

@@ -348,4 +348,10 @@
 @extern void(string h) BotSayTeam;
 @extern void(entity e1, entity e2, float flag) DeveloperLightning;
 
+/*
+	angles is pitch yaw roll
+	move is forward right up
+*/
+@extern void (entity cl, float sec, vector angles, vector move, integer buttons, integer impulse) SV_UserCmd;
+
 #include "defs.h"
