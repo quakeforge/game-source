@@ -308,11 +308,8 @@ void() bsp_explode =
 	T_RadiusDamage (@self.trigger_field, @self.trigger_field, @self.dmg, world, "");
 	sound (@self.trigger_field, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	
-	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-	WriteByte (MSG_MULTICAST, TE_EXPLOSION);
-	WriteCoord (MSG_MULTICAST, @self.trigger_field.origin_x);
-	WriteCoord (MSG_MULTICAST, @self.trigger_field.origin_y);
-	WriteCoord (MSG_MULTICAST, @self.trigger_field.origin_z);
+	WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_EXPLOSION);
+	WriteCoordV (MSG_MULTICAST, @self.trigger_field.origin);
 	multicast (@self.origin, MULTICAST_PHS);
 
 	remove (@self);
@@ -321,25 +318,25 @@ void() bsp_explode =
 
 void() misc_explobsp =
 {
-	local entity spot;
-	
+	local entity	spot;
+
 	@self.solid = SOLID_BBOX;
 	@self.movetype = MOVETYPE_NONE;
-	
+
 	setmodel (@self, @self.model);
 	setsize( @self, @self.mins, @self.maxs );
 	precache_sound ("weapons/r_exp3.wav");
-	
+
 	if (!@self.health)
 		@self.health = 20;
-	
+
 	if (!@self.dmg)
 		@self.dmg = 160;
-	
+
 	@self.th_die = bsp_explode;
 	@self.takedamage = DAMAGE_AIM;
 	@self.nobleed = TRUE;
-	
+
 	//POX 1.2 - HACK!
 	//put a null entity at the center of the model to hold the explosion position
 	spot = spawn(); 
