@@ -59,32 +59,28 @@ float (entity e1, entity e2) CheckLinked =
 {
 	if ((e1 == e2) || (e2 == NIL) || (e1 == NIL))
 		return FALSE;
-	else if (e1.target1 == e2)
-	{
+	else if (e1.target1 == e2) {
 		if (e1.b_aiflags & AI_TELELINK_1)
 			return 2;
-		else return TRUE;
-	}
-	else if (e1.target2 == e2)
-	{
+		else
+			return TRUE;
+	} else if (e1.target2 == e2) {
 		if (e1.b_aiflags & AI_TELELINK_2)
 			return 2;
-		else return TRUE;
-	}
-	else if (e1.target3 == e2)
-	{
+		else
+			return TRUE;
+	} else if (e1.target3 == e2) {
 		if (e1.b_aiflags & AI_TELELINK_3)
 			return 2;
-		else return TRUE;
-	}
-	else if (e1.target4 == e2)
-	{
+		else
+			return TRUE;
+	} else if (e1.target4 == e2) {
 		if (e1.b_aiflags & AI_TELELINK_4)
 			return 2;
-		else return TRUE;
-	}
-
-	else return FALSE;
+		else
+			return TRUE;
+	} else
+		return FALSE;
 };
 
 
@@ -95,23 +91,16 @@ float (entity e1, entity e2) LinkWays =
 	else if (CheckLinked(e1, e2))
 		return FALSE; // already linked!!!
 
-	if (e1.target1 == NIL)
-	{
+	if (e1.target1 == NIL) {
 		e1.target1 = e2;
 		return TRUE;
-	}
-	else if (e1.target2 == NIL)
-	{
+	} else if (e1.target2 == NIL) {
 		e1.target2 = e2;
 		return TRUE;
-	}
-	else if (e1.target3 == NIL)
-	{
+	} else if (e1.target3 == NIL) {
 		e1.target3 = e2;
                 return TRUE;
-	}
-	else if (e1.target4 == NIL)
-	{
+	} else if (e1.target4 == NIL) {
 		e1.target4 = e2;
 		return TRUE;
 	}
@@ -127,26 +116,19 @@ float (entity e1, entity e2) TeleLinkWays =
 	else if (CheckLinked(e1, e2))
 		return FALSE; // already linked!!!
 
-	if (e1.target1 == NIL)
-	{
+	if (e1.target1 == NIL) {
 		e1.target1 = e2;
 		e1.b_aiflags = e1.b_aiflags | AI_TELELINK_1;
 		return TRUE;
-	}
-	else if (e1.target2 == NIL)
-	{
+	} else if (e1.target2 == NIL) {
 		e1.target2 = e2;
 		e1.b_aiflags = e1.b_aiflags | AI_TELELINK_2;
 		return TRUE;
-	}
-	else if (e1.target3 == NIL)
-	{
+	} else if (e1.target3 == NIL) {
 		e1.target3 = e2;
 		e1.b_aiflags = e1.b_aiflags | AI_TELELINK_3;
             return TRUE;
-	}
-	else if (e1.target4 == NIL)
-	{
+	} else if (e1.target4 == NIL) {
 		e1.target4 = e2;
 		e1.b_aiflags = e1.b_aiflags | AI_TELELINK_4;
 		return TRUE;
@@ -163,23 +145,19 @@ void (entity e1, entity e2) UnlinkWays =
 	else if (!CheckLinked(e1, e2))
 		return;
 
-	if (e1.target1 == e2)
-	{
+	if (e1.target1 == e2) {
 		e1.b_aiflags = e1.b_aiflags - (e1.b_aiflags & AI_TELELINK_1);
 		e1.target1 = NIL;
 	}
-	if (e1.target2 == e2)
-	{
+	if (e1.target2 == e2) {
 		e1.b_aiflags = e1.b_aiflags - (e1.b_aiflags & AI_TELELINK_2);
 		e1.target2 = NIL;
 	}
-	if (e1.target3 == e2)
-	{
+	if (e1.target3 == e2) {
 		e1.b_aiflags = e1.b_aiflags - (e1.b_aiflags & AI_TELELINK_3);
 		e1.target3 = NIL;
 	}
-	if (e1.target4 == e2)
-	{
+	if (e1.target4 == e2) {
 		e1.b_aiflags = e1.b_aiflags - (e1.b_aiflags & AI_TELELINK_4);
 		e1.target4 = NIL;
 	}
@@ -209,28 +187,21 @@ entity(entity start) FindWayPoint =
 	org = realorigin(self);
 
 	t = way_head; 
-	if (start != NIL)
-	{
+	if (start != NIL) {
 		dst = vlen(start.origin - org);
 		best = start;
-	}
-	else
-	{
+	} else {
 		dst = 100000;
 		best = NIL;
 	}
-	while(t)
-	{
+	while(t) {
 		// real players cut through ignore types
 		if (dst < 20)
 			return best;
-		if (!(t.b_aiflags & AI_IGNORE_TYPES) || self.ishuman)
-		{
+		if (!(t.b_aiflags & AI_IGNORE_TYPES) || self.ishuman) {
 			tdst = vlen(t.origin - org);
-			if (tdst < dst)
-			{
-				if (sisible(t))
-				{
+			if (tdst < dst) {
+				if (sisible(t)) {
 					dst = tdst;
 					best = t;
 				}
@@ -264,13 +235,10 @@ entity(vector org) make_waypoint =
 	
 	setsize(point, VEC_HULL_MIN, VEC_HULL_MAX);
 	waypoints = waypoints + 1;
-	if (!way_head)
-	{
+	if (!way_head) {
 		way_head = point;
 		way_foot = point;
-	}
-	else
-	{
+	} else {
 		way_foot._next = point;
 		point._last = way_foot;
 		way_foot = point;
@@ -296,13 +264,10 @@ void() DynamicWaypoint =
 	local entity t;
 	local float dist, dynlink = 0, dynpoint = 0, editor = 0;
 
-	if (self.teleport_time > self.portal_time)
-	{
-		if (!(self.flags & FL_WATERJUMP))
-		{
+	if (self.teleport_time > self.portal_time) {
+		if (!(self.flags & FL_WATERJUMP)) {
 			self.dyn_flags = 2;
-			if (!self.ishuman)
-			{
+			if (!self.ishuman) {
 				bot_lost(self.target1, TRUE);
 				self.enemy = NIL;
 			}
@@ -314,23 +279,19 @@ void() DynamicWaypoint =
 
 
 // convert waypoint_mode to something more usable..
-	if (waypoint_mode > WM_LOADED)
-	{
-		if (self.ishuman)
-		{
+	if (waypoint_mode > WM_LOADED) {
+		if (self.ishuman) {
 			if (waypoint_mode == WM_EDITOR_DYNLINK)
 				dynlink = 1;
 			else if (waypoint_mode == WM_EDITOR_DYNAMIC)
 				dynlink = dynpoint = 1;
 			editor = 1;
 		}
-	}	
-	else if (waypoint_mode == WM_DYNAMIC)
+	} else if (waypoint_mode == WM_DYNAMIC)
 		dynlink = dynpoint = 1;
 
 // if there's nothing for dynamic to do..
-	if (!dynpoint)
-	{
+	if (!dynpoint) {
 		if (!editor)
 			return;
 	}
@@ -343,14 +304,10 @@ void() DynamicWaypoint =
 	if (max_clients < 2)
 		return; 
 // if you're dead
-	else if (self.health <= 0)
-	{
-		if (dynpoint)
-		{
-			if (self.current_way)
-			{
-				if (pointcontents(self.origin) < -4)
-				{
+	else if (self.health <= 0) {
+		if (dynpoint) {
+			if (self.current_way) {
+				if (pointcontents(self.origin) < -4) {
 					if (self.current_way.b_aiflags & AI_BLIND)
 						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_PRECISION;
 					else
@@ -365,12 +322,9 @@ void() DynamicWaypoint =
 	}
 
 // you shouldn't be making waypoints mid air
-	if (dynpoint)
-	{
-		if (!((self.flags & FL_ONGROUND) || self.waterlevel == 3))
-		{
-			if (self.dyn_flags != 2)
-			{
+	if (dynpoint) {
+		if (!((self.flags & FL_ONGROUND) || self.waterlevel == 3)) {
+			if (self.dyn_flags != 2) {
 				self.dyn_flags = 1;
 			}
 			return;
@@ -382,10 +336,8 @@ void() DynamicWaypoint =
 	self.dyn_time = time + 0.2;
 
 // display the links for editor mode
-	if (editor)
-	{
-		if (self.current_way)
-		{
+	if (editor) {
+		if (self.current_way) {
 			if (self.current_way.target1)
 				DeveloperLightning(self.current_way, self.current_way.target1, self.current_way.b_aiflags & AI_TELELINK_1);
 			if (self.current_way.target2)
@@ -400,20 +352,14 @@ void() DynamicWaypoint =
 	}
 
 	t = FindWayPoint(self.current_way);
-	if (t)
-	{
+	if (t) {
 		dist = vlen(self.origin - t.origin);
-		if (dist < 192)
-		{
-			if (dist < 64)
-			{
+		if (dist < 192) {
+			if (dist < 64) {
 
-				if (t != self.current_way)
-				{
-					if (dynlink)
-					{
-						if (!self.dyn_flags)
-						{
+				if (t != self.current_way) {
+					if (dynlink) {
+						if (!self.dyn_flags) {
 							if (wisible(t, self.current_way))
 								LinkWays(t, self.current_way);
 						}
@@ -422,8 +368,7 @@ void() DynamicWaypoint =
 						else if (wisible(t, self.current_way))
 							LinkWays(self.current_way, t);
 					}
-					if (editor)
-					{
+					if (editor) {
 						setmodel(t, "progs/s_light.spr");
 						if (self.current_way)
 							setmodel(self.current_way, "progs/s_bubble.spr");
@@ -437,21 +382,17 @@ void() DynamicWaypoint =
 		}
 	}
 
-	if (frik_recognize_plat(FALSE)) 
-	{
-		if (vlen(trace_ent.velocity) > 0)
-		{
+	if (frik_recognize_plat(FALSE)) {
+		if (vlen(trace_ent.velocity) > 0) {
 			if (self.dyn_plat)
 				return;
 			self.dyn_plat = TRUE;
 			if (!self.dyn_flags)
 				self.dyn_flags = 1;
 			//bprint("on a plat!!!!!\n");
-		}
-		else
+		} else
 			self.dyn_plat = FALSE;
-	}
-	else
+	} else
 		self.dyn_plat = FALSE;
 
 	if (self.dyn_flags == 2)
@@ -462,8 +403,7 @@ void() DynamicWaypoint =
 		return;
 	t = make_waypoint(self.dyn_dest);
 
-	if (!self.dyn_flags)
-	{
+	if (!self.dyn_flags) {
 		if (wisible(t, self.current_way))
 			LinkWays(t, self.current_way);
 	}
@@ -472,8 +412,7 @@ void() DynamicWaypoint =
 	else if (wisible(t, self.current_way))
 		LinkWays(self.current_way, t);
 
-	if (editor)
-	{
+	if (editor) {
 		setmodel(t, "progs/s_light.spr");
 		if (self.current_way)
 			setmodel(self.current_way, "progs/s_bubble.spr");
@@ -483,8 +422,7 @@ void() DynamicWaypoint =
 	
 	self.dyn_dest = self.origin + self.view_ofs;
 
-	if (frik_recognize_plat(FALSE))
-	{
+	if (frik_recognize_plat(FALSE)) {
 		if (trace_ent.classname == "door")
 			t.b_aiflags = t.b_aiflags | AI_DOORFLAG;
 	}
@@ -503,8 +441,7 @@ void() ClearAllWays =
 
 	local entity t, n;
 	t = way_head;
-	while(t)
-	{
+	while(t) {
 		n = t._next;
 		remove(t);
 		t = n;
@@ -521,8 +458,7 @@ entity(float num) WaypointForNum =
 		return NIL;
 
 	t = way_head;
-	while (t)
-	{
+	while (t) {
 		if (t.count == num)
 			return t;
 		t = t._next;
@@ -538,8 +474,7 @@ void() FixThisWaypoint =
 	self.enemy.target4 = WaypointForNum(self.enemy.b_frags);
 	self.enemy = self.enemy._next;
 	self.nextthink = time;
-	if (self.enemy == NIL)
-	{
+	if (self.enemy == NIL) {
 		remove(self);
 		fixer = NIL;
 	}
@@ -570,8 +505,7 @@ void(entity what) delete_waypoint =
 		what._next._last = what._last;
 	waypoints = 0;
 	t = way_head;
-	while(t)
-	{
+	while(t) {
 		t.count = waypoints = waypoints + 1;
 		if (CheckLinked(t, what))
 			UnlinkWays(t, what);
@@ -600,11 +534,9 @@ entity(string s) FindThing =
 	dst = 100000;
 	best = NIL;
 	t = find (NIL, classname, s);
-	while (t != NIL)
-	{
+	while (t != NIL) {
 		tdst = vlen(((t.absmin + t.absmax) * 0.5) - self.origin);
-            if (tdst < dst)
-		{
+		if (tdst < dst) {
 			dst = tdst;
 			best = t;
 		} 
@@ -635,13 +567,10 @@ entity(entity lastone) FindRoute =
 	t = way_head;
 	dst = 100000;
 	best = NIL;
-	while(t)
-	{
+	while(t) {
 		tdst = vlen(t.origin - self.origin);
-            if ((tdst < dst) &&  (t.b_sound & flag))
-		{
-			if ((lastone == NIL) || (CheckLinked(lastone, t)))
-			{
+		if ((tdst < dst) &&  (t.b_sound & flag)) {
+			if ((lastone == NIL) || (CheckLinked(lastone, t))) {
 				dst = tdst;
 				best = t;
 			}
@@ -664,8 +593,7 @@ void() ClearRouteTable =
 
 	local entity t;
 	t = way_head;
-	while (t)
-	{
+	while (t) {
 		t. keys = FALSE;
 		t.enemy = NIL;
 		t.items = -1; // not in table
@@ -681,8 +609,7 @@ void() ClearMyRoute =
 	flag = ClientBitFlag(self.b_clientno);
 
 	t = way_head;
-	while (t)
-	{
+	while (t) {
 		t.b_sound = t.b_sound - (t.b_sound & flag);
 		t = t._next;
 	}
@@ -718,8 +645,7 @@ void(entity this) mark_path =
 	if (this.classname != "player")
 		this.current_way = t;
 		
-	if (t.enemy == NIL)
-	{
+	if (t.enemy == NIL) {
 		bot_lost(this, FALSE);
 		if (waypoint_mode == WM_DYNAMIC)
 			self.route_failed = TRUE;
@@ -728,8 +654,7 @@ void(entity this) mark_path =
 
 	flag = ClientBitFlag(self.b_clientno);
 
-	while(t)
-	{
+	while(t) {
 		if (t.b_sound & flag)
 			return;
 		if (t == self.last_way)
@@ -760,8 +685,7 @@ void(entity e2, float b_bit) FollowLink =
 		dist = vlen(self.origin - e2.origin) + self.items;
 
 	// check if this is an RJ link
-	if (e2.b_aiflags & AI_SUPER_JUMP)
-	{
+	if (e2.b_aiflags & AI_SUPER_JUMP) {
 		if (!bot_can_rj(route_table))
 			return;
 	}
@@ -770,8 +694,7 @@ void(entity e2, float b_bit) FollowLink =
 
 	dist = dist + random() * 100; // add a little chaos
 
-	if ((dist < e2.items) || (e2.items == -1))
-	{
+	if ((dist < e2.items) || (e2.items == -1)) {
 		if (!e2.keys)
 			busy_waypoints = busy_waypoints + 1;
 		e2.keys = TRUE;
@@ -789,35 +712,28 @@ void() WaypointThink =
 	if (self.items == -1)
 		return;
 	// can you say ugly?
-	if (self.b_aiflags & AI_TRACE_TEST)
-	{
-		if (self.target1)
-		{
+	if (self.b_aiflags & AI_TRACE_TEST) {
+		if (self.target1) {
 			traceline(self.origin, self.target1.origin, TRUE, self);
 			if (trace_fraction == 1)
 				FollowLink(self.target1, AI_TELELINK_1);
 		}
-		if (self.target2)
-		{
+		if (self.target2) {
 			traceline(self.origin, self.target2.origin, TRUE, self);
 			if (trace_fraction == 1)
 				FollowLink(self.target2, AI_TELELINK_2);
 		}
-		if (self.target3)
-		{
+		if (self.target3) {
 			traceline(self.origin, self.target3.origin, TRUE, self);
 			if (trace_fraction == 1)
-			FollowLink(self.target3, AI_TELELINK_3);
+				FollowLink(self.target3, AI_TELELINK_3);
 		}
-		if (self.target4)
-		{
+		if (self.target4) {
 			traceline(self.origin, self.target4.origin, TRUE, self);
 			if (trace_fraction == 1)
 				FollowLink(self.target4, AI_TELELINK_4);
 		}
- 	}
-	else
-	{
+ 	} else {
 		if (self.target1)
 			FollowLink(self.target1, AI_TELELINK_1);
 		if (self.target2)
@@ -831,10 +747,8 @@ void() WaypointThink =
 	busy_waypoints = busy_waypoints - 1;
 	self.keys = FALSE;
 
-	if (busy_waypoints <= 0)
-	{
-		if (direct_route)
-		{
+	if (busy_waypoints <= 0) {
+		if (direct_route) {
 			oself = self;
 			self = route_table;
 			bot_get_path(self.target1, FALSE);
@@ -866,10 +780,8 @@ float() begin_route =
 	if (busy_waypoints > 0)
 		return FALSE;
 	
-	if (route_table != NIL)
-	{
-		if (!route_table.ishuman)
-		{
+	if (route_table != NIL) {
+		if (!route_table.ishuman) {
 			if (route_table.b_clientno != -1)
 				return FALSE;
 		}
@@ -879,17 +791,14 @@ float() begin_route =
 	ClearRouteTable();
 	self.last_way = FindWayPoint(self.current_way);
 
-	if (self.last_way != NIL)
-	{
+	if (self.last_way != NIL) {
 		self.last_way.items = vlen(self.last_way.origin - self.origin);
 		self.last_way.nextthink = time;
 		self.last_way.think = WaypointThink;
 		self.last_way.keys = TRUE;
 		busy_waypoints = 1;
 		return TRUE;
-	}
-	else 
-	{
+	} else {
 		route_table = NIL;
 		busy_waypoints = 0;
 		return FALSE;
@@ -901,17 +810,14 @@ void(entity this, float direct) bot_get_path =
 	if (this == NIL)
 		return;
 
-	if (route_table == self)
-	{
-		if (busy_waypoints <= 0)
-		{
+	if (route_table == self) {
+		if (busy_waypoints <= 0) {
 			route_table = NIL;
 			mark_path(this);
 		}
 		return;
 	}
-	if (direct)
-	{
+	if (direct) {
 		if(begin_route())
 			direct_route = TRUE;
 		else
@@ -937,13 +843,10 @@ void() waypoint =
 	
 	setsize(self, VEC_HULL_MIN, VEC_HULL_MAX);
 	waypoints = waypoints + 1;
-	if (!way_head)
-	{
+	if (!way_head) {
 		way_head = self;
 		way_foot = self;
-	}
-	else
-	{
+	} else {
 		way_foot._next = self;
 		self._last = way_foot;
 		way_foot = self;
@@ -951,8 +854,7 @@ void() waypoint =
 
 	self.count = waypoints;
 	waypoint_mode = WM_LOADED;
-	if (self.count == 1)
-	{
+	if (self.count == 1) {
 		self.think = FixWaypoints; // wait until all bsp loaded points are spawned
 		self.nextthink = time;
 	}
@@ -968,8 +870,7 @@ void(vector org, vector bit1, float bit4, float flargs) make_way =
 	y.b_skill = bit1_y;
 	y.b_shirt = bit1_z;
 	y.b_frags = bit4;
-	if (y.count == 1)
-	{
+	if (y.count == 1) {
 		y.think = FixWaypoints; // wait until all qc loaded points are spawned
 		y.nextthink = time;
 	}

@@ -88,56 +88,43 @@ void() bot_dodge_stuff =
 	self.avoid = NIL;
 
 
-	if (self.enemy)
-	{
+	if (self.enemy) {
 		v = self.origin - realorigin(self.enemy);
 		foedist = vlen(v);
 		foesz = bot_size_player(self.enemy);
-	}
-	else 
-	{
+	} else {
 		foedist = 3000;
 		foesz = 9999999;
 	}
 	avdist = 256;
 
 	foe = find(NIL, classname, "grenade");
-	while(foe)
-	{
+	while(foe) {
 		flen = vlen(foe.origin - self.origin);
-		if (flen < avdist)
-		{
+		if (flen < avdist) {
 			avdist = flen;
 			self.avoid = foe;
 		}
 		foe = find(foe, classname, "grenade");
 	}
-	if (!self.avoid)
-	{
+	if (!self.avoid) {
 		foe = find(NIL, classname, "missile");
-		while(foe)
-		{
-			if (foe.owner != self)
-			{
+		while(foe) {
+			if (foe.owner != self) {
 				flen = vlen(foe.origin - self.origin);
-				if (flen < avdist)
-				{
+				if (flen < avdist) {
 					avdist = flen;
 					self.avoid = foe;
 				}
 			}
 			foe = find(foe, classname, "missile");
 		}
-		if (!self.avoid)
-		{
+		if (!self.avoid) {
 			foe = find(NIL, classname, "spike");
-			while(foe)
-			{
-				if (foe.owner != self)
-				{
+			while(foe) {
+				if (foe.owner != self) {
 					flen = vlen(foe.origin - self.origin);
-					if (flen < avdist)
-					{
+					if (flen < avdist) {
 						avdist = flen;
 						self.avoid = foe;
 					}
@@ -146,25 +133,17 @@ void() bot_dodge_stuff =
 			}
 		}
 	}
-	if (coop)
-	{
-		if (!self.enemy)
-		{
+	if (coop) {
+		if (!self.enemy) {
 			foe = findradius(self.origin, foedist);
-			while(foe)
-			{
-				if(foe.flags & FL_MONSTER)
-				{
-					if(foe.health > 0)
-					{
+			while(foe) {
+				if(foe.flags & FL_MONSTER) {
+					if(foe.health > 0) {
 						flen = vlen(foe.origin - self.origin);
-						if (flen < foedist)
-						{
+						if (flen < foedist) {
 							tsz = bot_size_player(foe);
-							if (tsz < foesz)
-							{
-								if (fisible(foe))
-								{
+							if (tsz < foesz) {
+								if (fisible(foe)) {
 									self.enemy = foe;
 									foedist = flen;
 									foesz = tsz;
@@ -176,31 +155,21 @@ void() bot_dodge_stuff =
 				foe = foe.chain;
 			}
 		}		
-	}
-	else
-	{
+	} else {
 		local integer i = 0;
 		for (i = 0; i < 32; i++) {
 			if (!(foe = players[i]))
 				continue;
-			if(foe != self)
-			{
-				if (foe.modelindex != 0)
-				{
-					if (foe.health > 0)
-					{
-						if (!(teamplay && self.team == foe.team))
-						{
+			if(foe != self) {
+				if (foe.modelindex != 0) {
+					if (foe.health > 0) {
+						if (!(teamplay && self.team == foe.team)) {
 							flen = vlen(foe.origin - self.origin);
-							if (flen < foedist)
-							{
+							if (flen < foedist) {
 								tsz = bot_size_player(foe);
-								if (tsz < foesz)
-								{
-									if (fov(foe) || foe.b_sound > time || self.b_skill == 3)
-									{
-										if (fisible(foe))
-										{
+								if (tsz < foesz) {
+									if (fov(foe) || foe.b_sound > time || self.b_skill == 3) {
+										if (fisible(foe)) {
 											self.enemy = foe;
 											foedist = vlen(foe.origin - self.origin);
 										}
@@ -211,7 +180,6 @@ void() bot_dodge_stuff =
 					}
 				}
 			}
-			foe = foe._next;
 		}
 	}
 };
@@ -266,52 +234,35 @@ void(float brange) bot_weapon_switch =
 
 	it = self.items & 127;
 
-	while(it)
-	{
-		if ((self.ammo_rockets >= 1) && (it & 32))
-		{
+	while(it) {
+		if ((self.ammo_rockets >= 1) && (it & 32)) {
 			flag = 32;
 			pulse = 7;
-		}
-		else if (self.waterlevel <= 1 && self.ammo_cells >= 1 && (it & 64))
-		{
+		} else if (self.waterlevel <= 1 && self.ammo_cells >= 1 && (it & 64)) {
 			flag = 64;
 			pulse = 8;
-		}
-		else if(self.ammo_nails >= 2 && (it & 8))
-		{
+		} else if(self.ammo_nails >= 2 && (it & 8)) {
 			flag = 8;
 			pulse = 5;
-		}
-		else if ((self.ammo_rockets >= 1) && (it & 16))
-		{
+		} else if ((self.ammo_rockets >= 1) && (it & 16)) {
 			flag = 16;
 			pulse = 6;
-		}
-		else if(self.ammo_shells >= 2 && (it & 2))
-		{
+		} else if(self.ammo_shells >= 2 && (it & 2)) {
 			flag = 2;
 			pulse = 3;
-		}
-		else if(self.ammo_nails >= 1 && (it & 4))
-		{
+		} else if(self.ammo_nails >= 1 && (it & 4)) {
 			flag = 4;
 			pulse = 4;
-		}
-		else if(self.ammo_shells >= 1 && (it & 1))
-		{
+		} else if(self.ammo_shells >= 1 && (it & 1)) {
 			flag = 1;
 			pulse = 2;
-		}
-		else
-		{
+		} else {
 			if (pulse)
 				self.impulse = pulse;
 			return;
 		}
 
-		if (brange == -1)
-		{
+		if (brange == -1) {
 			if (pulse)
 				self.impulse = pulse;
 			return;
@@ -320,8 +271,7 @@ void(float brange) bot_weapon_switch =
 		v = weapon_range(flag);
 		if (brange < v_y || brange > v_z)
 			it = it - flag;
-		else
-		{
+		else {
 			if (pulse)
 				self.impulse = pulse;
 			return;
@@ -359,18 +309,13 @@ void() bot_fight_style =
 	local float foedist, mysz, foesz;
 
 
-	if (self.enemy.health <= 0)
-	{
+	if (self.enemy.health <= 0) {
 		self.enemy = NIL;
 		return;
-	}
-	else if (!self.enemy.takedamage)
-	{
+	} else if (!self.enemy.takedamage) {
 		self.enemy = NIL;
 		return;
-	}
-	else if (!fisible(self.enemy))
-	{
+	} else if (!fisible(self.enemy)) {
 		self.enemy = NIL;
 		return;
 	}
@@ -382,43 +327,34 @@ void() bot_fight_style =
 
 	foedist = vlen(org - self.origin);
 	v = weapon_range(self.weapon);
-	if (foedist > v_y && foedist < v_z)
-	{
+	if (foedist > v_y && foedist < v_z) {
 		traceline(self.origin + self.view_ofs, self.origin + self.view_ofs + v_forward * v_z, FALSE, self);
-		if (vlen(trace_endpos - (self.origin + self.view_ofs)) >= v_y)
-		{
+		if (vlen(trace_endpos - (self.origin + self.view_ofs)) >= v_y) {
 			// try to avoid shooting teammates
 			if (trace_ent.classname == "player")
 				if ((trace_ent.team == self.team && teamplay) || (coop))
 					return;
 			bot_shoot();
 		}
-	}
-	else
+	} else
 		bot_weapon_switch(foedist);
 
-	if (!(self.b_aiflags & (AI_PRECISION | AI_BLIND | AI_OBSTRUCTED)))
-	{
+	if (!(self.b_aiflags & (AI_PRECISION | AI_BLIND | AI_OBSTRUCTED))) {
 		foesz = bot_size_player(self.enemy);
 		mysz = bot_size_player(self) + 5;
 
-		if (foesz > mysz)
-		{
-			if (teamplay)
-			{
-				if (random() < 0.02)
-				{
+		if (foesz > mysz) {
+			if (teamplay) {
+				if (random() < 0.02) {
 					bot_start_topic(5);
 					self.b_chattime = 1;
 				}
 			}
 			
 			return;
-		}
-		else if (mysz < 140)
+		} else if (mysz < 140)
 			return;
-		else if (self.avoid)
-		{
+		else if (self.avoid) {
 			if (self.avoid.velocity)
 				v = self.avoid.velocity;
 			else
@@ -432,9 +368,7 @@ void() bot_fight_style =
 				frik_walkmove(v2);
 			else
 				frik_walkmove(v1);
-		}
-		else if (!(self.enemy.flags & FL_MONSTER))
-		{
+		} else if (!(self.enemy.flags & FL_MONSTER)) {
 			if (foedist + 32 <  v_x)
 				frik_walkmove(self.origin - org);
 			else if (foedist - 32 >  v_x)
@@ -444,9 +378,7 @@ void() bot_fight_style =
 			else
 				frik_walkmove(v_right * -1);
 		}
-	}
-	else
-	{
+	} else {
 		foesz = bot_size_player(self.enemy);
 		mysz = bot_size_player(self) + 5;
 

@@ -84,24 +84,19 @@ float(float flag) frik_recognize_plat =
 	if ((self.classname != "waypoint") && !(self.flags & FL_ONGROUND))
 		return FALSE;
 	traceline(self.origin, self.origin - '0 0 64', TRUE, self);
-	if (trace_ent != NIL)
-	{
-		if (flag) // afect bot movement too
-		{
-			if (self.keys & KEY_MOVEUP)
-			{
+	if (trace_ent != NIL) {
+		if (flag) {
+			// afect bot movement too
+			if (self.keys & KEY_MOVEUP) {
 				if (trace_ent.velocity_z > 0)
 					self.keys = self.keys & 960; // 960 is all view keys
-			}
-			else if (self.keys & KEY_MOVEDOWN)
-			{
+			} else if (self.keys & KEY_MOVEDOWN) {
 				if (trace_ent.velocity_z < 0)
 					self.keys = self.keys & 960;
 			}
 		}
 		return TRUE;
-	}
-	else
+	} else
 		return FALSE;
 };
 
@@ -111,8 +106,7 @@ float(vector sdir) frik_KeysForDir =
 	local vector keydir;
 	local float outkeys, tang;
 	outkeys = 0;
-	if (sdir_x || sdir_y)
-	{
+	if (sdir_x || sdir_y) {
 		// Everything is tested against 60 degrees,
 		// this allows the bot to overlap the keys
 		// 30 degrees on each diagonal  45 degrees 
@@ -157,8 +151,7 @@ void(vector whichway, float danger) frik_obstructed =
 		return;
 	org = realorigin(self.target1);
 
-	if (danger)
-	{
+	if (danger) {
 		self.b_aiflags = self.b_aiflags | AI_DANGER;
 		self.keys = frik_KeysForDir('0 0 0' - whichway);
 	}
@@ -166,16 +159,12 @@ void(vector whichway, float danger) frik_obstructed =
 		return;
 
 
-	if (self.target1)
-	{
-		if (self.b_aiflags & AI_OBSTRUCTED)
-		{
-			if (!(self.b_aiflags & AI_DANGER))
-			{
+	if (self.target1) {
+		if (self.b_aiflags & AI_OBSTRUCTED) {
+			if (!(self.b_aiflags & AI_DANGER)) {
 				self.b_aiflags = self.b_aiflags - AI_OBSTRUCTED;
 				return;
-			}
-			else if (!danger)
+			} else if (!danger)
 				return;
 		}
 		self.obs_dir = whichway;
@@ -188,9 +177,7 @@ void(vector whichway, float danger) frik_obstructed =
 		self.wallhug =  (vlen(org - (self.origin + disway)) > dist) ? 1.0 : 0.0;
 		self.b_aiflags = self.b_aiflags | AI_OBSTRUCTED;
 		
-	}
-	else
-	{
+	} else {
 		disway_x = whichway_y * -1;
 		disway_y = whichway_x;
 		disway_z = 0;
@@ -238,8 +225,7 @@ void() frik_obstacles =
 		return;
 	hgt = trace_endpos_z - stop_z;
 
-	if (hgt > 18)
-	{
+	if (hgt > 18) {
 		bot_jump();
 		return;
 	}
@@ -262,17 +248,14 @@ void() frik_obstacles =
 	ang = self.velocity;
 	ang_z = 0;
 	dist = ((540 / sv_gravity) * vlen(ang))/* + 32*/;
-	if (test > dist) // I can't make it
-	{
-		if (conts < -3) // bad stuff down dare
-		{
+	if (test > dist) {
+		// I can't make it
+		if (conts < -3) {
+			// bad stuff down dare
 			frik_obstructed(ang, TRUE);
 			return;
-		}
-		else
-		{
-			if (self.target1)
-			{
+		} else {
+			if (self.target1) {
 				stop = realorigin(self.target1);
 				if ((stop_z - self.origin_z) < -32)
 					return; // safe to fall
@@ -280,23 +263,17 @@ void() frik_obstacles =
 			frik_obstructed(ang, FALSE);
 			return;
 		}
-	}
-	else
-	{
+	} else {
 		ang = normalize(ang);
 		//look for a ledge
 		traceline(self.origin, self.origin + (ang * (test + 20)), TRUE, self); 
-		if (trace_fraction != 1)
-		{
-			if (conts < -3) // bad stuff down dare
-			{
+		if (trace_fraction != 1) {
+			if (conts < -3) {
+				// bad stuff down dare
 				frik_obstructed(ang, TRUE);
 				return;
-			}
-			else
-			{
-				if (self.target1)
-				{
+			} else {
+				if (self.target1) {
 					stop = realorigin(self.target1);
 					if ((stop_z - self.origin_z) < -32)
 						return; // safe to fall
@@ -306,29 +283,23 @@ void() frik_obstacles =
 			}
 		}
 
-		if (self.target1)
-		{
+		if (self.target1) {
 			// getting furter away from my target?
 			test = vlen(self.target1.origin - (ang + self.origin));
-			if (test > vlen(self.target1.origin - self.origin))
-			{
-				if (conts < -3) // bad stuff down dare
-				{
+			if (test > vlen(self.target1.origin - self.origin)) {
+				if (conts < -3) {
+					// bad stuff down dare
 					frik_obstructed(ang, TRUE);
 					return;
-				}
-				else
-				{
+				} else {
 					frik_obstructed(ang, FALSE);
 					return;
 				}
 			}
 		}
 	}
-	if (hgt < -18)
-	{
-		if (self.target1)
-		{
+	if (hgt < -18) {
+		if (self.target1) {
 			stop = realorigin(self.target1);
 			if ((stop_z - self.origin_z) < -32)
 				return; // safe to fall
@@ -357,8 +328,7 @@ void() frik_dodge_obstruction =
 
 	if (!(self.b_aiflags & AI_OBSTRUCTED))
 		return;
-	if ((self.b_aiflags & (AI_BLIND | AI_PRECISION)) || !(self.flags & FL_ONGROUND))
-	{
+	if ((self.b_aiflags & (AI_BLIND | AI_PRECISION)) || !(self.flags & FL_ONGROUND)) {
 		self.b_aiflags = self.b_aiflags - AI_OBSTRUCTED;
 		return;
 	}
@@ -373,19 +343,13 @@ void() frik_dodge_obstruction =
 	yaw = vectoyaw(self.obs_dir);
 	if (walkmove(yaw, 32))
 		self.b_aiflags = self.b_aiflags - AI_OBSTRUCTED;
-	else
-	{
-		if (self.b_aiflags & AI_DANGER)
-		{
+	else {
+		if (self.b_aiflags & AI_DANGER) {
 			way = '0 0 0' - self.obs_dir;
-		}
-		else if (self.wallhug)
-		{
+		} else if (self.wallhug) {
 			way_x = self.obs_dir_y * -1;
 			way_y = self.obs_dir_x;
-		}
-		else
-		{
+		} else {
 			way_x = self.obs_dir_y;
 			way_y = self.obs_dir_x * -1;
 		}
@@ -414,15 +378,13 @@ void() frik_movetogoal =
 	local vector way;
 	local float g;
 
-	if (self.target1 == NIL)
-	{
+	if (self.target1 == NIL) {
 		makevectors(self.v_angle);
 		frik_walkmove(v_forward);
 		return;
 	}
 	way = realorigin(self.target1) - self.origin;
-	if (vlen(way) < 25)
-	{
+	if (vlen(way) < 25) {
 		self.keys = self.keys & 960;
 		return;
 	}
@@ -433,8 +395,7 @@ void() frik_movetogoal =
 	frik_dodge_obstruction();
 	frik_recognize_plat(TRUE);
 
-	if (self.b_aiflags & AI_PRECISION)
-	{
+	if (self.b_aiflags & AI_PRECISION) {
 		g = angcomp(self.v_angle_x, self.b_angle_x);
 		if (fabs(g) > 10)
 			self.keys = self.keys & 960;
@@ -480,8 +441,7 @@ void() frik_bot_roam =
 
 	loopcount = 26;
 	flag = FALSE;
-	while((loopcount > 0) && !flag)
-	{
+	while((loopcount > 0) && !flag) {
 		loopcount = loopcount - 1;
 		org = self.origin + self.view_ofs;
 		ang = self.angles;
@@ -489,23 +449,19 @@ void() frik_bot_roam =
 		ang_x = 0; // avoid upward sloping
 		makevectors(ang);
 		traceline(org, org + v_forward * 2300, TRUE, self);
-		if (trace_fraction != 1)
-		{
+		if (trace_fraction != 1) {
 			org1 = trace_endpos;
 			ang = normalize(trace_plane_normal);
 			ang_z = 0; // avoid upward sloping
 			traceline(org1, org1 + (ang * 2300), TRUE, self);
-			if ((trace_fraction != 1) && (vlen(trace_endpos - org1) >= 64))
-			{
+			if ((trace_fraction != 1) && (vlen(trace_endpos - org1) >= 64)) {
 				org = trace_endpos;
 				traceline(org, self.origin + self.view_ofs, TRUE, self);
-				if (trace_fraction != 1)
-				{
+				if (trace_fraction != 1) {
 					dist = vlen(org1 - org) /2;
 					org = org1 + (ang * dist);
 					traceline(org, org - '0 0 48', TRUE, self);
-					if (trace_fraction != 1)
-					{
+					if (trace_fraction != 1) {
 						SpawnTempWaypoint(org);
 						flag = TRUE;
 					}

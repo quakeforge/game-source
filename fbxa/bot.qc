@@ -319,10 +319,8 @@ void(entity	client, string s) stuffcmd =
 		frik_stuffcmd(client, s);
 	b_temp1 = player_head;
 
-	while(b_temp1)
-	{
-		if (b_temp1.classname == "botcam")
-		{
+	while(b_temp1) {
+		if (b_temp1.classname == "botcam") {
 			if ((b_temp1.enemy == client) && b_temp1.ishuman)
 				frik_stuffcmd(b_temp1, s);
 		}
@@ -334,13 +332,10 @@ void(entity	e) setspawnparms =
 {
 	if (e.ishuman == 1)
 		frik_setspawnparms(e);
-	else
-	{
+	else {
 		b_temp1 = player_head;
-		while(b_temp1)
-		{
-			if (b_temp1.ishuman)
-			{
+		while(b_temp1) {
+			if (b_temp1.ishuman) {
 				frik_setspawnparms(b_temp1);
 				return;
 			}
@@ -355,10 +350,8 @@ void(entity	client, string s) sprint =
 		frik_sprint(client, s);
 	b_temp1 = player_head;
 
-	while(b_temp1)
-	{
-		if (b_temp1.classname == "botcam")
-		{
+	while(b_temp1) {
+		if (b_temp1.classname == "botcam") {
 			if ((b_temp1.enemy == client) && b_temp1.ishuman)
 				frik_sprint(b_temp1, s);
 		}
@@ -372,10 +365,8 @@ void(entity	client, string s) centerprint =
 		frik_centerprint(client, s);
 	b_temp1 = player_head;
 
-	while(b_temp1)
-	{
-		if (b_temp1.classname == "botcam")
-		{
+	while(b_temp1) {
+		if (b_temp1.classname == "botcam") {
 			if ((b_temp1.enemy == client) && b_temp1.ishuman)
 				frik_centerprint(b_temp1, s);
 		}
@@ -497,18 +488,14 @@ void() botcam_u =
 {
 
 	// sloppy cycling code
-	if (self.classname != "botcam")
-	{
+	if (self.classname != "botcam") {
 		self.enemy = player_head;
-	}
-	else
-	{
+	} else {
 		do
 			self.enemy = self.enemy._next;
 		while (self.enemy.classname == "botcam");
 	}
-	if (self.enemy == self)
-	{
+	if (self.enemy == self) {
 		do
 			self.enemy = self.enemy._next;
 		while (self.enemy.classname == "botcam");
@@ -520,8 +507,7 @@ void() botcam_u =
 	self.takedamage = DAMAGE_NO;
 
 
-	if (!self.enemy)
-	{
+	if (!self.enemy) {
 		sprint(self, "No one left to track!\n");
 		msg_entity = self;
 		WriteByte (MSG_ONE,5);
@@ -529,8 +515,7 @@ void() botcam_u =
 		PutClientInServer();
 		return;
 	}
-	if (!self.enemy.ishuman)
-	{
+	if (!self.enemy.ishuman) {
 		self.enemy.dmg_take = 0;
 		self.enemy.dmg_save = 0;
 	}
@@ -560,8 +545,7 @@ void() ClientFixRankings =
 	b_temp2 = nextent(NIL);
 	cno = 0;
 
-	while (cno < max_clients)
-	{
+	while (cno < max_clients) {
 		if ((!b_temp2.ishuman) && (active_clients & ClientBitFlag(cno)))
 			UpdateClient(b_temp2);
 		cno = cno + 1;
@@ -579,16 +563,14 @@ void() ClientInRankings =
 	self._last = NIL;
 	player_head = self;
 
-	if (!self.phys_obj)
-	{
+	if (!self.phys_obj) {
 		b_temp2 = phys_head;
 		while (b_temp2 != NIL && b_temp2.owner != self)
 			b_temp2 = b_temp2._next;
 		self.phys_obj = b_temp2;
 	}
 
-	if (self.ishuman == 2)
-	{
+	if (self.ishuman == 2) {
 		self.ishuman = FALSE;
 		return;
 	}
@@ -625,18 +607,15 @@ float () BotPreFrame =
 {
 	if (self.b_clientno == -1)
 		return TRUE;
-	if (self.ishuman)
-	{
+	if (self.ishuman) {
 		if (self.switch_wallhug)
 			ClientFixRankings();
 		if (self.classname == "botcam")
 			return TRUE;
 	}
-	if (self.b_frags != self.frags)
-	{
+	if (self.b_frags != self.frags) {
 		
-		if (self.b_frags > self.frags)
-		{
+		if (self.b_frags > self.frags) {
 			if (pointcontents(self.origin) == CONTENT_LAVA)
 				bot_start_topic(10);
 			else
@@ -653,8 +632,7 @@ float () BotPostFrame =
 {
 	if (self.b_clientno == -1)
 		return TRUE;
-	if (self.ishuman)
-	{
+	if (self.ishuman) {
 
 		if (waypoint_mode > WM_LOADED)
 			bot_menu_display();
@@ -703,10 +681,8 @@ void(string h) BotSayTeam =
 	if (!teamplay)
 		return;
 	t = player_head;
-	while(t)
-	{
-		if (t.team == self.team)
-		{
+	while(t) {
+		if (t.team == self.team) {
 			msg_entity = t;
 			WriteByte(MSG_ONE, 8);
 			WriteByte(MSG_ONE, 1);
@@ -738,8 +714,7 @@ void() BotInit =
 	ent = nextent(NIL);
 	max_clients = 0;
 
-	while(ent != NIL)
-	{
+	while(ent != NIL) {
 		max_clients = max_clients + 1;
 		ent = nextent(ent);
 	}
@@ -748,8 +723,7 @@ void() BotInit =
 
 	ent = nextent(NIL);
 	fisent = NIL;
-	while (numents < max_clients)
-	{
+	while (numents < max_clients) {
 
 		phys_head = spawn();
 		if (fisent)
@@ -766,22 +740,19 @@ void() BotInit =
 	precache_model("progs/s_bubble.spr");
 	// the bots return!
 	b_options = cvar("saved1");
-	if (coop || (b_options & OPT_SAVEBOTS))
-	{
+	if (coop || (b_options & OPT_SAVEBOTS)) {
 		saved_bots = cvar("scratch1");
 		saved_skills1 = cvar("scratch2");
 		saved_skills2 = cvar("scratch3");
 	}
 	cvar_set ("saved4", "0");
-	if (max_clients > 1)
-	{
+	if (max_clients > 1) {
 		localcmd("exec maps/");
 		localcmd(mapname);
 		localcmd(".way\n");
 		waypoint_mode = WM_DYNAMIC;
 		bot_map_load();
-	}
-	else
+	} else
 		waypoint_mode = WM_LOADED;
 
 };
@@ -854,8 +825,7 @@ float() ClientNextAvailable =
 	local float clientno;
 
 	clientno = max_clients;
-	while(clientno > 0)
-	{
+	while(clientno > 0) {
 		clientno = clientno - 1;
 
 		if(!(active_clients & ClientBitFlag(clientno)))
@@ -898,31 +868,25 @@ float(float tcolor) FindAnotherColor =
 	local float bestbet, scolor, pcount, bestp;
 	bestbet = -1;
 	bestp = 16;
-	while(scolor < 14)
-	{
-		if (scolor != tcolor)
-		{
+	while(scolor < 14) {
+		if (scolor != tcolor) {
 			b_temp2 = player_head;
 			pcount = 0;
-			while(b_temp2 != NIL)
-			{
+			while(b_temp2 != NIL) {
 				if (b_temp2.team == scolor + 1)
 					pcount = pcount + 1;
 				b_temp2 = b_temp2._next;
 			}
-			if ((pcount < bestp) && pcount)
-			{
+			if ((pcount < bestp) && pcount) {
 				bestbet = scolor;
 				bestp = pcount;
 			}
 		}
 		scolor = scolor + 1;
 	}
-	if (bestbet < 0)
-	{
+	if (bestbet < 0) {
 		bestbet = tcolor;
-		while (bestbet == tcolor)
-		{
+		while (bestbet == tcolor) {
 			bestbet = floor(random() * 13);
 		}
 	}
@@ -941,8 +905,7 @@ entity(float num) GetClientEntity =
 	local entity upsy;
 	upsy = NIL;
 	num = num + 1;
-	while (num > 0)
-	{
+	while (num > 0) {
 		num = num - 1;
 		upsy = nextent(upsy);
 	} 
@@ -957,8 +920,7 @@ void(float whichteam, float whatbot, float whatskill) BotConnect =
 	
 	f = ClientNextAvailable();
 	uself = self;
-	if(f == -1)
-	{
+	if(f == -1) {
 		bprint("Unable to connect a bot, server is full.\n");
 		return;
 	}
@@ -986,8 +948,7 @@ void(float whichteam, float whatbot, float whatskill) BotConnect =
 		whatskill = 0;
 	self.b_skill = whatskill;
 
-	if (teamplay && !coop)
-	{
+	if (teamplay && !coop) {
 		if (whichteam)
 			self.b_pants = FindAnotherColor(uself.team - 1);
 		else
@@ -1010,8 +971,7 @@ void(float whichteam, float whatbot, float whatskill) BotConnect =
 
 	if (self.b_num <= 8)
 		saved_skills1 = (saved_skills1 & (65536 - (3 * f)) | (self.b_skill * f));
-	else
-	{
+	else {
 		f = ClientBitFlag(self.b_num - 9);
 		saved_skills2 = (saved_skills2 & (65536 - (3 * f)) | (self.b_skill * f));
 	}
@@ -1041,8 +1001,7 @@ void(entity bot) BotDisconnect =
 
 	ClientDisconnect();
 
-	if (self.b_clientno != -1)
-	{
+	if (self.b_clientno != -1) {
       	// the bot's client number is not in use by a real player so we
 		// must remove it's entry in the rankings
 		// Quake engine sets all fields to 0, can only do the most important here
@@ -1076,10 +1035,8 @@ void(float clientno) BotInvalidClientNo =
 	local entity bot;
 
 	bot = GetClientEntity(clientno);
-	if(bot.b_clientno > 0)
-	{
-		if (!bot.ishuman)
-		{
+	if(bot.b_clientno > 0) {
+		if (!bot.ishuman) {
 			bot.b_clientno = -1;
 			BotDisconnect(bot);
 			active_clients = active_clients | ClientBitFlag(self.b_clientno);
@@ -1118,10 +1075,8 @@ void() LoadWaypoint =
 
 void() bot_return =
 {
-	if (time > 2)
-	{
-		if ((waypoint_mode == WM_DYNAMIC) || (waypoint_mode == WM_LOADED))
-		{
+	if (time > 2) {
+		if ((waypoint_mode == WM_DYNAMIC) || (waypoint_mode == WM_LOADED)) {
 			// minor precaution
 
 			if (saved_bots & 1) BotConnect(0, 1, saved_skills1 & 3);
@@ -1154,15 +1109,12 @@ void() WaypointWatch =
 
 	if (max_clients < 2)
 		return;
-	if (waypoint_mode != WM_UNINIT)
-	{
+	if (waypoint_mode != WM_UNINIT) {
 		bigboobs = cvar("saved4");
-		if (bigboobs != 0)
-		{
+		if (bigboobs != 0) {
 			if ((bigboobs & 3) == 1)
 				ClearAllWays();
-			else if ((bigboobs & 3) == 3)
-			{
+			else if ((bigboobs & 3) == 3) {
 				FixWaypoints();
 				h = ftos(b_options);
 				cvar_set("saved1", h);
@@ -1191,12 +1143,9 @@ void() BotFrame =
 	
 	self = nextent(NIL);
 	num = 0;
-	while (num < max_clients)
-	{
-		if (self.ishuman == FALSE)
-		{
-			if (active_clients & ClientBitFlag(num))
-			{
+	while (num < max_clients) {
+		if (self.ishuman == FALSE) {
+			if (active_clients & ClientBitFlag(num)) {
 				frik_obstacles();
 				CL_KeyMove();
 				SV_ClientThink();
@@ -1225,17 +1174,13 @@ void() BotImpulses =
 {
 	local float f;
 
-	if (self.impulse == 100)
-	{
+	if (self.impulse == 100) {
 		f = cvar("skill");
 		BotConnect(0, 0, f);
-	}
-	else if (self.impulse == 101)
-	{
+	} else if (self.impulse == 101) {
 		f = cvar("skill");
 		BotConnect(1, 0, f);
-	}
-	else if (self.impulse == 102)
+	} else if (self.impulse == 102)
 		KickABot();
 	else if (self.impulse == 103)
 		botcam_u();

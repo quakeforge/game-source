@@ -185,10 +185,8 @@ void() ClientFixRankings =
 	b_temp2 = nextent(NIL);
 	cno = 0;
 
-	while (cno < max_clients)
-	{
-		if (!b_temp2.ishuman)
-		{
+	while (cno < max_clients) {
+		if (!b_temp2.ishuman) {
 			if (players[cno])
 				UpdateClient(b_temp2);
 		}
@@ -209,8 +207,7 @@ void() ClientInRankings =
 	
 	self.phys_obj = phys_objects[cl_no];
 
-	if (self.ishuman == 2)
-	{
+	if (self.ishuman == 2) {
 		self.ishuman = FALSE;
 		return;
 	}
@@ -241,20 +238,16 @@ float () BotPreFrame =
 	if (self.ishuman)
 		if (self.switch_wallhug)
 			ClientFixRankings();
-	if (self.b_frags != self.frags)
-	{
-		if (self.b_frags > self.frags)
-		{
+	if (self.b_frags != self.frags) {
+		if (self.b_frags > self.frags) {
 			if (pointcontents(self.origin) == CONTENT_LAVA)
 				bot_start_topic(10);
 			else
 				bot_start_topic(9);
-		}
-		else
+		} else
 			bot_start_topic(2);
 		self.b_frags = self.frags;
-		if (!self.ishuman)
-		{
+		if (!self.ishuman) {
 			WriteByte(2, 14);
 			WriteByte(2, (float)self.b_clientno);
 			WriteShort(2, self.frags);
@@ -327,15 +320,13 @@ void() BotInit =
 	ent = nextent(NIL);
 	max_clients = 0;
 
-	while(ent != NIL)
-	{
+	while(ent != NIL) {
 		max_clients = max_clients + 1;
 		ent = nextent(ent);
 	}
 
 	ent = nextent(NIL);
-	while (numents < max_clients)
-	{
+	while (numents < max_clients) {
 
 		phys_objects[numents] = spawn();
 		phys_objects[numents].classname = "phys_obj";
@@ -382,8 +373,7 @@ float(integer clientno) ClientBitFlag =
 {
 	local float bitflag;
 	bitflag = 1;
-	while(clientno > 0)
-	{
+	while(clientno > 0) {
 		bitflag = bitflag * 2;
 		clientno = clientno - 1;
 	}
@@ -395,8 +385,7 @@ integer() ClientNextAvailable =
 	local integer clientno;
 	// I want to do this top down, but QW won't let me
 	clientno = 0;
-	while(clientno < max_clients)
-	{
+	while(clientno < max_clients) {
 		clientno = clientno + 1;
 
 		//FIXME if(!ClientIsActive(clientno))
@@ -420,8 +409,7 @@ entity(float num) GetClientEntity =
 	local entity upsy;
 	upsy = NIL;
 	num = num + 1;
-	while (num > 0)
-	{
+	while (num > 0) {
 		num = num - 1;
 		upsy = nextent(upsy);
 	} 
@@ -490,8 +478,7 @@ void(entity bot) BotDisconnect =
 
 	ClientDisconnect();
 
-	if (self.b_clientno != -1)
-	{
+	if (self.b_clientno != -1) {
       		// the bot's client number is not in use by a real player so we
 		// must remove it's entry in the rankings
 		// Quake engine sets all fields to 0, can only do the most important here
@@ -530,21 +517,16 @@ void() BotFrame =
 	
 	self = nextent(NIL);
 	num = 0;
-	while (num < max_clients)
-	{
-		if (self.ishuman == FALSE)
-		{
-			if (self.b_clientno > 0)
-			{
+	while (num < max_clients) {
+		if (self.ishuman == FALSE) {
+			if (self.b_clientno > 0) {
 				frik_obstacles();
 				CL_KeyMove();
 				SV_ClientThink();
 				SV_Physics_Client();
 				// this is sickening	
-				if (self.phys_obj)
-				{
-					if (self.phys_obj.modelindex != self.modelindex)
-					{
+				if (self.phys_obj) {
+					if (self.phys_obj.modelindex != self.modelindex) {
 						setmodel(self.phys_obj, "progs/player.mdl");
 						self.phys_obj.modelindex = self.modelindex;
 					}
@@ -574,13 +556,11 @@ void() BotImpulses =
 	local float f;
 	local string h;
 	
-	if (self.impulse == 100)
-	{
+	if (self.impulse == 100) {
 		h = infokey(NIL, "skill");
 		f = stof(h);
 		BotConnect(0, f);
-	}
-	else if (self.impulse == 102)
+	} else if (self.impulse == 102)
 		KickABot();
 	else
 		return;
