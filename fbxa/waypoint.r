@@ -268,7 +268,7 @@ Route & path table management
 
 +(void)clearMyRoute:(Bot) bot
 {
-	[waypoint_array makeObjectsPerformSelector:@selector (clearRouteForBot)
+	[waypoint_array makeObjectsPerformSelector:@selector (clearRouteForBot:)
 					withObject:bot];
 }
 
