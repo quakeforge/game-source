@@ -8,7 +8,7 @@ W = waiting on other work
 I	Single source tree, using qfcc with cpp support
 o	Add code to exec a script on map change (e.g. if maps/q1_q3dm17.bsp is
 	loaded, exec q1_q3dm17.bsp.cfg)
-o	commit to a CVS tree somewhere
+X	commit to a CVS tree somewhere
 o	Better team support (classes?)
 W	Client-side game code (waiting for QF support)
 W	secondtrigger as a +command (CSGC)

@@ -5,7 +5,7 @@ SRC=	buttons.r builtins.r client.r combat.r defs.r doors.r dynlight.r \
 
 HEADERS = client.rh paroxysm.rh config.rh
 
-RFLAGS += -Wall -Werror -g
+RFLAGS += -Wall -Werror -g --advanced
 
 INSTALLDIR = $(HOME)/.quake/paroxysm/
 
