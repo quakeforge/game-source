@@ -2,6 +2,7 @@ QFCC=qfcc
 #QCFLAGS=-z -qq -g -Werror
 QCFLAGS=-qq -g -Werror
 QCPPFLAGS=
+prefix=/usr/local
 
 libfrikbot_source = \
 	bot_ai.qc		\
@@ -39,5 +40,9 @@ libfrikbot.a: $(libfrikbot_obj)
 clean:
 	rm -f *.o *.qfo *.a *.d
 	rm -rf .deps
+
+install: libfrikbot.a
+	cp frikbot.h $(prefix)/include/QF/ruamoko
+	cp libfrikbot.a $(prefix)/lib/ruamoko
 
 -include $(libfrikbot_dep)
