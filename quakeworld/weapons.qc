@@ -334,7 +334,7 @@ void ()
 W_FireRocket =
 {
 	if (deathmatch != 4)
-		self.currentammo = -self.ammo_rockets;
+		self.currentammo = --self.ammo_rockets;
 
 	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
 
