@@ -1365,6 +1365,7 @@ void(entity targ, entity attacker) ClientObituary =
 							bprint (PRINT_MEDIUM, targ.netname);
 							bprint (PRINT_MEDIUM, " a new one\n");
 							return;
+							deathstring = "bogus uninit warning";
 						}
 						deathstring2 = "'s quad rocket\n";
 					}
@@ -1401,6 +1402,9 @@ void(entity targ, entity attacker) ClientObituary =
 						deathstring2 = "'s discharge\n";
 					else
 						deathstring2 = "'s shaft\n";
+				} else {
+					deathstring = " dies misteriously ";
+					deathstring2 = " progs bug\n";
 				}
 				bprint (PRINT_MEDIUM,targ.netname);
 				bprint (PRINT_MEDIUM,deathstring);
