@@ -1,5 +1,6 @@
 QFCC=qfcc
-QCFLAGS=-z -qq -g -Werror
+#QCFLAGS=-z -qq -g -Werror
+QCFLAGS=-qq -g -Werror
 QCPPFLAGS=
 
 libfrikbot_source = \
