@@ -6,7 +6,7 @@ DEBUG=0
 ###############################################
 
 CPP=cpp
-CPPFLAGS=-I. 
+CPPFLAGS=-I. -Iweapons -Imdl -Iact -Imapents
 
 QFCC=qfcc
 QFCCFLAGS=-q --warn all --code v6only $(CPPFLAGS)
@@ -33,6 +33,7 @@ MAPENTS_SOURCES=mapents_util.qc	\
 
 COMMON_SOURCES=system.qc	\
 	\
+	equipid.qc	\
 	server.qc	worldspawn.qc	\
 	client.qc	spectate.qc	\
 	math.qc		\
@@ -42,20 +43,20 @@ COMMON_SOURCES=system.qc	\
 	menu.qc		menus.qc	\
 	override.qc	\
 	\
-	$(prefix weapons/,	$(WEAPONS_SOURCES))	\
-	$(prefix act/,		$(ACT_SOURCES))		\
-	$(prefix mdl/,		$(MDL_SOURCES))		\
-	$(prefix mapents/,	$(MAPENTS_SOURCES))
+	$(addprefix weapons/,	$(WEAPONS_SOURCES))	\
+	$(addprefix act/,		$(ACT_SOURCES))		\
+	$(addprefix mdl/,		$(MDL_SOURCES))		\
+	$(addprefix mapents/,	$(MAPENTS_SOURCES))
 
 DEBUG_SOURCES=	debug.qc	entnum.qc
 
 ifeq ($(GAME),qw)
 PROGS=../qwprogs.dat
-CPPFLAGS+=-DSYSTEM_DIR=\"qw/\"
+CPPFLAGS+=-I qw
 SOURCES=$(QW_SOURCES) $(COMMON_SOURCES)
 else
 PROGS=../progs.dat
-CPPFLAGS+=-DSYSTEM_DIR=\"nq/\"
+CPPFLAGS+=-I nq
 SOURCES=$(NQ_SOURCES) $(COMMON_SOURCES)
 endif
 
@@ -66,7 +67,7 @@ endif
 
 OBJECTS=$(SOURCES:.qc=.qfo)
 
-GENERATED_SOURCES = equipid.qh equipid.qc weapon_g.qc
+GENERATED_SOURCES = equipid.qh equipid.qc weapons/weapon_g.qc
 
 all: $(PROGS)
 
@@ -76,8 +77,8 @@ $(PROGS): $(OBJECTS)
 	$(QFCC) $(QFCCFLAGS) -o $@ $^
 
 WEAPON_G_SOURCES=$(filter w_%.qc,$(SOURCES))
-weapon_g.qc: weapon_gen.sh $(WEAPON_G_SOURCES)
-	bash weapon_gen.sh $(WEAPON_G_SOURCES) > $@
+weapons/weapon_g.qc: weapons/weapon_gen.sh $(WEAPON_G_SOURCES)
+	bash weapons/weapon_gen.sh $(WEAPON_G_SOURCES) > $@
 
 EQUIPID_SOURCES=$(filter-out $(GENERATED_SOURCES),$(SOURCES))
 equipid.qh equipid.qc: equipid_gen.pl Makefile $(EQUIPID_SOURCES)

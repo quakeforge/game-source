@@ -1,0 +1,4 @@
+*.qfo
+Makefile.deps
+equipid.qc
+equipid.qh

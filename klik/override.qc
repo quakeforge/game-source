@@ -48,7 +48,7 @@ type1 _passthru_##func = {				\
 	local entity ovr;				\
 	ovr = override_findself();			\
 	if (ovr.func)					\
-		return ovr.func##args;			\
+		return ovr.func args;			\
 	return val;					\
 }
 
@@ -58,7 +58,7 @@ all_funcs();
 
 /* for the override_set_FUNCTION macros in override.qh */
 #define one_type(type1,type2)						\
-	void(entity e, .##type1 fld, type1 func) override_set_##type2 = {\
+	void(entity e, .type1 fld, type1 func) override_set_##type2 = {\
 		if (e.overrider)					\
 			e.overrider.fld = func;				\
 		else							\

@@ -1,6 +1,0 @@
-#ifndef BUILTINS_qh
-#define BUILTINS_qh 1
-
-#include SYSTEM_DIR "builtins.qh"
-
-#endif
