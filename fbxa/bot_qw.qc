@@ -406,8 +406,6 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
 
 - (void) preThink
 {
-	local entity uself;
-
 	if (switch_wallhug)
 		ClientFixRankings ();
 	if (b_frags != ent.frags) {
@@ -421,11 +419,6 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
 		b_frags = ent.frags;
 	}
 	[self dynamicWaypoint];
-
-	uself = @self;
-	@self = ent;
-	PlayerPreThink ();
-	@self = uself;
 }
 
 - (void) postThink
@@ -455,8 +448,9 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
 -(void)frame
 {
 	[self obstacles];
-	[self AI];
+	[self preThink];
 	[self sendMove];
+	[self AI];
 }
 
 -(void) updateClient
