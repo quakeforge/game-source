@@ -2,5 +2,6 @@
 *.dat
 *.qfo
 *.sym
+.deps
 ChangeLog
 progdefs.h
