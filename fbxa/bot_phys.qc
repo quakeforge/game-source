@@ -49,6 +49,8 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 
+integer bot_phys_linker;
+
 float (integer keys, integer key) key_state =
 {
 	return ((keys & key) != 0) ? 1.0 : 0.0;
@@ -106,23 +108,3 @@ float (integer keys, integer key) key_state =
 	SV_UserCmd (ent, real_frametime, v_angle, movevect, buttons, impulse);
 }
 @end
-
-/*
-=========================================
-
-Stuff mimicking sv_user.c
-
-=========================================
-*/
-
-void() DropPunchAngle =
-{
-	local float len;
-
-	len = vlen (@self.punchangle);
-	@self.punchangle = normalize (@self.punchangle);
-	len -= 10 * real_frametime;
-	if (len < 0)
-		len = 0;
-	@self.punchangle *= len;
-};

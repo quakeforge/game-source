@@ -85,6 +85,11 @@ Array waypoint_array;
 {
 	origin = org;
 }
+
+-(vector)origin
+{
+	return origin;
+}
 /*
 entity (vector org)
 make_waypoint = 
@@ -190,7 +195,8 @@ Waypoint Loading from file
 
 +(void)clearAll
 {
-	[waypoint_array free];
+	if (waypoint_array)
+		[waypoint_array free];
 	waypoint_array = [[Array alloc] init];
 }
 

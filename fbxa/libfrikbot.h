@@ -13,8 +13,10 @@ typedef struct bot_data_t bot_data_t;
 {
 }
 -(vector)realorigin;
+-(vector)origin;
 -(integer)canSee:(Target)targ ignoring:(entity)ignore;
 -(void)setOrigin:(vector) org;
+-(integer)recognize_plat:(integer)flag;
 @end
 
 @interface Waypoint: Target
@@ -92,7 +94,7 @@ typedef struct bot_data_t bot_data_t;
 	integer dyn_flags, dyn_plat;
 	float dyn_time;
 	Waypoint temp_way, last_way, current_way;
-	entity [4] targets;
+	Target [4] targets;
 	entity avoid;
 	vector obs_dir;
 	vector b_dir;
@@ -104,8 +106,8 @@ typedef struct bot_data_t bot_data_t;
 - (id) init;
 - (id) initWithEntity: (entity) e named:(bot_data_t [])name skill:(integer)skill;
 - (id) initFromPlayer: (entity) e;
-- (integer) preFrame;
-- (integer) postFrame;
+- (void) preThink;
+- (void) postThink;
 - (void) frame;
 - (void) disconnect;
 
@@ -138,9 +140,9 @@ typedef struct bot_data_t bot_data_t;
 @end
 
 @interface Bot (AI)
--(integer)target_onstack:(entity)scot;
--(void)target_add:(entity)e;
--(void)target_drop:(entity)e;
+-(integer)target_onstack:(Target)scot;
+-(void)target_add:(Target)e;
+-(void)target_drop:(Target)e;
 -(void)lost:(Waypoint)targ :(integer)success;
 -(void)check_lost:(Waypoint)targ;
 -(void)handle_ai;
@@ -309,5 +311,12 @@ typedef struct bot_data_t bot_data_t;
 	move is forward right up
 */
 @extern void (entity cl, float sec, vector angles, vector move, integer buttons, integer impulse) SV_UserCmd;
+
+@extern integer bot_way_linker;
+@extern integer bot_move_linker;
+@extern integer bot_phys_linker;
+@extern integer bot_chat_linker;
+@extern float stagger_think;
+@extern integer bot_fight_linker;
 
 #include "defs.h"

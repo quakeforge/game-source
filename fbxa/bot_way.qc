@@ -46,6 +46,8 @@ this notice in its entirety.
 #include "Array.h"
 #include "List.h"
 
+integer bot_way_linker;
+
 @implementation Bot (Way)
 
 /*

@@ -1,7 +1,6 @@
 @extern void() BotInit;
 @extern void() BotFrame;
-@extern float () BotPreFrame;
-@extern float () BotPostFrame;
+@extern void () BotImpulses;
 @extern void() ClientInRankings;
 @extern void() ClientDisconnected;
 @extern void() ClientFixRankings;

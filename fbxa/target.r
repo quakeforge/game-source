@@ -53,6 +53,11 @@ this notice in its entirety.
 	return realorigin (ent);
 }
 
+-(vector)origin
+{
+	return ent.origin;
+}
+
 -(integer)canSee:(Target)targ ignoring:(entity)ignore
 {
 	local vector	spot1, spot2;
@@ -73,6 +78,16 @@ this notice in its entirety.
 
 -(void)setOrigin:(vector)org
 {
+}
+
+- (integer) recognize_plat: (integer) flag
+{
+	local vector org = [self origin];
+	traceline (org, org - '0 0 64', TRUE, ent);
+	if (trace_ent != NIL)
+		return TRUE;
+	else
+		return FALSE;
 }
 
 @end

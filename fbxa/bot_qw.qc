@@ -75,6 +75,13 @@ ClientFixRankings(); // FrikBot
 
 #include "libfrikbot.h"
 
+integer []bot_way_ref;
+integer []bot_move_ref;
+integer []bot_phys_ref;
+integer []bot_chat_ref;
+float []stagger_think_ref;
+integer []bot_fight_ref;
+
 void ()
 bot_map_load =
 {
@@ -134,8 +141,8 @@ void (entity e, string str) SV_SetUserinfo = #0;
 void (entity e, integer ping) SV_SetPing = #0;
 void (entity cl, float sec, vector angles, vector move, integer buttons, integer impulse) SV_UserCmd = #0;
 
-void() SV_Physics_Client = #0;
-void() SV_ClientThink = #0;
+void() SV_Physics_Client = {};//#0;
+void() SV_ClientThink = {};//#0;
 
 
 //----------------------------------------------------------------------------
@@ -216,7 +223,8 @@ ClientInRankings =
 {
 	local integer cl_no = ClientNumber (@self);
 
-	players[cl_no] = [[Bot alloc] initWithEntity:@self];
+	if (!players[cl_no])
+		players[cl_no] = [[Bot alloc] initFromPlayer:@self];
 };
 
 void ()
@@ -226,31 +234,18 @@ ClientDisconnected =
 	players[cl_no] = NIL;
 };
 
-/*
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-BotPreFrame & BotPostFrame, used to make the
-bot easier to install
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-*/
-float ()
-BotPreFrame =
-{
-	return (float)[((Bot)@self.@this) preFrame];
-};
-
-float ()
-BotPostFrame =
-{
-	return (float)[((Bot)@self.@this) postFrame];
-};
-
 // BotInit ====================================================================
 
 void ()
 BotInit =
 {
+	[Waypoint clearAll];
+	bot_way_ref = &bot_way_linker;
+	bot_move_ref = &bot_move_linker;
+	bot_phys_ref = &bot_phys_linker;
+	bot_chat_ref = &bot_chat_linker;
+	stagger_think_ref = &stagger_think;
+	bot_fight_ref = &bot_fight_linker;
 	bot_map_load ();
 };
 
@@ -343,11 +338,12 @@ void () BotImpulses =
 
 	b_entertime = time;
 	ent.team = b_pants + 1;
-	[self updateClient];
 
 	ent.netname = name.name;
 	b_pants = name.pants;
 	b_shirt = name.shirt;
+
+	[self updateClient];
 	//b_num = I
 	bot_count++;
 	if (skill > 3)
@@ -355,7 +351,7 @@ void () BotImpulses =
 	else if (skill < 0)
 		skill = 0;
 	b_skill = skill;
-	ishuman = 2;
+	ishuman = FALSE;
 
 	uself = @self;
 	@self = ent;
@@ -363,6 +359,8 @@ void () BotImpulses =
 	ClientConnect ();
 	PutClientInServer ();
 	@self = uself;
+
+	players[cl_no] = self;
 
 	return self;
 }
@@ -381,13 +379,12 @@ void () BotImpulses =
 	return self;
 }
 
-- (integer) preFrame
+- (void) preThink
 {
-	if (b_clientno == -1)
-		return TRUE;
-	if (ishuman)
-		if (switch_wallhug)
-			ClientFixRankings ();
+	local entity uself;
+
+	if (switch_wallhug)
+		ClientFixRankings ();
 	if (b_frags != ent.frags) {
 		if (b_frags > ent.frags) {
 			if (pointcontents (ent.origin) == CONTENT_LAVA)
@@ -399,16 +396,21 @@ void () BotImpulses =
 		b_frags = ent.frags;
 	}
 	[self dynamicWaypoint];
-	return FALSE;
+
+	uself = @self;
+	@self = ent;
+	PlayerPreThink ();
+	@self = uself;
 }
 
-- (integer) postFrame
+- (void) postThink
 {
-	if (b_clientno == -1)
-		return TRUE;
-	if (ishuman)
-		BotImpulses ();
-	return FALSE;
+	local entity uself;
+
+	uself = @self;
+	@self = ent;
+	PlayerPostThink ();
+	@self = uself;
 }
 
 -(void)disconnect
@@ -427,24 +429,9 @@ void () BotImpulses =
 
 -(void)frame
 {
-	local string h;
-	
-	h = infokey (NIL, "bot_options");
-	b_options = stof (h);
-	
-	// for the sake of speed
-	sv_maxspeed = cvar ("sv_maxspeed");
-	sv_gravity = cvar ("sv_gravity");
-	sv_friction = cvar ("sv_friction");
-	sv_accelerate = cvar ("sv_accelerate");
-	sv_stopspeed = cvar ("sv_stopspeed");
-	real_frametime = time - lasttime; // in QW frametime is fuxx0red
-	lasttime = time;
-	
 	[self obstacles];
+	[self AI];
 	[self sendMove];
-	SV_ClientThink ();
-	SV_Physics_Client ();
 }
 
 -(void) updateClient
@@ -461,3 +448,27 @@ void () BotImpulses =
 	// FIXME: do teams properly
 }
 @end
+
+void ()
+BotFrame =
+{
+	local string h;
+	local integer i;
+	
+	h = infokey (NIL, "bot_options");
+	b_options = stof (h);
+	
+	// for the sake of speed
+	sv_maxspeed = cvar ("sv_maxspeed");
+	sv_gravity = cvar ("sv_gravity");
+	sv_friction = cvar ("sv_friction");
+	sv_accelerate = cvar ("sv_accelerate");
+	sv_stopspeed = cvar ("sv_stopspeed");
+	real_frametime = time - lasttime; // in QW frametime is fuxx0red
+	lasttime = time;
+
+	for (i = 0; i < 32; i++) {
+		if (players[i] && !players[i].ishuman)
+			[players[i] frame];
+	}
+};

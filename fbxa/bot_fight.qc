@@ -42,6 +42,8 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 
+integer bot_fight_linker;
+
 /*
 weapon_range
 

@@ -42,6 +42,8 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 
+integer bot_move_linker;
+
 @implementation Bot (Move)
 - (void) jump
 {
@@ -80,10 +82,10 @@ this notice in its entirety.
 
 - (integer) recognize_plat: (integer) flag
 {
-	if ((ent.classname != "waypoint") && !(ent.flags & FL_ONGROUND))
-		return FALSE;
-	traceline (ent.origin, ent.origin - '0 0 64', TRUE, ent);
-	if (trace_ent != NIL) {
+	local integer ret;
+
+	ret = [super recognize_plat:flag];
+	if (ret) {
 		if (flag) {
 			// afect bot movement too
 			if (keys & KEY_MOVEUP) {
@@ -94,9 +96,8 @@ this notice in its entirety.
 					keys &= ~KEY_MOVE;
 			}
 		}
-		return TRUE;
-	} else
-		return FALSE;
+	}
+	return ret;
 }
 
 -(integer)keysForDir: (vector) sdir
@@ -143,7 +144,7 @@ manuever around.
 // TODO: something
 	if (b_aiflags & AI_BLIND)
 		return;
-	org = realorigin(targets[0]);
+	org = [targets[0] realorigin];
 
 	if (danger) {
 		b_aiflags |= AI_DANGER;
@@ -244,7 +245,7 @@ Also responsible for jumping gaps.
 			return;
 		} else {
 			if (targets[0]) {
-				stop = realorigin(targets[0]);
+				stop = [targets[0] realorigin];
 				if ((stop_z - ent.origin_z) < -32)
 					return; // safe to fall
 			}
@@ -262,7 +263,7 @@ Also responsible for jumping gaps.
 				return;
 			} else {
 				if (targets[0]) {
-					stop = realorigin(targets[0]);
+					stop = [targets[0] realorigin];
 					if ((stop_z - ent.origin_z) < -32)
 						return; // safe to fall
 				}
@@ -273,8 +274,8 @@ Also responsible for jumping gaps.
 
 		if (targets[0]) {
 			// getting furter away from my target?
-			test = vlen (targets[0].origin - (ang + ent.origin));
-			if (test > vlen (targets[0].origin - ent.origin)) {
+			test = vlen ([targets[0] origin] - (ang + ent.origin));
+			if (test > vlen ([targets[0] origin] - ent.origin)) {
 				if (conts < -3) {
 					// bad stuff down dare
 					[self obstructed: ang :TRUE];
@@ -288,7 +289,7 @@ Also responsible for jumping gaps.
 	}
 	if (hgt < -18) {
 		if (targets[0]) {
-			stop = realorigin (targets[0]);
+			stop = [targets[0] realorigin];
 			if ((stop_z - ent.origin_z) < -32)
 				return; // safe to fall
 		}
@@ -362,7 +363,7 @@ blah
 		[self walkmove: v_forward];
 		return;
 	}
-	way = realorigin(targets[0]) - ent.origin;
+	way = [targets[0] realorigin] - ent.origin;
 	if (vlen(way) < 25) {
 		keys &= ~KEY_MOVE;
 		return;

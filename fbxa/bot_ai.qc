@@ -56,7 +56,7 @@ checks to see if an entity is on the bot's stack
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(integer)target_onstack:(entity)scot
+-(integer)target_onstack:(Target)scot
 {
 	if (scot == NIL)
 		return FALSE;
@@ -82,7 +82,7 @@ LIFO stack, this will be the bot's new target1
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)target_add:(entity)e
+-(void)target_add:(Target)e
 {
 	if (e == NIL)
 		return;
@@ -109,7 +109,7 @@ is gone too.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)target_drop:(entity)e
+-(void)target_drop:(Target)e
 {
 	switch ([self target_onstack:e]) {
 	case 1:
@@ -192,11 +192,11 @@ removed.
 {
 	local vector dist;
 
-	dist = [targ realorigin] - ent.origin;
-	dist_z = 0;
-
 	if (targ == NIL)
 		return;
+
+	dist = [targ realorigin] - ent.origin;
+	dist_z = 0;
 
 	// waypoints and items are lost if you get close enough to them
 	if (targ.ent.flags & FL_ITEM) {
@@ -304,7 +304,7 @@ based b_aiflags.
 	if (b_aiflags & AI_DOORFLAG) {
 		// was on a door when spawned
 		// if there is nothing there now
-		if (![ent.@this recognize_plat:FALSE]) {
+		if (![last_way recognize_plat:FALSE]) {
 			newt = [self findThing: "door"]; // this is likely the door responsible (crossfingers)
 
 			if (b_aiflags & AI_DOOR_NO_OPEN) {
@@ -321,7 +321,7 @@ based b_aiflags.
 						[self weapon_switch:1];
 					} else {
 					//	target_drop (last_way);
-						[self target_add:newt];
+						[self target_add:newt]; //FIXME newt wrong type
 					//	bot_get_path (newt, TRUE);
 					}
 				}
@@ -359,7 +359,7 @@ based b_aiflags.
 		// simple, but effective
 		// this can probably be used for a lot of different
 		// things, not just trains (door elevators come to mind)
-		if (![ent.@this recognize_plat:FALSE]) {
+		if (![last_way recognize_plat:FALSE]) {
 			// if there is nothing there now
 			keys &= ~KEY_MOVE;
 		} else {
@@ -456,7 +456,7 @@ confused
 	if (last_way) {
 		if ([last_way isLinkedTo:jj] == 2) {
 			// waypoints are telelinked
-			tele = [self findThing:"trigger_teleport"].@this; // this is probbly the teleport responsible
+			tele = [self findThing:"trigger_teleport"].@this; // this is probbly the teleport responsible FIXME shouldn't use @this here
 			[self target_add:tele];
 		}
 		traceline (last_way.origin, jj.origin, FALSE, ent); // check for blockage
@@ -477,7 +477,7 @@ confused
 						[self weapon_switch:1];
 					} else {
 //						target_drop (jj);
-						[self target_add:e];
+						[self target_add:e]; //FIXME e wrong type
 //						bot_get_path (tele, TRUE);
 						b_aiflags |= AI_BLIND; // give a bot a bone	
 						return;
@@ -628,7 +628,7 @@ the bot finds things it wants to kill/grab.
 	if (best == NIL)
 		return;
 	if (![self target_onstack:best]) {	
-		[self target_add:best];
+		[self target_add:best]; //FIXME best wrong type
 		if (scope) {
 			[self get_path:best :FALSE];
 			b_aiflags |= AI_WAIT;
@@ -680,8 +680,8 @@ generally making the bot look good.
 		view_x = view_x * -1;
 		b_angle = view;
 	} else if (targets[0]) {
-		view = realorigin (targets[0]);
-		if (targets[0].flags & FL_ITEM)
+		view = [targets[0] realorigin];
+		if (targets[0].ent.flags & FL_ITEM)
 			view = view + '0 0 48';
 		view -= (ent.origin + ent.view_ofs);
 		view = vectoangles (view);
@@ -699,7 +699,7 @@ generally making the bot look good.
 			v_angle.x += 360;
 		while (v_angle.x > 180)
 			v_angle.x -= 360;
-	} else if ((ent.enemy == NIL || ent.enemy.movetype == MOVETYPE_PUSH) && targets[0].classname != "player") {
+	} else if ((ent.enemy == NIL || ent.enemy.movetype == MOVETYPE_PUSH) && targets[0].ent.classname != "player") {
 		keys &= ~KEY_LOOK;
 		v_angle = b_angle;
 		while (v_angle.x < -180)
@@ -746,7 +746,8 @@ frame, the ai_time limits it's actual updating
 		keys = 0;
 		b_aiflags = 0;
 		[Waypoint clearMyRoute:self];
-		targets[0] = targets[1] = targets[2] = targets[3] = ent.enemy = NIL;
+		targets[0] = targets[1] = targets[2] = targets[3] = NIL;
+		ent.enemy = NIL;
 		last_way = NIL;
 		return;
 	}

@@ -42,6 +42,8 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 
+integer bot_chat_linker;
+
 @static Bot b_originator;
 @static integer b_topic;
 /* FBX Topics
