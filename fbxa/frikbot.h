@@ -6,17 +6,6 @@
 @extern void() ClientDisconnected;
 @extern void() ClientFixRankings;
 
-@extern void(entity	client, string s) stuffcmd;
 @extern void(entity	e) setspawnparms;
-@extern void(entity	client, float level, string s) sprint;
-@extern void(entity	client, string s) centerprint;
 @extern vector(entity e, float sped) aim;
 @extern void(entity e, float chan, string samp, float vol, float atten) sound;
-@extern void(float to, float f) WriteByte;
-@extern void(float to, float f) WriteChar;
-@extern void(float to, float f) WriteShort;
-@extern void(float to, float f) WriteLong;
-@extern void(float to, float f) WriteCoord;
-@extern void(float to, float f) WriteAngle;
-@extern void(float to, string s) WriteString;
-@extern void(float to, entity s) WriteEntity;
