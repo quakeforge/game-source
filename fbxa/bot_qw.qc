@@ -75,6 +75,18 @@ ClientFixRankings(); // FrikBot
 
 #include "libfrikbot.h"
 
+@implementation Bot
+- (id) init
+{
+	return [super init];
+}
+
+- (id) initWithEntity:(entity) e
+{
+	return [super initWithEntity:e];
+}
+@end
+
 void ()
 bot_map_load =
 {
