@@ -71,15 +71,6 @@ void(entity targ, entity attacker) Killed =
 
 	self.enemy = attacker;
 
-// bump the monster counter
-	if (self.flags & FL_MONSTER)
-	{
-		while (killed_monsters_oldcount < killed_monsters) {
-			killed_monsters_oldcount++;
-			WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
-		}
-	}
-
 	ClientObituary(self, attacker);
 	
 	self.takedamage = DAMAGE_NO;
@@ -87,7 +78,14 @@ void(entity targ, entity attacker) Killed =
 
 	monster_death_use();
 	self.th_die ();
-	
+
+	if (self.flags & FL_MONSTER) {
+		while (killed_monsters_oldcount < killed_monsters) {
+			killed_monsters_oldcount++;
+			WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
+		}
+	}
+
 	self = oself;
 };
 
