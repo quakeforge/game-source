@@ -48,6 +48,8 @@
 
 -(id)queueForThink;
 @end
+@class Array;
+@extern Array waypoint_array;
 
 @interface Bot: Target
 {
@@ -66,7 +68,7 @@
 	integer wallhug;
 	integer ishuman;
 	float b_frags;
-	integer b_clientno;
+	integer b_clientno, b_clientflag;
 	float b_shirt, b_pants;
 	float ai_time;
 	float b_sound;
@@ -99,6 +101,8 @@
 - (integer) postFrame;
 - (void) frame;
 - (void) disconnect;
+
+- (void) updateClient;
 @end
 
 @interface Bot (Misc)
@@ -185,49 +189,55 @@
 #define SVC_UPDATECOLORS	17
 
 // used for the physics & movement AI
-#define KEY_MOVEUP 		1
-#define KEY_MOVEDOWN 	2
-#define KEY_MOVELEFT 	4
-#define KEY_MOVERIGHT 	8
-#define KEY_MOVEFORWARD	16
-#define KEY_MOVEBACK	32
-#define KEY_LOOKUP		64
-#define KEY_LOOKDOWN	128
-#define KEY_LOOKLEFT	256
-#define KEY_LOOKRIGHT	512
+#define KEY_MOVEUP 		0x001
+#define KEY_MOVEDOWN 	0x002
+#define KEY_MOVELEFT 	0x004
+#define KEY_MOVERIGHT 	0x008
+#define KEY_MOVEFORWARD	0x010
+#define KEY_MOVEBACK	0x020
+#define KEY_LOOKUP		0x040
+#define KEY_LOOKDOWN	0x080
+#define KEY_LOOKLEFT	0x100
+#define KEY_LOOKRIGHT	0x200
+
+#define KEY_LOOK		(KEY_LOOKRIGHT|KEY_LOOKLEFT|KEY_LOOKDOWN|KEY_LOOKUP)
+#define KEY_MOVE		(KEY_MOVEBACK|KEY_MOVEFORWARD|KEY_MOVERIGHT\
+						 |KEY_MOVELEFT|KEY_MOVEDOWN|KEY_MOVEUP)
 
 // these are aiflags for waypoints
 // some overlap to the bot
-#define AI_TELELINK_1	1	// link type
-#define AI_TELELINK_2	2	// link type
-#define AI_TELELINK_3	4	// link type
-#define AI_TELELINK_4	8	// link type
-#define AI_DOORFLAG		16	// read ahead
-#define AI_PRECISION	32	// read ahead + point
-#define AI_SURFACE		64	// point 
-#define AI_BLIND		128	// read ahead + point
-#define AI_JUMP		256	// point + ignore
-#define AI_DIRECTIONAL	512	// read ahead + ignore
-#define AI_PLAT_BOTTOM	1024	// read ahead 
-#define AI_RIDE_TRAIN	2048	// read ahead 
-#define AI_SUPER_JUMP	4096	// point + ignore + route test
-#define AI_SNIPER		8192	// point type 
-#define AI_AMBUSH		16384	// point type
-#define AI_DOOR_NO_OPEN	32768	// read ahead
-#define AI_DIFFICULT	65536	// route test
-#define AI_TRACE_TEST	131072	// route test
+#define AI_TELELINK_1	0x00001	// link type
+#define AI_TELELINK_2	0x00002	// link type
+#define AI_TELELINK_3	0x00004	// link type
+#define AI_TELELINK_4	0x00008	// link type
+#define AI_DOORFLAG		0x00010	// read ahead
+#define AI_PRECISION	0x00020	// read ahead + point
+#define AI_SURFACE		0x00040	// point 
+#define AI_BLIND		0x00080	// read ahead + point
+#define AI_JUMP			0x00100	// point + ignore
+#define AI_DIRECTIONAL	0x00200	// read ahead + ignore
+#define AI_PLAT_BOTTOM	0x00400	// read ahead 
+#define AI_RIDE_TRAIN	0x00800	// read ahead 
+#define AI_SUPER_JUMP	0x01000	// point + ignore + route test
+#define AI_SNIPER		0x02000	// point type 
+#define AI_AMBUSH		0x04000	// point type
+#define AI_DOOR_NO_OPEN	0x08000	// read ahead
+#define AI_DIFFICULT	0x10000	// route test
+#define AI_TRACE_TEST	0x20000	// route test
+
+// addition masks
+#define AI_POINT_TYPES 		(AI_AMBUSH|AI_SNIPER|AI_SUPER_JUMP|AI_JUMP\
+							 |AI_BLIND|AI_SURFACE|AI_PRECISION)
+#define AI_READAHEAD_TYPES	(AI_DOOR_NO_OPEN|AI_RIDE_TRAIN|AI_PLAT_BOTTOM\
+							 |AI_DIRECTIONAL)
+#define AI_IGNORE_TYPES		(AI_SUPER_JUMP|AI_DIRECTIONAL|AI_JUMP)
 
 // these are flags for bots/players (dynamic/editor flags)
 #define AI_OBSTRUCTED	1
 #define AI_HOLD_SELECT	2
 #define AI_ROUTE_FAILED	2
-#define AI_WAIT		4
+#define AI_WAIT			4
 #define AI_DANGER		8
-
-// addition masks
-#define AI_POINT_TYPES 	29152
-#define AI_READAHEAD_TYPES	36528
-#define AI_IGNORE_TYPES	4864
 
 #define WM_UNINIT		0
 #define WM_DYNAMIC		1
@@ -257,15 +267,13 @@
 @extern float coop;
 
 // -------ProtoTypes------
-// external
+// external, in main code
 @extern void()				ClientConnect;
 @extern void()				ClientDisconnect;
 @extern void()				SetNewParms;
 
 // rankings
 @extern integer (entity e) ClientNumber;
-@extern integer(integer clientno)		ClientBitFlag;
-@extern void(entity who)			UpdateClient;
 
 @extern void(vector org, vector bit1, integer bit4, integer flargs) make_way;
 

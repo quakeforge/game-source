@@ -88,10 +88,10 @@ this notice in its entirety.
 			// afect bot movement too
 			if (keys & KEY_MOVEUP) {
 				if (trace_ent.velocity_z > 0)
-					keys &= 960; // 960 is all view keys
+					keys &= ~KEY_MOVE;
 			} else if (keys & KEY_MOVEDOWN) {
 				if (trace_ent.velocity_z < 0)
-					keys &= 960;
+					keys &= ~KEY_MOVE;
 			}
 		}
 		return TRUE;
@@ -338,7 +338,7 @@ I have no idea how well it will work
 			way.y = obs_dir.x * -1;
 		}
 		way_z = 0;
-		keys &= 960;
+		keys &= ~KEY_MOVE;
 		keys |= [self keysForDir: way];
 	}
 	
@@ -364,12 +364,12 @@ blah
 	}
 	way = realorigin(targets[0]) - ent.origin;
 	if (vlen(way) < 25) {
-		keys = keys & 960;
+		keys &= ~KEY_MOVE;
 		return;
 	}
 
 	way = normalize (way);
-	keys &= 960;
+	keys &= ~KEY_MOVE;
 	keys |= [self keysForDir: way];
 
 	[self dodge_obstruction];
@@ -378,10 +378,10 @@ blah
 	if (b_aiflags & AI_PRECISION) {
 		g = angcomp (v_angle.x, b_angle.x);
 		if (fabs (g) > 10)
-			keys &= 960;
+			keys &= ~KEY_MOVE;
 		g = angcomp (v_angle.y, b_angle.y);
 		if (fabs(g) > 10)
-			keys &= 960;
+			keys &= ~KEY_MOVE;
 	}
 }
 
@@ -389,7 +389,7 @@ blah
 {
 	// okay so it's not walkmove
 	// sue me
- 	keys &= 960;
+ 	keys &= ~KEY_MOVE;
 	keys |= [self keysForDir: weird];
 
 	[self dodge_obstruction];

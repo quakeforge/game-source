@@ -205,7 +205,7 @@ ClientFixRankings =
 		btmp_bot = btmp.@this;
 		if (!btmp_bot.ishuman) {
 			if (players[cno])
-				UpdateClient (btmp);
+				[btmp_bot updateClient];
 		}
 		cno++;
 		btmp = nextent (btmp);
@@ -263,29 +263,6 @@ the same network messages as when a real player
 signs on to the server.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
-
-void (entity who)
-UpdateClient =
-{
-	/* XXX
-	local string bottomcolor = ftos (who.b_pants);
-	local string topcolor = ftos (who.b_shirt);
-
-	dprint (who.netname);
-	dprint ("\n");
-	SV_SetPing (who, 100 * (3 - who.b_skill));
-	SV_SetUserinfo (who, "\\bottomcolor\\" + bottomcolor
-					+ "\\topcolor\\" + topcolor
-					+ "\\team\\bot\\skin\\base\\name\\" + who.netname);
-	// FIXME: do teams properly
-	*/
-};
-
-integer (integer clientno)
-ClientBitFlag =
-{
-	return 1 << clientno;
-};
 
 void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
 
@@ -381,12 +358,13 @@ void () BotImpulses =
 		return NIL;
 
 	b_clientno = cl_no + 1;
+	b_clientflag = 1 << cl_no;
 	
 	ent.colormap = (float) (cl_no + 1);
 
 	b_entertime = time;
 	ent.team = b_pants + 1;
-	UpdateClient (ent);
+	[self updateClient];
 	SetNewParms ();
 	ishuman = 2;
 	ClientConnect ();
@@ -472,5 +450,19 @@ void () BotImpulses =
 	CL_KeyMove ();
 	SV_ClientThink ();
 	SV_Physics_Client ();
+}
+
+-(void) updateClient
+{
+	local string bottomcolor = ftos (b_pants);
+	local string topcolor = ftos (b_shirt);
+
+	dprint (ent.netname);
+	dprint ("\n");
+	SV_SetPing (ent, 100 * (3 - b_skill));
+	SV_SetUserinfo (ent, "\\bottomcolor\\" + bottomcolor
+					+ "\\topcolor\\" + topcolor
+					+ "\\team\\bot\\skin\\base\\name\\" + ent.netname);
+	// FIXME: do teams properly
 }
 @end

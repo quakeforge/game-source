@@ -46,35 +46,6 @@ this notice in its entirety.
 #include "Array.h"
 #include "List.h"
 
-@static Array waypoint_array;
-@static entity waypoint_thinker;
-@static List waypoint_queue;
-@implementation Target
-
--(vector)realorigin
-{
-	return realorigin (ent);
-}
-
--(integer)canSee:(Target)targ ignoring:(entity)ignore
-{
-	local vector	spot1, spot2;
-
-	spot1 = ent.origin;
-	spot2 = [targ realorigin];
-	
-	do {
-		traceline (spot1, spot2, TRUE, ignore);
-		spot1 = realorigin(trace_ent);
-                ignore = trace_ent;
-	} while ((trace_ent != world) && (trace_fraction != 1));
-	if (trace_endpos == spot2)
-		return TRUE;
-	else 
-		return FALSE;
-}
-@end
-
 @implementation Bot (Way)
 
 /*
@@ -178,7 +149,7 @@ an object.
 	local integer flag;
 	local integer count, i;
 
-	flag = ClientBitFlag(b_clientno);
+	flag = b_clientflag;
 	dst = 100000;
 	best = NIL;
 	count = [waypoint_array count];
@@ -229,7 +200,7 @@ different bot.
 		return;
 	}
 
-	flag = ClientBitFlag(b_clientno);
+	flag = b_clientflag;
 
 	while(t) {
 		if (t.b_sound & flag)

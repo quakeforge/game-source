@@ -385,7 +385,7 @@ attacking an enemy.
 			return;
 		else if (mysz < 140)
 			return;
-		keys &= 960;
+		keys &= ~KEY_MOVE;
 	}
 }
 @end

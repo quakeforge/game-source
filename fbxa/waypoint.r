@@ -46,7 +46,7 @@ this notice in its entirety.
 #include "Array.h"
 #include "List.h"
 
-@static Array waypoint_array;
+Array waypoint_array;
 @static entity waypoint_thinker;
 @static List waypoint_queue;
 
@@ -235,7 +235,7 @@ Route & path table management
 -(void)clearRouteForBot:(Bot)bot
 {
 	local integer flag;
-	flag = ClientBitFlag(bot.b_clientno);
+	flag = bot.b_clientflag;
 	b_sound &= ~flag;
 }
 

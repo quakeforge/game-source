@@ -151,7 +151,7 @@ Bot has lost its target.
 
 	[self target_drop:targ];
 	if (targ.ent.classname == "waypoint")
-		targ.b_sound &= ~(ClientBitFlag (b_clientno));
+		targ.b_sound &= ~b_clientflag;
 
 	// find a new route
 	if (!success) {
@@ -161,17 +161,17 @@ Bot has lost its target.
 		b_aiflags = 0;
 	} else {
 		if (targ.ent.classname == "item_artifact_invisibility")
-			if (ent.items & 524288)
+			if (ent.items & 524288)		// IT_INVISIBILITY
 				[self start_topic:3];
                 
-				/*XXX
                 if (targ.ent.flags & FL_ITEM) {
+					/*XXX
 					if (!targ.ent.model)
 						targ.prev = NIL;
 					else
 						targ.prev = ent;
+					*/
                 }
-				*/
         }
 
 	if (targ.ent.classname != "player")
@@ -227,12 +227,12 @@ removed.
 					[self lost:targ :TRUE];
 			} else if (targ.ent.teleport_time > time) {
 				// try not to telefrag teammates
-				keys &= 960;
+				keys &= ~KEY_MOVE;
 			} else if (vlen (targ.origin - ent.origin) < 128) {
 				if (vlen (targ.origin - ent.origin) < 48)
 					[self walkmove: ent.origin - targ.origin];
 				else {
-					keys &= 960;
+					keys &= ~KEY_MOVE;
 					[self start_topic:4];
 				}
 				ent.search_time = time + 5; // never time out
@@ -299,7 +299,7 @@ based b_aiflags.
 	// wait is used by the ai to stop the bot until his search time expires / or route changes
 
 	if (b_aiflags & AI_WAIT)
-		keys &= 960;
+		keys &= ~KEY_MOVE;
 
 	if (b_aiflags & AI_DOORFLAG) {
 		// was on a door when spawned
@@ -309,7 +309,7 @@ based b_aiflags.
 
 			if (b_aiflags & AI_DOOR_NO_OPEN) {
 				if (newt.nextthink)
-					keys &= 960; // wait until it closes
+					keys &= ~KEY_MOVE; // wait until it closes
 				else {
 					[self lost:last_way :FALSE];
 				}
@@ -361,13 +361,13 @@ based b_aiflags.
 		// things, not just trains (door elevators come to mind)
 		if (![ent.@this recognize_plat:FALSE]) {
 			// if there is nothing there now
-			keys &= 960;
+			keys &= ~KEY_MOVE;
 		} else {
 			if ([self recognize_plat:FALSE]) {
 				v = realorigin (trace_ent) + trace_ent.origin - ent.origin;
 				v_z = 0;
 				if (vlen (v) < 24)
-					keys &= 960;
+					keys &= ~KEY_MOVE;
 				else {
 					b_aiflags |= AI_PRECISION;
 					keys = [self keysForDir:v];
@@ -381,7 +381,7 @@ based b_aiflags.
 			v =  ent.origin - realorigin (newt);
 			v_z = 0;
 			if (vlen (v) > 96)
-				keys &= 960;
+				keys &= ~KEY_MOVE;
 			else
 				[self walkmove:v];
 		} else
@@ -693,14 +693,14 @@ generally making the bot look good.
 	// The bot falls off ledges a lot because of "turning around"
 	// so let the bot use instant turn around when not hunting a player
 	if (b_skill == 3) {
-		keys = keys & 63;
+		keys &= ~KEY_LOOK;
 		v_angle = b_angle;
 		while (v_angle.x < -180)
 			v_angle.x += 360;
 		while (v_angle.x > 180)
 			v_angle.x -= 360;
 	} else if ((ent.enemy == NIL || ent.enemy.movetype == MOVETYPE_PUSH) && targets[0].classname != "player") {
-		keys = keys & 63;
+		keys &= ~KEY_LOOK;
 		v_angle = b_angle;
 		while (v_angle.x < -180)
 			v_angle.x += 360;
@@ -710,7 +710,7 @@ generally making the bot look good.
 		// skill 2 handled in bot_phys
 		if (b_angle.x > 180)
 			b_angle.x -= 360;
-		keys = keys & 63;
+		keys &= ~KEY_LOOK;
 
 		if (angcomp (b_angle.y, v_angle.y) > 10)
 			keys = KEY_LOOKLEFT;
