@@ -113,19 +113,14 @@ for all variable in the bot...
 Bot [32] players;
 
 // -------globals-----
-integer		max_clients;
 float       real_frametime;
 float		bot_count, b_options, lasttime;
 float		waypoint_mode, dump_mode; 
-integer		waypoints;
-float		direct_route, userid;
+float		direct_route;
 float		sv_friction, sv_gravity;
 float		sv_accelerate, sv_maxspeed, sv_stopspeed;
-entity		fixer;
 Bot			route_table;
-entity		b_temp1, b_temp3;
-Waypoint	way_head;
-float		busy_waypoints;
+integer		busy_waypoints;
 
 float coop = 0; // hack
 
@@ -201,9 +196,7 @@ ClientFixRankings =
 	bot.switch_wallhug = 0;
 
 	btmp = nextent (NIL);
-	cno = 0;
-
-	while (cno < max_clients) {
+	for (cno = 0; cno < 32; cno++) {
 		btmp_bot = btmp.@this;
 		if (!btmp_bot.ishuman) {
 			if (players[cno])
@@ -298,19 +291,6 @@ BotSayTeam =
 void ()
 BotInit =
 {
-	local entity ent;
-	local integer numents = 0;
-	
-	// spawn entities for the physics
-	ent = nextent (NIL);
-	max_clients = 0;
-
-	while (ent != NIL) {
-		max_clients++;
-		ent = nextent (ent);
-	}
-
-	ent = nextent (NIL);
 	bot_map_load ();
 };
 
@@ -440,7 +420,6 @@ void () BotImpulses =
 		return NIL;
 
 	b_clientno = cl_no + 1;
-	userid++;
 	
 	ent.colormap = (float) (cl_no + 1);
 

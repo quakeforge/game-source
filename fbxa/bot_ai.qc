@@ -192,7 +192,7 @@ removed.
 {
 	local vector dist;
 
-	dist = realorigin (targ.ent) - ent.origin;
+	dist = [targ realorigin] - ent.origin;
 	dist_z = 0;
 
 	if (targ == NIL)

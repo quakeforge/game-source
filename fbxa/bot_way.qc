@@ -706,8 +706,8 @@ very good all things considered.
 		if (coop)
 			return;
 	// don't waypoint in single player
-	if (max_clients < 2)
-		return; 
+	//XXX if (max_clients < 2)
+	//XXX 	return; 
 	// if you're dead
 	else if (ent.health <= 0) {
 		if (dynpoint) {

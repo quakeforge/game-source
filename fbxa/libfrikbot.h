@@ -234,17 +234,16 @@
 
 // -------globals-----
 @extern Bot [32] players;
-@extern integer		max_clients;
 @extern float		real_frametime;
-@extern float		bot_count, b_options, lasttime;
-@extern float		waypoint_mode, dump_mode; 
-@extern float		direct_route, userid;
+@extern float		bot_count, b_options;
+@extern float		lasttime;
+@extern float		waypoint_mode;
+@extern float		dump_mode; 
+@extern float		direct_route;
 @extern float		sv_friction, sv_gravity;
 @extern float		sv_accelerate, sv_maxspeed, sv_stopspeed;
-@extern entity		fixer;
 @extern Bot			route_table;
-@extern entity		b_temp1, b_temp3;
-@extern float		busy_waypoints;
+@extern integer		busy_waypoints;
 
 @extern float coop;
 
@@ -257,10 +256,6 @@
 // rankings
 @extern integer (entity e) ClientNumber;
 @extern integer(integer clientno)		ClientBitFlag;
-@extern integer()				ClientNextAvailable;
-@extern void(integer whatbot, integer whatskill) BotConnect;
-@extern void(entity bot)			BotDisconnect;
-@extern void(float clientno)		BotInvalidClientNo;
 @extern void(entity who)			UpdateClient;
 
 @extern void(vector org, vector bit1, integer bit4, integer flargs) make_way;
@@ -278,11 +273,9 @@
 @extern void() 				CL_KeyMove;
 
 // ai & misc
-@extern float(entity targ)		fov;
 @extern float(float y1, float y2)	angcomp;
 @extern float(entity ent, entity targ)		sisible;
 @extern vector(entity ent)		realorigin;
-@extern void()				BotImpulses;
 @extern float(float v)			frik_anglemod;
 @extern void() bot_chat;
 @extern void(float tpic) bot_start_topic;
