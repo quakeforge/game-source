@@ -619,7 +619,7 @@
 @extern void(vector v1, vector v2, float nomonsters, entity forent) traceline;    
 
 @extern entity() checkclient;  // returns a client to look for
-@extern entity(entity start, .string fld, string match) find;
+@extern entity(entity start, ...) find;
 @extern string(string s) precache_sound;
 @extern string(string s) precache_model;
 @extern void(entity client, string s)stuffcmd;
