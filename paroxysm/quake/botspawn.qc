@@ -36,7 +36,7 @@ float (string st) check_bot_name =
 string() bot_name =
 {
    local float r;
-   local string st;
+   local string st = "Mozilla";
 
       do
       {

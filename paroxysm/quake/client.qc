@@ -1683,6 +1683,7 @@ void(entity targ, entity attacker) ClientObituary =
 					msgUpdateFragsToAll (attacker.fClientNo, attacker.frags);
 
 				rnum = attacker.weapon;
+				deathstring = deathstring2 = " uninitialized ";
 				
 				if (rnum == IT_BONESAW)
 				{

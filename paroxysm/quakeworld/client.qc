@@ -1584,7 +1584,7 @@ void(entity targ, entity attacker) ClientObituary =
 				
 				if (!(deathmatch & DM_LMS)) //POX 1.2 - do regular obituary taunts in LMS mode
 					attacker.frags = attacker.frags + 1;
-				
+				deathstring = deathstring2 = " uninitialized ";
 				rnum = attacker.weapon;
 				if (targ.deathtype == "nail")
 				{
