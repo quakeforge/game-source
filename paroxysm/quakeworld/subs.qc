@@ -1,10 +1,6 @@
 
-
 void() SUB_Null = {};
-
 void() SUB_Remove = {remove(self);};
-
-
 /*
 QuakeEd only writes a single float for angles (bad idea), so up and down are
 just constant angles.
@@ -23,7 +19,6 @@ vector() SetMovedir =
 	
 	self.angles = '0 0 0';
 };
-
 /*
 ================
 InitTrigger
@@ -41,11 +36,9 @@ void() InitTrigger =
 	self.modelindex = 0;
 	self.model = "";
 };
-
 /*
 =============
 SUB_CalcMove
-
 calculate self.velocity and self.nextthink to reach dest from
 self.origin traveling at speed
 ===============
@@ -55,23 +48,18 @@ void(entity ent, vector tdest, float tspeed, void() func) SUB_CalcMoveEnt =
 local entity	stemp;
 	stemp = self;
 	self = ent;
-
 	SUB_CalcMove (tdest, tspeed, func);
 	self = stemp;
 };
-
 void(vector tdest, float tspeed, void() func) SUB_CalcMove =
 {
 local vector	vdestdelta;
 local float		len, traveltime;
-
 	if (!tspeed)
 		objerror("No speed is defined!");
-
 	self.think1 = func;
 	self.finaldest = tdest;
 	self.think = SUB_CalcMoveDone;
-
 	if (tdest == self.origin)
 	{
 		self.velocity = '0 0 0';
@@ -87,17 +75,14 @@ local float		len, traveltime;
 	
 // divide by speed to get time to reach dest
 	traveltime = len / tspeed;
-
 	if (traveltime < 0.03)
 		traveltime = 0.03;
 	
 // set nextthink to trigger a think when dest is reached
 	self.nextthink = self.ltime + traveltime;
-
 // scale the destdelta vector by the time spent traveling to get velocity
 	self.velocity = vdestdelta * (1/traveltime);	// qcc won't take vec/float	
 };
-
 /*
 ============
 After moving, set origin to exact final destination
@@ -111,15 +96,11 @@ void()	SUB_CalcMoveDone =
 	if (self.think1)
 		self.think1();
 };
-
-
 /*
 =============
 SUB_CalcAngleMove
-
 calculate self.avelocity and self.nextthink to reach destangle from
 self.angles rotating 
-
 The calling function should make sure self.think is valid
 ===============
 */
@@ -131,12 +112,10 @@ local entity		stemp;
 	SUB_CalcAngleMove (destangle, tspeed, func);
 	self = stemp;
 };
-
 void(vector destangle, float tspeed, void() func) SUB_CalcAngleMove =
 {
 local vector	destdelta;
 local float		len, traveltime;
-
 	if (!tspeed)
 		objerror("No speed is defined!");
 		
@@ -148,10 +127,8 @@ local float		len, traveltime;
 	
 // divide by speed to get time to reach dest
 	traveltime = len / tspeed;
-
 // set nextthink to trigger a think when dest is reached
 	self.nextthink = self.ltime + traveltime;
-
 // scale the destdelta vector by the time spent traveling to get velocity
 	self.avelocity = destdelta * (1 / traveltime);
 	
@@ -159,7 +136,6 @@ local float		len, traveltime;
 	self.finalangle = destangle;
 	self.think = SUB_CalcAngleMoveDone;
 };
-
 /*
 ============
 After rotating, set angle to exact final angle
@@ -173,40 +149,29 @@ void() SUB_CalcAngleMoveDone =
 	if (self.think1)
 		self.think1();
 };
-
-
 //=============================================================================
-
 void() DelayThink =
 {
 	activator = self.enemy;
 	SUB_UseTargets ();
 	remove(self);
 };
-
 /*
 ==============================
 SUB_UseTargets
-
 the global "activator" should be set to the entity that initiated the firing.
-
 If self.delay is set, a DelayedUse entity will be created that will actually
 do the SUB_UseTargets after that many seconds have passed.
-
 Centerprints any self.message to the activator.
-
 Removes all entities with a targetname that match self.killtarget,
 and removes them, so some events can remove other triggers.
-
 Search for (string)targetname in all entities that
 match (string)self.target and call their .use function
-
 ==============================
 */
 void() SUB_UseTargets =
 {
 	local entity t, stemp, otemp, act;
-
 //
 // check for a delay
 //
@@ -236,7 +201,6 @@ void() SUB_UseTargets =
 		if (!self.noise)
 			sound (activator, CHAN_VOICE, "misc/talk.wav", 1, ATTN_NORM);
 	}
-
 //
 // kill the killtagets
 //
@@ -281,6 +245,4 @@ void() SUB_UseTargets =
 		} while ( 1 );
 	}
 	
-
 };
-

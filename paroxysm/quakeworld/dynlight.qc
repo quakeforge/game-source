@@ -1,7 +1,6 @@
 /*
 Frank Condello 09.28.98 - originally for the M.A.H.E.M. MacQuake Mod.
 Now used in paroxysm
-
 EMAIL: pox@planetquake.com
 WEB: http://www.planetquake.com/paroxysm/
 =========================================================================
@@ -19,7 +18,6 @@ Dynamic Light can also be triggered, They currenty only start turned off.
 .float dynlight_style;
 void() dynlight_next;
 void() dynlight_find;
-
 void() start_dynlight =
 {	
 //POX v1.1 - changed this for QW support
@@ -39,7 +37,6 @@ void() start_dynlight =
 	
 	dynlight_next();
 };
-
 void() dynlight_wait =
 {
 	if (self.wait)
@@ -49,11 +46,9 @@ void() dynlight_wait =
 	
 	self.think = dynlight_next;
 };
-
 void() dynlight_next =
 {
 	local entity	targ;
-
 	targ = find (world, targetname, self.target);
 	self.target = targ.target;
 	if (!self.target)
@@ -64,12 +59,9 @@ void() dynlight_next =
 		self.wait = 0;
 	SUB_CalcMove (targ.origin - self.mins, self.speed, dynlight_wait);
 };
-
 void() dynlight_find =
-
 {
 	local entity	targ;
-
 	targ = find (world, targetname, self.target);
 	self.target = targ.target;
 	setorigin (self, targ.origin - self.mins);
@@ -79,20 +71,15 @@ void() dynlight_find =
 		self.think = start_dynlight;
 	}
 };
-
-
 void() dynlight_use =
 {
 	if (self.think != dynlight_find)
 		return;		// already activated
 	start_dynlight();
 };
-
-
 void() dyn_light =
 {	
 	precache_model ("progs/null.spr");
-
 	if (!self.speed)
 		self.speed = 100;
 	
@@ -107,7 +94,6 @@ void() dyn_light =
 	setmodel (self, "progs/null.spr");
 	setsize (self, '0 0 0', '0 0 0');
 	setorigin (self, self.origin);
-
 // start trains on the second frame, to make sure their targets have had
 // a chance to spawn
 	self.nextthink = self.ltime + 0.1;

@@ -7,42 +7,70 @@ void() W_Precache =
 {
 	precache_model ("progs/plasma.mdl");
 	precache_model ("progs/laser.mdl");
-	precache_sound ("weapons/r_exp3.wav");	// new rocket explosion
+
+	precache_sound ("weapons/r_exp3.wav");		// new rocket explosion
 	precache_sound ("weapons/rocket1i.wav");	// spike gun
 	precache_sound ("weapons/sgun1.wav");
-	precache_sound ("weapons/ric1.wav");	// ricochet (used in c code)
-	precache_sound ("weapons/ric2.wav");	// ricochet (used in c code)
-	precache_sound ("weapons/ric3.wav");	// ricochet (used in c code)
-	precache_sound ("weapons/spike2.wav");	// super spikes
-	precache_sound ("weapons/nailgun.wav"); // new nailgun sound
-	precache_sound ("weapons/tink1.wav");	// spikes tink (used in c code)
+	precache_sound ("weapons/ric1.wav");		// ricochet (used in c code)
+	precache_sound ("weapons/ric2.wav");		// ricochet (used in c code)
+	precache_sound ("weapons/ric3.wav");		// ricochet (used in c code)
+	precache_sound ("weapons/spike2.wav");		// super spikes
+	precache_sound ("weapons/hog.wav"); 		// new nailgun sound
+	precache_sound ("weapons/tink1.wav");		// spikes tink (used in c code)
 	precache_sound ("weapons/tink2.wav");
-	precache_sound ("weapons/grenade.wav"); // grenade launcher
+	precache_sound ("weapons/gren.wav"); 		// grenade launcher
+	precache_sound ("weapons/gren2.wav"); 		// second trigger grenades
 	precache_sound ("weapons/bounce.wav");		// grenade bounce
 	precache_sound ("weapons/bounce2.wav");		// grenade bounce alt
-	precache_sound ("weapons/shotgn2.wav"); // super shotgun
+	precache_sound ("weapons/shotgn2.wav"); 	// super shotgun
 	
-	precache_sound ("weapons/mfire1.wav");	// missfire
-	precache_sound ("weapons/mfire2.wav");	// megaplasma burst missfire
+	precache_sound ("weapons/mfire1.wav");		// misfire
+	precache_sound ("weapons/mfire2.wav");		// megaplasma burst misfire
 	precache_sound ("weapons/plasma.wav");		// plasmagun fire
 	precache_sound ("weapons/mplasma.wav");		// megaplasmagun fire
 	precache_sound ("weapons/mplasex.wav");		// megaplasmagun explosion
-	precache_sound ("weapons/ssgrnde.wav"); // super shotgun grenade fire
+	precache_sound ("weapons/gren.wav"); 		// super shotgun grenade fire
 	precache_sound ("weapons/armed.wav");		// mine armed sound
-	precache_sound ("weapons/minedet.wav"); //mine detonate click
+	precache_sound ("weapons/minedet.wav"); 	//mine detonate click
 	
-	precache_sound ("weapons/rhino.wav");	//rhino firing sound
-	precache_sound ("weapons/rhinore.wav"); //rhino reload sound
-	precache_sound ("weapons/error.wav");	//weapon error sound
+	precache_sound ("weapons/rhino.wav");		//rhino firing sound
+	precache_sound ("weapons/rhinore.wav"); 	//rhino reload sound
+	precache_sound ("weapons/error.wav");		//weapon error sound
 	
-	precache_sound ("weapons/tsload.wav");	//t-shot load
-	precache_sound ("weapons/tsfire.wav");	//t-shot single fire
-	precache_sound ("weapons/ts3fire.wav"); //t-shot triple fire
+	precache_sound ("weapons/tsload.wav");		//t-shot load
+	precache_sound ("weapons/tsfire.wav");		//t-shot single fire
+	precache_sound ("weapons/ts3fire.wav"); 	//t-shot triple fire
 
 	
-	precache_sound ("weapons/shrapdet.wav"); //ShrapnelBomb detonation-confirmation beep
-	//Shrapnel Model
-	precache_model("progs/mwrub1.mdl");
+	precache_sound ("weapons/shrapdet.wav");	//ShrapnelBomb detonation-confirmation beep
+
+	/*
+		Precached models
+	*/
+	precache_model ("progs/mwrub1.mdl"); 		//Shrapnel Model
+
+/*
+	// VisWeap - Player
+	precache_model ("progs/bsaw_p.mdl");
+	precache_model ("progs/tshot_p.mdl");
+	precache_model ("progs/combo_p.mdl");
+	precache_model ("progs/plasma_p.mdl");
+	precache_model ("progs/nail_p.mdl"); 
+	precache_model ("progs/gren_p.mdl");
+	precache_model ("progs/rhino_p.mdl");
+
+	// VisWeap - Weapon drop
+	precache_model ("progs/d_bsaw.mdl");
+	precache_model ("progs/d_tshot.mdl");
+	precache_model ("progs/d_combo.mdl");
+	precache_model ("progs/d_plasma.mdl");
+	precache_model ("progs/d_nail.mdl");
+	precache_model ("progs/d_gren.mdl");
+	precache_model ("progs/d_rhino.mdl");
+
+	// No weapon Death Model (weapons are dropped)
+	precache_model ("progs/death_p.mdl");
+*/
 };
 
 /*
@@ -63,17 +91,14 @@ void() W_FireAxe =
 	
 	org = trace_endpos - v_forward*4;
 
-	if (trace_ent.takedamage)
-	{
+	if (trace_ent.takedamage) {
 		trace_ent.axhitme = 1;
 		SpawnBlood (org, 20);
 		//if (deathmatch > 3)
 		//	T_Damage (trace_ent, self, self, 75);
 		//else
 			T_Damage (trace_ent, self, self, 20);
-	}
-	else
-	{	// hit wall
+	} else {	// hit wall
 		sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
 
 		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
@@ -119,21 +144,6 @@ void(vector org, vector vel) SpawnMeatSpray =
 	setorigin (missile, org);
 };
 
-
-// + POX - SpawnNoBleed
-// Entities with .nobleed=TRUE will display a gunshot particle instead of blood
-void(vector org, float damage) SpawnNoBleed =
-{
-	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-	WriteByte (MSG_MULTICAST, TE_GUNSHOT);
-	WriteByte (MSG_MULTICAST, 5);
-	WriteCoord (MSG_MULTICAST, org_x);
-	WriteCoord (MSG_MULTICAST, org_y);
-	WriteCoord (MSG_MULTICAST, org_z);
-	multicast (org, MULTICAST_PVS);
-};
-// - POX
-
 /*
 ================
 SpawnBlood
@@ -141,21 +151,19 @@ SpawnBlood
 */
 void(vector org, float damage) SpawnBlood =
 {
+	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
 
-// + POX - check for a bleeder
-	if (trace_ent.nobleed)
-		SpawnNoBleed (org, damage);
-	else
-// - POX
-	{
-		WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
+	if (trace_ent.nobleed) {
+		WriteByte (MSG_MULTICAST, TE_GUNSHOT);
+		WriteByte (MSG_MULTICAST, 5);
+	} else {
 		WriteByte (MSG_MULTICAST, TE_BLOOD);
 		WriteByte (MSG_MULTICAST, 1);
-		WriteCoord (MSG_MULTICAST, org_x);
-		WriteCoord (MSG_MULTICAST, org_y);
-		WriteCoord (MSG_MULTICAST, org_z);
-		multicast (org, MULTICAST_PVS);
 	}
+	WriteCoord (MSG_MULTICAST, org_x);
+	WriteCoord (MSG_MULTICAST, org_y);
+	WriteCoord (MSG_MULTICAST, org_z);
+	multicast (org, MULTICAST_PVS);
 };
 
 
@@ -170,12 +178,7 @@ void(float damage) spawn_touchblood =
 
 	vel = wall_velocity () * 0.2;
 	
-	// + POX - check for a bleeder
-	if (other.nobleed)
-		SpawnNoBleed (self.origin + vel*0.01, damage);
-	else
-	// - POX
-		SpawnBlood (self.origin + vel*0.01, damage);
+	SpawnBlood (self.origin + vel*0.01, damage);
 };
 
 /*
@@ -580,7 +583,7 @@ void() W_FireGrenade =
 {	
 	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
 	
-	sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
+	sound (self, CHAN_WEAPON, "weapons/gren.wav", 1, ATTN_NORM);
 
 	msg_entity = self;
 	WriteByte (MSG_ONE, SVC_SMALLKICK);
@@ -828,7 +831,7 @@ void(float ox) W_FireNails =
 	
 	self.weaponmodel = "progs/v_nailgl.mdl"; // light up nailgun barrels
 	
-	sound (self, CHAN_WEAPON, "weapons/nailgun.wav", 1, ATTN_NORM);
+	sound (self, CHAN_WEAPON, "weapons/hog.wav", 0.8, ATTN_NORM);
 	
 	self.currentammo = self.ammo_nails = self.ammo_nails - 1;
 	

@@ -1,6 +1,5 @@
 // POX - v1.1 target identifier ala Quake3 - displays the name of players who cross your sight
 // by Frank Condello (POX) - http://www.planetquake.com/paroxysm/ - pox@planetquake.com
-
 /* POX - from original Quake ai.qc
 =============
 visible
@@ -17,14 +16,11 @@ float (entity targ) visible =
 	
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
-
 	if (trace_fraction == 1)
 		return TRUE;
 	
 	return FALSE;
 };
-
-
 // Short and sweet....
 void() ID_CheckTarget =
 {	
@@ -37,11 +33,9 @@ void() ID_CheckTarget =
 		self.last_target_id = world;
 	
 	traceline (self.origin , (self.origin+(v_forward * 800)) , FALSE , self);
-
 	org = trace_endpos;
 	
 	spot = findradius(org, 200);
-
 	while (spot)
 	{
 		if ((spot.classname == "player") && spot.takedamage)
@@ -75,5 +69,4 @@ void() ID_CheckTarget =
 		spot = spot.chain;
 		
 	}
-
 };

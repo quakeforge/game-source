@@ -28,8 +28,8 @@ void() button_return =
 };
 
 
-void() button_blocked =
-{	// do nothing, just don't ome all the way back out
+void() button_blocked = 	// do nothing, just don't come all the way back out
+{
 };
 
 
@@ -85,23 +85,19 @@ When a button is touched, it moves some distance in the direction of it's angle,
 */
 void() func_button =
 {
-	if (self.sounds == 0)
-	{
+	if (self.sounds == 0) {
 		precache_sound ("buttons/airbut1.wav");
 		self.noise = "buttons/airbut1.wav";
 	}
-	if (self.sounds == 1)
-	{
+	if (self.sounds == 1) {
 		precache_sound ("buttons/switch21.wav");
 		self.noise = "buttons/switch21.wav";
 	}
-	if (self.sounds == 2)
-	{
+	if (self.sounds == 2) {
 		precache_sound ("buttons/switch02.wav");
 		self.noise = "buttons/switch02.wav";
 	}
-	if (self.sounds == 3)
-	{
+	if (self.sounds == 3) {
 		precache_sound ("buttons/switch04.wav");
 		self.noise = "buttons/switch04.wav";
 	}
@@ -115,17 +111,13 @@ void() func_button =
 	self.blocked = button_blocked;
 	self.use = button_use;
 
-	if (self.health)
-	{
+	if (self.health) {
 		self.max_health = self.health;
 		self.th_die = button_killed;
 		self.takedamage = DAMAGE_YES;
 	
-	// + POX
-		self.nobleed = TRUE;
-	// - POX
-	}
-	else
+		self.nobleed = TRUE;	// + POX
+	} else
 		self.touch = button_touch;
 
 	if (!self.speed)

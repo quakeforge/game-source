@@ -2,14 +2,10 @@
 POX - Last Man Standing Observer Code
 This was written to support Last Man Standing Rules, it is a crude form of Spectate that allows
 observes to stay connected as players so they can play the next game.
-
 An LMS observer is counted as a player, so you can still have the max amount of true Spectors connected
 */
-
 entity() SelectSpawnPoint;
 void() teleport_touch; //POX v1.12
-
-
 //POX v1.12 - sets fov for observer (impulses 1 and 2)
 /*------------------
 SetObserverFOV
@@ -23,9 +19,7 @@ void() SetObserverFOV =
 	stuffcmd (self, "fov ");
 	stuffcmd (self, ob_fov);
 	stuffcmd (self, "\n");
-
 };
-
 //POX v1.12 - Allows observers to use teleporters
 /*------------------
 ObserverTeleportTouch
@@ -44,7 +38,6 @@ local entity	t;
 		
 	setorigin (self, t.origin);
 	self.angles = t.mangle;
-
 	self.fixangle = 1;		// turn this way immediately
 	self.teleport_time = time + 1.7;//POX v1.2 increased this
 	if (self.flags & FL_ONGROUND)
@@ -52,15 +45,12 @@ local entity	t;
 	self.velocity = v_forward * 300;
 	self.flags = self.flags - self.flags & FL_ONGROUND;
 };
-
-
 /*------------------
 ObserverImpulses
 Handels observer controls
 -------------------*/
 void() ObserverImpulses =
 {
-
 	//Jump to a dm start point (Fire Button)
 	if (self.button0)
 	{
@@ -133,7 +123,6 @@ void() ObserverImpulses =
 		else
 		{
 			self.target_id_toggle = TRUE;
-
 			//POX v1.12 - don't centerprint if a message is up
 			if (self.target_id_finished < time)
 				centerprint (self, "Target Identifier ON\n");
@@ -147,14 +136,11 @@ void() ObserverImpulses =
 	self.impulse = 0;
 	self.button0 = 0;
 	self.button1 = 0;
-
 };
-
 /*------------------
 ObserverThink
 Rerouted from PlayerPostThink
 -------------------*/
-
 void() ObserverThink =
 {	
 	local entity tele; //POX v1.12
@@ -216,13 +202,10 @@ void() ObserverThink =
 	}
 	
 	ObserverImpulses ();
-
 };
-
 /*------------------
 SpawnObserver
 -------------------*/
-
 void() SpawnObserver =
 {
 	local	entity spot;
@@ -240,24 +223,19 @@ void() SpawnObserver =
 	self.invincible_finished = 0;
 	self.effects = 0;
 	self.invincible_time = 0;
-
 	self.items = 0;
 	self.ammo_shells = 0;
 	self.ammo_nails = 0;
 	self.ammo_rockets = 0;
 	self.ammo_cells = 0;	
 	self.weapon = 0;
-
 	self.armorvalue = 0;
 	self.armortype = 0;
-
 	self.deadflag = DEAD_NO;
 	spot = SelectSpawnPoint ();
-
 	self.origin = spot.origin + '0 0 1';
 	self.angles = spot.angles;
 	self.fixangle = TRUE;		// turn this way immediately
-
 	setmodel (self, string_null);
 	self.weaponmodel = string_null;
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
@@ -279,9 +257,3 @@ void() SpawnObserver =
 	stuffcmd (self, "fov 100\n");
 	self.target_id_toggle = TRUE; //POX v1.12 default to on
 };
-
-
-
-
-
-

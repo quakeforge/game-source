@@ -1,17 +1,12 @@
 
 entity stemp, otemp, s, old;
-
-
 void() trigger_reactivate =
 {
 	self.solid = SOLID_TRIGGER;
 };
-
 //=============================================================================
-
 float	SPAWNFLAG_NOMESSAGE = 1;
 float	SPAWNFLAG_NOTOUCH = 1;
-
 // the wait time has passed, so set back up for another activation
 void() multi_wait =
 {
@@ -22,8 +17,6 @@ void() multi_wait =
 		self.solid = SOLID_BBOX;
 	}
 };
-
-
 // the trigger was just touched/killed/used
 // self.enemy should be set to the activator so it can be held through a delay
 // so wait for the delay time before firing
@@ -33,7 +26,6 @@ void() multi_trigger =
 	{
 		return;		// allready been triggered
 	}
-
 	if (self.classname == "trigger_secret")
 	{
 		if (self.enemy.classname != "player")
@@ -41,17 +33,13 @@ void() multi_trigger =
 		found_secrets = found_secrets + 1;
 		WriteByte (MSG_ALL, SVC_FOUNDSECRET);
 	}
-
 	if (self.noise)
 		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
-
 // don't trigger again until reset
 	self.takedamage = DAMAGE_NO;
-
 	activator = self.enemy;
 	
 	SUB_UseTargets();
-
 	if (self.wait > 0)	
 	{
 		self.think = multi_wait;
@@ -65,19 +53,16 @@ void() multi_trigger =
 		self.think = SUB_Remove;
 	}
 };
-
 void() multi_killed =
 {
 	self.enemy = damage_attacker;
 	multi_trigger();
 };
-
 void() multi_use =
 {
 	self.enemy = activator;
 	multi_trigger();
 };
-
 void() multi_touch =
 {
 	if (other.classname != "player")
@@ -94,7 +79,6 @@ void() multi_touch =
 	self.enemy = other;
 	multi_trigger ();
 };
-
 /*QUAKED trigger_multiple (.5 .5 .5) ? notouch
 Variable sized repeatable trigger.  Must be targeted at one or more entities.  If "health" is set, the trigger must be killed to activate each time.
 If "delay" is set, the trigger waits some time after activating before firing.
@@ -129,9 +113,7 @@ void() trigger_multiple =
 	if (!self.wait)
 		self.wait = 0.2;
 	self.use = multi_use;
-
 	InitTrigger ();
-
 	if (self.health)
 	{
 		if (self.spawnflags & SPAWNFLAG_NOTOUCH)
@@ -155,8 +137,6 @@ void() trigger_multiple =
 		}
 	}
 };
-
-
 /*QUAKED trigger_once (.5 .5 .5) ? notouch
 Variable sized trigger. Triggers once, then removes itself.  You must set the key "target" to the name of another object in the level that has a matching
 "targetname".  If "health" is set, the trigger must be killed to activate.
@@ -175,9 +155,7 @@ void() trigger_once =
 	self.wait = -1;
 	trigger_multiple();
 };
-
 //=============================================================================
-
 /*QUAKED trigger_relay (.5 .5 .5) (-8 -8 -8) (8 8 8)
 This fixed size trigger cannot be touched, it can only be fired by other events.  It can contain killtargets, targets, delays, and messages.
 */
@@ -185,10 +163,7 @@ void() trigger_relay =
 {
 	self.use = SUB_UseTargets;
 };
-
-
 //=============================================================================
-
 /*QUAKED trigger_secret (.5 .5 .5) ?
 secret counter trigger
 sounds
@@ -217,13 +192,9 @@ void() trigger_secret =
 		precache_sound ("misc/talk.wav");
 		self.noise = "misc/talk.wav";
 	}
-
 	trigger_multiple ();
 };
-
 //=============================================================================
-
-
 void() counter_use =
 {
 	self.count = self.count - 1;
@@ -258,12 +229,9 @@ void() counter_use =
 	self.enemy = activator;
 	multi_trigger ();
 };
-
 /*QUAKED trigger_counter (.5 .5 .5) ? nomessage
 Acts as an intermediary for an action that takes multiple inputs.
-
 If nomessage is not set, t will print "1 more.. " etc when triggered and "sequence complete" when finished.
-
 After the counter has been triggered "count" times (default 2), it will fire all of it's targets and remove itself.
 */
 void() trigger_counter =
@@ -271,22 +239,15 @@ void() trigger_counter =
 	self.wait = -1;
 	if (!self.count)
 		self.count = 2;
-
 	self.use = counter_use;
 };
-
-
 /*
 ==============================================================================
-
 TELEPORT TRIGGERS
-
 ==============================================================================
 */
-
 float	PLAYER_ONLY	= 1;
 float	SILENT = 2;
-
 void() play_teleport =
 {
 	local	string tmpstr;
@@ -295,18 +256,15 @@ void() play_teleport =
 		tmpstr = "misc/r_tele1.wav";
 	else
 		tmpstr = "misc/r_tele2.wav";
-
 	sound (self, CHAN_VOICE, tmpstr, 1, ATTN_NORM);
 	remove (self);
 };
-
 void(vector org) spawn_tfog =
 {
 	s = spawn ();
 	s.origin = org;
 	s.nextthink = time + 0.1;// + POX - quicker
 	s.think = play_teleport;
-
 	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
 	WriteByte (MSG_MULTICAST, TE_TELEPORT);
 	WriteCoord (MSG_MULTICAST, org_x);
@@ -314,15 +272,11 @@ void(vector org) spawn_tfog =
 	WriteCoord (MSG_MULTICAST, org_z);
 	multicast (org, MULTICAST_PHS);
 };
-
-
 void() tdeath_touch =
 {
 	local entity other2;
-
 	if (other == self.owner)
 		return;
-
 // frag anyone who teleports in on top of an invincible player
 	if (other.classname == "player")
 	{
@@ -345,18 +299,14 @@ void() tdeath_touch =
 		}
 		
 	}
-
 	if (other.health)
 	{
 		T_Damage (other, self, self, 50000);
 	}
 };
-
-
 void(vector org, entity death_owner) spawn_tdeath =
 {
 local entity	death;
-
 	death = spawn();
 	death.classname = "teledeath";
 	death.movetype = MOVETYPE_NONE;
@@ -371,12 +321,10 @@ local entity	death;
 	
 	force_retouch = 2;		// make sure even still objects get hit
 };
-
 void() teleport_touch =
 {
 local entity	t;
 local vector	org;
-
 	if (self.targetname)
 	{
 		if (self.nextthink < time)
@@ -390,16 +338,12 @@ local vector	org;
 		if (other.classname != "player")
 			return;
 	}
-
 // only teleport living creatures
 	if (other.health <= 0 || other.solid != SOLID_SLIDEBOX)
 		return;
-
 	SUB_UseTargets ();
-
 // put a tfog where the player was
 	spawn_tfog (other.origin);
-
 	t = find (world, targetname, self.target);
 	if (!t)
 		objerror ("couldn't find target");
@@ -407,10 +351,8 @@ local vector	org;
 // spawn a tfog flash in front of the destination
 	makevectors (t.mangle);
 	org = t.origin + 32 * v_forward;
-
 	spawn_tfog (org);
 	spawn_tdeath(t.origin, other);
-
 // move the player and lock him down for a little while
 	if (!other.health)
 	{
@@ -418,7 +360,6 @@ local vector	org;
 		other.velocity = (v_forward * other.velocity_x) + (v_forward * other.velocity_y);
 		return;
 	}
-
 	setorigin (other, t.origin);
 	other.angles = t.mangle;
 	if (other.classname == "player")
@@ -434,7 +375,6 @@ local vector	org;
 	}
 	other.flags = other.flags - other.flags & FL_ONGROUND;
 };
-
 /*QUAKED info_teleport_destination (.5 .5 .5) (-8 -8 -8) (8 8 32)
 This is the destination marker for a teleporter.  It should have a "targetname" field with the same value as a teleporter's "target" field.
 */
@@ -448,30 +388,25 @@ void() info_teleport_destination =
 	if (!self.targetname)
 		objerror ("no targetname");
 };
-
 void() teleport_use =
 {
 	self.nextthink = time + 0.2;
 	force_retouch = 2;		// make sure even still objects get hit
 	self.think = SUB_Null;
 };
-
 /*QUAKED trigger_teleport (.5 .5 .5) ? PLAYER_ONLY SILENT
 Any object touching this will be transported to the corresponding info_teleport_destination entity. You must set the "target" field, and create an object with a "targetname" field that matches.
-
 If the trigger_teleport has a targetname, it will only teleport entities when it has been fired.
 */
 void() trigger_teleport =
 {
 	local vector o;
-
 	InitTrigger ();
 	self.touch = teleport_touch;
 	// find the destination 
 	if (!self.target)
 		objerror ("no target");
 	self.use = teleport_use;
-
 	if (!(self.spawnflags & SILENT))
 	{
 		precache_sound ("ambience/hum1.wav");
@@ -479,15 +414,11 @@ void() trigger_teleport =
 		ambientsound (o, "ambience/hum1.wav",0.5 , ATTN_STATIC);
 	}
 };
-
 /*
 ==============================================================================
-
 trigger_setskill
-
 ==============================================================================
 */
-
 /*QUAKED trigger_setskill (.5 .5 .5) ?
 sets skill level to the value of "message".
 Only used on start map.
@@ -496,23 +427,17 @@ void() trigger_setskill =
 {
 	remove (self);
 };
-
-
 /*
 ==============================================================================
-
 ONLY REGISTERED TRIGGERS
-
 ==============================================================================
 */
-
 void() trigger_onlyregistered_touch =
 {
 	if (other.classname != "player")
 		return;
 	if (self.attack_finished > time)
 		return;
-
 	self.attack_finished = time + 2;
 	if (cvar("registered"))
 	{
@@ -531,7 +456,6 @@ void() trigger_onlyregistered_touch =
 		}
 	}
 };
-
 /*QUAKED trigger_onlyregistered (.5 .5 .5) ?
 Only fires if playing the registered version, otherwise prints the message
 */
@@ -541,15 +465,12 @@ void() trigger_onlyregistered =
 	InitTrigger ();
 	self.touch = trigger_onlyregistered_touch;
 };
-
 //============================================================================
-
 void() hurt_on =
 {
 	self.solid = SOLID_TRIGGER;
 	self.nextthink = -1;
 };
-
 void() hurt_touch =
 {
 	if (other.takedamage)
@@ -559,10 +480,8 @@ void() hurt_touch =
 		self.think = hurt_on;
 		self.nextthink = time + 1;
 	}
-
 	return;
 };
-
 /*QUAKED trigger_hurt (.5 .5 .5) ?
 Any object touching this will be hurt
 set dmg to damage amount
@@ -575,11 +494,8 @@ void() trigger_hurt =
 	if (!self.dmg)
 		self.dmg = 5;
 };
-
 //============================================================================
-
 float PUSH_ONCE = 1;
-
 void() trigger_push_touch =
 {
 	if (other.classname == "grenade")
@@ -599,8 +515,6 @@ void() trigger_push_touch =
 	if (self.spawnflags & PUSH_ONCE)
 		remove(self);
 };
-
-
 /*QUAKED trigger_push (.5 .5 .5) ? PUSH_ONCE
 Pushes the player
 */
@@ -612,24 +526,18 @@ void() trigger_push =
 	if (!self.speed)
 		self.speed = 1000;
 };
-
 /*--------------------
 trigger_bouncepad
-
 POX v1.2 - Adds Q3A style bounce pads
 It's kind of a low level entity to create, you must grasp the concept of 3D vectors and acceleration to get it to work
-
 angles - must be entered as '0 0 0' (roll, pitch, yaw) in English, that's (left/right, forward/backward, up/down)
 so, negative numbers are (left, back, down) positive numbers are (right, forward, up) The bigger the number,
 (in the positive or negative direction) the greater the acceleration in that direction.
 A value of (0 40 800) is a good starting point for a vertical, slightly-forward bounce
 (Just remeber that forward (pitch) is ALWAYS NORTH when viewing a map from above)
-
 Use SMALL triggers for this one (it has a touch timeout to prevent serious acceleration)
 ---------------------*/
-
 .float bounce_time;
-
 void() trigger_bounce_touch =
 {	
 	if (other.bounce_time > time)
@@ -643,8 +551,6 @@ void() trigger_bounce_touch =
 		sound (other, CHAN_AUTO, "misc/menu2.wav", 1, ATTN_NORM);
 	}
 };
-
-
 void() trigger_bouncepad =
 {
 	self.solid = SOLID_TRIGGER;
@@ -652,18 +558,13 @@ void() trigger_bouncepad =
 	self.movetype = MOVETYPE_NONE;
 	self.modelindex = 0;
 	self.model = "";
-
 	self.touch = trigger_bounce_touch;
-
 };
-
 //============================================================================
-
 void() trigger_monsterjump_touch =
 {
 	if ( other.flags & (FL_MONSTER | FL_FLY | FL_SWIM) != FL_MONSTER )
 		return;
-
 // set XY even if not on ground, so the jump will clear lips
 	other.velocity_x = self.movedir_x * self.speed;
 	other.velocity_y = self.movedir_y * self.speed;
@@ -672,10 +573,8 @@ void() trigger_monsterjump_touch =
 		return;
 	
 	other.flags = other.flags - FL_ONGROUND;
-
 	other.velocity_z = self.height;
 };
-
 /*QUAKED trigger_monsterjump (.5 .5 .5) ?
 Walking monsters that touch this will jump in the direction of the trigger's angle
 "speed" default to 200, the speed thrown forward
@@ -692,4 +591,3 @@ void() trigger_monsterjump =
 	InitTrigger ();
 	self.touch = trigger_monsterjump_touch;
 };
-

@@ -2,65 +2,44 @@
 EMAIL: pox@planetquake.com
 WEB: http://www.planetquake.com/paroxysm
 =========================================================================
-
 Custom Paroxysm visual and audio effects
 These are simple little ambient effects that are customizable within Quiver.
-
 Feel free to use this code in anyway.
-
 =========================================================================
-
 */
-
 //NOT USED IN POXworld
-
 .float spark_freq; // To avoid 'not a feild' server errors
 void() e_spark =
 {remove(self);};
-
 void() a_drip =
 {remove(self);};
-
 /*
 =================================================================================================
 Custom Sound Entity (cust_sound)
 The lack of a Mac sound editor that produces looping .wav files in a format that Quake understands
 prompted the creation of this function. Then I added some options to make it worth while.
-
 snd_attn - sets the sound's attenuation (defaults to ATTN_NORM (1))
-
 snd_volume - sets the sounds overall volume (typically values of 0.5 to 1) default is 1
-
 strt_onoff - 0 = initially on, 1 = initially off
-
 snd_rep - number of times to play the sound (-2 is infinite loop)
-
 snd_loop - delay in seconds before playing sound again (use sound length for looping sounds)
-
 snd_rand - random seed, this number is multiplied by random() and added to loop (default 0 is no random)
-
 the_snd - directory path to the sound - example: "misc/mysound.wav" NOTE: "sound/" is NOT needed
-
 targetname - sounds can be triggered by using a targetname.
-
 TOGGLE_SND - spawn flag, determines if sounds can be toggled on and off.
-
 BUGS
 1. Quake won't start playing these sounds on the first frame - (Unless you precache every possible sound
 at world_spawn)
-
 HACKY FIX - If you need a sound to play right away;
 Position a trigger in such a way that it is touched when the player enters the map - NOT touching the
 player initially (doesn't work on frame 1 remember?). Try making a trigger 4 units tall and place
 info_player_start just above it. Not pretty, but it does the trick - Don't forget to set
 strt_onoff to 1 (initially off) for this to work
-
 2. When Quake no longer 'hears' or more arcurately - 'sees' the sound, it kills it until it comes into view
 again. This causes the sound to stop playing and remsume at the NEXT loop point when it is in view, so for
 sounds that must be looped constantly, I would reccomend using the ambient_sound function (see below)
 =================================================================================================
 */
-
 //NOTE: some of these .floats are used in ambient_sound as well (see below)
 float TOGGLE_SND = 1;
 .float snd_attn;
@@ -71,17 +50,14 @@ float TOGGLE_SND = 1;
 .float snd_loop;
 .float snd_strt;
 .string the_snd;
-
 void() sound_think;
 void() play_sound;
-
 void() sound_wait =
 {	
 	// hang around until next use
 	self.nextthink = time + 60*10;
 	self.think = sound_wait;
 };
-
 void() stop_sound =
 {
 	// if sound is set to toggle, silence it and set use to play
@@ -99,7 +75,6 @@ void() stop_sound =
 		remove (self);
 	}
 };
-
 void() play_sound = 
 {
 	//infinite repeat
@@ -122,7 +97,6 @@ void() play_sound =
 	}
 	
 };
-
 void() sound_think =
 {	
 	// if sound is toggled, set next use to stop
@@ -133,7 +107,6 @@ void() sound_think =
 	self.nextthink = time + (random()*self.snd_rand) + self.snd_loop;
 	self.think = play_sound;
 };
-
 void() cust_sound =
 {	
 	precache_sound (self.the_snd);
@@ -167,7 +140,6 @@ void() cust_sound =
 	}
 	
 };
-
 	
 //Made this so custom ambient sounds could be called with a single function
 //ONLY WORKS WITH LOOPED .WAV FILES
@@ -176,12 +148,10 @@ void() cust_sound =
 //To my knowledge you can't make these with existing Mac sound editors
 //(you can make looping wavs, just not ones Quake will loop)
 //CoolEdit 1.5 (for Windows) is the only editor that can create these looping wavs (to my knowledge)
-
 void() ambientsound_go =
 {
 	ambientsound (self.origin, self.the_snd, self.snd_volume, self.snd_attn);
 };
-
 void() ambient_sound =
 {
 	precache_sound (self.the_snd);
@@ -208,36 +178,26 @@ void() ambient_sound =
 	else
 		self.use = ambientsound_go;
 };
-
-
 /*
 colour_light is a small hack to try and simulate coloured lighting.
 It does this by calling the built-in v_cshift function
 This can be used for 'atmospheric' effects like outdoor haze and darkness.
 This function is overriden by Quake when under liquids and by the background flash when an item is picked up
 The GL Quake command 'gl_polyblend 0' also negates this entity.
-
 colourvalue - this is the only parameter, must be in this format;
 v_cshift R G B I\n
-
 where R is Red (0 - 255), G is Green (0 - 255), B is Rlue (0 - 255), and I is Intensity (0 - 255)
-
 This effect works poorly in small increments in GL Quake, no colour will be noticeable until about an
 intesity of about 5 (depending on the colour) and some colour/intensity combinations result in ugly
 banding. It's best to test colour levels in the console before applying them in your map.
-
 These entities are activated by touch (the colour shift only occurs when the player is touching the trigger field)
 But can also be enabled/disabled by using a targetname.
-
-
 The string must be exactly as shown (including the v_cshift and the carraige return
 at the end) I could have used multiple stuffcmd statements to make it more user friendly but.. eh.
 */
-
 void() colourlight_wait;
 .string colourvalue;
 float CLSTART_OFF = 1;
-
 void() colourlight_off =
 {
 	if(other.classname != "player")
@@ -249,7 +209,6 @@ void() colourlight_off =
 	self.touch = SUB_Null;
 	
 };
-
 void() colourlight_toggle =
 {
 	//called after light is triggered a second time
@@ -276,14 +235,11 @@ void() colourlight_use =
 		self.use = colourlight_toggle;
 	
 };
-
 void() colourlight_wait =
 {
 	//activated by a trigger so wait for touch
 	self.touch = colourlight_use;
-
 };
-
 void() colour_light =
 {		
 	InitTrigger ();
@@ -298,23 +254,16 @@ void() colour_light =
 		self.use = colourlight_wait;
 		self.touch = SUB_Null;
 	}
-
 };
-
 /*
 particle_stream
-
 Changed for Paroxysm v1.11's new regen stations
 Creates a regen stream-pulse model with out a grate and no touch
-
 This entity should be used in conjunction with a regen_station trigger
-
 clr = skin# (0 = blue, 1 = yellow, 2 = red)
 */
-
 .float clr;
 void() regen_ambientsound;
-
 void() particle_stream =
 {
 	precache_sound("ambience/regen1.wav");
@@ -336,15 +285,12 @@ void() particle_stream =
 	makestatic (self);
 	
 };
-
 /*
 POX v1.2
 misc_explobox
-
 BSP based explo_box'es
 Try to use rectangular objects, since entites use bounding box collision detection 
 */
-
 void() bsp_explode =
 {
 	self.takedamage = DAMAGE_NO;
@@ -352,6 +298,7 @@ void() bsp_explode =
 	
 	// did say self.owner
 	T_RadiusDamage (self.trigger_field, self.trigger_field, self.dmg, world, "");
+	sound (self.trigger_field, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	
 	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
 	WriteByte (MSG_MULTICAST, TE_EXPLOSION);
@@ -362,9 +309,7 @@ void() bsp_explode =
 
 	remove (self);
 	remove (self.trigger_field);
-	
 };
-
 void() misc_explobsp =
 {
 	local entity spot;
@@ -374,7 +319,6 @@ void() misc_explobsp =
 	
 	setmodel (self, self.model);
 	setsize( self, self.mins, self.maxs );
-
 	precache_sound ("weapons/r_exp3.wav");
 	
 	if (!self.health)

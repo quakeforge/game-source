@@ -14,17 +14,15 @@ float	modelindex_eyes, modelindex_player;
 
 /*
 =============================================================================
-
 				LEVEL CHANGING / INTERMISSION
-
 =============================================================================
 */
 
 string nextmap;
 
-// POX - moved to poxdefs.qc
-//float	  intermission_running;
+//float	  intermission_running; 	// POX - moved to poxdefs.qc
 float	intermission_exittime;
+
 
 /*QUAKED info_intermission (1 0.5 0.5) (-16 -16 -16) (16 16 16)
 This is the camera point for the intermission.
@@ -52,7 +50,6 @@ void() SetNewParms =
 	// Quake Complains if this function isn't defined
 };
 
-
 void() DecodeLevelParms =
 {
 	//POX v1.2 - parms are used to store the Taget ID toggle, and to prevent running autoexec.cfg more than once per session
@@ -62,19 +59,15 @@ void() DecodeLevelParms =
 	self.configed = parm2;
 	
 	//POX v1.2 - run autoexec.cfg ONCE when first joining server only!
-	if (!self.configed)
-	{
+	if (!self.configed) {
 		self.configed = TRUE;
 		stuffcmd(self, "exec autoexec.cfg\n");
 	}
 	
 };
-
-
 /*
 ============
 FindIntermission
-
 Returns the entity to view from
 ============
 */
@@ -82,14 +75,12 @@ entity() FindIntermission =
 {
 	local	entity spot;
 	local	float cyc;
-
 // look for info_intermission first
 	spot = find (world, classname, "info_intermission");
 	if (spot)
 	{	// pick a random one
 		cyc = random() * 4;
-		while (cyc > 1)
-		{
+		while (cyc > 1) {
 			spot = find (spot, classname, "info_intermission");
 			if (!spot)
 				spot = find (spot, classname, "info_intermission");
@@ -97,7 +88,6 @@ entity() FindIntermission =
 		}
 		return spot;
 	}
-
 // then look for the start position
 	spot = find (world, classname, "info_player_start");
 	if (spot)
@@ -106,14 +96,12 @@ entity() FindIntermission =
 	objerror ("FindIntermission: no spot");
 };
 
-
 void() GotoNextMap =
 {
 	local string newmap;
 
-//ZOID: 12-13-96, samelevel is overloaded, only 1 works for same level
-
-	if (cvar("samelevel") == 1)	// if samelevel is set, stay on same level
+	//ZOID: 12-13-96, samelevel is overloaded, only 1 works for same level
+	if (cvar ("samelevel") == 1)	// if samelevel is set, stay on same level
 		changelevel (mapname);
 	else {
 		// configurable map lists, see if the current map exists as a
@@ -126,12 +114,9 @@ void() GotoNextMap =
 	}
 };
 
-
-
 /*
 ============
 IntermissionThink
-
 When the player presses attack or jump, change to the next level
 ============
 */
@@ -157,18 +142,14 @@ Take the players to the intermission spot
 void() execute_changelevel =
 {
 	local entity	pos;
-
 	intermission_running = 1;
 	
 // enforce a wait time before allowing changelevel
 	intermission_exittime = time + 5;
-
 	pos = FindIntermission ();
-
 // play intermission music
 	WriteByte (MSG_ALL, SVC_CDTRACK);
 	WriteByte (MSG_ALL, 3);
-
 	WriteByte (MSG_ALL, SVC_INTERMISSION);
 	WriteCoord (MSG_ALL, pos.origin_x);
 	WriteCoord (MSG_ALL, pos.origin_y);
@@ -186,15 +167,11 @@ void() execute_changelevel =
 		other.modelindex = 0;
 		other = find (other, classname, "player");
 	}	
-
 };
-
-
 void() changelevel_touch =
 {
 	if (other.classname != "player")
 		return;
-
 // if "noexit" is set, blow up the player trying to leave
 //ZOID, 12-13-96, noexit isn't supported in QW.	 Overload samelevel
 //	if ((cvar("noexit") == 1) || ((cvar("noexit") == 2) && (mapname != "start")))
@@ -203,22 +180,17 @@ void() changelevel_touch =
 		T_Damage (other, self, self, 50000);
 		return;
 	}
-
 	bprint (PRINT_HIGH, other.netname);
 	bprint (PRINT_HIGH," exited the level\n");
 	
 	nextmap = self.map;
-
 	SUB_UseTargets ();
-
 	self.touch = SUB_Null;
-
 // we can't move people right now, because touch functions are called
 // in the middle of C movement code, so set a think time to do it
 	self.think = execute_changelevel;
 	self.nextthink = time + 0.1;
 };
-
 /*QUAKED trigger_changelevel (0.5 0.5 0.5) ? NO_INTERMISSION
 When the player touches this, he gets sent to the map listed in the "map" variable.  Unless the NO_INTERMISSION flag is set, the view will go to the info_intermission spot and display stats.
 */
@@ -230,18 +202,12 @@ void() trigger_changelevel =
 	InitTrigger ();
 	self.touch = changelevel_touch;
 };
-
-
 /*
 =============================================================================
-
 				PLAYER GAME EDGE FUNCTIONS
-
 =============================================================================
 */
-
 void() set_suicide_frame;
-
 // called by ClientKill and DeadThink
 void() respawn =
 {
@@ -252,18 +218,13 @@ void() respawn =
 	// respawn		
 	PutClientInServer ();
 };
-
-
 /*
 ============
 ClientKill
-
 Player entered the suicide command
 ============
 */
-
 void() NextLevel; //POX v1.12
-
 void() ClientKill =
 {	
 	//POX v1.12 - don't let LMS observers suicide!
@@ -303,16 +264,13 @@ void() ClientKill =
 	
 	respawn ();
 };
-
 float(vector v) CheckSpawnPoint =
 {
 	return FALSE;
 };
-
 /*
 ============
 SelectSpawnPoint
-
 Returns the entity to spawn at
 ============
 */
@@ -322,25 +280,20 @@ entity() SelectSpawnPoint =
 	local	float	numspots, totalspots;
 	local	float	pcount;
 	local entity spots;
-
 	numspots = 0;
 	totalspots = 0;
-
 // testinfo_player_start is only found in regioned levels
 	spot = find (world, classname, "testplayerstart");
 	if (spot)
 		return spot;
 		
 // choose a info_player_deathmatch point
-
 // ok, find all spots that don't have players nearby
-
 	spots = world;
 	spot = find (world, classname, "info_player_deathmatch");	
 	while (spot)
 	{
 		totalspots = totalspots + 1;
-
 		thing=findradius(spot.origin, 84);
 		pcount=0;		
 		while (thing)
@@ -354,7 +307,6 @@ entity() SelectSpawnPoint =
 			spots = spot;
 			numspots = numspots + 1;
 		}
-
 		// Get the next spot in the chain
 		spot = find (spot, classname, "info_player_deathmatch");		
 	}
@@ -372,29 +324,22 @@ entity() SelectSpawnPoint =
 	}
 		
 // We now have the number of spots available on the map in numspots
-
 	// Generate a random number between 1 and numspots
-
 	numspots = numspots - 1;
 	
 	numspots = rint((random() * numspots ) );
-
 	spot = spots;
 	while (numspots > 0) {
 		spot = spot.goalentity;
 		numspots = numspots - 1;
 	}
 	return spot;
-
 };
 //void() DecodeLevelParms;
 void() PlayerDie;
-
 /*
 ===========
 ValidateUser
-
-
 ============
 */
 float(entity e) ValidateUser =
@@ -403,7 +348,6 @@ float(entity e) ValidateUser =
 	local string	s;
 	local string	userclan;
 	local float	rank, rankmin, rankmax;
-
 //
 // if the server has set "clan1" and "clan2", then it
 // is a clan match that will allow only those two clans in
@@ -419,14 +363,12 @@ float(entity e) ValidateUser =
 			return true;
 		return false;
 	}
-
 //
 // if the server has set "rankmin" and/or "rankmax" then
 // the users rank must be between those two values
 //
 	s = masterinfo (e, "rank");
 	rank = stof (s);
-
 	s = serverinfo("rankmin");
 	if (s)
 	{
@@ -441,16 +383,12 @@ float(entity e) ValidateUser =
 		if (rankmax < rank)
 			return false;
 	}
-
 	return true;
 */
 };
-
-
 /*
 ===========
 PutClientInServer
-
 called each time a player enters a new level
 ============
 */
@@ -498,11 +436,9 @@ void() PutClientInServer =
 	self.armorvalue = 50;
 	self.armortype = 0.9;
 // - POX
-
 	DecodeLevelParms (); //POX v1.2 - exec autoconfig if needed, restore Target ID value
 	
 	W_SetCurrentAmmo ();
-
 	self.attack_finished = time;
 	self.th_pain = player_pain;
 	self.th_die = PlayerDie;
@@ -513,48 +449,36 @@ void() PutClientInServer =
 	
 // + POX resest reload_rocket after death
 	self.reload_rocket = 0;
-
 //resest triple shot after death
 	self.prime_tshot = FALSE;
 // - POX
-
 	spot = SelectSpawnPoint ();
-
 	self.origin = spot.origin + '0 0 1';
 	self.angles = spot.angles;
 	self.fixangle = TRUE;		// turn this way immediately
-
 	
 // oh, this is a hack!
 	setmodel (self, "progs/eyes.mdl");
 	modelindex_eyes = self.modelindex;
-
 	setmodel (self, "progs/player.mdl");
 	modelindex_player = self.modelindex;
-
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 	
 	self.view_ofs = '0 0 22';
-
 // Mod - Xian (May.20.97)
 // Bug where player would have velocity from their last kill
-
 	self.velocity = '0 0 0';
-
 	player_stand1 ();
 	
 	makevectors(self.angles);
 	spawn_tfog (self.origin + v_forward*20);
-
 	spawn_tdeath (self.origin, self);
-
 	// Set Rocket Jump Modifiers
 	if (stof(infokey(world, "rj")) != 0)
 	{		 
 		rj = stof(infokey(world, "rj"));
 	}
 // + POX - New DM mode stuff -----------------------------------------------------
-
 	//Last Man Standing Rules
 	if ((deathmatch & DM_LMS) && !self.LMS_registered)
 	{
@@ -566,7 +490,6 @@ void() PutClientInServer =
 		self.LMS_registered = TRUE;
 		lms_plrcount = lms_plrcount + 1;
 	}
-
 	// + POX - Dark Mode more stuff is done in Player_PostThink - doesn't work here (?)
 	if (deathmatch & DM_DARK)
 		flash_on(self);
@@ -617,9 +540,7 @@ void() PutClientInServer =
 		self.invisible_time = 1;
 		self.invisible_finished = time + 9999999999;
 	}
-
 // - POX - New DM mode stuff -----------------------------------------------------
-
 /*	if (deathmatch == 4)
 	{
 		self.ammo_shells = 0;
@@ -644,7 +565,6 @@ void() PutClientInServer =
 		self.invincible_time = 1;
 		self.invincible_finished = time + 3;
 	}
-
 	if (deathmatch == 5)
 	{
 		self.ammo_nails = 80;
@@ -666,56 +586,41 @@ void() PutClientInServer =
 		self.invincible_finished = time + 3;
 	}
 */
-
 };
-
-
 /*
 =============================================================================
-
 				QUAKED FUNCTIONS
-
 =============================================================================
 */
-
-
 /*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 24)
 The normal starting point for a level.
 */
 void() info_player_start =
 {
 };
-
-
 /*QUAKED info_player_start2 (1 0 0) (-16 -16 -24) (16 16 24)
 Only used on start map for the return point from an episode.
 */
 void() info_player_start2 =
 {
 };
-
 /*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 24)
 potential spawning position for deathmatch games
 */
 void() info_player_deathmatch =
 {
 };
-
 /*QUAKED info_player_coop (1 0 1) (-16 -16 -24) (16 16 24)
 potential spawning position for coop games
 */
 void() info_player_coop =
 {
 };
-
 /*
 ===============================================================================
-
 RULES
-
 ===============================================================================
 */
-
 /*
 go to the next level for deathmatch
 */
@@ -730,7 +635,6 @@ void() NextLevel =
 	
 	if (nextmap != "")
 		return; // already done
-
 	if (mapname == "start")
 	{
 		if (!cvar("registered"))
@@ -771,20 +675,16 @@ void() NextLevel =
 			o.map = mapname;
 		}
 	}
-
 	nextmap = o.map;
-
 	if (o.nextthink < time)
 	{
 		o.think = execute_changelevel;
 		o.nextthink = time + 0.1;
 	}
 };
-
 /*
 ============
 CheckRules
-
 Exit deathmatch games upon conditions
 ============
 */
@@ -811,13 +711,10 @@ void() CheckRules =
 	
 	// - POX
 };
-
 //============================================================================
-
 void() PlayerDeathThink =
 {
 	local float		forward;
-
 	if ((self.flags & FL_ONGROUND))
 	{
 		forward = vlen (self.velocity);
@@ -827,7 +724,6 @@ void() PlayerDeathThink =
 		else	
 			self.velocity = forward * normalize(self.velocity);
 	}
-
 // wait for all buttons released
 	if (self.deadflag == DEAD_DEAD)
 	{
@@ -836,11 +732,9 @@ void() PlayerDeathThink =
 		self.deadflag = DEAD_RESPAWNABLE;
 		return;
 	}
-
 // + POX - don't let players lay around as dead guys during a Last Man Standing game
 	if (!self.button2 && !self.button1 && !self.button0 && !(deathmatch & DM_LMS))
 		return;
-
 	if (deathmatch & DM_LMS)
 		stuffcmd (self, "wait;wait;wait;wait;wait;wait\n");
 	
@@ -848,14 +742,11 @@ void() PlayerDeathThink =
 //	if (!self.button2 && !self.button1 && !self.button0)
 //		return;
 // - POX
-
 	self.button0 = 0;
 	self.button1 = 0;
 	self.button2 = 0;
 	respawn();
 };
-
-
 void() PlayerJump =
 {
 	if (self.flags & FL_WATERJUMP)
@@ -873,7 +764,6 @@ void() PlayerJump =
 			else
 				sound (self, CHAN_BODY, "misc/water2.wav", 1, ATTN_NORM);
 		}
-
 		return;
 	}
 */
@@ -886,33 +776,24 @@ void() PlayerJump =
 			self.velocity_z = 80;
 		else
 			self.velocity_z = 50;
-
 		return;
 	}
 // - POX 
-
 	if (!(self.flags & FL_ONGROUND))
 		return;
-
 	if ( !(self.flags & FL_JUMPRELEASED) )
 		return;		// don't pogo stick
-
 	self.flags = self.flags - (self.flags & FL_JUMPRELEASED);	
 	self.button2 = 0;
-
 // player jumping sound
 	sound (self, CHAN_VOICE, "player/plyrjmp8.wav", 1, ATTN_NORM);
 };
-
-
 /*
 ===========
 WaterMove
-
 ============
 */
 .float	dmgtime;
-
 void() WaterMove =
 {
 //dprint (ftos(self.waterlevel));
@@ -920,7 +801,6 @@ void() WaterMove =
 		return;
 	if (self.health < 0)
 		return;
-
 	if (self.waterlevel != 3)
 	{
 		if (self.air_finished < time)
@@ -961,7 +841,6 @@ void() WaterMove =
 		}
 		return;
 	}
-
 	if (self.watertype == CONTENT_LAVA)
 	{	// do damage
 		if (self.dmgtime < time)
@@ -970,7 +849,6 @@ void() WaterMove =
 				self.dmgtime = time + 1;
 			else
 				self.dmgtime = time + 0.2;
-
 			T_Damage (self, world, world, 10*self.waterlevel);
 		}
 	}
@@ -985,20 +863,16 @@ void() WaterMove =
 	
 	if ( !(self.flags & FL_INWATER) )
 	{	
-
 // player enter water sound
-
 		if (self.watertype == CONTENT_LAVA)
 			sound (self, CHAN_BODY, "player/inlava.wav", 1, ATTN_NORM);
 		if (self.watertype == CONTENT_WATER)
 			sound (self, CHAN_VOICE, "player/inh2o.wav", 1, ATTN_NORM);
 		if (self.watertype == CONTENT_SLIME)
 			sound (self, CHAN_BODY, "player/slimbrn2.wav", 1, ATTN_NORM);
-
 		self.flags = self.flags + FL_INWATER;
 		self.dmgtime = 0;
 	}	
-
 // + POX - New water movement sounds
 if (self.waterlevel >= 3)
 	{
@@ -1046,13 +920,10 @@ if (self.waterlevel >= 3)
 		*/
 	}
 // - POX
-
 };
-
 void() CheckWaterJump =
 {
 	local vector start, end;
-
 // check for a jump-out-of-water
 	makevectors (self.angles);
 	start = self.origin;
@@ -1077,11 +948,9 @@ void() CheckWaterJump =
 		}
 	}
 };
-
 /*
 ================
 PlayerPreThink
-
 Called every frame before physics are run
 ================
 */
@@ -1092,12 +961,9 @@ void() PlayerPreThink =
 		IntermissionThink ();	// otherwise a button could be missed between
 		return;					// the think tics
 	}
-
 	if (self.view_ofs == '0 0 0')
 		return;		// intermission or finale
-
 	makevectors (self.v_angle);		// is this still used
-
     self.deathtype = "";
 	
 	CheckRules ();
@@ -1113,13 +979,11 @@ void() PlayerPreThink =
 		return;
 	}
 	// - POX
-
 	WaterMove ();
 /*
 	if (self.waterlevel == 2)
 		CheckWaterJump ();
 */
-
 	if (self.deadflag >= DEAD_DEAD)
 	{
 		PlayerDeathThink ();
@@ -1135,7 +999,6 @@ void() PlayerPreThink =
 	}
 	else
 		self.flags = self.flags | FL_JUMPRELEASED;
-
 // teleporters can force a non-moving pause time	
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
@@ -1155,7 +1018,6 @@ void() PlayerPreThink =
 /*
 ================
 CheckPowerups
-
 Check for turning off powerups
 ================
 */
@@ -1163,7 +1025,6 @@ void() CheckPowerups =
 {
 	if (self.health <= 0)
 		return;
-
 // + POX - Rot armour down to 150 (max 250)
 	if (self.armorvalue > 150 && self.armor_rot < time)
 	{
@@ -1175,7 +1036,6 @@ void() CheckPowerups =
 		self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR2;
 	}
 // - POX
-
 // invisibility
 	if (self.invisible_finished)
 	{
@@ -1185,8 +1045,6 @@ void() CheckPowerups =
 			sound (self, CHAN_AUTO, "items/inv3.wav", 0.5, ATTN_IDLE);
 			self.invisible_sound = time + ((random() * 3) + 1);
 		}
-
-
 		if (self.invisible_finished < time + 3)
 		{
 			if (self.invisible_time == 1)
@@ -1203,7 +1061,6 @@ void() CheckPowerups =
 				stuffcmd (self, "bf\n");
 			}
 		}
-
 		if (self.invisible_finished < time)
 		{	// just stopped
 			self.items = self.items - IT_INVISIBILITY;
@@ -1217,7 +1074,6 @@ void() CheckPowerups =
 	}
 	else
 		self.modelindex = modelindex_player;	// don't use eyes
-
 // invincibility
 	if (self.invincible_finished)
 	{
@@ -1257,13 +1113,10 @@ void() CheckPowerups =
 			self.effects = self.effects - (self.effects & EF_RED);
 		}
 	}
-
 // super damage
 	if (self.super_damage_finished)
 	{
-
 // sound and screen flash when items starts to run out
-
 		if (self.super_damage_finished < time + 3)
 		{
 			if (self.super_time == 1)
@@ -1283,7 +1136,6 @@ void() CheckPowerups =
 				stuffcmd (self, "bf\n");
 			}
 		}
-
 		if (self.super_damage_finished < time)
 		{	// just stopped
 			self.items = self.items - IT_QUAD;
@@ -1309,12 +1161,10 @@ void() CheckPowerups =
 			self.effects = self.effects - (self.effects & EF_BLUE);
 		}
 	}	
-
 // suit 
 	if (self.radsuit_finished)
 	{
 		self.air_finished = time + 12;		// don't drown
-
 // sound and screen flash when items starts to run out
 		if (self.radsuit_finished < time + 3)
 		{
@@ -1332,7 +1182,6 @@ void() CheckPowerups =
 				stuffcmd (self, "bf\n");
 			}
 		}
-
 		if (self.radsuit_finished < time)
 		{	// just stopped
 			self.items = self.items - IT_SUIT;
@@ -1340,13 +1189,10 @@ void() CheckPowerups =
 			self.radsuit_finished = 0;
 		}
 	}	
-
 };
-
 //POX v1.2 - PlayerRegen - for better handling of regen staion touch
 .float armregen;
 .float regen_finished;
-
 void() PlayerRegen =
 {   
 local	float	type, bit;
@@ -1357,13 +1203,11 @@ local string snd;
 		self.regen_finished = time;
 		return; // already have max armour that station can give
 	}
-
 	self.armorvalue = self.armorvalue + 3;
 	
 	//Cap armour
 	if (self.armorvalue > self.armregen)
 		self.armorvalue = self.armregen;
-
 	if (self.armorvalue > 150) //Equivlent to Red (level 3) Armour
 	{
 		type = 0.8;
@@ -1396,13 +1240,10 @@ local string snd;
 	
 	//POX - 1.01b - Don't allow armour to rot while recharging
 	self.armor_rot = time + 5;
-
 };
-
 /*
 ================
 PlayerPostThink
-
 Called every frame after physics are run
 ================
 */
@@ -1421,7 +1262,6 @@ void() PlayerPostThink =
 			self.cshift_off = TRUE;
 		}
 	}
-
 	if (self.view_ofs == '0 0 0')
 		return;		// intermission or finale
 	
@@ -1459,7 +1299,6 @@ void() PlayerPostThink =
 		else
 			sound (self, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);
 	}
-
 	self.jump_flag = self.velocity_z;
 	
 	//POX v1.2 - better regen touch handling
@@ -1467,22 +1306,16 @@ void() PlayerPostThink =
 		PlayerRegen ();
 	
 	CheckPowerups ();
-
 	W_WeaponFrame ();
-
 };
-
-
 /*
 ===========
 ClientConnect
-
 called when a player connects to a server
 ============
 */
 void() ClientConnect =
 {
-
 // + POX - I hard coded some environmental changes to prevent tampering....
 // NOTE: autoexec.cfg is called at DecodeLevelParms (QW ignores it when called from quake.rc - which is also ignored)
 // POX v1.12 added 'fov 90' (mostly for lms_observer additions)
@@ -1491,7 +1324,6 @@ void() ClientConnect =
 	
 	//POX v1.12 - why bother...
 	//sprint (self, PRINT_HIGH, "\n\n---------------\nPOXworld v1.11b\n---------------\n\n");
-
 // + POX LMS late joiners get booted to spectate
 	if (!(deathmatch & DM_LMS))
 	{
@@ -1532,17 +1364,13 @@ void() ClientConnect =
 		
 	}
 		
-
 // a client connecting during an intermission can cause problems
 	if (intermission_running)
 		GotoNextMap ();
 };
-
-
 /*
 ===========
 ClientDisconnect
-
 called when a player disconnects from a server
 ============
 */
@@ -1554,7 +1382,6 @@ void() ClientDisconnect =
 	bprint (PRINT_HIGH, ftos(self.frags));
 	bprint (PRINT_HIGH, " frags\n");
 	sound (self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NONE);
-
 // + POX
 	if ((deathmatch & DM_LMS) && (self.LMS_registered))
 	{
@@ -1567,21 +1394,17 @@ void() ClientDisconnect =
 	
 	set_suicide_frame ();
 };
-
 /*
 ===========
 ClientObituary
-
 called when a player dies
 ============
 */
-
 void(entity targ, entity attacker) ClientObituary =
 {
 	local	float rnum;
 	local	string deathstring, deathstring2;
 	local	string	attackerteam, targteam;
-
 	rnum = random();
 	//ZOID 12-13-96: self.team doesn't work in QW.	Use keys
 	attackerteam = infokey(attacker, "team");
@@ -1605,7 +1428,6 @@ void(entity targ, entity attacker) ClientObituary =
 			
 			if (lms_plrcount <= 1) //1 or no players left so end the game
 				lms_gameover = TRUE;//POX v1.2 - Check this in CheckRules (so frag logging is still done)
-
 			//Put'em into LMS observer mode at next spawn
 			//POX v1.12 - fixed a stupid overlook on my part - said 'self.' (!?)
 			targ.frags = 0;
@@ -1618,7 +1440,6 @@ void(entity targ, entity attacker) ClientObituary =
 	
 	if (targ.classname == "player")
 	{
-
 		/*if (deathmatch > 3)	
 		{
 			if (targ.deathtype == "selfwater")
@@ -1629,7 +1450,6 @@ void(entity targ, entity attacker) ClientObituary =
 				return;
 			}
 		}*/
-
 		if (attacker.classname == "teledeath")
 		{
 			bprint (PRINT_MEDIUM,targ.netname);
@@ -1644,7 +1464,6 @@ void(entity targ, entity attacker) ClientObituary =
 				
 			return;
 		}
-
 		if (attacker.classname == "teledeath2")
 		{
 			bprint (PRINT_MEDIUM,"MegaSheild's power deflects ");
@@ -1655,10 +1474,8 @@ void(entity targ, entity attacker) ClientObituary =
 			
 			if (!(deathmatch & DM_LMS)) //POX 1.2 - do regular obituary taunts in LMS mode
 				targ.frags = targ.frags - 1;
-
 			return;
 		}
-
 		// double 666 telefrag (can happen often in deathmatch 4)
 		if (attacker.classname == "teledeath3") 
 		{
@@ -1671,11 +1488,9 @@ void(entity targ, entity attacker) ClientObituary =
 			
 			if (!(deathmatch & DM_LMS)) //POX 1.2 - do regular obituary taunts in LMS mode
 				targ.frags = targ.frags - 1;
-
 			return;
 		}
 	
-
 		if (targ.deathtype == "squish")
 		{
 			if (teamplay && targteam == attackerteam && attackerteam != "" && targ != attacker)
@@ -1715,7 +1530,6 @@ void(entity targ, entity attacker) ClientObituary =
 				return;
 			}
 		}
-
 		if (attacker.classname == "player")
 		{
 			if (targ == attacker)
@@ -1762,7 +1576,6 @@ void(entity targ, entity attacker) ClientObituary =
 				
 				if (!(deathmatch & DM_LMS)) //POX 1.2 - do regular obituary taunts in LMS mode
 					attacker.frags = attacker.frags - 1;
-
 				return;
 			}
 			else
@@ -1898,9 +1711,7 @@ void(entity targ, entity attacker) ClientObituary =
 			
 			if (!(deathmatch & DM_LMS)) //POX 1.2 - do regular obituary taunts in LMS mode
 				targ.frags = targ.frags - 1;		// killed self
-
 			rnum = targ.watertype;
-
 			bprint (PRINT_MEDIUM,targ.netname);
 			if (rnum == -3)
 			{
@@ -1962,7 +1773,6 @@ void(entity targ, entity attacker) ClientObituary =
 				bprint (PRINT_MEDIUM," tried to leave\n");
 				return;
 			}
-
 			bprint (PRINT_MEDIUM," died\n");
 		}
 	}

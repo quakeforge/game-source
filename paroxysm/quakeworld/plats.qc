@@ -1,5 +1,4 @@
 
-
 void() plat_center_touch;
 void() plat_outside_touch;
 void() plat_trigger_use;
@@ -7,12 +6,10 @@ void() plat_go_up;
 void() plat_go_down;
 void() plat_crush;
 float PLAT_LOW_TRIGGER = 1;
-
 void() plat_spawn_inside_trigger =
 {
 	local entity	trigger;
 	local vector	tmin, tmax;
-
 //
 // middle trigger
 //	
@@ -41,7 +38,6 @@ void() plat_spawn_inside_trigger =
 	
 	setsize (trigger, tmin, tmax);
 };
-
 void() plat_hit_top =
 {
 	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise1, 1, ATTN_NORM);
@@ -49,27 +45,23 @@ void() plat_hit_top =
 	self.think = plat_go_down;
 	self.nextthink = self.ltime + 3;
 };
-
 void() plat_hit_bottom =
 {
 	sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 	self.state = STATE_BOTTOM;
 };
-
 void() plat_go_down =
 {
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_DOWN;
 	SUB_CalcMove (self.pos2, self.speed, plat_hit_bottom);
 };
-
 void() plat_go_up =
 {
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_UP;
 	SUB_CalcMove (self.pos1, self.speed, plat_hit_top);
 };
-
 void() plat_center_touch =
 {
 	if (other.classname != "player")
@@ -77,19 +69,16 @@ void() plat_center_touch =
 		
 	if (other.health <= 0)
 		return;
-
 	self = self.enemy;
 	if (self.state == STATE_BOTTOM)
 		plat_go_up ();
 	else if (self.state == STATE_TOP)
 		self.nextthink = self.ltime + 1;	// delay going down
 };
-
 void() plat_outside_touch =
 {
 	if (other.classname != "player")
 		return;
-
 	if (other.health <= 0)
 		return;
 		
@@ -98,19 +87,15 @@ void() plat_outside_touch =
 	if (self.state == STATE_TOP)
 		plat_go_down ();
 };
-
 void() plat_trigger_use =
 {
 	if (self.think)
 		return;		// allready activated
 	plat_go_down();
 };
-
-
 void() plat_crush =
 {
 //dprint ("plat_crush\n");
-
 	other.deathtype = "squish";
 	T_Damage (other, self, self, 1);
 	
@@ -121,7 +106,6 @@ void() plat_crush =
 	else
 		objerror ("plat_crush: bad self.state\n");
 };
-
 void() plat_use =
 {
 	self.use = SUB_Null;
@@ -129,34 +113,24 @@ void() plat_use =
 		objerror ("plat_use: not in up state");
 	plat_go_down();
 };
-
-
 /*QUAKED func_plat (0 .5 .8) ? PLAT_LOW_TRIGGER
 speed	default 150
-
 Plats are always drawn in the extended position, so they will light correctly.
-
 If the plat is the target of another trigger or button, it will start out disabled in the extended position until it is trigger, when it will lower and become a normal plat.
-
 If the "height" key is set, that will determine the amount the plat moves, instead of being implicitly determined by the model's height.
 Set "sounds" to one of the following:
 1) base fast
 2) chain slow
 */
-
-
 void() func_plat =
-
 {
 	if (!self.t_length)
 		self.t_length = 80;
 	if (!self.t_width)
 		self.t_width = 10;
-
 	if (self.sounds == 0)
 		self.sounds = 3;// + POX - changed from 2
 // FIX THIS TO LOAD A GENERIC PLAT SOUND
-
 	if (self.sounds == 1)
 	{
 		precache_sound ("plats/plat1.wav");
@@ -164,7 +138,6 @@ void() func_plat =
 		self.noise = "plats/plat1.wav";
 		self.noise1 = "plats/plat2.wav";
 	}
-
 	if (self.sounds == 2)
 	{
 		precache_sound ("plats/medplat1.wav");
@@ -180,7 +153,6 @@ void() func_plat =
 		self.noise = "doors/hydro1.wav";
 		self.noise1 = "doors/hydro2.wav";
 	}
-
 	if (self.sounds == 4)
 	{
 		precache_sound ("doors/stndr1.wav");
@@ -188,7 +160,6 @@ void() func_plat =
 		self.noise = "doors/stndr1.wav";
 		self.noise1 = "doors/stndr2.wav";
 	}
-
 	if (self.sounds == 5)
 	{
 		precache_sound ("doors/ddoor1.wav");
@@ -197,21 +168,17 @@ void() func_plat =
 		self.noise1 = "doors/ddoor1.wav";
 	}
 // - POX
-
 	self.mangle = self.angles;
 	self.angles = '0 0 0';
-
 	self.classname = "plat";
 	self.solid = SOLID_BSP;
 	self.movetype = MOVETYPE_PUSH;
 	setorigin (self, self.origin);	
 	setmodel (self, self.model);
 	setsize (self, self.mins , self.maxs);
-
 	self.blocked = plat_crush;
 	if (!self.speed)
 		self.speed = 150;
-
 // pos1 is the top position, pos2 is the bottom
 	self.pos1 = self.origin;
 	self.pos2 = self.origin;
@@ -219,11 +186,8 @@ void() func_plat =
 		self.pos2_z = self.origin_z - self.height;
 	else
 		self.pos2_z = self.origin_z - self.size_z + 8;
-
 	self.use = plat_trigger_use;
-
 	plat_spawn_inside_trigger ();	// the "start moving" trigger	
-
 	if (self.targetname)
 	{
 		self.state = STATE_UP;
@@ -235,12 +199,9 @@ void() func_plat =
 		self.state = STATE_BOTTOM;
 	}
 };
-
 //============================================================================
-
 void() train_next;
 void() func_train_find;
-
 void() train_blocked =
 {
 	if (time < self.attack_finished)
@@ -249,14 +210,12 @@ void() train_blocked =
 	other.deathtype = "squish";
 	T_Damage (other, self, self, self.dmg);
 };
-
 void() train_use =
 {
 	if (self.think != func_train_find)
 		return;		// already activated
 	train_next();
 };
-
 void() train_wait =
 {
 	if (self.wait)
@@ -269,11 +228,9 @@ void() train_wait =
 	
 	self.think = train_next;
 };
-
 void() train_next =
 {
 	local entity	targ;
-
 	targ = find (world, targetname, self.target);
 	self.target = targ.target;
 	if (!self.target)
@@ -285,12 +242,9 @@ void() train_next =
 	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 	SUB_CalcMove (targ.origin - self.mins, self.speed, train_wait);
 };
-
 void() func_train_find =
-
 {
 	local entity	targ;
-
 	targ = find (world, targetname, self.target);
 	self.target = targ.target;
 	setorigin (self, targ.origin - self.mins);
@@ -300,7 +254,6 @@ void() func_train_find =
 		self.think = train_next;
 	}
 };
-
 /*QUAKED func_train (0 .5 .8) ?
 Trains are moving platforms that players can ride.
 The targets origin specifies the min point of the train at each corner.
@@ -310,7 +263,6 @@ speed	default 100
 dmg		default 2
 sounds
 1) ratchet metal
-
 */
 void() func_train =
 {	
@@ -320,7 +272,6 @@ void() func_train =
 		objerror ("func_train without a target");
 	if (!self.dmg)
 		self.dmg = 2;
-
 	if (self.sounds == 0)
 	{
 		self.noise = ("misc/null.wav");
@@ -328,7 +279,6 @@ void() func_train =
 		self.noise1 = ("misc/null.wav");
 		precache_sound ("misc/null.wav");
 	}
-
 	if (self.sounds == 1)
 	{
 		self.noise = ("plats/train2.wav");
@@ -336,24 +286,20 @@ void() func_train =
 		self.noise1 = ("plats/train1.wav");
 		precache_sound ("plats/train1.wav");
 	}
-
 	self.cnt = 1;
 	self.solid = SOLID_BSP;
 	self.movetype = MOVETYPE_PUSH;
 	self.blocked = train_blocked;
 	self.use = train_use;
 	self.classname = "train";
-
 	setmodel (self, self.model);
 	setsize (self, self.mins , self.maxs);
 	setorigin (self, self.origin);
-
 // start trains on the second frame, to make sure their targets have had
 // a chance to spawn
 	self.nextthink = self.ltime + 0.1;
 	self.think = func_train_find;
 };
-
 /*QUAKED misc_teleporttrain (0 .5 .8) (-8 -8 -8) (8 8 8)
 This is used for the final bos
 */
@@ -363,27 +309,22 @@ void() misc_teleporttrain =
 		self.speed = 100;
 	if (!self.target)
 		objerror ("func_train without a target");
-
 	self.cnt = 1;
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_PUSH;
 	self.blocked = train_blocked;
 	self.use = train_use;
 	self.avelocity = '100 200 300';
-
 	self.noise = ("misc/null.wav");
 	precache_sound ("misc/null.wav");
 	self.noise1 = ("misc/null.wav");
 	precache_sound ("misc/null.wav");
-
 	precache_model2 ("progs/teleport.mdl");
 	setmodel (self, "progs/teleport.mdl");
 	setsize (self, self.mins , self.maxs);
 	setorigin (self, self.origin);
-
 // start trains on the second frame, to make sure their targets have had
 // a chance to spawn
 	self.nextthink = self.ltime + 0.1;
 	self.think = func_train_find;
 };
-

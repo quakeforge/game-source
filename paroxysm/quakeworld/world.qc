@@ -1,49 +1,38 @@
 
 void() InitBodyQue;
-
-
 void() main =
 {
 	dprint ("main function\n");
 	
 // these are just commands the the prog compiler to copy these files
-
 	precache_file ("progs.dat");
 	precache_file ("gfx.wad");
 	precache_file ("quake.rc");
 	precache_file ("default.cfg");
-
 	precache_file ("end1.bin");
 	precache_file2 ("end2.bin");
-
 	precache_file ("demo1.dem");
 	precache_file ("demo2.dem");
 	precache_file ("demo3.dem");
-
 //
 // these are all of the lumps from the cached.ls files
 //
 	precache_file ("gfx/palette.lmp");
 	precache_file ("gfx/colormap.lmp");
-
 	precache_file2 ("gfx/pop.lmp");
-
 	precache_file ("gfx/complete.lmp");
 	precache_file ("gfx/inter.lmp");
-
 	precache_file ("gfx/ranking.lmp");
 	precache_file ("gfx/vidmodes.lmp");
 	precache_file ("gfx/finale.lmp");
 	precache_file ("gfx/conback.lmp");
 	precache_file ("gfx/qplaque.lmp");
-
 	precache_file ("gfx/menudot1.lmp");
 	precache_file ("gfx/menudot2.lmp");
 	precache_file ("gfx/menudot3.lmp");
 	precache_file ("gfx/menudot4.lmp");
 	precache_file ("gfx/menudot5.lmp");
 	precache_file ("gfx/menudot6.lmp");
-
 	precache_file ("gfx/menuplyr.lmp");
 	precache_file ("gfx/bigbox.lmp");
 	precache_file ("gfx/dim_modm.lmp");
@@ -87,26 +76,20 @@ void() main =
 	precache_file ("gfx/help3.lmp");
 	precache_file ("gfx/help4.lmp");
 	precache_file ("gfx/help5.lmp");
-
 	precache_file ("gfx/pause.lmp");
 	precache_file ("gfx/loading.lmp");
-
 	precache_file ("gfx/p_option.lmp");
 	precache_file ("gfx/p_load.lmp");
 	precache_file ("gfx/p_save.lmp");
 	precache_file ("gfx/p_multi.lmp");
-
 // sounds loaded by C code
 	precache_sound ("misc/menu1.wav");
 	precache_sound ("misc/menu2.wav");
 	precache_sound ("misc/menu3.wav");
-
 	precache_sound ("ambience/water1.wav");
 	precache_sound ("ambience/wind2.wav");
-
 // shareware
 	precache_file ("maps/start.bsp");
-
 	precache_file ("maps/e1m1.bsp");
 	precache_file ("maps/e1m2.bsp");
 	precache_file ("maps/e1m3.bsp");
@@ -115,10 +98,8 @@ void() main =
 	precache_file ("maps/e1m6.bsp");
 	precache_file ("maps/e1m7.bsp");
 	precache_file ("maps/e1m8.bsp");
-
 // registered
 	precache_file2 ("gfx/pop.lmp");
-
 	precache_file2 ("maps/e2m1.bsp");
 	precache_file2 ("maps/e2m2.bsp");
 	precache_file2 ("maps/e2m3.bsp");
@@ -126,7 +107,6 @@ void() main =
 	precache_file2 ("maps/e2m5.bsp");
 	precache_file2 ("maps/e2m6.bsp");
 	precache_file2 ("maps/e2m7.bsp");
-
 	precache_file2 ("maps/e3m1.bsp");
 	precache_file2 ("maps/e3m2.bsp");
 	precache_file2 ("maps/e3m3.bsp");
@@ -134,7 +114,6 @@ void() main =
 	precache_file2 ("maps/e3m5.bsp");
 	precache_file2 ("maps/e3m6.bsp");
 	precache_file2 ("maps/e3m7.bsp");
-
 	precache_file2 ("maps/e4m1.bsp");
 	precache_file2 ("maps/e4m2.bsp");
 	precache_file2 ("maps/e4m3.bsp");
@@ -143,9 +122,7 @@ void() main =
 	precache_file2 ("maps/e4m6.bsp");
 	precache_file2 ("maps/e4m7.bsp");
 	precache_file2 ("maps/e4m8.bsp");
-
 	precache_file2 ("maps/end.bsp");
-
 	precache_file2 ("maps/dm1.bsp");
 	precache_file2 ("maps/dm2.bsp");
 	precache_file2 ("maps/dm3.bsp");
@@ -153,16 +130,12 @@ void() main =
 	precache_file2 ("maps/dm5.bsp");
 	precache_file2 ("maps/dm6.bsp");
 };
-
-
 entity	lastspawn;
-
 //=======================
 /*QUAKED worldspawn (0 0 0) ?
 Only used for the world entity.
 Set message to the level name.
 Set sounds to the cd track to play.
-
 World Types:
 0: medieval
 1: metal
@@ -173,37 +146,27 @@ void() worldspawn =
 {
 	lastspawn = world;
 	InitBodyQue ();
-
-	rj = 1;
-
 // custom map attributes
-
 	if (self.model == "maps/e1m8.bsp")
 		cvar_set ("sv_gravity", "100");
 // +POX
 	else
 		cvar_set ("sv_gravity", "790");
 		cvar_set ("sv_friction", "3.12");
-
 // + POX-- make sure gamedir is "pox"
-	if (infokey(world, "*gamedir") != "pox") 
-		error("Gamedir must be pox\n");
+	if (infokey(world, "*gamedir") != "paroxysm") 
+		error("Gamedir must be \"paroxysm\"\n");
 // - POX
-
 	//POX - for Last Man Standing Mode
 	fraglimit_LMS = cvar("fraglimit");
-
 // -POX
 		
 // the area based ambient sounds MUST be the first precache_sounds
-
 // player precaches	
 	W_Precache ();			// get weapon precaches
-
 // sounds used from C physics code
 	precache_sound ("demon/dland2.wav");		// landing thud
 	precache_sound ("misc/h2ohit1.wav");		// landing splash
-
 // setup precaches allways needed
 	precache_sound ("items/itembk2.wav");		// item respawn sound
 	precache_sound ("player/plyrjmp8.wav");		// player jump
@@ -214,7 +177,6 @@ void() worldspawn =
 	precache_sound ("player/gasp1.wav");		// gasping for air
 	precache_sound ("player/gasp2.wav");		// taking breath
 	precache_sound ("player/h2odeath.wav");		// drowning death
-
 	precache_sound ("misc/talk.wav");			// talk
 	precache_sound ("player/teledth1.wav");		// telefrag
 	precache_sound ("misc/r_tele1.wav");		// teleport sounds
@@ -228,69 +190,54 @@ void() worldspawn =
 	precache_sound ("weapons/lhit.wav");		//lightning
 	precache_sound ("weapons/lstart.wav");		//lightning start
 	precache_sound ("items/damage3.wav");
-
 	precache_sound ("misc/power.wav");			//lightning for boss
-
 // player gib sounds
 	precache_sound ("player/gib.wav");			// player gib sound
 	precache_sound ("player/udeath.wav");		// player gib sound
 	precache_sound ("player/tornoff2.wav");		// gib sound
-
 // player pain sounds
-
 	precache_sound ("player/pain1.wav");
 	precache_sound ("player/pain2.wav");
 	precache_sound ("player/pain3.wav");
 	precache_sound ("player/pain4.wav");
 	precache_sound ("player/pain5.wav");
 	precache_sound ("player/pain6.wav");
-
 // player death sounds
 	precache_sound ("player/death1.wav");
 	precache_sound ("player/death2.wav");
 	precache_sound ("player/death3.wav");
 	precache_sound ("player/death4.wav");
 	precache_sound ("player/death5.wav");
-
 	precache_sound ("boss1/sight1.wav");
-
 // ax sounds	
 	precache_sound ("weapons/ax1.wav");			// ax swoosh
 	precache_sound ("player/axhit1.wav");		// ax hit meat
 	precache_sound ("player/axhit2.wav");		// ax hit world
-
 	precache_sound ("player/h2ojump.wav");		// player jumping into water
 	precache_sound ("player/slimbrn2.wav");		// player enter slime
 	precache_sound ("player/inh2o.wav");		// player enter water
 	precache_sound ("player/inlava.wav");		// player enter lava
 	precache_sound ("misc/outwater.wav");		// leaving water sound
-
 	precache_sound ("player/lburn1.wav");		// lava burn
 	precache_sound ("player/lburn2.wav");		// lava burn
-
 	precache_sound ("misc/water1.wav");			// swimming
 	precache_sound ("misc/water2.wav");			// swimming
-
 // Invulnerability sounds
 	precache_sound ("items/protect.wav");
 	precache_sound ("items/protect2.wav");
 	precache_sound ("items/protect3.wav");
-
 // POX - for Predator Mode
 	precache_sound ("items/inv1.wav");
 	precache_sound ("items/inv2.wav");
 	precache_sound ("items/inv3.wav");
-
 	precache_model ("progs/player.mdl");
 	precache_model ("progs/eyes.mdl");
 	precache_model ("progs/h_player.mdl");
 	precache_model ("progs/gib1.mdl");
 	precache_model ("progs/gib2.mdl");
 	precache_model ("progs/gib3.mdl");
-
 	precache_model ("progs/s_bubble.spr");	// drowning bubbles
 	precache_model ("progs/s_explod.spr");	// sprite explosion
-
 	precache_model ("progs/v_axe.mdl");
 	/*
 	precache_model ("progs/v_shot.mdl");
@@ -299,8 +246,6 @@ void() worldspawn =
 	precache_model ("progs/v_shot2.mdl");
 	precache_model ("progs/v_nail2.mdl");
 	precache_model ("progs/v_rock2.mdl");
-
-
 	precache_model ("progs/bolt.mdl");		// for lightning gun
 	precache_model ("progs/bolt2.mdl");		// for lightning gun
 	precache_model ("progs/bolt3.mdl");		// for boss shock
@@ -311,13 +256,9 @@ void() worldspawn =
 	precache_model ("progs/grenade.mdl");
 	precache_model ("progs/spike.mdl");
 	precache_model ("progs/s_spike.mdl");
-
 	precache_model ("progs/backpack.mdl");
-
 	precache_model ("progs/zom_gib.mdl");
-
 	//precache_model ("progs/v_light.mdl");
-
 // + POX precaches
 	precache_sound ("misc/owater2.wav");		// leaving water sound
 	precache_sound ("misc/inh2ob.wav");			// renter water
@@ -337,7 +278,6 @@ void() worldspawn =
 	precache_sound ("misc/foot2.wav");
 	precache_sound ("misc/foot3.wav");
 	precache_sound ("misc/foot4.wav");
-
 	//Narration
 	precache_sound ("nar/n_elim.wav");
 	
@@ -350,11 +290,9 @@ void() worldspawn =
 	//Bounce pad sound
 	precache_sound ("misc/menu2.wav");
 // - POX
-
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
 //
-
 		// 0 normal
 	lightstyle(0, "m");
 	
@@ -388,23 +326,18 @@ void() worldspawn =
 // + POX lightstyles
 	// 12 SLOW STROBE2
 	lightstyle(12, "ggggggzzzzzzgggggg");
-
 	// 13 SLOW STROBE3
 	lightstyle(13, "ggggggggggggzzzzzz");
 	
 	// 10 FLUORESCENT FLICKER
 	lightstyle(10, "bbbbbmmmccmmamambbbmmbbbbmmaammmcccmamamm");
-
 	// 11 SLOW PULSE NOT FADE TO BLACK
 	lightstyle(11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
 	
 	// styles 32-62 are assigned by the light program for switchable lights
-
 	// 63 testing
 	lightstyle(63, "a");
-
 };
-
 void() StartFrame =
 {
 	timelimit = cvar("timelimit") * 60;
@@ -415,22 +348,16 @@ void() StartFrame =
 	
 	framecount = framecount + 1;
 };
-
 /*
 ==============================================================================
-
 BODY QUE
-
 ==============================================================================
 */
-
 entity	bodyque_head;
-
 void() bodyque =
 {	// just here so spawn functions don't complain after the world
 	// creates bodyques
 };
-
 void() InitBodyQue =
 {
 	bodyque_head = spawn();
@@ -443,8 +370,6 @@ void() InitBodyQue =
 	bodyque_head.owner.owner.owner.classname = "bodyque";
 	bodyque_head.owner.owner.owner.owner = bodyque_head;
 };
-
-
 // make a body que entry for the given ent so the ent can be
 // respawned elsewhere
 void(entity ent) CopyToBodyQue =
@@ -461,5 +386,3 @@ void(entity ent) CopyToBodyQue =
 	setsize (bodyque_head, ent.mins, ent.maxs);
 	bodyque_head = bodyque_head.owner;
 };
-
-
