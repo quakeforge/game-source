@@ -85,7 +85,6 @@ float()	WizardCheckAttack =
 {
 	local entity	targ;
 	local float		chance;
-	local vector	spot1, spot2;	
 
 	if (time < self.attack_finished)
 		return FALSE;
@@ -103,10 +102,8 @@ float()	WizardCheckAttack =
 	targ = self.enemy;
 
 	// see if any entities are in the way of the shot
-	spot1 = self.origin + self.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
-
-	traceline (spot1, spot2, FALSE, self);
+	traceline (self.origin + self.view_ofs, targ.origin + targ.view_ofs,
+			   FALSE, self);
 
 	if (trace_ent != targ) {	// don't have a clear shot, so move to a side
 		if (self.attack_state != AS_STRAIGHT) {
@@ -115,7 +112,8 @@ float()	WizardCheckAttack =
 		}
 		return FALSE;
 	}
-			
+
+	chance = 0;			// FIXME: DAMN IDIOTIC WARNINGS!			
 	switch (enemy_range) {
 	case RANGE_MELEE:
 		chance = 0.9;
@@ -199,8 +197,7 @@ void() Wiz_StartFast =
 	missile.owner = self;
 	missile.nextthink = time + 0.6;
 	setsize (missile, '0 0 0', '0 0 0');
-	setorigin (missile, self.origin + '0 0 30' + v_forward * 14 + v_righ
-			   * 14);
+	setorigin (missile, self.origin + '0 0 30' + 14 * (v_forward + v_right));
 	missile.enemy = self.enemy;
 	missile.nextthink = time + 0.8;
 	missile.think = Wiz_FastFire;
@@ -209,9 +206,8 @@ void() Wiz_StartFast =
 	missile = spawn ();
 	missile.owner = self;
 	missile.nextthink = time + 1;
-	setsize (missile, '0 0 0', '0 0 0');		
-	setorigin (missile, self.origin + '0 0 30' + v_forward * 14 + v_right
-			   * -14);
+	setsize (missile, '0 0 0', '0 0 0');
+	setorigin (missile, self.origin + '0 0 30' + 14 * (v_forward - v_right));
 	missile.enemy = self.enemy;
 	missile.nextthink = time + 0.3;
 	missile.think = Wiz_FastFire;

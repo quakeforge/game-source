@@ -238,8 +238,6 @@ void(float num_bubbles) DeathBubbles;
 
 void() PainSound =
 {
-	local float             rs;
-
 	if (self.health < 0)
 		return;
 

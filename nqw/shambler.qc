@@ -1,10 +1,4 @@
-/*
-==============================================================================
-
-SHAMBLER
-
-==============================================================================
-*/
+// SHAMBLER ===================================================================
 
 $cd id1/models/shams
 $origin 0 0 24
@@ -95,7 +89,6 @@ void() sham_smash7     =[      $smash7,       sham_smash8    ] {ai_charge(0);};
 void() sham_smash8     =[      $smash8,       sham_smash9    ] {ai_charge(0);};
 void() sham_smash9     =[      $smash9,       sham_smash10   ] {ai_charge(0);};
 void() sham_smash10    =[      $smash10,      sham_smash11   ] {
-	local vector	delta;
 	local float		ldmg;
 
 	if (!self.enemy)
@@ -103,9 +96,7 @@ void() sham_smash10    =[      $smash10,      sham_smash11   ] {
 
 	ai_charge (0);
 
-	delta = self.enemy.origin - self.origin;
-
-	if (vlen (delta) > 100)
+	if (vlen (self.enemy.origin - self.origin) > 100)
 		return;
 	if (!CanDamage (self.enemy, self))
 		return;
@@ -115,9 +106,9 @@ void() sham_smash10    =[      $smash10,      sham_smash11   ] {
 	sound (self, CHAN_VOICE, "shambler/smack.wav", 1, ATTN_NORM);
 
 	SpawnMeatSpray (self.origin + v_forward * 16,
-					v_right * (200 * (random () - 0.5));
+					v_right * 200 * (random () - 0.5));
 	SpawnMeatSpray (self.origin + v_forward * 16,
-					v_right * (200 * (random () - 0.5));
+					v_right * 200 * (random () - 0.5));
 };
 void() sham_smash11    =[      $smash11,      sham_smash12   ] {ai_charge(5);};
 void() sham_smash12    =[      $smash12,      sham_run1	   ] {ai_charge(4);};

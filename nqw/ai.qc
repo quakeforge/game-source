@@ -1,9 +1,9 @@
-void() movetarget_f;
-void() t_movetarget;
-void() knight_walk1;
-void() knight_bow6;
-void() knight_bow1;
-void(entity etemp, entity stemp, entity stemp, float dmg) T_Damage;
+void () movetarget_f;
+void () t_movetarget;
+void () knight_walk1;
+void () knight_bow6;
+void () knight_bow1;
+void (entity etemp, entity stemp, entity stemp, float dmg) T_Damage;
 /*
 .enemy
 Will be world if not currently angry at anyone.
@@ -38,15 +38,6 @@ float	current_yaw;
 entity	sight_entity;
 float	sight_entity_time;
 
-float(float v) anglemod =
-{
-	while (v >= 360)
-		v = v - 360;
-	while (v < 0)
-		v = v + 360;
-	return v;
-};
-
 /*
 ==============================================================================
 MOVETARGET CODE
@@ -63,7 +54,8 @@ pausetime
 The number of seconds to spend standing or bowing for path_stand or path_bow
 ==============================================================================
 */
-void() movetarget_f =
+void ()
+movetarget_f =
 {
 	if (!self.targetname)
 		objerror ("monster_movetarget: no targetname");
@@ -71,13 +63,13 @@ void() movetarget_f =
 	self.solid = SOLID_TRIGGER;
 	self.touch = t_movetarget;
 	setsize (self, '-8 -8 -8', '8 8 8');
-	
 };
 
 /*QUAKED path_corner (0.5 0.3 0) (-8 -8 -8) (8 8 8)
 Monsters will continue walking towards the next target corner.
 */
-void() path_corner =
+void ()
+path_corner =
 {
 	movetarget_f ();
 };
@@ -90,7 +82,8 @@ Something has bumped into a movetarget.  If it is a monster
 moving towards it, change the next destination and continue.
 ==============
 */
-void() t_movetarget =
+void ()
+t_movetarget =
 {
 	local entity	temp;
 
@@ -130,7 +123,8 @@ returns the range catagorization of an entity reletive to self
 3	only triggered by damage
 =============
 */
-float(entity targ) range =
+float (entity targ)
+range =
 {
 	local vector	spot1, spot2;
 	local float		r;
@@ -155,7 +149,8 @@ visible
 returns 1 if the entity is visible to self, even if not infront ()
 =============
 */
-float (entity targ) visible =
+float (entity targ)
+visible =
 {
 	local vector	spot1, spot2;
 
@@ -178,7 +173,8 @@ infront
 returns 1 if the entity is in front (in sight) of self
 =============
 */
-float(entity targ) infront =
+float (entity targ)
+infront =
 {
 	local vector	vec;
 	local float		dot;
@@ -210,7 +206,7 @@ void() ChangeYaw =
 
 //	current_yaw = self.ideal_yaw;
 	// mod down the current angle
-	current_yaw = anglemod (self.angles_y);
+	current_yaw = self.angles_y % 360;
 	ideal = self.ideal_yaw;
 
 	if (current_yaw == ideal)
@@ -233,7 +229,7 @@ void() ChangeYaw =
 			move = 0 - self.yaw_speed;
 	}
 
-	current_yaw = anglemod (current_yaw + move);
+	current_yaw = (current_yaw + move) % 360;
 
 	self.angles_y = current_yaw;
 };
@@ -241,7 +237,8 @@ void() ChangeYaw =
 
 //============================================================================
 
-void() HuntTarget =
+void ()
+HuntTarget =
 {
 	self.goalentity = self.enemy;
 	self.think = self.th_run;
@@ -250,7 +247,8 @@ void() HuntTarget =
 	SUB_AttackFinished (1);	// wait a while before first attack
 };
 
-void() SightSound =
+void ()
+SightSound =
 {
 	local float		rsnd;
 
@@ -302,7 +300,8 @@ void() SightSound =
 	}
 };
 
-void() FoundTarget =
+void ()
+FoundTarget =
 {
 	if (self.enemy.classname == "player") {
 		// let other monsters see this monster for a while
@@ -333,7 +332,8 @@ checked each frame.  This means multi player games will have slightly
 slower noticing monsters.
 ============
 */
-float() FindTarget =
+float ()
+FindTarget =
 {
 	local entity	client;
 	local float		r;
@@ -394,14 +394,16 @@ float() FindTarget =
 
 //=============================================================================
 
-void(float dist) ai_forward =
+void (float dist)
+ai_forward =
 {
 	walkmove (self.angles_y, dist);
 };
 
-void(float dist) ai_back =
+void (float dist)
+ai_back =
 {
-	walkmove ( (self.angles_y+180), dist);
+	walkmove ((self.angles_y + 180), dist);
 };
 
 /*
@@ -411,14 +413,15 @@ ai_pain
 stagger back a bit
 =============
 */
-void(float dist) ai_pain =
+void (float dist)
+ai_pain =
 {
 	ai_back (dist);
 /*
 	local float	away;
 
-	away = anglemod (vectoyaw (self.origin - self.enemy.origin) 
-					 + 180 * (random () - 0.5) );
+	away = (vectoyaw (self.origin - self.enemy.origin) 
+			+ 180 * (random () - 0.5)) % 360;
 
 	walkmove (away, dist);
 */
@@ -431,7 +434,8 @@ ai_painforward
 stagger back a bit
 =============
 */
-void(float dist) ai_painforward =
+void (float dist)
+ai_painforward =
 {
 	walkmove (self.ideal_yaw, dist);
 };
@@ -443,7 +447,8 @@ ai_walk
 The monster is walking it's beat
 =============
 */
-void(float dist) ai_walk =
+void (float dist)
+ai_walk =
 {
 	movedist = dist;
 
@@ -461,7 +466,8 @@ ai_stand
 The monster is staying in one place for a while, with slight angle turns
 =============
 */
-void() ai_stand =
+void ()
+ai_stand =
 {
 	if (FindTarget ())
 		return;
@@ -480,7 +486,8 @@ ai_turn
 don't move, but turn towards ideal_yaw
 =============
 */
-void() ai_turn =
+void ()
+ai_turn =
 {
 	if (FindTarget ())
 		return;
@@ -490,33 +497,35 @@ void() ai_turn =
 
 //=============================================================================
 
-void(vector dest3) ChooseTurn =
+void (vector dest3)
+ChooseTurn =
 {
 	local vector	dir, newdir;
 	
 	dir = self.origin - dest3;
 
 	newdir_x = trace_plane_normal_y;
-	newdir_y = 0 - trace_plane_normal_x;
+	newdir_y = -trace_plane_normal_x;
 	newdir_z = 0;
 	
 	if (dir * newdir > 0) {
-		dir_x = 0 - trace_plane_normal_y;
+		dir_x = -trace_plane_normal_y;
 		dir_y = trace_plane_normal_x;
 	} else {
 		dir_x = trace_plane_normal_y;
-		dir_y = 0 - trace_plane_normal_x;
+		dir_y = -trace_plane_normal_x;
 	}
 
 	dir_z = 0;
-	self.ideal_yaw = vectoyaw(dir);	
+	self.ideal_yaw = vectoyaw (dir);	
 };
 
-float() FacingIdeal =
+float ()
+FacingIdeal =
 {
 	local	float	delta;
 	
-	delta = anglemod (self.angles_y - self.ideal_yaw);
+	delta = (self.angles_y - self.ideal_yaw) % 360;
 	if (delta > 45 && delta < 315)
 		return FALSE;
 	return TRUE;
@@ -525,10 +534,11 @@ float() FacingIdeal =
 
 //=============================================================================
 
-float()	WizardCheckAttack;
-float()	DogCheckAttack;
+float () WizardCheckAttack;
+float () DogCheckAttack;
 
-float() CheckAnyAttack =
+float ()
+CheckAnyAttack =
 {
 	if (!enemy_vis)
 		return 0;
@@ -565,7 +575,8 @@ ai_run_melee
 Turn and close until within an angle to launch a melee attack
 =============
 */
-void() ai_run_melee =
+void ()
+ai_run_melee =
 {
 	self.ideal_yaw = enemy_yaw;
 	ChangeYaw ();
@@ -583,7 +594,8 @@ ai_run_missile
 Turn in place until within an angle to launch a missile attack
 =============
 */
-void() ai_run_missile =
+void ()
+ai_run_missile =
 {
 	self.ideal_yaw = enemy_yaw;
 	ChangeYaw ();
@@ -600,7 +612,8 @@ ai_run_slide
 Strafe sideways, but stay at aproximately the same range
 =============
 */
-void() ai_run_slide =
+void ()
+ai_run_slide =
 {
 	local float	ofs;
 
@@ -626,7 +639,8 @@ ai_run
 The monster has an enemy it is trying to kill
 =============
 */
-void(float dist) ai_run =
+void (float dist)
+ai_run =
 {
 	movedist = dist;
 	// see if the enemy is dead
@@ -661,24 +675,25 @@ void(float dist) ai_run =
 	enemy_infront = infront (self.enemy);
 	enemy_range = range (self.enemy);
 	enemy_yaw = vectoyaw (self.enemy.origin - self.origin);
-	
-	if (self.attack_state == AS_MISSILE) {
+
+	switch (self.attack_state) {
+	case AS_MISSILE:
 //		dprint ("ai_run_missile\n");
 		ai_run_missile ();
 		return;
-	}
-	if (self.attack_state == AS_MELEE) {
+	case AS_MELEE:
 //		dprint ("ai_run_melee\n");
 		ai_run_melee ();
 		return;
-	}
-
-	if (CheckAnyAttack ())
-		return;					// beginning an attack
-
-	if (self.attack_state == AS_SLIDING) {
+	case AS_SLIDING:
+		if (CheckAnyAttack ())
+			return;
 		ai_run_slide ();
 		return;
+	default:
+		if (CheckAnyAttack ())
+			return;					// beginning an attack
+		break;
 	}
 
 	// head straight in

@@ -1,10 +1,5 @@
-/*
-==============================================================================
+// BOSS-ONE ===================================================================
 
-BOSS-ONE
-
-==============================================================================
-*/
 $cd id1/models/boss1
 $origin 0 0 -15
 $base base
@@ -35,9 +30,10 @@ $frame shockc1 shockc2 shockc3 shockc4 shockc5 shockc6 shockc7 shockc8
 $frame shockc9 shockc10
 
 
-void(vector p) boss_missile;
+void (vector p) boss_missile;
 
-void() boss_face =
+void ()
+boss_face =
 {
 	// go for another player if multi player
 	if (self.enemy.health <= 0 || random () < 0.02) {
@@ -45,7 +41,7 @@ void() boss_face =
 		if (!self.enemy)
 			self.enemy = find(self.enemy, classname, "player");
 	}
-	ai_face();
+	ai_face ();
 };
 
 void() boss_rise1	=[	$rise1, boss_rise2 ] {
@@ -163,7 +159,7 @@ void() boss_shockc9 =[	$shockc9, boss_shockc10 ] {};
 void() boss_shockc10 =[	$shockc10, boss_death1 ] {};
 
 void() boss_death1 = [$death1, boss_death2] {
-sound (self, CHAN_VOICE, "boss1/death.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "boss1/death.wav", 1, ATTN_NORM);
 };
 void() boss_death2 = [$death2, boss_death3] {};
 void() boss_death3 = [$death3, boss_death4] {};
@@ -187,7 +183,8 @@ void() boss_death10 = [$death9, boss_death10]
 	remove (self);
 };
 
-void(vector p) boss_missile =
+void (vector p)
+boss_missile =
 {
 	local	vector	offang;
 	local	vector	org, vec, d;
@@ -207,7 +204,7 @@ void(vector p) boss_missile =
 	} else {
 		d = self.enemy.origin;
 	}
-	
+
 	vec = normalize (d - org);
 
 	launch_spike (org, vec);
