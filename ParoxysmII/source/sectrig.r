@@ -2,39 +2,37 @@
 #include "paroxysm.rh"
 
 // + POX moved prototypes from weapons.qc for use here
-void(float shotcount, vector dir, vector spread) FireBullets2;
-void(float damage) spawn_touchblood;
-void() muzzleflash;
-void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
-void () player_run;
-void(entity bomb, entity attacker, float rad, entity ignore, string dtype) T_RadiusDamage;
-void(vector org, float damage) SpawnBlood;
-void() SuperDamageSound;
-float SECOND_TRIGGER = 15;	// Impulse constant for second trigger (more readable than 15)
-void(vector org) launch_shrapnel; //Predeclare
-void()	player_shot1;
-void()	player_gshot1;
-void()	player_plasma1;
-void()	player_plasma2;
-void()	player_mplasma1;
-void()	player_nail1;
-void()	player_rocket1;
-void()	player_rocketload1;
-void()	player_grenade1;
-void()	player_reshot1;
-void()	player_tshot1;
-void()	player_shrap1;
-void()	player_axe1;
-void()	player_axeb1;
-void()	player_axec1;
-void()	player_axed1;
+@extern void(float shotcount, vector dir, vector spread) FireBullets2;
+@extern void(float damage) spawn_touchblood;
+@extern void() muzzleflash;
+@extern void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
+@extern void () player_run;
+@extern void(vector org, float damage) SpawnBlood;
+@extern void() SuperDamageSound;
+@extern void(vector org) launch_shrapnel; //Predeclare
+@extern void()	player_shot1;
+@extern void()	player_gshot1;
+@extern void()	player_plasma1;
+@extern void()	player_plasma2;
+@extern void()	player_mplasma1;
+@extern void()	player_nail1;
+@extern void()	player_rocket1;
+@extern void()	player_rocketload1;
+@extern void()	player_grenade1;
+@extern void()	player_reshot1;
+@extern void()	player_tshot1;
+@extern void()	player_shrap1;
+@extern void()	player_axe1;
+@extern void()	player_axeb1;
+@extern void()	player_axec1;
+@extern void()	player_axed1;
 
-void(float damage, vector dir) TraceAttack;
-void() ClearMultiDamage;
-void() ApplyMultiDamage;
-void() Multi_Finish;
-void(vector org, vector dir) launch_spike;
-void() superspike_touch;
+@extern void(float damage, vector dir) TraceAttack;
+@extern void() ClearMultiDamage;
+@extern void() ApplyMultiDamage;
+@extern void() Multi_Finish;
+@extern void(vector org, vector dir) launch_spike;
+@extern void() superspike_touch;
 
 //Some nitty-gritty from weapons.qc ...
 float() crandom =

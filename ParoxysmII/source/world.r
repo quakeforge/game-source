@@ -2,9 +2,6 @@
 
 #include "paroxysm.rh"
 
-void() bubble_bob;
-
-void() InitBodyQue;
 void() main =
 {
 	dprint ("main function\n");

@@ -1,3 +1,4 @@
 *.dat
 *.sym
+.deps
 config.rh

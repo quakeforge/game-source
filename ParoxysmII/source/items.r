@@ -2,7 +2,6 @@
 #include "paroxysm.rh"
 
 // POX - had to make room for Paroxysm's DM modes......
-void() W_SetCurrentAmmo;
 /* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
 BE .8 .3 .4 IN COLOR */
 .entity quadcore;		// + POX - used by the dual model quad
@@ -401,7 +400,7 @@ void(float old, float new) Deathmatch_Weapon =
 weapon_touch
 =============
 */
-float() W_BestWeapon;
+
 void() weapon_touch =
 {
 	local	float	hadammo, best, new = NIL, old;

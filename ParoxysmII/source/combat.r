@@ -2,11 +2,6 @@
 
 #include "paroxysm.rh"
 
-void () T_MissileTouch;
-void () info_player_start;
-void (entity targ, entity attacker) ClientObituary;
-void (entity inflictor, entity attacker, float damage, entity ignore, string dtype) T_RadiusDamage;
-
 /*SERVER
 void() monster_death_use;
 */

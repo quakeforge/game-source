@@ -1,3 +1,4 @@
+#include "paroxysm.rh"
 
 void() monster_ogre = {remove(@self);};
 void() monster_demon1 = {remove(@self);};

@@ -1,6 +1,11 @@
 #ifndef __paroxysm_rh_
 #define __paroxysm_rh_
 
+#include "defs.rh"
+#include "builtins.rh"
+#include "poxdefs.rh"
+#include "sectrig.rh"
+
 /****************************************************************************
  *							ENGINE-DEFINED CONSTANTS						*
  ****************************************************************************/

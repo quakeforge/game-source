@@ -1,0 +1,673 @@
+
+/*
+==============================================================================
+
+			SOURCE FOR GLOBALVARS_T C STRUCTURE
+
+==============================================================================
+*/
+
+//
+// system globals
+//
+@extern entity		other;
+@extern entity		world;
+@extern float		time;
+@extern float		frametime;
+
+@extern entity		newmis;				// if this is set, the entity that just
+								// run created a new missile that should
+								// be simulated immediately
+
+@extern float		force_retouch;		// force all entities to touch triggers
+								// next frame.	this is needed because
+								// non-moving things don't normally scan
+								// for triggers, and when a trigger is
+								// created (like a teleport trigger), it
+								// needs to catch everything.
+								// decremented each frame, so set to 2
+								// to guarantee everything is touched
+@extern string		mapname;
+
+@extern float		serverflags;		// propagated from level to level, used to
+								// keep track of completed episodes
+
+@extern float		total_secrets;
+@extern float		total_monsters;
+
+@extern float		found_secrets;		// number of secrets found
+@extern float		killed_monsters;	// number of monsters killed
+
+// spawnparms are used to encode information about clients across server
+// level changes
+@extern float		parm1, parm2, parm3, parm4, parm5, parm6, parm7, parm8, parm9, parm10, parm11, parm12, parm13, parm14, parm15, parm16;
+
+//
+// global variables set by built in functions
+//	
+@extern vector		v_forward, v_up, v_right;	// set by makevectors()
+	
+// set by traceline / tracebox
+@extern float		trace_allsolid;
+@extern float		trace_startsolid;
+@extern float		trace_fraction;
+@extern vector		trace_endpos;
+@extern vector		trace_plane_normal;
+@extern float		trace_plane_dist;
+@extern entity		trace_ent;
+@extern float		trace_inopen;
+@extern float		trace_inwater;
+
+@extern entity		msg_entity;				// destination of single entity writes
+
+//
+// required prog functions
+//
+@extern void()		main;					// only for testing
+
+@extern void()		StartFrame;
+
+@extern void()		PlayerPreThink;
+@extern void()		PlayerPostThink;
+
+@extern void()		ClientKill;
+@extern void()		ClientConnect;
+@extern void()		PutClientInServer;		// call after setting the parm1... parms
+@extern void()		ClientDisconnect;
+
+@extern void()		SetNewParms;			// called when a client first connects to
+									// a server. sets parms so they can be
+									// saved off for restarts
+
+@extern void()		SetChangeParms;			// call to set parms for @self so they can
+									// be saved for a level transition
+
+
+//================================================
+@extern void		end_sys_globals;		// flag for structure dumping
+//================================================
+
+/*
+==============================================================================
+
+			SOURCE FOR ENTVARS_T C STRUCTURE
+
+==============================================================================
+*/
+
+//
+// system fields (*** = do not set in prog code, maintained by C code)
+//
+@extern .float		modelindex;		// *** model index in the precached list
+@extern .vector		absmin, absmax; // *** origin + mins / maxs
+
+@extern .float		ltime;			// local time for entity
+@extern .float		lastruntime;	// *** to allow entities to run out of sequence
+
+@extern .float		movetype;
+@extern .float		solid;
+
+@extern .vector		origin;			// ***
+@extern .vector		oldorigin;		// ***
+@extern .vector		velocity;
+@extern .vector		angles;
+@extern .vector		avelocity;
+
+@extern .string		classname;		// spawn function
+@extern .string		model;
+@extern .float		frame;
+@extern .float		skin;
+@extern .float		effects;
+
+@extern .vector		mins, maxs;		// bounding box extents reletive to origin
+@extern .vector		size;			// maxs - mins
+
+@extern .void()		touch;
+@extern .void()		use;
+@extern .void()		think;
+@extern .void()		blocked;		// for doors or plats, called when can't push other
+
+@extern .float		nextthink;
+@extern .entity		groundentity;
+
+
+
+// stats
+@extern .float		health;
+@extern .float		frags;
+@extern .float		weapon;			// one of the IT_TSHOT, etc flags
+@extern .string		weaponmodel;
+@extern .float		weaponframe;
+@extern .float		currentammo;
+@extern .float		ammo_shells, ammo_nails, ammo_rockets, ammo_cells;
+
+@extern .float		items;			// bit flags
+
+@extern .float		takedamage;
+@extern .entity		chain;
+@extern .float		deadflag;
+
+@extern .vector		view_ofs;			// add to origin to get eye point
+
+
+@extern .float		button0;		// fire
+@extern .float		button1;		// use
+@extern .float		button2;		// jump
+
+@extern .float		impulse;		// weapon changes
+
+@extern .float		fixangle;
+@extern .vector		v_angle;		// view / targeting angle for players
+
+@extern .string		netname;
+
+@extern .entity		enemy;
+
+@extern .float		flags;
+
+@extern .float		colormap;
+@extern .float		team;
+
+@extern .float		max_health;		// players maximum health is stored here
+
+@extern .float		teleport_time;	// don't back up
+
+@extern .float		armortype;		// save this fraction of incoming damage
+@extern .float		armorvalue;
+
+@extern .float		waterlevel;		// 0 = not in, 1 = feet, 2 = wast, 3 = eyes
+@extern .float		watertype;		// a contents value
+
+@extern .float		ideal_yaw;
+@extern .float		yaw_speed;
+
+@extern .entity		aiment;
+
+@extern .entity		goalentity;		// a movetarget or an enemy
+
+@extern .float		spawnflags;
+
+@extern .string		target;
+@extern .string		targetname;
+
+// damage is accumulated through a frame. and sent as one single
+// message, so the super shotgun doesn't generate huge messages
+@extern .float		dmg_take;
+@extern .float		dmg_save;
+@extern .entity		dmg_inflictor;
+
+@extern .entity		owner;		// who launched a missile
+@extern .vector		movedir;	// mostly for doors, but also used for waterjump
+
+@extern .string		message;		// trigger messages
+
+@extern .float		sounds;		// either a cd track number or sound number
+
+@extern .string		noise, noise1, noise2, noise3;	// contains names of wavs to play
+
+//================================================
+@extern void		end_sys_fields;			// flag for structure dumping
+//================================================
+
+/*
+==============================================================================
+
+				VARS NOT REFERENCED BY C CODE
+
+==============================================================================
+*/
+
+// edict.solid values
+#define SOLID_NOT	0	// no interaction with other objects
+#define SOLID_TRIGGER	1	// touch on edge, but not blocking
+#define SOLID_BBOX	2	// touch on edge, block
+#define SOLID_SLIDEBOX	3	// touch on edge, but not an onground
+#define SOLID_BSP	4	// bsp clip, touch on edge, block
+
+// range values
+#define RANGE_MELEE	0
+#define RANGE_NEAR	1
+#define RANGE_MID	2
+#define RANGE_FAR	3
+
+// deadflag values
+
+#define DEAD_NO	0
+#define DEAD_DYING	1
+#define DEAD_DEAD	2
+#define DEAD_RESPAWNABLE	3
+
+// takedamage values
+
+#define DAMAGE_NO	0
+#define DAMAGE_YES	1
+#define DAMAGE_AIM	2
+
+#define STATE_TOP	0
+#define STATE_BOTTOM	1
+#define STATE_UP	2
+#define STATE_DOWN	3
+
+#define VEC_ORIGIN	'0 0 0'
+#define VEC_HULL_MIN	'-16 -16 -24'
+#define VEC_HULL_MAX	'16 16 32'
+#define VEC_HULL2_MIN	'-32 -32 -24'
+#define VEC_HULL2_MAX	'32 32 64'
+
+// protocol bytes
+#define SVC_TEMPENTITY	23
+#define SVC_KILLEDMONSTER	27
+#define SVC_FOUNDSECRET	28
+#define SVC_INTERMISSION	30
+#define SVC_FINALE	31
+#define SVC_CDTRACK	32
+#define SVC_SELLSCREEN	33
+#define SVC_SMALLKICK	34
+#define SVC_BIGKICK	35
+#define SVC_MUZZLEFLASH	39
+
+#define TE_SPIKE	0
+#define TE_SUPERSPIKE	1
+#define TE_GUNSHOT	2
+#define TE_EXPLOSION	3
+#define TE_TAREXPLOSION	4
+#define TE_LIGHTNING1	5
+#define TE_LIGHTNING2	6
+#define TE_WIZSPIKE	7
+#define TE_KNIGHTSPIKE	8
+#define TE_LIGHTNING3	9
+#define TE_LAVASPLASH	10
+#define TE_TELEPORT	11
+#define TE_BLOOD	12
+#define TE_LIGHTNINGBLOOD	13
+
+// sound channels
+// channel 0 never willingly overrides
+// other channels (1-7) allways override a playing sound on that channel
+#define CHAN_AUTO	0
+#define CHAN_WEAPON	1
+#define CHAN_VOICE	2
+#define CHAN_ITEM	3
+#define CHAN_BODY	4
+#define CHAN_NO_PHS_ADD	8	// ie: CHAN_BODY | CHAN_NO_PHS_ADD
+
+#define ATTN_NONE	0	// Attenuation
+#define ATTN_NORM	1
+#define ATTN_IDLE	2
+#define ATTN_STATIC	3
+
+// update types
+
+#define UPDATE_GENERAL	0
+#define UPDATE_STATIC	1
+#define UPDATE_BINARY	2
+#define UPDATE_TEMP	3
+
+// entity effects
+
+//float EF_BRIGHTFIELD	= 1;
+//float EF_MUZZLEFLASH	= 2;
+#define EF_BRIGHTLIGHT	4
+#define EF_DIMLIGHT	8
+#define EF_FLAG1	16
+#define EF_FLAG2	32
+
+// GLQuakeWorld Stuff
+#define EF_BLUE	64 		// Blue Globe effect for Quad
+#define EF_RED	128		// Red Globe effect for Pentagram
+
+// messages
+#define MSG_BROADCAST	0		// unreliable to all
+#define MSG_ONE	1		// reliable to one (msg_entity)
+#define MSG_ALL	2		// reliable to all
+#define MSG_INIT	3		// write to the init string
+#define MSG_MULTICAST	4		// for multicast() call
+
+// message levels
+#define PRINT_LOW	0		// pickup messages
+#define PRINT_MEDIUM	1		// death messages
+#define PRINT_HIGH	2		// critical messages
+#define PRINT_CHAT	3		// also goes to chat console
+
+// multicast sets
+#define MULTICAST_ALL	0		// every client
+#define MULTICAST_PHS	1		// within hearing
+#define MULTICAST_PVS	2		// within sight
+#define MULTICAST_ALL_R	3		// every client, reliable
+#define MULTICAST_PHS_R	4		// within hearing, reliable
+#define MULTICAST_PVS_R	5		// within sight, reliable
+
+//================================================
+
+//
+// globals
+//
+@extern float	movedist;
+
+@extern string	string_null;	// null string, nothing should be held here
+@extern float	empty_float;
+
+@extern entity	activator;		// the entity that activated a trigger or brush
+
+@extern entity	damage_attacker;	// set by T_Damage
+@extern entity	damage_inflictor;
+@extern float	framecount;
+
+//
+// cvars checked each frame
+//
+@extern float		teamplay;
+@extern float		timelimit;
+@extern float		fraglimit;
+@extern float		deathmatch;
+@extern float		rj;
+
+//================================================
+
+//
+// world fields (FIXME: make globals)
+//
+@extern .string		wad;
+@extern .string		map;
+@extern .float		worldtype;	// 0=medieval 1=metal 2=base
+
+//================================================
+
+@extern .string		killtarget;
+
+//
+// quakeed fields
+//
+@extern .float		light_lev;		// not used by game, but parsed by light util
+@extern .float		style;
+
+//
+// monster ai
+//
+@extern .void()		th_stand;
+@extern .void()		th_walk;
+@extern .void()		th_run;
+@extern .void()		th_missile;
+@extern .void()		th_melee;
+@extern .void()		th_pain;
+@extern .void()		th_die;
+
+@extern .entity		oldenemy;		// mad at this player before taking damage
+
+@extern .float		speed;
+
+@extern .float		lefty;
+
+@extern .float		search_time;
+@extern .float		attack_state;
+
+#define AS_STRAIGHT	1
+#define AS_SLIDING	2
+#define AS_MELEE	3
+#define AS_MISSILE	4
+
+//
+// player only fields
+//
+@extern .float		voided;
+@extern .float		walkframe;
+
+// Zoid Additions
+@extern .float		maxspeed;		// Used to set Maxspeed on a player
+@extern .float		gravity;		// Gravity Multiplier (0 to 1.0)
+
+@extern .float		attack_finished;
+@extern .float		pain_finished;
+
+@extern .float		invincible_finished;
+@extern .float		invisible_finished;
+@extern .float		super_damage_finished;
+@extern .float		radsuit_finished;
+
+@extern .float		invincible_time, invincible_sound;
+@extern .float		invisible_time, invisible_sound;
+@extern .float		super_time, super_sound;
+@extern .float		rad_time;
+@extern .float		fly_sound;
+
+@extern .float		axhitme;
+
+@extern .float		show_hostile;	// set to time+0.2 whenever a client fires a
+							// weapon or takes damage.  Used to alert
+							// monsters that otherwise would let the player go
+@extern .float		jump_flag;		// player jump flag
+// + POX - removed
+//.float	  swim_flag;		  // player swimming sound flag
+// - POX
+@extern .float		air_finished;	// when time > air_finished, start drowning
+@extern .float		bubble_count;	// keeps track of the number of bubbles
+@extern .string		deathtype;		// keeps track of how the player died
+
+//
+// object stuff
+//
+@extern .string		mdl;
+@extern .vector		mangle;			// angle at start
+
+@extern .vector		oldorigin;		// only used by secret door
+
+@extern .float		t_length, t_width;
+
+//
+// doors, etc
+//
+@extern .vector		dest, dest1, dest2;
+@extern .float		wait;			// time from firing to restarting
+@extern .float		delay;			// time from activation to firing
+@extern .entity		trigger_field;	// door's trigger entity
+@extern .string		noise4;
+
+//
+// monsters
+//
+@extern .float		pausetime;
+@extern .entity		movetarget;
+
+//
+// doors
+//
+@extern .float		aflag;
+@extern .float		dmg;			// damage done by door when hit
+	
+//
+// misc
+//
+@extern .float		cnt;			// misc flag
+	
+//
+// subs
+//
+@extern .void()		think1;
+@extern .vector		finaldest, finalangle;
+
+//
+// triggers
+//
+@extern .float		count;			// for counting triggers
+
+
+//
+// plats / doors / buttons
+//
+@extern .float		lip;
+@extern .float		state;
+@extern .vector		pos1, pos2;		// top and bottom positions
+@extern .float		height;
+
+//
+// sounds
+//
+@extern .float		waitmin, waitmax;
+@extern .float		distance;
+@extern .float		volume;
+
+
+//===========================================================================
+
+//
+// builtin functions
+//
+
+@extern void(string e) error;
+@extern void(string e) objerror;
+
+// sets trace_* globals
+// nomonsters can be:
+// An entity will also be ignored for testing if forent == test,
+// forent->owner == test, or test->owner == forent
+// a forent of world is ignored
+@extern void(vector v1, vector v2, float nomonsters, entity forent) traceline;	
+
+@extern entity() checkclient;	// returns a client to look for
+@extern entity(entity start, .string fld, string match) find;
+@extern void(entity client, string s)stuffcmd;
+@extern entity(vector org, float rad) findradius;
+@extern void(float level, string s) bprint;
+@extern void(entity client, float level, string s) sprint;
+@extern void(string s) dprint;
+@extern string(float f) ftos;
+@extern string(vector v) vtos;
+@extern float(float yaw, float dist) walkmove;	// returns TRUE or FALSE
+// #33 was removed
+@extern float() droptofloor;	// TRUE if landed on floor
+@extern void(float style, string value) lightstyle;
+// #39 was removed
+@extern float(entity e) checkbottom;		// true if @self is on ground
+@extern float(vector v) pointcontents;		// returns a CONTENT_*
+// #42 was removed
+@extern vector(entity e, float speed) aim;		// returns the shooting vector
+@extern void(string s) localcmd;					// put string into local que
+@extern entity(entity e) nextent;					// for looping through all ents
+// #48 was removed
+@extern void() ChangeYaw;						// turn towards @self.ideal_yaw
+											// at @self.yaw_speed
+// #50 was removed
+
+//
+// direct client message generation
+//
+@extern void(float to, float f) WriteByte;
+@extern void(float to, float f) WriteChar;
+@extern void(float to, float f) WriteShort;
+@extern void(float to, float f) WriteLong;
+@extern void(float to, float f) WriteCoord;
+@extern void(float to, float f) WriteAngle;
+@extern void(float to, string s) WriteString;
+@extern void(float to, entity s) WriteEntity;
+
+@extern void(float step) movetogoal;
+
+@extern void(string s) changelevel;
+
+//#71 was removed
+
+@extern void(entity client, string s) centerprint;	// sprint, but in middle
+
+@extern void(entity e, float chan, string samp, float vol, float atten) sound;
+@extern void(vector pos, string samp, float vol, float atten) ambientsound;
+
+@extern string(string s) precache_sound;
+@extern string(string s) precache_model;
+@extern string(string s) precache_file;	// no effect except for -copy
+@extern string(string s) precache_model2;	// registered version only
+@extern string(string s) precache_sound2;	// registered version only
+@extern string(string s) precache_file2;	// registered version only
+
+@extern void(entity e) setspawnparms;		// set parm1... to the
+												// values at level start
+												// for coop respawn
+
+@extern void(entity killer, entity killee) logfrag;	// add to stats
+
+@extern float(string s) stof;		// convert string to float
+@extern void(vector where, float set) multicast;	// sends the temp message to a set
+												// of clients, possibly in PVS or PHS
+
+//============================================================================
+
+//
+// subs.qc
+//
+@extern void(vector tdest, float tspeed, void() func) SUB_CalcMove;
+@extern void(entity ent, vector tdest, float tspeed, void() func) SUB_CalcMoveEnt;
+@extern void(vector destangle, float tspeed, void() func) SUB_CalcAngleMove;
+@extern void() SUB_CalcMoveDone;
+@extern void() SUB_CalcAngleMoveDone;
+@extern void() SUB_Null;
+@extern void() SUB_UseTargets;
+@extern void() SUB_Remove;
+
+// FIXME needs sorting into appropriate places
+@extern vector () SetMovedir;
+@extern void() InitTrigger;
+@extern void(entity ent) CopyToBodyQue;
+@extern void() SpawnObserver;
+@extern void(entity me) flash_on;
+@extern float() W_BestWeapon;
+@extern void() ObserverThink;
+@extern void (entity inflictor, entity attacker, float damage, entity ignore, string dtype) T_RadiusDamage;
+@extern void(vector org, float damage) SpawnBlood;
+@extern void(vector org, vector dir) launch_spike;
+@extern void() superspike_touch;
+@extern void() ID_CheckTarget;
+@extern void() W_FireAxe;
+@extern void() SuperDamageSound;
+@extern void(float ox) W_FireNails;
+@extern void(float ox) W_FirePlasma;
+@extern void(vector barrel) W_FireRocket;
+@extern void() W_FireTShot;
+@extern void() W_SecondTrigger;
+@extern float() crandom;
+@extern void(float timeleft) DropQuad;
+@extern void(float timeleft) DropRing;
+@extern float  modelindex_eyes, modelindex_player;
+@extern void() DropBackpack;
+@extern void() W_SetCurrentAmmo;
+@extern .float regen_finished;
+@extern .float armregen;
+@extern vector() wall_velocity;
+@extern void() player_run;
+@extern void() player_axe1;
+@extern void() player_axeb1;
+@extern void() player_axec1;
+@extern void() player_axed1;
+@extern void() player_tshot;
+@extern void() player_tshot1;
+@extern void() player_shot1;
+@extern void() player_plasma1;
+@extern void() player_plasma2;
+@extern void() player_nail1;
+@extern void() player_grenade1;
+@extern void() player_rocket1;
+@extern void() player_stand1;
+@extern void() W_Precache;
+@extern void(entity targ, entity attacker) ClientObituary;
+@extern void() teleport_touch;
+@extern entity() SelectSpawnPoint;
+@extern void() bubble_bob;
+@extern void () player_pain;
+@extern void () W_WeaponFrame;
+@extern void () W_SetCurrentAmmo;
+@extern void (vector org) spawn_tfog;
+@extern void (vector org, entity death_owner) spawn_tdeath;
+@extern void() PlayerDie;
+@extern void() regen_ambientsound;
+@extern void() InitBodyQue;
+
+
+//
+//	combat.qc
+//
+@extern void(entity targ, entity inflictor, entity attacker, float damage) T_Damage;
+
+
+@extern float (entity e, float healamount, float ignore) T_Heal; // health function
+
+@extern float(entity targ, entity inflictor) CanDamage;
+
+

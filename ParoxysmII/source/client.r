@@ -4,12 +4,6 @@
 #include "paroxysm.rh"
 
 // prototypes
-void () W_WeaponFrame;
-void () W_SetCurrentAmmo;
-void () player_pain;
-void () player_stand1;
-void (vector org) spawn_tfog;
-void (vector org, entity death_owner) spawn_tdeath;
 
 float	modelindex_eyes, modelindex_player;
 
@@ -213,8 +207,6 @@ void() trigger_changelevel =
 				PLAYER GAME EDGE FUNCTIONS
 =============================================================================
 */
-void() set_suicide_frame;
-// called by ClientKill and DeadThink
 
 void() respawn =
 {
@@ -349,8 +341,6 @@ entity() SelectSpawnPoint =
 	return spot;
 };
 
-//void() DecodeLevelParms;
-void() PlayerDie;
 /*
 ===========
 ValidateUser

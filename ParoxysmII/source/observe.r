@@ -8,8 +8,6 @@ This was written to support Last Man Standing Rules, it is a crude form of Spect
 observes to stay connected as players so they can play the next game.
 An LMS observer is counted as a player, so you can still have the max amount of true Spectors connected
 */
-entity() SelectSpawnPoint;
-void() teleport_touch; //POX v1.12
 //POX v1.12 - sets fov for observer (impulses 1 and 2)
 /*------------------
 SetObserverFOV

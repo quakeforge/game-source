@@ -271,7 +271,7 @@ This entity should be used in conjunction with a regen_station trigger
 clr = skin# (0 = blue, 1 = yellow, 2 = red)
 */
 .float clr;
-void() regen_ambientsound;
+
 void() particle_stream =
 {
 	precache_sound("ambience/regen1.wav");

@@ -2,7 +2,6 @@
 #include "config.rh"
 #include "paroxysm.rh"
 
-void() bubble_bob;
 /*
 ==============================================================================
 PLAYER
@@ -75,7 +74,6 @@ $frame axattd1 axattd2 axattd3 axattd4 axattd5 axattd6
 PLAYER
 ==============================================================================
 */
-void() player_run;
 void() player_stand1 = [$axstnd1, player_stand1]
 {
 	@self.weaponframe = 0;

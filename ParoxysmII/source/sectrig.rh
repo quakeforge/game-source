@@ -1,0 +1,2 @@
+
+#define SECOND_TRIGGER	15	// Impulse constant for second trigger (more readable than 15)
