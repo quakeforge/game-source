@@ -345,7 +345,7 @@ tripping the runaway loop counter
 	}
 	if (waypoint_thinker.@this = [waypoint_queue removeItemAtHead]) {
 		local id obj = waypoint_thinker.@this;
-		local IMP imp = [obj methodFor: @selector (waypointThink)];
+		local IMP imp = [obj methodForSelector: @selector (waypointThink)];
 		(IMP)waypoint_thinker.think = imp;
 		waypoint_thinker.nextthink = time;
 	}
@@ -356,7 +356,7 @@ tripping the runaway loop counter
 	if (waypoint_thinker.@this) {
 		[waypoint_queue addItemAtTail: self];
 	} else {
-		local IMP imp = [self methodFor: @selector (waypointThink)];
+		local IMP imp = [self methodForSelector: @selector (waypointThink)];
 		(IMP)waypoint_thinker.think = imp;
 		waypoint_thinker.nextthink = time;
 		waypoint_thinker.@this = self;
