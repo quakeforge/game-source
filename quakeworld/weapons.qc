@@ -1096,6 +1096,7 @@ void() ImpulseCommands =
 			sprint (self, PRINT_HIGH, "not enough ammo.\n");
 			return;
 		}
+
 		// set weapon, set ammo
 		self.weapon = fl;
 		W_SetCurrentAmmo ();

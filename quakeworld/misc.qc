@@ -168,9 +168,9 @@ void() fire_fly =
 	fireball.solid = SOLID_TRIGGER;
 	fireball.movetype = MOVETYPE_TOSS;
 	fireball.velocity = '0 0 1000';
-	fireball.velocity_x = (100 * random ()) - 50;
-	fireball.velocity_y = (100 * random ()) - 50;
-	fireball.velocity_z = self.speed + (200 * random ());
+	fireball.velocity_x = 100 * random () - 50;
+	fireball.velocity_y = 100 * random () - 50;
+	fireball.velocity_z = self.speed + 200 * random ();
 	fireball.classname = "fireball";
 	setmodel (fireball, "progs/lavaball.mdl");
 	setsize (fireball, '0 0 0', '0 0 0');
@@ -445,37 +445,30 @@ void() bubble_remove =
 
 void() bubble_bob =
 {
-	local float		rnd1, rnd2, rnd3;
-
-	self.cnt = self.cnt + 1;
+	self.cnt++;
 	if (self.cnt == 4)
 		bubble_split ();
-	if (self.cnt == 20)
+	if (self.cnt >= 20)
 		remove (self);
 
-	rnd1 = self.velocity_x - 10 + 20 * random ();
-	rnd2 = self.velocity_y - 10 + 20 * random ();
-	rnd3 = self.velocity_z + 10 + 10 * random ();
+	self.velocity_x += 20 * random () - 10;
+	if (self.velocity_x > 10)
+		self.velocity_x = 5;
+	if (self.velocity_x < -10)
+		self.velocity_x = -5;
 
-	if (rnd1 > 10)
-		rnd1 = 5;
-	if (rnd1 < -10)
-		rnd1 = -5;
-		
-	if (rnd2 > 10)
-		rnd2 = 5;
-	if (rnd2 < -10)
-		rnd2 = -5;
-		
-	if (rnd3 < 10)
-		rnd3 = 15;
-	if (rnd3 > 30)
-		rnd3 = 25;
+	self.velocity_y += 20 * random () - 10;
+	if (self.velocity_y > 10)
+		self.velocity_y = 5;
+	if (self.velocity_y < -10)
+		self.velocity_y = -5;
+
+	self.velocity_z += 10 * random () + 10;
+	if (self.velocity_z < 10)
+		self.velocity_z = 15;
+	if (self.velocity_z > 30)
+		self.velocity_z = 25;
 	
-	self.velocity_x = rnd1;
-	self.velocity_y = rnd2;
-	self.velocity_z = rnd3;
-		
 	self.nextthink = time + 0.5;
 	self.think = bubble_bob;
 };
@@ -545,8 +538,9 @@ This bmodel appears unless players have all of the episode sigils.
 */
 void() func_bossgate =
 {
-	if ( (serverflags & 15) == 15)
+	if ((serverflags & 15) == 15)
 		return;         // all episodes completed
+
 	self.angles = '0 0 0';
 	self.movetype = MOVETYPE_PUSH;  // so it doesn't get pushed by anything
 	self.solid = SOLID_BSP;
@@ -555,6 +549,7 @@ void() func_bossgate =
 };
 
 //============================================================================
+
 /*QUAKED ambient_suck_wind (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
 */
 void() ambient_suck_wind =
@@ -578,6 +573,7 @@ void() ambient_flouro_buzz =
 	precache_sound ("ambience/buzz1.wav");
 	ambientsound (self.origin, "ambience/buzz1.wav", 1, ATTN_STATIC);
 };
+
 /*QUAKED ambient_drip (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
 */
 void() ambient_drip =
@@ -641,7 +637,6 @@ void() noise_think =
 };
 
 /*QUAKED misc_noisemaker (1 0.5 0) (-10 -10 -10) (10 10 10)
-
 For optimzation testing, starts a lot of sounds.
 */
 void() misc_noisemaker =
