@@ -16,7 +16,7 @@ typedef struct bot_data_t bot_data_t;
 -(vector)origin;
 -(integer)canSee:(Target)targ ignoring:(entity)ignore;
 -(void)setOrigin:(vector) org;
--(integer)recognize_plat:(integer)flag;
+-(integer)recognizePlat:(integer)flag;
 @end
 
 @interface Waypoint: Target
@@ -49,7 +49,7 @@ typedef struct bot_data_t bot_data_t;
 -(integer)teleLinkWay:(Waypoint)way;
 -(void)unlinkWay:(Waypoint)way;
 
--(void)followLink:(Waypoint)e2 :(integer)b_bit;
+-(void)followLink:(Waypoint)e2 :(integer)bBit;
 -(void)waypointThink;
 
 -(void)clearRoute;
@@ -128,37 +128,37 @@ typedef struct bot_data_t bot_data_t;
 
 @interface Bot (Move)
 - (void)jump;
-- (integer)can_rj;
-- (integer)recognize_plat: (integer) flag;
+- (integer)canRJ;
+- (integer)recognizePlat: (integer) flag;
 - (integer)keysForDir: (vector) sdir;
 - (void)obstructed: (vector) whichway : (integer) danger;
 - (void)obstacles;
-- (void)dodge_obstruction;
+- (void)dodgeObstruction;
 - (void)movetogoal;
 - (integer)walkmove: (vector) weird;
 - (void)roam;
 @end
 
 @interface Bot (AI)
--(integer)target_onstack:(Target)scot;
--(void)target_add:(Target)e;
--(void)target_drop:(Target)e;
+-(integer)targetOnstack:(Target)scot;
+-(void)targetAdd:(Target)e;
+-(void)targetDrop:(Target)e;
 -(void)lost:(Waypoint)targ :(integer)success;
--(void)check_lost:(Waypoint)targ;
--(void)handle_ai;
+-(void)checkLost:(Waypoint)targ;
+-(void)handleAI;
 -(void)path;
--(float)priority_for_thing:(entity)thing;
--(void)look_for_crap:(integer)scope;
--(void)angle_set;
+-(float)priorityForThing:(entity)thing;
+-(void)lookForCrap:(integer)scope;
+-(void)angleSet;
 -(void)AI;
 @end
 
 @interface Bot (Fight)
--(float)size_player:(entity)e;
--(void)dodge_stuff;
--(void)weapon_switch:(float)brange;
+-(float)sizePlayer:(entity)e;
+-(void)dodgeStuff;
+-(void)weaponSwitch:(float)brange;
 -(void)shoot;
--(void)fight_style;
+-(void)fightStyle;
 @end
 
 @interface Bot (Way)
@@ -166,9 +166,9 @@ typedef struct bot_data_t bot_data_t;
 -(void)deleteWaypoint:(Waypoint)what;
 -(entity)findThing:(string)s;
 -(Waypoint)findRoute:(Waypoint)lastone;
--(void)mark_path:(entity)this;
--(void)get_path:(Waypoint)this :(integer)direct;
--(integer)begin_route;
+-(void)markPath:(entity)this;
+-(void)getPath:(Waypoint)this :(integer)direct;
+-(integer)beginRoute;
 -(void)spawnTempWaypoint:(vector)org;
 -(void)dynamicWaypoint;
 
@@ -176,7 +176,7 @@ typedef struct bot_data_t bot_data_t;
 @end
 
 @interface Bot (Chat)
--(void)start_topic:(integer)topic;
+-(void)startTopic:(integer)topic;
 -(void)say:(string)msg;
 -(void)say2:(string)msg;
 -(void)sayTeam:(string)msg;

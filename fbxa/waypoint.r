@@ -263,18 +263,18 @@ tripping the runaway loop counter
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
--(void)followLink:(Waypoint)e2 :(integer)b_bit
+-(void)followLink:(Waypoint)e2 :(integer)bBit
 {
 	local float dist;
 	
-	if (flags & b_bit)
+	if (flags & bBit)
 		dist = items;
 	else
 		dist = vlen(origin - e2.origin) + items;
 
 	// check if this is an RJ link
 	if (e2.flags & AI_SUPER_JUMP) {
-		if (![route_table can_rj])
+		if (![route_table canRJ])
 			return;
 	}
 	if (e2.flags & AI_DIFFICULT)
@@ -320,7 +320,7 @@ tripping the runaway loop counter
 
 	if (busy_waypoints <= 0) {
 		if (direct_route) {
-			[route_table get_path:route_table.targets[0] :FALSE];
+			[route_table getPath:route_table.targets[0] :FALSE];
 			direct_route = FALSE;
 		}
 	}

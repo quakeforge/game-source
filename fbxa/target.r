@@ -80,7 +80,7 @@ this notice in its entirety.
 {
 }
 
-- (integer) recognize_plat: (integer) flag
+- (integer) recognizePlat: (integer) flag
 {
 	local vector org = [self origin];
 	traceline (org, org - '0 0 64', TRUE, ent);

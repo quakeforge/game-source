@@ -294,7 +294,7 @@ BotConnect =
 		name = [Bot randomName];
 
 	bot = [[Bot alloc] initWithEntity: cl named:name skill:whatskill];
-	[bot start_topic:1];
+	[bot startTopic:1];
 };
 
 /*
@@ -388,11 +388,11 @@ void () BotImpulses =
 	if (b_frags != ent.frags) {
 		if (b_frags > ent.frags) {
 			if (pointcontents (ent.origin) == CONTENT_LAVA)
-				[self start_topic:10];
+				[self startTopic:10];
 			else
-				[self start_topic:9];
+				[self startTopic:9];
 		} else
-			[self start_topic:2];
+			[self startTopic:2];
 		b_frags = ent.frags;
 	}
 	[self dynamicWaypoint];

@@ -51,7 +51,7 @@ integer bot_move_linker;
 	ent.button2 = TRUE;
 }
 
-- (integer) can_rj
+- (integer) canRJ
 {
 	// this returns true of the bot can rocket/superjump/hook
 	// if your mod doesn't have an RL you can just return FALSE all the time
@@ -80,11 +80,11 @@ integer bot_move_linker;
 		return FALSE;
 }
 
-- (integer) recognize_plat: (integer) flag
+- (integer) recognizePlat: (integer) flag
 {
 	local integer ret;
 
-	ret = [super recognize_plat:flag];
+	ret = [super recognizePlat:flag];
 	if (ret) {
 		if (flag) {
 			// afect bot movement too
@@ -305,7 +305,7 @@ following funtion to move "around" the obstacle
 
 I have no idea how well it will work
 */
--(void)dodge_obstruction
+-(void)dodgeObstruction
 {
 	local vector way, org;
 	local float oflags, yaw;
@@ -373,8 +373,8 @@ blah
 	keys &= ~KEY_MOVE;
 	keys |= [self keysForDir: way];
 
-	[self dodge_obstruction];
-	[self recognize_plat: TRUE];
+	[self dodgeObstruction];
+	[self recognizePlat: TRUE];
 
 	if (b_aiflags & AI_PRECISION) {
 		g = angcomp (v_angle.x, b_angle.x);
@@ -393,8 +393,8 @@ blah
  	keys &= ~KEY_MOVE;
 	keys |= [self keysForDir: weird];
 
-	[self dodge_obstruction];
-	[self recognize_plat: TRUE];
+	[self dodgeObstruction];
+	[self recognizePlat: TRUE];
 	if (b_aiflags & AI_OBSTRUCTED)
 		return FALSE;
 	else

@@ -77,7 +77,7 @@ weapon_range =
 };
 
 @implementation Bot (Fight)
--(float)size_player:(entity)e
+-(float)sizePlayer:(entity)e
 {
 	local float		sz;
 
@@ -120,7 +120,7 @@ weapon_range =
 	return sz;
 }
 
--(void)dodge_stuff
+-(void)dodgeStuff
 {
 	local entity	foe;
 	local float		foedist, avdist, foesz, flen, tsz;
@@ -134,7 +134,7 @@ weapon_range =
 	if (ent.enemy) {
 		v = ent.origin - realorigin (ent.enemy);
 		foedist = vlen (v);
-		foesz = [self size_player:ent.enemy];
+		foesz = [self sizePlayer:ent.enemy];
 	} else {
 		foedist = 3000;
 		foesz = 9999999;
@@ -184,7 +184,7 @@ weapon_range =
 					if (foe.health > 0) {
 						flen = vlen (foe.origin - ent.origin);
 						if (flen < foedist) {
-							tsz = [self size_player:foe];
+							tsz = [self sizePlayer:foe];
 							if (tsz < foesz) {
 								if ([self canSee:foe]) {
 									ent.enemy = foe;
@@ -210,7 +210,7 @@ weapon_range =
 						if (!(teamplay && ent.team == foe.ent.team)) {
 							flen = vlen (foe.ent.origin - ent.origin);
 							if (flen < foedist) {
-								tsz = [self size_player:foe];
+								tsz = [self sizePlayer:foe];
 								if (tsz < foesz) {
 									/*XXX
 									if (fov(foe) || foe.b_sound > time || b_skill == 3) {
@@ -231,11 +231,11 @@ weapon_range =
 }
 
 /*
-bot_weapon_switch
+weaponSwitch
 
 Pick a weapon based on range / ammo
 */
--(void)weapon_switch:(float)brange
+-(void)weaponSwitch:(float)brange
 {
 	local float		it, flag = 0, pulse = 0;
 	local vector	v;
@@ -302,12 +302,12 @@ Pick a weapon based on range / ammo
 }
 
 /*
-Bot_fight_style
+fightStyle
 
 This is the core of the bot's thinking when
 attacking an enemy. 
 */
--(void)fight_style
+-(void)fightStyle
 {
 	local float		foedist, mysz, foesz;
 	local vector	v, v1 = '0 0 0', v2 = '0 0 0', org;
@@ -339,16 +339,16 @@ attacking an enemy.
 			[self shoot];
 		}
 	} else
-		[self weapon_switch:foedist];
+		[self weaponSwitch:foedist];
 
 	if (!(b_aiflags & (AI_PRECISION | AI_BLIND | AI_OBSTRUCTED))) {
-		foesz = [self size_player:ent.enemy];
-		mysz = [self size_player:self] + 5;
+		foesz = [self sizePlayer:ent.enemy];
+		mysz = [self sizePlayer:self] + 5;
 
 		if (foesz > mysz) {
 			if (teamplay) {
 				if (random () < 0.02) {
-					[self start_topic:5];
+					[self startTopic:5];
 					b_chattime = 1;
 				}
 			}
@@ -380,8 +380,8 @@ attacking an enemy.
 				[self walkmove:v_right * -1];
 		}
 	} else {
-		foesz = [self size_player:ent.enemy];
-		mysz = [self size_player:self] + 5;
+		foesz = [self sizePlayer:ent.enemy];
+		mysz = [self sizePlayer:self] + 5;
 
 		if (foesz > mysz)
 			return;

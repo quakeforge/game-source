@@ -101,7 +101,7 @@ b_originator == targ
 }
 
 // I didn't like the old code so this is very stripped down
--(void)start_topic:(integer)topic
+-(void)startTopic:(integer)topic
 {
 	if (random() < 0.2) {
 		b_topic = topic;
@@ -131,27 +131,27 @@ b_originator == targ
 				switch (r) {
 				case 1:
 					[self say:": lo all\n"];
-					[self start_topic:8];
+					[self startTopic:8];
 					break;
 				case 2:
 					[self say:": hey everyone\n"];
-					[self start_topic:8];
+					[self startTopic:8];
 					break;
 				case 3:
 					[self say:": prepare to be fragged!\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				case 4:
 					[self say:": boy this is laggy\n"];
-					[self start_topic:11];
+					[self startTopic:11];
 					break;
 				case 5:
 					[self say:": #mm getting some lag here\n"];
-					[self start_topic:11];
+					[self startTopic:11];
 					break;
 				default:
 					[self say:": hi everyone\n"];
-					[self start_topic:8];
+					[self startTopic:8];
 					break;
 				}
 			}
@@ -178,7 +178,7 @@ b_originator == targ
 					[self say:": eat that\n"];
 					break;
 				}
-				[self start_topic:0];
+				[self startTopic:0];
 			}
 			break;
 		case 3:
@@ -187,7 +187,7 @@ b_originator == targ
 					[self sayTeam:": friendly eyes\n"];
 				else
 					[self sayTeam:": team eyes\n"];
-				[self start_topic:0];
+				[self startTopic:0];
 			}
 			break;
 		case 4:
@@ -196,7 +196,7 @@ b_originator == targ
 					[self sayTeam:": on your back\n"];
 				else
 					[self sayTeam:": I'm with you\n"];
-				[self start_topic:0];
+				[self startTopic:0];
 			}
 			break;
 		case 5:
@@ -205,7 +205,7 @@ b_originator == targ
 					[self sayTeam:": I need help\n"];
 				else
 					[self sayTeam:": need backup\n"];
-				[self start_topic:0];
+				[self startTopic:0];
 			}
 			break;
 		case 6:
@@ -213,27 +213,27 @@ b_originator == targ
 				switch (r) {
 				case 1:
 					[self say:": sun got in my eyes\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				case 2:
 					[self say:": mouse needs cleaning\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				case 3:
 					[self say:": i meant to do that\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				case 4:
 					[self say:": lag\n"];
-					[self start_topic:11];
+					[self startTopic:11];
 					break;
 				case 5:
 					[self say:": killer lag\n"];
-					[self start_topic:11];
+					[self startTopic:11];
 					break;
 				default:
 					[self say:": 100% lag\n"];
-					[self start_topic:11];
+					[self startTopic:11];
 					break;
 				}
 			}
@@ -259,40 +259,40 @@ b_originator == targ
 				[self say:": hrm\n"];
 				break;
 			}
-			[self start_topic:0];
+			[self startTopic:0];
 			break;
 		case 8:
 			if (b_originator != self) {
 				switch (r) {
 				case 1:
 					[self say:": heya\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				case 2:
 					[self say:": welcome\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				case 3:
 					[self sayInit];
 					[self say2:": hi "];
 					[self say2:b_originator.ent.netname];
 					[self say2:"\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				case 5:
 					[self sayInit];
 					[self say2:": hey "];
 					[self say2:b_originator.ent.netname];
 					[self say2:"\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				case 6:
 					[self say:": howdy\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				default:
 					[self say:": lo\n"];
-					[self start_topic:0];	
+					[self startTopic:0];	
 					break;
 				}
 			}
@@ -367,27 +367,27 @@ b_originator == targ
 					[self say2:": yeah right "];
 					[self say2:b_originator.ent.netname];
 					[self say2:"\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				case 2:
 					[self say:": ping\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				case 3:
 					[self say:": shuddup, you're an lpb\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				case 4:
 					[self say:": lag my eye\n"];
-					[self start_topic:0];
+					[self startTopic:0];
 					break;
 				case 5:
 					[self say:": yeah\n"];
-					[self start_topic:11];
+					[self startTopic:11];
 					break;
 				default:
 					[self say:": totally\n"];
-					[self start_topic:11];
+					[self startTopic:11];
 					break;
 				}
 			}

@@ -50,13 +50,13 @@ float stagger_think;
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-target_onstack
+targetOnstack
 
 checks to see if an entity is on the bot's stack
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(integer)target_onstack:(Target)scot
+-(integer)targetOnstack:(Target)scot
 {
 	if (scot == NIL)
 		return FALSE;
@@ -75,18 +75,18 @@ checks to see if an entity is on the bot's stack
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-target_add
+targetAdd
 
 adds a new entity to the stack, since it's a
 LIFO stack, this will be the bot's new target1
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)target_add:(Target)e
+-(void)targetAdd:(Target)e
 {
 	if (e == NIL)
 		return;
-	if ([self target_onstack:e])
+	if ([self targetOnstack:e])
 		return;
 
 	targets[3] = targets[2];
@@ -99,7 +99,7 @@ LIFO stack, this will be the bot's new target1
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-target_drop
+targetDrop
 
 Removes an entity from the bot's target stack.
 The stack will empty everything up to the object
@@ -109,9 +109,9 @@ is gone too.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)target_drop:(Target)e
+-(void)targetDrop:(Target)e
 {
-	switch ([self target_onstack:e]) {
+	switch ([self targetOnstack:e]) {
 	case 1:
 		targets[0] = targets[1];
 		targets[1] = targets[2];
@@ -149,7 +149,7 @@ Bot has lost its target.
 	if (!targ)
 		return;
 
-	[self target_drop:targ];
+	[self targetDrop:targ];
 	if (targ.ent.classname == "waypoint")
 		targ.b_sound &= ~b_clientflag;
 
@@ -162,7 +162,7 @@ Bot has lost its target.
 	} else {
 		if (targ.ent.classname == "item_artifact_invisibility")
 			if (ent.items & IT_INVISIBILITY)
-				[self start_topic:3];
+				[self startTopic:3];
                 
                 if (targ.ent.flags & FL_ITEM) {
 					/*XXX
@@ -181,14 +181,14 @@ Bot has lost its target.
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-bot_check_lost
+checkLost
 
 decide if my most immediate target should be
 removed.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)check_lost:(Waypoint)targ
+-(void)checkLost:(Waypoint)targ
 {
 	local vector dist;
 
@@ -233,7 +233,7 @@ removed.
 					[self walkmove: ent.origin - targ.origin];
 				else {
 					keys &= ~KEY_MOVE;
-					[self start_topic:4];
+					[self startTopic:4];
 				}
 				ent.search_time = time + 5; // never time out
 			} else if (![self canSee:targ])
@@ -250,14 +250,14 @@ removed.
 			if (ent.enemy == targ.ent)
 				ent.enemy = NIL;
 //			if (target[0])
-//				bot_get_path (target[0], TRUE);
+//				[self getPath:target[0] :TRUE];
 		}
 	} else if ((targ.ent.movetype == MOVETYPE_NONE) && (targ.ent.solid == SOLID_TRIGGER)) {
 		// trigger_multiple style triggers are lost if their thinktime changes
 		if (targ.ent.nextthink >= time) {
 			[self lost:targ :TRUE];
 //			if (target[0])
-//				bot_get_path (target[0], TRUE);
+//				[self getPath:target[0] :TRUE];
 		}
 	}
 	// lose any target way above the bot's head
@@ -267,10 +267,10 @@ removed.
 		dist_z = 0;
 		if (vlen (dist) < 32)
 			if (ent.flags & FL_ONGROUND)
-				if (![self recognize_plat:FALSE])
+				if (![self recognizePlat:FALSE])
 					[self lost:targ :FALSE];
 	} else if (targ.ent.classname == "train") {
-		if ([self recognize_plat:FALSE])
+		if ([self recognizePlat:FALSE])
 			[self lost:targ :TRUE];
 	}
 	// targets are lost if the bot's search time has expired
@@ -281,14 +281,14 @@ removed.
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-bot_handle_ai
+handleAI
 
 This is a 0.10 addition. Handles any action
 based b_aiflags.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)handle_ai
+-(void)handleAI
 {
 	local entity newt;
 	local vector v;
@@ -304,7 +304,7 @@ based b_aiflags.
 	if (b_aiflags & AI_DOORFLAG) {
 		// was on a door when spawned
 		// if there is nothing there now
-		if (![last_way recognize_plat:FALSE]) {
+		if (![last_way recognizePlat:FALSE]) {
 			newt = [self findThing: "door"]; // this is likely the door responsible (crossfingers)
 
 			if (b_aiflags & AI_DOOR_NO_OPEN) {
@@ -318,11 +318,11 @@ based b_aiflags.
 					newt = find (NIL, target, newt.targetname);
 					if (newt.health > 0) {
 						ent.enemy = newt;
-						[self weapon_switch:1];
+						[self weaponSwitch:1];
 					} else {
-					//	target_drop (last_way);
-						[self target_add:newt]; //FIXME newt wrong type
-					//	bot_get_path (newt, TRUE);
+					//	targetDrop (last_way);
+						[self targetAdd:newt]; //FIXME newt wrong type
+					//	[self getPath:newt :TRUE];
 					}
 				}
 				b_aiflags &= ~AI_DOORFLAG;
@@ -340,7 +340,7 @@ based b_aiflags.
 			ent.impulse = 7;
 		else if (ent.flags & FL_ONGROUND) {
 			b_aiflags &= ~AI_SUPER_JUMP;
-			if ([self can_rj]) {
+			if ([self canRJ]) {
 				[self jump];
 				v_angle.x = b_angle.x = 80;
 				ent.button0 = TRUE;
@@ -359,11 +359,11 @@ based b_aiflags.
 		// simple, but effective
 		// this can probably be used for a lot of different
 		// things, not just trains (door elevators come to mind)
-		if (![last_way recognize_plat:FALSE]) {
+		if (![last_way recognizePlat:FALSE]) {
 			// if there is nothing there now
 			keys &= ~KEY_MOVE;
 		} else {
-			if ([self recognize_plat:FALSE]) {
+			if ([self recognizePlat:FALSE]) {
 				v = realorigin (trace_ent) + trace_ent.origin - ent.origin;
 				v_z = 0;
 				if (vlen (v) < 24)
@@ -411,7 +411,7 @@ based b_aiflags.
 bot_path
 
 Bot will follow a route generated by the
-begin_route set of functions in bot_way.qc.
+beginRoute set of functions in bot_way.qc.
 This code, while it works pretty well, can get
 confused
 
@@ -424,12 +424,12 @@ confused
 	local Waypoint jj, tele;
 	local entity e;
 
-	[self check_lost:targets[0]];
+	[self checkLost:targets[0]];
 	if (!targets[0]) {
 		keys=0;
 		return;
 	}
-	if ([self target_onstack:last_way])
+	if ([self targetOnstack:last_way])
 		return; // old waypoint still being hunted
 
 	jj = [self findRoute:last_way];
@@ -452,12 +452,12 @@ confused
 	// point types are AI flags that should be executed once reaching a waypoint
 
 	b_aiflags = (jj.flags & AI_READAHEAD_TYPES) | (last_way.flags & AI_POINT_TYPES);
-	[self target_add:jj];
+	[self targetAdd:jj];
 	if (last_way) {
 		if ([last_way isLinkedTo:jj] == 2) {
 			// waypoints are telelinked
 			tele = [self findThing:"trigger_teleport"].@this; // this is probbly the teleport responsible FIXME shouldn't use @this here
-			[self target_add:tele];
+			[self targetAdd:tele];
 		}
 		traceline (last_way.origin, jj.origin, FALSE, ent); // check for blockage
    		if (trace_fraction != 1) {
@@ -468,17 +468,17 @@ confused
 					trace_ent = trace_ent.owner;
 				if ((trace_ent.health > 0) && (ent.enemy == NIL)) {
 					ent.enemy = trace_ent;
-					[self weapon_switch:1];
+					[self weaponSwitch:1];
 					b_aiflags = b_aiflags | AI_BLIND; // nick knack paddy hack
 				} else if (trace_ent.targetname) {
 					e = find (NIL, target, trace_ent.targetname);
 					if (e.health > 0) {
 						ent.enemy = e;
-						[self weapon_switch:1];
+						[self weaponSwitch:1];
 					} else {
-//						target_drop (jj);
-						[self target_add:e]; //FIXME e wrong type
-//						bot_get_path (tele, TRUE);
+//						targetDrop (jj);
+						[self targetAdd:e]; //FIXME e wrong type
+//						[self getPath:tele :TRUE];
 						b_aiflags |= AI_BLIND; // give a bot a bone	
 						return;
 					}					
@@ -510,9 +510,9 @@ the bot finds things it wants to kill/grab.
 // 30 - 50 bot will consider this a target worth changing course for
 // 50 - 90 bot will hunt these as vital items
 
-// *!* Make sure you add code to bot_check_lost to remove the target *!*
+// *!* Make sure you add code to checkLost to remove the target *!*
 
--(float)priority_for_thing:(entity)thing
+-(float)priorityForThing:(entity)thing
 {
 	local float thisp;
 
@@ -601,7 +601,7 @@ the bot finds things it wants to kill/grab.
 	return thisp;
 }
 
--(void)look_for_crap:(integer)scope
+-(void)lookForCrap:(integer)scope
 {
 	local entity foe, best = NIL;
 	local float thatp, bestp, dist;
@@ -613,7 +613,7 @@ the bot finds things it wants to kill/grab.
 
 	bestp = 1;
 	while (foe) {
-		thatp = [self priority_for_thing:foe];
+		thatp = [self priorityForThing:foe];
 		if (thatp)
 			if (!scope)
 				if (!sisible (ent, foe))
@@ -627,10 +627,10 @@ the bot finds things it wants to kill/grab.
 	}
 	if (best == NIL)
 		return;
-	if (![self target_onstack:best]) {	
-		[self target_add:best]; //FIXME best wrong type
+	if (![self targetOnstack:best]) {	
+		[self targetAdd:best]; //FIXME best wrong type
 		if (scope) {
-			[self get_path:best :FALSE];
+			[self getPath:best :FALSE];
 			b_aiflags |= AI_WAIT;
 		}
 	}
@@ -639,7 +639,7 @@ the bot finds things it wants to kill/grab.
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-bot_angle_set
+angleSet
 
 Sets the bots look keys & b_angle to point at
 the target - used for fighting and just
@@ -647,7 +647,7 @@ generally making the bot look good.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)angle_set
+-(void)angleSet
 {
 	local float h;
 	local vector view;
@@ -699,7 +699,8 @@ generally making the bot look good.
 			v_angle.x += 360;
 		while (v_angle.x > 180)
 			v_angle.x -= 360;
-	} else if ((ent.enemy == NIL || ent.enemy.movetype == MOVETYPE_PUSH) && targets[0].ent.classname != "player") {
+	} else if ((ent.enemy == NIL || ent.enemy.movetype == MOVETYPE_PUSH)
+			   && targets[0].ent.classname != "player") {
 		keys &= ~KEY_LOOK;
 		v_angle = b_angle;
 		while (v_angle.x < -180)
@@ -766,7 +767,7 @@ frame, the ai_time limits it's actual updating
 			return;
 	}
 	if (ent.view_ofs == '0 0 0')
-		[self start_topic:7];
+		[self startTopic:7];
 	stagger_think = time;
 
 	// shut the bot's buttons off, various functions will turn them on by AI end
@@ -778,7 +779,7 @@ frame, the ai_time limits it's actual updating
 	if (route_table == self) {
 		if (busy_waypoints <= 0) {
 			if (waypoint_mode < WM_EDITOR)
-				[self look_for_crap:TRUE];
+				[self lookForCrap:TRUE];
 		}
 		b_aiflags = 0;
 		keys = 0;
@@ -790,8 +791,8 @@ frame, the ai_time limits it's actual updating
 			if (route_failed) {
 				[self roam];
 				route_failed = 0;
-			} else if (![self begin_route]) {	
-				[self look_for_crap:FALSE];
+			} else if (![self beginRoute]) {	
+				[self lookForCrap:FALSE];
 			}
 			keys = 0;
 		} else {
@@ -800,18 +801,18 @@ frame, the ai_time limits it's actual updating
 		}
 	}
 
-	// bot_angle_set points the bot at it's goal (ent.enemy or target1)
-	[self angle_set];
+	// angleSet points the bot at it's goal (ent.enemy or target1)
+	[self angleSet];
 
 	// fight my enemy. Enemy is probably a field QC coders will most likely
 	// use a lot for their own needs, since it's unused on a normal player
 	// FIXME
 	if (ent.enemy)
-		[self fight_style];
+		[self fightStyle];
 	else if (random () < 0.2)
 		if (random () < 0.2)
-			[self weapon_switch:-1];
-	[self dodge_stuff];
+			[self weaponSwitch:-1];
+	[self dodgeStuff];
 
 	// checks to see if bot needs to start going up for air
 	if (ent.waterlevel > 2) {
@@ -827,7 +828,7 @@ frame, the ai_time limits it's actual updating
 
 	// b_aiflags handling
 	if (b_aiflags)
-		[self handle_ai]; 
+		[self handleAI]; 
 	else
 		[self chat]; // don't want chat to screw him up if he's rjing or something
 }

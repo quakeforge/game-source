@@ -136,7 +136,7 @@ in bot_ai.qc
 FindRoute, this is a key function in the
 pathing. The name is a bit misleading, this
 code finds the closest waypoint that is part
-of a route calculated by the begin_route and
+of a route calculated by the beginRoute and
 end_route routines This is a definite path to
 an object.
 
@@ -181,7 +181,7 @@ different bot.
 */
 
 
--(void)mark_path:(entity)this
+-(void)markPath:(entity)this
 {
 	local Waypoint t;
 	local integer flag;
@@ -217,10 +217,10 @@ different bot.
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-begin_route and bot_get_path
+beginRoute and getPath
 
-PLEASE NOTE: bot_get_path replaces the old
-calls to begin_route. 
+PLEASE NOTE: getPath replaces the old
+calls to beginRoute. 
 
 Routing isn't done all at once now, but in two
 stages, the bot will calc a route *THEN*
@@ -231,7 +231,7 @@ Boy it's confusing.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
--(integer)begin_route
+-(integer)beginRoute
 {
 	if (busy_waypoints > 0)
 		return FALSE;
@@ -260,7 +260,7 @@ Boy it's confusing.
 	}
 }
 
--(void)get_path:(Waypoint)this :(integer)direct
+-(void)getPath:(Waypoint)this :(integer)direct
 {
 	if (this == NIL)
 		return;
@@ -268,12 +268,12 @@ Boy it's confusing.
 	if (route_table == self) {
 		if (busy_waypoints <= 0) {
 			route_table = NIL;
-			[self mark_path:this];
+			[self markPath:this];
 		}
 		return;
 	}
 	if (direct) {
-		if([self begin_route])
+		if([self beginRoute])
 			direct_route = TRUE;
 		else
 			[self lost:this :FALSE];
@@ -301,7 +301,7 @@ Temporary Marker code
 	[tep setOrigin:org];
 	tep.search_time = 0;
 
-	[self target_add:tep];
+	[self targetAdd:tep];
 }
 
 /*
@@ -429,7 +429,7 @@ very good all things considered.
 		}
 	}
 
-	if ([self recognize_plat:FALSE]) {
+	if ([self recognizePlat:FALSE]) {
 		if (vlen(trace_ent.velocity) > 0) {
 			if (dyn_plat)
 				return;
@@ -469,7 +469,7 @@ very good all things considered.
 	
 	dyn_dest = ent.origin + ent.view_ofs;
 
-	if ([self recognize_plat:FALSE]) {
+	if ([self recognizePlat:FALSE]) {
 		if (trace_ent.classname == "door")
 			t.flags |= AI_DOORFLAG;
 	}
