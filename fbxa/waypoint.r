@@ -56,6 +56,7 @@ Array waypoint_array;
 {
 	if (!waypoint_array) {
 		waypoint_array = [[Array alloc] init];
+		[waypoint_array addItem:NIL];
 		waypoint_queue = [[List alloc] init];
 		waypoint_thinker = spawn ();
 		waypoint_thinker.classname = "waypoint_thinker";
@@ -121,7 +122,7 @@ make_waypoint =
 		return 0;
 
 	for (i = 0; i < 4; i++) {
-		if (targets[i] == way) {
+		if (links[i] == way) {
 			if (flags & (AI_TELELINK_1 << i))
 				return 2;
 			return 1;
@@ -140,8 +141,8 @@ make_waypoint =
 		return 0; // already linked!!!
 
 	for (i = 0; i < 4; i++) {
-		if (!targets[i]) {
-			targets[i] = way;
+		if (!links[i]) {
+			links[i] = way;
 			return 1;
 		}
 	}
@@ -159,8 +160,8 @@ make_waypoint =
 		return 0; // already linked!!!
 
 	for (i = 0; i < 4; i++) {
-		if (!targets[i]) {
-			targets[i] = way;
+		if (!links[i]) {
+			links[i] = way;
 			flags |= AI_TELELINK_1 << i;
 			return 1;
 		}
@@ -178,9 +179,9 @@ make_waypoint =
 		return;
 
 	for (i = 0; i < 4; i++) {
-		if (targets[i] == way) {
+		if (links[i] == way) {
 			flags &= ~(AI_TELELINK_1 << i);
-			targets[i] = NIL;
+			links[i] = NIL;
 		}
 	}
 }
@@ -207,10 +208,10 @@ Waypoint Loading from file
 
 -(void)fix
 {
-	targets[0] = [Waypoint waypointForNum:b_pants];
-	targets[1] = [Waypoint waypointForNum:b_skill];
-	targets[2] = [Waypoint waypointForNum:b_shirt];
-	targets[3] = [Waypoint waypointForNum:b_frags];
+	links[0] = [Waypoint waypointForNum:b_pants];
+	links[1] = [Waypoint waypointForNum:b_skill];
+	links[2] = [Waypoint waypointForNum:b_shirt];
+	links[3] = [Waypoint waypointForNum:b_frags];
 }
 
 +(void) fixWaypoints
@@ -301,16 +302,16 @@ tripping the runaway loop counter
 	// can you say ugly?
 	if (flags & AI_TRACE_TEST) {
 		for (i = 0; i < 4; i++) {
-			if (targets[i]) {
-				traceline (origin, targets[i].origin, TRUE, /*self*/NIL);
+			if (links[i]) {
+				traceline (origin, links[i].origin, TRUE, /*self*/NIL);
 				if (trace_fraction == 1)
-					[self followLink:targets[i].origin :AI_TELELINK_1 << i];
+					[self followLink:links[i] :AI_TELELINK_1 << i];
 			}
 		}
  	} else {
 		for (i = 0; i < 4; i++) {
-			if (targets[i]) {
-				[self followLink:targets[i].origin :AI_TELELINK_1 << i];
+			if (links[i]) {
+				[self followLink:links[i] :AI_TELELINK_1 << i];
 			}
 		}
 	}
@@ -343,6 +344,15 @@ tripping the runaway loop counter
 		waypoint_thinker.@this = self;
 	}
 	return self;
+}
+
+-(integer)priority:(Bot)bot
+{
+		if (flags & AI_SNIPER)
+			return 30;
+		else if (flags & AI_AMBUSH)
+			return 30;
+		return 0;
 }
 
 @end

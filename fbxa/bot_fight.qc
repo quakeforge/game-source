@@ -77,9 +77,10 @@ weapon_range =
 };
 
 @implementation Bot (Fight)
--(float)sizePlayer:(entity)e
+-(float)sizePlayer:(Target)targ
 {
 	local float		sz;
+	local entity e = targ.ent;
 
 	sz = e.health + e.armorvalue * e.armortype;
 	switch (e.weapon) {
@@ -134,7 +135,7 @@ weapon_range =
 	if (ent.enemy) {
 		v = ent.origin - realorigin (ent.enemy);
 		foedist = vlen (v);
-		foesz = [self sizePlayer:ent.enemy];
+		foesz = [self sizePlayer:[Target forEntity:ent.enemy]];
 	} else {
 		foedist = 3000;
 		foesz = 9999999;
@@ -184,9 +185,10 @@ weapon_range =
 					if (foe.health > 0) {
 						flen = vlen (foe.origin - ent.origin);
 						if (flen < foedist) {
-							tsz = [self sizePlayer:foe];
+							local Target targ = [Target forEntity:foe];
+							tsz = [self sizePlayer:targ];
 							if (tsz < foesz) {
-								if ([self canSee:foe]) {
+								if ([self canSee:targ]) {
 									ent.enemy = foe;
 									foedist = flen;
 									foesz = tsz;
@@ -316,7 +318,7 @@ attacking an enemy.
 	} else if (!ent.enemy.takedamage) {
 		ent.enemy = NIL;
 		return;
-	} else if (![self canSee:ent.enemy]) {
+	} else if (![self canSee:[Target forEntity:ent.enemy]]) {
 		ent.enemy = NIL;
 		return;
 	}
@@ -340,7 +342,7 @@ attacking an enemy.
 		[self weaponSwitch:foedist];
 
 	if (!(b_aiflags & (AI_PRECISION | AI_BLIND | AI_OBSTRUCTED))) {
-		foesz = [self sizePlayer:ent.enemy];
+		foesz = [self sizePlayer:[Target forEntity:ent.enemy]];
 		mysz = [self sizePlayer:self] + 5;
 
 		if (foesz > mysz) {
@@ -378,7 +380,7 @@ attacking an enemy.
 				[self walkmove:v_right * -1];
 		}
 	} else {
-		foesz = [self sizePlayer:ent.enemy];
+		foesz = [self sizePlayer:[Target forEntity:ent.enemy]];
 		mysz = [self sizePlayer:self] + 5;
 
 		if (foesz > mysz)

@@ -73,6 +73,9 @@ struct target_s = {
 	local Target t;
 	local struct target_s ele;
 
+	if (!ent)
+		return NIL;
+
 	if (ent.classname == "player")
 		return ent.@this;
 
@@ -136,6 +139,97 @@ struct target_s = {
 -(integer)ishuman
 {
 	return 0;
+}
+
+-(integer)priority:(Bot)bot
+{
+	if ((ent.flags & FL_ITEM) && ent.model && ent.search_time < time) {
+		// ugly hack
+		//XXX if (ent._last != bot)
+		//XXX 	thisp = 20;
+		if (ent.classname == "item_artifact_super_damage")
+			return 65;
+		else if (ent.classname == "item_artifact_invulnerability")
+			return 65;
+		else if (ent.classname == "item_health") {
+			if (ent.spawnflags & 2)
+				return 55;
+			if (bot.ent.health < 40)
+				return 55 + 50;
+		} else if (ent.model == "progs/armor.mdl") {
+			if (bot.ent.armorvalue < 200) {		
+				if (ent.skin == 2)
+					return 60;
+				else if (bot.ent.armorvalue < 100)			
+					return 60 + 25;
+			}
+		} else if (ent.classname == "weapon_supershotgun") {
+			if (!(bot.ent.items & IT_SUPER_SHOTGUN))
+				return 25;
+		} else if (ent.classname == "weapon_nailgun") {
+			if (!(bot.ent.items & IT_NAILGUN))
+				return 30;
+		} else if (ent.classname == "weapon_supernailgun") {
+			if (!(bot.ent.items & IT_SUPER_NAILGUN))
+				return 35;
+		} else if (ent.classname == "weapon_grenadelauncher") {
+			if (!(bot.ent.items & IT_GRENADE_LAUNCHER))
+				return 45;
+		} else if (ent.classname == "weapon_rocketlauncher") {
+			if (!(bot.ent.items & IT_ROCKET_LAUNCHER))
+				return 60;
+		} else if (ent.classname == "weapon_lightning") {
+			if (!(bot.ent.items & IT_LIGHTNING))
+				return 50;
+		}
+	} else if ((ent.flags & FL_MONSTER) && ent.health > 0)
+		return 45;
+	return 0;
+}
+
+/*
+FindWaypoint
+
+This is used quite a bit, by many different
+functions big lag causer
+
+Finds the closest, fisible, waypoint to e
+*/
+-(Waypoint)findWaypoint:(Waypoint)start
+{
+	local Waypoint best, t;
+	local float dst, tdst;
+	local vector org;
+	local integer count, i;
+	local integer ishuman = [self ishuman];
+
+	org = [self realorigin];
+
+	if (start) {
+		dst = vlen ([start origin] - org);
+		best = start;
+	} else {
+		dst = 100000;
+		best = NIL;
+	}
+	count = [waypoint_array count];
+	for (i = 0; i < count; i++) {
+		t = [waypoint_array getItemAt:i];
+		// real players cut through ignore types
+		if (dst < 20)
+			return best;
+		if (!(t.flags & AI_IGNORE_TYPES) || ishuman) {
+			tdst = vlen (t.origin - org);
+			if (tdst < dst) {
+				traceline (ent.origin, t.origin, TRUE, ent);
+				if (trace_fraction == 1) {
+					dst = tdst;
+					best = t;
+				}
+			}
+		}
+	} 
+	return best;
 }
 
 @end

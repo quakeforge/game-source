@@ -50,49 +50,6 @@ integer bot_way_linker;
 
 @implementation Bot (Way)
 
-/*
-FindWaypoint
-
-This is used quite a bit, by many different
-functions big lag causer
-
-Finds the closest, fisible, waypoint to e
-*/
--(Waypoint)findWaypoint:(Waypoint)start
-{
-	local Waypoint best, t;
-	local float dst, tdst;
-	local vector org;
-	local integer count, i;
-
-	org = realorigin (ent);
-
-	if (start) {
-		dst = vlen (start.origin - org);
-		best = start;
-	} else {
-		dst = 100000;
-		best = NIL;
-	}
-	count = [waypoint_array count];
-	for (i = 0; i < count; i++) {
-		t = [waypoint_array getItemAt:i];
-		// real players cut through ignore types
-		if (dst < 20)
-			return best;
-		if (!(t.flags & AI_IGNORE_TYPES) || ishuman) {
-			tdst = vlen (t.origin - org);
-			if (tdst < dst) {
-				if (sisible (ent, t.ent)) {
-					dst = tdst;
-					best = t;
-				}
-			}
-		}
-	} 
-	return best;
-}
-
 -(void)deleteWaypoint:(Waypoint)what
 {
 	if (current_way == what)
@@ -181,19 +138,18 @@ different bot.
 */
 
 
--(void)markPath:(entity)this
+-(void)markPath:(Target)this
 {
 	local Waypoint t;
 	local integer flag;
-	local Bot bot = (Bot)this.@this;
 
 	[Waypoint clearMyRoute:self];
 
-	t = [this.@this findWaypoint:bot.current_way];
+	t = [this findWaypoint:this.current_way];
 	// FIXME
 	// ugh, better way to find players please!!!
-	if (this.classname != "player")
-		bot.current_way = t;
+	if (this.ent.classname != "player")
+		this.current_way = t;
 		
 	if (t.enemy == NIL) {
 		[self lost:this :FALSE];
@@ -260,7 +216,7 @@ Boy it's confusing.
 	}
 }
 
--(void)getPath:(Waypoint)this :(integer)direct
+-(void)getPath:(Target)this :(integer)direct
 {
 	if (this == NIL)
 		return;
@@ -389,8 +345,8 @@ very good all things considered.
 			local integer i;
 
 			for (i = 0; i < 4; i++) {
-				if (way.targets[i]) {
-					DeveloperLightning (way, way.targets[i],
+				if (way.links[i]) {
+					DeveloperLightning (way, way.links[i],
 										way.flags & (AI_TELELINK_1 << i));
 				}
 			}

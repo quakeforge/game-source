@@ -144,14 +144,14 @@ Bot has lost its target.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)lost:(Waypoint)targ :(integer)success
+-(void)lost:(Target)targ :(integer)success
 {
 	if (!targ)
 		return;
 
 	[self targetDrop:targ];
-	if (targ.ent.classname == "waypoint")
-		targ.b_sound &= ~b_clientflag;
+	if ([targ isKindOfClass:[Waypoint class]])
+		((Waypoint)targ).b_sound &= ~b_clientflag;
 
 	// find a new route
 	if (!success) {
@@ -174,8 +174,8 @@ Bot has lost its target.
                 }
         }
 
-	if (targ.ent.classname != "player")
-		targ.search_time = time + 5;
+	//XXX if (targ.ent.classname != "player")
+	//XXX 	targ.search_time = time + 5;
 }
 
 /*
@@ -188,7 +188,7 @@ removed.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)checkLost:(Waypoint)targ
+-(void)checkLost:(Target)targ
 {
 	local vector dist;
 
@@ -199,65 +199,71 @@ removed.
 	dist_z = 0;
 
 	// waypoints and items are lost if you get close enough to them
-	if (targ.ent.flags & FL_ITEM) {
-		if (vlen (targ.ent.origin - ent.origin) < 32)
-			[self lost:targ :TRUE];
-		else if (!targ.ent.model)
-			[self lost:targ :TRUE];
-	} else if (targ.ent.classname == "waypoint") {
+	if ([targ isKindOfClass:[Waypoint class]]) {
+		local Waypoint way = (Waypoint) targ;
 		if (!(b_aiflags & (AI_SNIPER | AI_AMBUSH))) {
 			if (b_aiflags & AI_RIDE_TRAIN) {
-				if (vlen (targ.origin - ent.origin) < 48)
-					[self lost:targ :TRUE];
+				if (vlen (way.origin - ent.origin) < 48)
+					[self lost:way :TRUE];
 			} else if (b_aiflags & AI_PRECISION) {
-				if (vlen (targ.origin - ent.origin) < 24)
-					[self lost:targ :TRUE];
-			} else if (vlen (targ.origin - ent.origin) < 32)
-				[self lost:targ :TRUE];
+				if (vlen (way.origin - ent.origin) < 24)
+					[self lost:way :TRUE];
+			} else if (vlen (way.origin - ent.origin) < 32)
+				[self lost:way :TRUE];
 		}
-	} else if (targ.ent.classname == "temp_waypoint") {
-		if (vlen (targ.origin - ent.origin) < 32)
-			[self lost:targ :TRUE];
-	} else if (targ.ent.classname == "player") {
-		if (targ.ent.health <= 0)
-			[self lost:targ :TRUE];
-		else if ((coop) || (teamplay && targ.ent.team == ent.team)) {
-			if (targ.targets[0].ent.classname == "player") {
-				if (![targ.targets[0] ishuman])
-					[self lost:targ :TRUE];
-			} else if (targ.ent.teleport_time > time) {
+		//temp_waypoint
+		if (vlen (way.origin - ent.origin) < 32)
+			[self lost:way :TRUE];
+	} else if ([targ isKindOfClass:[Bot class]]) {
+		local Bot bot = (Bot) targ;
+		if (bot.ent.health <= 0)
+			[self lost:bot :TRUE];
+		else if ((coop) || (teamplay && bot.ent.team == ent.team)) {
+			if (bot.targets[0].ent.classname == "player") {
+				if (![bot.targets[0] ishuman])
+					[self lost:bot :TRUE];
+			} else if (bot.ent.teleport_time > time) {
 				// try not to telefrag teammates
 				keys &= ~KEY_MOVE;
-			} else if (vlen (targ.origin - ent.origin) < 128) {
-				if (vlen (targ.origin - ent.origin) < 48)
-					[self walkmove: ent.origin - targ.origin];
+			} else if (vlen (bot.ent.origin - ent.origin) < 128) {
+				if (vlen (bot.ent.origin - ent.origin) < 48)
+					[self walkmove: ent.origin - bot.ent.origin];
 				else {
 					keys &= ~KEY_MOVE;
 					[self startTopic:4];
 				}
 				ent.search_time = time + 5; // never time out
-			} else if (![self canSee:targ])
-				[self lost:targ :FALSE];	
+			} else if (![self canSee:bot])
+				[self lost:bot :FALSE];	
 		} else if (waypoint_mode > WM_LOADED) {
-			if (vlen (targ.origin - ent.origin) < 128) {
-				[self lost:targ :TRUE];	
+			if (vlen (bot.ent.origin - ent.origin) < 128) {
+				[self lost:bot :TRUE];	
 			}
 		}
-	} else if (targ.ent.classname == "func_button") {
-		// buttons are lost of their frame changes
-		if (targ.ent.frame) {
-			[self lost:targ :TRUE];
-			if (ent.enemy == targ.ent)
-				ent.enemy = NIL;
-//			if (target[0])
-//				[self getPath:target[0] :TRUE];
-		}
-	} else if ((targ.ent.movetype == MOVETYPE_NONE) && (targ.ent.solid == SOLID_TRIGGER)) {
-		// trigger_multiple style triggers are lost if their thinktime changes
-		if (targ.ent.nextthink >= time) {
-			[self lost:targ :TRUE];
-//			if (target[0])
-//				[self getPath:target[0] :TRUE];
+	} else {
+		if (targ.ent.flags & FL_ITEM) {
+			if (vlen (targ.ent.origin - ent.origin) < 32)
+				[self lost:targ :TRUE];
+			else if (!targ.ent.model)
+				[self lost:targ :TRUE];
+		} else if (targ.ent.classname == "func_button") {
+			// buttons are lost of their frame changes
+			if (targ.ent.frame) {
+				[self lost:targ :TRUE];
+				if (ent.enemy == targ.ent)
+					ent.enemy = NIL;
+	//			if (target[0])
+	//				[self getPath:target[0] :TRUE];
+			}
+		} else if ((targ.ent.movetype == MOVETYPE_NONE)
+				   && (targ.ent.solid == SOLID_TRIGGER)) {
+			// trigger_multiple style triggers are lost if their thinktime
+			// changes
+			if (targ.ent.nextthink >= time) {
+				[self lost:targ :TRUE];
+	//			if (target[0])
+	//				[self getPath:target[0] :TRUE];
+			}
 		}
 	}
 	// lose any target way above the bot's head
@@ -512,99 +518,49 @@ the bot finds things it wants to kill/grab.
 
 // *!* Make sure you add code to checkLost to remove the target *!*
 
--(float)priorityForThing:(Target)thing
+-(integer)priority:(Bot)bot
 {
-	local float thisp;
+	local integer p;
 
-	thisp = 0;
-	// This is the most executed function in the bot. Careful what you do here.
-	if ((thing.flags & FL_ITEM) && thing.model && thing.search_time < time) {
-		// ugly hack
-		//XXX if (thing._last != ent)
-		//XXX 	thisp = 20;
-		if (thing.classname == "item_artifact_super_damage")
-			thisp = 65;
-		else if (thing.classname == "item_artifact_invulnerability")
-			thisp = 65;
-		else if (thing.classname == "item_health") {
-			if (thing.spawnflags & 2)
-				thisp = 55;
-			if (ent.health < 40)
-				thisp = thisp + 50;
-		} else if (thing.model == "progs/armor.mdl") {
-			if (ent.armorvalue < 200) {		
-				if (thing.skin == 2)
-					thisp = 60;
-				else if (ent.armorvalue < 100)			
-					thisp = thisp + 25;
-			}
-		} else if (thing.classname == "weapon_supershotgun") {
-			if (!(ent.items & IT_SUPER_SHOTGUN))
-				thisp = 25;
-		} else if (thing.classname == "weapon_nailgun") {
-			if (!(ent.items & IT_NAILGUN))
-				thisp = 30;
-		} else if (thing.classname == "weapon_supernailgun") {
-			if (!(ent.items & IT_SUPER_NAILGUN))
-				thisp = 35;
-		} else if (thing.classname == "weapon_grenadelauncher") {
-			if (!(ent.items & IT_GRENADE_LAUNCHER))
-				thisp = 45;
-		} else if (thing.classname == "weapon_rocketlauncher") {
-			if (!(ent.items & IT_ROCKET_LAUNCHER))
-				thisp = 60;
-		} else if (thing.classname == "weapon_lightning") {
-			if (!(ent.items & IT_LIGHTNING))
-				thisp = 50;
-		}
-	} else if ((thing.flags & FL_MONSTER) && thing.health > 0)
-		thisp = 45;
-	else if (thing.classname == "player") { 
-		if (thing.health > 0) {
-			if (thing == ent)
-				return 0;
-			else {
-				if (thing.items & IT_INVISIBILITY) //FIXME
-					thisp = 2;
-				else if (coop) {
-					thisp = 100;
-					//XXX if (thing.targets[0].classname == "player")
-					//XXX 	if (!thing.targets[0].ishuman)
-					//XXX 		return 0;
-				} else if (teamplay && thing.team == ent.team) {
-					thisp = 100;
-					//XXX if (thing.targets[0].classname == "player")
-					//XXX 	return 0;
-				} else
-					thisp = 30;
-			}
-		}
-	} else if (thing.classname == "waypoint") {
-		//XXX if (thing.b_aiflags & AI_SNIPER)
-		//XXX 	thisp = 30;
-		//XXX else if (thing.b_aiflags & AI_AMBUSH)
-		//XXX 	thisp = 30;
-	}
-	if (pointcontents (thing.origin) < -3)
+	if (ent.health <= 0)
 		return 0;
-	if (thisp) {
-		/*XXX
-		if (thing.current_way) {
-			// check to see if it's unreachable
-			if (thing.current_way.items == -1)
+	if (ent.items & IT_INVISIBILITY) //FIXME
+		p = 2;
+	else if (coop) {
+		if (targets[0].ent.classname == "player")
+			if (![targets[0] ishuman])
 				return 0;
-			else
-				thisp += (13000 - thing.current_way.items) * 0.05; 
-		}
-		*/
-	} 		
-	return thisp;
+		p = 100;
+	} else if (teamplay && ent.team == bot.ent.team) {
+		if (targets[0].ent.classname == "player")
+			return 0;
+		p = 100;
+	} else
+		p = 30;
+
+	if (current_way) {
+		// check to see if it's unreachable
+		if (current_way.items == -1)
+			return 0;
+		else
+			p += (integer) ((13000 - current_way.items) * 0.05);
+	}
+	return p;
+}
+
+-(integer)priorityForThing:(Target)thing
+{
+	// This is the most executed function in the bot. Careful what you do here.
+	if (pointcontents ([thing origin]) < -3)
+		return 0;
+	return [thing priority:self];
 }
 
 -(void)lookForCrap:(integer)scope
 {
 	local Target foe, best = NIL;
-	local float thatp, bestp, dist;
+	local integer thatp, bestp;
+	local float dist;
 
 	if (scope == 1)
 		foe = [Target forEntity:findradius (ent.origin, 13000)];

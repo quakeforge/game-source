@@ -11,6 +11,8 @@ typedef struct bot_data_t bot_data_t;
 
 @interface Target: Entity
 {
+@public
+	Waypoint current_way;
 }
 +(Target)forEntity:(entity)ent;
 -(vector)realorigin;
@@ -19,12 +21,14 @@ typedef struct bot_data_t bot_data_t;
 -(void)setOrigin:(vector) org;
 -(integer)recognizePlat:(integer)flag;
 -(integer)ishuman;
+-(integer)priority:(Bot)bot;
+-(Waypoint)findWaypoint:(Waypoint)start;
 @end
 
 @interface Waypoint: Target
 {
 @public
-	Waypoint [4] targets;
+	Waypoint [4] links;
 	integer flags;
 	vector origin;
 
@@ -97,7 +101,6 @@ typedef struct bot_data_t bot_data_t;
 	float dyn_time;
 	Waypoint temp_way;
 	Waypoint last_way;
-	Waypoint current_way;
 	Target [4] targets;
 	entity avoid;
 	vector obs_dir;
@@ -148,18 +151,18 @@ typedef struct bot_data_t bot_data_t;
 -(integer)targetOnstack:(Target)scot;
 -(void)targetAdd:(Target)e;
 -(void)targetDrop:(Target)e;
--(void)lost:(Waypoint)targ :(integer)success;
--(void)checkLost:(Waypoint)targ;
+-(void)lost:(Target)targ :(integer)success;
+-(void)checkLost:(Target)targ;
 -(void)handleAI;
 -(void)path;
--(float)priorityForThing:(Target)thing;
 -(void)lookForCrap:(integer)scope;
 -(void)angleSet;
 -(void)AI;
+-(integer)priorityForThing:(Target)thing;
 @end
 
 @interface Bot (Fight)
--(float)sizePlayer:(entity)e;
+-(float)sizePlayer:(Target)targ;
 -(void)dodgeStuff;
 -(void)weaponSwitch:(float)brange;
 -(void)shoot;
@@ -167,12 +170,11 @@ typedef struct bot_data_t bot_data_t;
 @end
 
 @interface Bot (Way)
--(Waypoint)findWaypoint:(Waypoint)start;
 -(void)deleteWaypoint:(Waypoint)what;
 -(entity)findThing:(string)s;
 -(Waypoint)findRoute:(Waypoint)lastone;
--(void)markPath:(entity)this;
--(void)getPath:(Waypoint)this :(integer)direct;
+-(void)markPath:(Target)this;
+-(void)getPath:(Target)this :(integer)direct;
 -(integer)beginRoute;
 -(void)spawnTempWaypoint:(vector)org;
 -(void)dynamicWaypoint;
