@@ -603,7 +603,7 @@ void () fd_secret_use =
 	sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 	self.nextthink = self.ltime + 0.1;
 
-	temp &= ~SECRET_1ST_LEFT);	// 1 or -1
+	temp = 1 - (self.spawnflags & SECRET_1ST_LEFT);	// 1 or -1
 	makevectors(self.mangle);
 	
 	if (!self.t_width)
