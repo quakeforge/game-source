@@ -1155,8 +1155,7 @@ void() CheckPowerups =
 		if (self.invincible_finished > time)
 		{
 			self.effects = self.effects | EF_DIMLIGHT;
-			if (deathmatch)	// Tonik
-				self.effects = self.effects | EF_RED;
+			self.effects = self.effects | EF_RED;
 		}
 		else
 		{
@@ -1207,8 +1206,7 @@ void() CheckPowerups =
 		if (self.super_damage_finished > time)
 		{
 			self.effects = self.effects | EF_DIMLIGHT;
-			if (deathmatch)	// Tonik
-				self.effects = self.effects | EF_BLUE;
+			self.effects = self.effects | EF_BLUE;
 		}
 		else
 		{
