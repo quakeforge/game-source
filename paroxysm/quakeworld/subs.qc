@@ -244,5 +244,4 @@ void() SUB_UseTargets =
 			activator = act;
 		} while ( 1 );
 	}
-	
 };

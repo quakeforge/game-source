@@ -47,7 +47,7 @@ void() ID_CheckTarget =
 				self.target_id_same = time + 3;
 				return;
 			}
-			else if (spot != self && visible (spot) )//Found new Target
+			else if (spot != self && visible (spot) )	//Found new Target
 			{
 				self.last_target_id = spot;
 				self.target_id_finished = time + 1.5;
@@ -61,12 +61,10 @@ void() ID_CheckTarget =
 				}
 				else
 					centerprint (self, self.last_target_id.netname);
-				
+
 				return;
 			}
 		}
-		
 		spot = spot.chain;
-		
 	}
 };
