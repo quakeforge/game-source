@@ -349,7 +349,7 @@ bot_chat =
 					BotSay2 ("\n");
 					bot_start_topic (0);
 					break;
-				case 5:
+				case 6:
 					BotSay (": howdy\n");
 					bot_start_topic (0);
 					break;

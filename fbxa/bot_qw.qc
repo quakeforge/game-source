@@ -97,6 +97,8 @@ bot_map_load =
 		break;
 	case "dm6":
 		map_dm6 ();
+		break;
+	}
 };
 
 /*
