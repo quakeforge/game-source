@@ -56,13 +56,13 @@ Stuff mimicking cl_input.c code
 */
 float(float key) CL_KeyState =
 {
-	return ((self.keys & key) > 0);
+	return (float)((self.keys & key) > 0);
 };
 
 void() CL_KeyMove = // CL_BaseMove + CL_AdjustAngles
 {
 	local float anglespeed;
-	local vector view;
+	local vector view = '0 0 0';
 	if (self.keys != self.oldkeys)
 	{
 		self.movevect = '0 0 0';
@@ -78,7 +78,7 @@ void() CL_KeyMove = // CL_BaseMove + CL_AdjustAngles
 		// 200 is the default cl_upspeed
 		self.movevect_z = self.movevect_z - (200 * CL_KeyState(KEY_MOVEDOWN)); 
 		// 200 is the default cl_upspeed
-		if (!self.b_aiflags & AI_PRECISION)
+		if (!(self.b_aiflags & AI_PRECISION))
 			self.movevect = self.movevect * 2; 
 		// 2 is the default cl_movespeedkey & bot always has +speed
 	}
@@ -392,7 +392,7 @@ float() SV_CheckWater =
 				self.waterlevel = 3;
 		}
 	}
-	return (self.waterlevel > 1);
+	return (float) (self.waterlevel > 1);
 
 };
 void() RemoveThud = // well sometimes
@@ -446,7 +446,7 @@ void() SV_CheckOnGround =
 		self.flags = self.flags - FL_ONGROUND;
 	else if ((trace_plane_normal_z <= 0.7) && (trace_fraction != 1))
 		self.flags = self.flags - FL_ONGROUND;
-        else if (!droptofloor(0,0))
+        else if (!droptofloor ())
 		self.flags = self.flags - FL_ONGROUND;
 	else if (org_z - self.origin_z < 2)
 		self.flags = self.flags | FL_ONGROUND;
@@ -468,7 +468,7 @@ float(vector dir) botCheckForStep =
 	yaw = vectoyaw(dir); 
 	if(walkmove(yaw, 3))
 	{	
-		if(droptofloor(0,0))
+		if(droptofloor ())
 		{	
 			stepdistance = self.origin_z - currentorigin_z;
 			v = self.origin - currentorigin;
@@ -489,7 +489,7 @@ float(vector dir) botCheckForStep =
 void(vector dir) BruteForceStep =
 {
 	local vector currentorigin;
-	local float currentflags, i, len;
+	local float currentflags, i = 0, len;
 
 	currentorigin = self.origin;
 	currentflags = self.flags;

@@ -77,7 +77,7 @@ float(entity e) bot_size_player =
 void() bot_dodge_stuff =
 {
 	local entity foe;
-	local float foedist, avdist, scandist, foesz, flen, tsz;
+	local float foedist, avdist, scandist = 0, foesz, flen, tsz;
 	local vector v;
 
 	if (waypoint_mode > WM_LOADED)
@@ -258,7 +258,7 @@ Pick a weapon based on range / ammo
 
 void(float brange) bot_weapon_switch =
 {
-	local	float	it, flag, pulse;
+	local	float	it, flag = 0, pulse = 0;
 	local vector v;
 
 	it = self.items & 127;
@@ -352,7 +352,7 @@ attacking an enemy.
 
 void() bot_fight_style =
 {
-	local vector v, v1, v2, org;
+	local vector v, v1 = '0 0 0', v2 = '0 0 0', org;
 	local float foedist, mysz, foesz;
 
 
@@ -430,7 +430,7 @@ void() bot_fight_style =
 			else
 				frik_walkmove(v1);
 		}
-		else if (!self.enemy.flags & FL_MONSTER)
+		else if (!(self.enemy.flags & FL_MONSTER))
 		{
 			if (foedist + 32 <  v_x)
 				frik_walkmove(self.origin - org);

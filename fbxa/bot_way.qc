@@ -292,11 +292,11 @@ very good all things considered.
 void() DynamicWaypoint =
 {
 	local entity t;
-	local float dist, dynlink, dynpoint, editor;
+	local float dist, dynlink = 0, dynpoint = 0, editor = 0;
 
 	if (self.teleport_time > self.portal_time)
 	{
-		if (!self.flags & FL_WATERJUMP)
+		if (!(self.flags & FL_WATERJUMP))
 		{
 			self.dyn_flags = 2;
 			if (!self.ishuman)

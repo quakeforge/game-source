@@ -503,7 +503,6 @@ void() bot_path =
 {
 
 	local entity jj, tele;
-	local vector org;
 
 	bot_check_lost(self.target1);
 	if (!self.target1)
@@ -723,7 +722,7 @@ float(entity thing) priority_for_thing =
 
 void(float scope) bot_look_for_crap =
 {
-	local entity foe, best;
+	local entity foe, best = world;
 	local float thatp, bestp, dist;
 
 	if (scope == 1)

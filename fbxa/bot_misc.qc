@@ -581,7 +581,7 @@ of the bounding boxes
 float (entity targ) fisible =
 {
 	local vector	spot1, org;
-	local float thruwater, pc1, pc2;
+	local float thruwater = 0, pc1 = 0, pc2 = 0;
 	
 	org = realorigin(targ);
 	spot1 = self.origin + self.view_ofs;

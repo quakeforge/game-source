@@ -584,7 +584,7 @@ BotInit
 void() BotInit =
 {
 	local entity ent, fisent;
-	local float numents;
+	local float numents = 0;
 	
 	// spawn entities for the physics
 	ent = nextent(world);
@@ -641,19 +641,19 @@ void(entity who) UpdateClient =
 	WriteByte(2, 40 );            // update userinfo
 	WriteByte(2, who.b_clientno);      // client number
 	WriteLong(2, who.b_userid);      // client userid
-	WriteByte(2, 92); // \
-	WriteByte(2, 98); // b
-	WriteByte(2, 111); // o
-	WriteByte(2, 116); // t
-	WriteByte(2, 116); // t
-	WriteByte(2, 111); // o
-	WriteByte(2, 109); // m
-	WriteByte(2, 99); // c
-	WriteByte(2, 111); // o
-	WriteByte(2, 108); // l
-	WriteByte(2, 111); // o
-	WriteByte(2, 114); // r
-	WriteByte(2, 92); // \
+	WriteByte(2, 92); // '\'
+	WriteByte(2, 98); // 'b'
+	WriteByte(2, 111); // 'o'
+	WriteByte(2, 116); // 't'
+	WriteByte(2, 116); // 't'
+	WriteByte(2, 111); // 'o'
+	WriteByte(2, 109); // 'm'
+	WriteByte(2, 99); // 'c'
+	WriteByte(2, 111); // 'o'
+	WriteByte(2, 108); // 'l'
+	WriteByte(2, 111); // 'o'
+	WriteByte(2, 114); // 'r'
+	WriteByte(2, 92); // '\'
 	if(who.b_pants > 9)
 	{
 		WriteByte(2, 49);
@@ -661,16 +661,16 @@ void(entity who) UpdateClient =
 	}
 	else
 		WriteByte(2, 48 + who.b_pants);
-	WriteByte(2, 92);  // \
-	WriteByte(2, 116); // t
-	WriteByte(2, 111); // o
-	WriteByte(2, 112); // p
-	WriteByte(2, 99);  // c
-	WriteByte(2, 111); // o
-	WriteByte(2, 108); // l
-	WriteByte(2, 111); // o
-	WriteByte(2, 114); // r
-	WriteByte(2, 92);  // \
+	WriteByte(2, 92);  // '\'
+	WriteByte(2, 116); // 't'
+	WriteByte(2, 111); // 'o'
+	WriteByte(2, 112); // 'p'
+	WriteByte(2, 99);  // 'c'
+	WriteByte(2, 111); // 'o'
+	WriteByte(2, 108); // 'l'
+	WriteByte(2, 111); // 'o'
+	WriteByte(2, 114); // 'r'
+	WriteByte(2, 92);  // '\'
 	if(who.b_shirt > 9)
 	{
 		WriteByte(2, 49);
@@ -678,33 +678,33 @@ void(entity who) UpdateClient =
 	}
 	else
 		WriteByte(2, 48 + who.b_shirt);
-	WriteByte(2, 92);  // \
-	WriteByte(2, 116); // t
-	WriteByte(2, 101); // e
-	WriteByte(2, 97);  // a
-	WriteByte(2, 109); // m
-	WriteByte(2, 92);  // \
-	WriteByte(2, 98);  // b
-	WriteByte(2, 111); // o
-	WriteByte(2, 116); // t
+	WriteByte(2, 92);  // '\'
+	WriteByte(2, 116); // 't'
+	WriteByte(2, 101); // 'e'
+	WriteByte(2, 97);  // 'a'
+	WriteByte(2, 109); // 'm'
+	WriteByte(2, 92);  // '\'
+	WriteByte(2, 98);  // 'b'
+	WriteByte(2, 111); // 'o'
+	WriteByte(2, 116); // 't'
 	// FIXME: do teams properly
 	// note this has no effect on infokey
-	WriteByte(2, 92 );  // \
-	WriteByte(2, 115); // s
-	WriteByte(2, 107); // k
-	WriteByte(2, 105); // i
-	WriteByte(2, 110); // n
-	WriteByte(2, 92);  // \
-	WriteByte(2, 98);  // b
-	WriteByte(2, 97);  // a
-	WriteByte(2, 115); // s
-	WriteByte(2, 101); // e
-	WriteByte(2, 92);  // \
-	WriteByte(2, 110); // n
-	WriteByte(2, 97);  // a
-	WriteByte(2, 109); // m
-	WriteByte(2, 101); // e
-	WriteByte(2, 92);  // \
+	WriteByte(2, 92 );  // '\'
+	WriteByte(2, 115); // 's'
+	WriteByte(2, 107); // 'k'
+	WriteByte(2, 105); // 'i'
+	WriteByte(2, 110); // 'n'
+	WriteByte(2, 92);  // '\'
+	WriteByte(2, 98);  // 'b'
+	WriteByte(2, 97);  // 'a'
+	WriteByte(2, 115); // 's'
+	WriteByte(2, 101); // 'e'
+	WriteByte(2, 92);  // '\'
+	WriteByte(2, 110); // 'n'
+	WriteByte(2, 97);  // 'a'
+	WriteByte(2, 109); // 'm'
+	WriteByte(2, 101); // 'e'
+	WriteByte(2, 92);  // '\'
 	WriteString( 2, who.netname);
 };
 
@@ -761,7 +761,6 @@ entity(float num) GetClientEntity =
 void(float whatbot, float whatskill) BotConnect =
 {
 	local float f;
-	local string h;
 	local entity uself;
 	
 	f = ClientNextAvailable();
@@ -804,7 +803,6 @@ void(float whatbot, float whatskill) BotConnect =
 
 void(entity bot) BotDisconnect =
 {
-	local string h;
 	local entity uself;
 	uself = self;
 	self = bot;
