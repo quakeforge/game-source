@@ -333,6 +333,8 @@ void() worldspawn =
 
 	// 63 testing
 	lightstyle(63, "a");
+	respawn_enabled = cvar ("respawn_enabled");
+	localcmd ("set respawn_enabled " + ftos (respawn_enabled) + "\n");
 };
 
 void() StartFrame =
