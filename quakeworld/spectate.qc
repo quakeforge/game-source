@@ -50,13 +50,14 @@ void() SpectatorImpulseCommand =
 {
 	if (self.impulse == 1) {
 		// teleport the spectator to the next spawn point
-		// note that if the spectator is tracking, this doesn't do
-		// much
-		self.goalentity = find(self.goalentity, classname, "info_player_deathmatch");
+		// note that if the spectator is tracking, this doesn't do much
+		self.goalentity = find (self.goalentity, classname,
+								"info_player_deathmatch");
 		if (self.goalentity == world)
-			self.goalentity = find(self.goalentity, classname, "info_player_deathmatch");
+			self.goalentity = find (self.goalentity, classname,
+									"info_player_deathmatch");
 		if (self.goalentity != world) {
-			setorigin(self, self.goalentity.origin);
+			setorigin (self, self.goalentity.origin);
 			self.angles = self.goalentity.angles;
 			self.fixangle = TRUE;           // turn this way immediately
 		}
@@ -76,9 +77,6 @@ void() SpectatorThink =
 {
 	// self.origin, etc contains spectator position, so you could
 	// do some neat stuff here
-
 	if (self.impulse)
-		SpectatorImpulseCommand();
+		SpectatorImpulseCommand ();
 };
-
-

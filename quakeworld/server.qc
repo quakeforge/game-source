@@ -1,4 +1,3 @@
-
 void() monster_ogre = {remove(self);};
 void() monster_demon1 = {remove(self);};
 void() monster_shambler = {remove(self);};
@@ -17,8 +16,7 @@ void() monster_oldone = {remove(self);};
 void() event_lightning = {remove(self);};
 
 /*
-==============================================================================
-
+=============================================================================
 MOVETARGET CODE
 
 The angle of the movetarget effects standing and bowing direction, but has no effect on movement, which allways heads to the next target.
@@ -31,7 +29,6 @@ the next spot to move to.  If not present, stop here for good.
 
 pausetime
 The number of seconds to spend standing or bowing for path_stand or path_bow
-
 ==============================================================================
 */
 
@@ -45,11 +42,10 @@ moving towards it, change the next destination and continue.
 */
 void() t_movetarget =
 {
-local entity    temp;
+	local entity	temp;
 
 	if (other.movetarget != self)
 		return;
-	
 	if (other.enemy)
 		return;         // fighting, not following a path
 
@@ -58,20 +54,18 @@ local entity    temp;
 	other = temp;
 
 	if (self.classname == "monster_ogre")
-		sound (self, CHAN_VOICE, "ogre/ogdrag.wav", 1, ATTN_IDLE);// play chainsaw drag sound
+		// play chainsaw drag sound
+		sound (self, CHAN_VOICE, "ogre/ogdrag.wav", 1, ATTN_IDLE);
 
-//dprint ("t_movetarget\n");
+//	dprint ("t_movetarget\n");
 	self.goalentity = self.movetarget = find (world, targetname, other.target);
-	self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
-	if (!self.movetarget)
-	{
+	self.ideal_yaw = vectoyaw (self.goalentity.origin - self.origin);
+	if (!self.movetarget) {
 		self.pausetime = time + 999999;
 		self.th_stand ();
 		return;
 	}
 };
-
-
 
 void() movetarget_f =
 {
@@ -81,7 +75,6 @@ void() movetarget_f =
 	self.solid = SOLID_TRIGGER;
 	self.touch = t_movetarget;
 	setsize (self, '-8 -8 -8', '8 8 8');
-	
 };
 
 /*QUAKED path_corner (0.5 0.3 0) (-8 -8 -8) (8 8 8)
@@ -91,7 +84,3 @@ void() path_corner =
 {
 	movetarget_f ();
 };
-
-
-
-//============================================================================

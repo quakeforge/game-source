@@ -1,11 +1,4 @@
-
-/*
-===============================================================================
-
-WORLD WEAPONS
-
-===============================================================================
-*/
+// WORLD WEAPONS ==============================================================
 
 $modelname g_shot
 $cd /raid/quake/id1/models/g_shot
@@ -15,7 +8,6 @@ $base base
 $skin skin
 $frame shot1
 
-
 $modelname g_nail
 $cd /raid/quake/id1/models/g_nail
 $flags 8		// client side rotate
@@ -23,7 +15,6 @@ $origin 0 0 -24
 $base base
 $skin skin
 $frame shot1
-
 
 $modelname g_nail2
 $cd /raid/quake/id1/models/g_nail2
@@ -33,7 +24,6 @@ $base base
 $skin skin
 $frame shot2
 
-
 $modelname g_rock
 $cd /raid/quake/id1/models/g_rock
 $flags 8		// client side rotate
@@ -41,7 +31,6 @@ $origin 0 0 -24
 $base base
 $skin skin
 $frame shot1
-
 
 $modelname g_rock2
 $cd /raid/quake/id1/models/g_rock2
@@ -59,13 +48,7 @@ $base base
 $skin skin
 $frame shot1
 
-/*
-===============================================================================
-
-VIEW WEAPONS
-
-===============================================================================
-*/
+// VIEW WEAPONS ===============================================================
 
 $modelname v_axe
 $cd /raid/quake/id1/models/v_axe
@@ -74,14 +57,12 @@ $base base
 $skin skin
 $frame frame1 frame2 frame3 frame4 frame5 frame6 frame7 frame8 frame9
 
-
 $modelname v_shot
 $cd /raid/quake/id1/models/v_shot
 $origin 0 0 54
 $base base
 $skin skin
 $frame shot1 shot2 shot3 shot4 shot5 shot6 shot7
-
 
 $modelname v_shot2
 $cd /raid/quake/id1/models/v_shot2
@@ -90,14 +71,12 @@ $base base
 $skin skin
 $frame shot1 shot2 shot3 shot4 shot5 shot6 shot7
 
-
 $modelname v_rock2
 $cd /raid/quake/id1/models/v_rock2
 $origin 0 0 54
 $base base
 $skin skin
 $frame shot1 shot2 shot3 shot4 shot5 shot6 shot6
-
 
 $modelname v_rock
 $cd /raid/quake/id1/models/v_rock
@@ -106,14 +85,12 @@ $base base
 $skin skin
 $frame shot1 shot2 shot3 shot4 shot5 shot6 shot7
 
-
 $modelname v_nail2
 $cd /raid/quake/id1/models/v_nail2
 $origin 0 0 54
 $base base
 $skin skin
 $frame shot1 shot2 shot3 shot4 shot5 shot6 shot7 shot8 shot9
-
 
 $modelname v_nail
 $cd /raid/quake/id1/models/v_nail
@@ -129,14 +106,7 @@ $base base
 $skin skin
 $frame shot1 shot2 shot3 shot4 shot5
 
-
-/*
-===============================================================================
-
-ITEMS
-
-===============================================================================
-*/
+// ITEMS ======================================================================
 
 $modelname w_g_key
 $cd /raid/quake/id1/models/w_g_key
@@ -179,7 +149,6 @@ $flags 8		// client side rotate
 $base base
 $skin skin
 $frame frame1
-
 
 $modelname quaddama
 $cd /raid/quake/id1/models/quaddama
@@ -258,14 +227,7 @@ $base base
 $skin skin
 $frame frame1
 
-
-/*
-===============================================================================
-
-GIBS
-
-===============================================================================
-*/
+// GIBS =======================================================================
 
 $modelname gib1
 $cd /raid/quake/id1/models/gib1
@@ -275,8 +237,8 @@ $base base
 $skin skin
 $frame frame1
 
-
 // torso
+
 $modelname gib2
 $cd /raid/quake/id1/models/gib2
 $flags 4		// EF_GIB
@@ -292,7 +254,6 @@ $origin 0 0 0
 $base base
 $skin skin
 $frame frame1
-
 
 // heads
 
@@ -392,13 +353,7 @@ $base base
 $skin skin
 $frame frame1
 
-/*
-===============================================================================
-
-MISC
-
-===============================================================================
-*/
+// MISC =======================================================================
 
 $modelname armor
 $cd /raid/quake/id1/models/armor
@@ -582,4 +537,3 @@ $origin 0 0 24
 $base base
 $skin skin
 $frame frame1
-
