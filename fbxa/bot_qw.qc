@@ -132,7 +132,7 @@ entity [32] phys_objects;
 .float	priority, ai_time, b_sound, missile_speed;
 .float	portal_time, b_skill, switch_wallhug;
 .float	b_aiflags, b_num, b_chattime;
-.float	b_entertime, b_userid; // QW shtuff
+.float	b_entertime; // QW shtuff
 .float	b_menu, b_menu_time, b_menu_value;
 .float route_failed, dyn_flags, dyn_time;
 .float dyn_plat;
@@ -248,7 +248,6 @@ void() ClientInRankings =
 	players[cl_no] = self;
 	self.b_clientno = cl_no + 1;
 	userid++;
-	self.b_userid = userid;
 	
 	self.phys_obj = phys_objects[cl_no];
 

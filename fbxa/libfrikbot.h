@@ -2,24 +2,90 @@
 #define TRUE 1
 
 // ----- entity fields ---
-@extern .float	wallhug, keys, oldkeys, ishuman;
+@extern .float	wallhug;
+/* keys
+ *	wp	if true, waypoint isn't busy (?)
+ *	bot	key press states for emulating a keyboard player
+ */
+@extern .float	keys;
+/* oldkeys
+ *	bot	used for checking for keystate changes
+ */
+@extern .float	oldkeys;
+/* ishuman
+ *	bot	0 = bot, 1 = human, 2 = bot spawning (moves to 0)
+ */
+@extern .float	ishuman;
+/* b_frags
+ *	wp	target4 waypoint number
+ *	bot	previous frag count. used for detecting suicides
+ */
 @extern .float	b_frags;
+/* b_clientno
+ *	bot	client number (1-32)
+ */
 @extern .integer b_clientno;
-@extern .float  b_shirt, b_pants; 
-@extern .float	priority, ai_time, b_sound, missile_speed;
-@extern .float	portal_time, b_skill, switch_wallhug;
-@extern .float	b_aiflags, b_num, b_chattime;
-@extern .float	b_entertime, b_userid; // QW shtuff
+/* b_shirt
+ *	wp	target3 waypoint number
+ *	bot	shirt color
+ */
+@extern .float  b_shirt;
+/* b_pants
+ *	wp	target1 waypoint number
+ *	bot	pants color
+ */
+@extern .float	b_pants; 
+@extern .float	priority;
+@extern .float	ai_time;
+/* b_sound
+ *	wp	if this waypoint is on a bot's route, the bit corresponding to the bot
+ *		client number will be set
+ *	bot	end time of current playing soud (for bots hearing enemies)
+ */
+@extern .float	b_sound;
+@extern .float	missile_speed;
+@extern .float	portal_time;
+/* b_skill
+ *	wp	target2 waypoint number
+ *	bot	skill level: 0 = easy, 3 = nightmare
+ */
+@extern .float	b_skill;
+@extern .float	switch_wallhug;
+@extern .float	b_aiflags;
+@extern .float	b_num;
+@extern .float	b_chattime;
+/* b_entertime
+ *	bot	used for keeping track of bot play time
+ */
+@extern .float	b_entertime;
+/* b_menu, b_menu_time, b_menu_value
+ *	?	waypoint editing stuff
+ */
 @extern .float	b_menu, b_menu_time, b_menu_value;
-@extern .float route_failed, dyn_flags, dyn_time;
-@extern .float dyn_plat;
-@extern .entity	temp_way, last_way, phys_obj;
+@extern .float	route_failed;
+@extern .float	dyn_flags;
+@extern .float	dyn_time;
+@extern .float	dyn_plat;
+@extern .entity	temp_way;
+@extern .entity	last_way;
+@extern .entity	phys_obj;
+/* targetN
+ *	bot	LIFO stack of goals for the bot to achieve
+ */
 @extern .entity	target1, target2, target3, target4;
+/* _next, _last
+ *	wp	linked list of waypoints
+ *	bot	linked list of possible foes
+ */
 @extern .entity	_next, _last;
 @extern .entity	current_way;
-@extern .vector	b_angle, b_dest, mouse_emu, obs_dir;
-@extern .vector	movevect, b_dir;
-@extern .vector dyn_dest;
+@extern .vector	b_angle;
+@extern .vector	b_dest;
+@extern .vector	mouse_emu;
+@extern .vector	obs_dir;
+@extern .vector	movevect;
+@extern .vector	b_dir;
+@extern .vector	dyn_dest;
 @extern .vector	punchangle; // HACK - Don't want to screw with bot_phys
 
 // --------defines-----
