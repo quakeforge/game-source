@@ -48,9 +48,9 @@ void()	demon1_stand12	=[	$stand12,	demon1_stand13	] {ai_stand();};
 void()	demon1_stand13	=[	$stand13,	demon1_stand1	] {ai_stand();};
 
 void()	demon1_walk1	=[	$walk1,		demon1_walk2	] {
-if (random() < 0.2)
-    sound (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
-ai_walk(8);
+	if (random () < 0.2)
+	    sound (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
+	ai_walk (8);
 };
 void()	demon1_walk2	=[	$walk2,		demon1_walk3	] {ai_walk(6);};
 void()	demon1_walk3	=[	$walk3,		demon1_walk4	] {ai_walk(6);};
@@ -61,9 +61,9 @@ void()	demon1_walk7	=[	$walk7,		demon1_walk8	] {ai_walk(10);};
 void()	demon1_walk8	=[	$walk8,		demon1_walk1	] {ai_walk(10);};
 
 void()	demon1_run1	=[	$run1,		demon1_run2	] {
-if (random() < 0.2)
-    sound (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
-ai_run(20);};
+	if (random () < 0.2)
+	    sound (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
+	ai_run (20);};
 void()	demon1_run2	=[	$run2,		demon1_run3	] {ai_run(15);};
 void()	demon1_run3	=[	$run3,		demon1_run4	] {ai_run(36);};
 void()	demon1_run4	=[	$run4,		demon1_run5	] {ai_run(20);};
@@ -96,7 +96,6 @@ self.nextthink = time + 3;
 
 void()	demon1_jump11	=[ 	$leap11,	demon1_jump12	] {};
 void()	demon1_jump12	=[ 	$leap12,	demon1_run1	] {};
-
 
 void()	demon1_atta1	=[	$attacka1,		demon1_atta2	] {ai_charge(4);};
 void()	demon1_atta2	=[	$attacka2,		demon1_atta3	] {ai_charge(0);};
@@ -132,7 +131,7 @@ void(entity attacker, float damage)	demon1_pain =
 	self.pain_finished = time + 1;
     sound (self, CHAN_VOICE, "demon/dpain1.wav", 1, ATTN_NORM);
 
-	if (random()*200 > damage)
+	if (random () * 200 > damage)
 		return;		// didn't flinch
 		
 	demon1_pain1 ();
@@ -152,9 +151,8 @@ void()	demon1_die9		=[	$death9,		demon1_die9 ] {};
 
 void() demon_die =
 {
-// check for gib
-	if (self.health < -80)
-	{
+	// check for gib
+	if (self.health < -80) {
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_demon.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -179,8 +177,7 @@ void() Demon_MeleeAttack =
 */
 void() monster_demon1 =
 {
-	if (deathmatch)
-	{
+	if (deathmatch) {
 		remove(self);
 		return;
 	}
@@ -210,17 +207,10 @@ void() monster_demon1 =
 	self.th_missile = demon1_jump1;			// jump attack
 	self.th_pain = demon1_pain;
 		
-	walkmonster_start();
+	walkmonster_start ();
 };
 
-
-/*
-==============================================================================
-
-DEMON
-
-==============================================================================
-*/
+// DEMON ======================================================================
 
 /*
 ==============
@@ -231,8 +221,7 @@ Returns TRUE if a melee attack would hit right now
 */
 float()	CheckDemonMelee =
 {
-	if (enemy_range == RANGE_MELEE)
-	{	// FIXME: check canreach
+	if (enemy_range == RANGE_MELEE) {	// FIXME: check canreach
 		self.attack_state = AS_MELEE;
 		return TRUE;
 	}
@@ -247,28 +236,27 @@ CheckDemonJump
 */
 float()	CheckDemonJump =
 {
-	local	vector	dist;
-	local	float	d;
+	local vector	dist;
+	local float		d;
 
 	if (self.origin_z + self.mins_z > self.enemy.origin_z + self.enemy.mins_z
-	+ 0.75 * self.enemy.size_z)
+		+ 0.75 * self.enemy.size_z)
 		return FALSE;
 		
 	if (self.origin_z + self.maxs_z < self.enemy.origin_z + self.enemy.mins_z
-	+ 0.25 * self.enemy.size_z)
+		+ 0.25 * self.enemy.size_z)
 		return FALSE;
 		
 	dist = self.enemy.origin - self.origin;
 	dist_z = 0;
 	
-	d = vlen(dist);
+	d = vlen (dist);
 	
 	if (d < 100)
 		return FALSE;
 		
-	if (d > 200)
-	{
-		if (random() < 0.9)
+	if (d > 200) {
+		if (random () < 0.9)
 			return FALSE;
 	}
 		
@@ -277,15 +265,13 @@ float()	CheckDemonJump =
 
 float()	DemonCheckAttack =
 {
-// if close enough for slashing, go for it
-	if (CheckDemonMelee ())
-	{
+	// if close enough for slashing, go for it
+	if (CheckDemonMelee ()) {
 		self.attack_state = AS_MELEE;
 		return TRUE;
 	}
 	
-	if (CheckDemonJump ())
-	{
+	if (CheckDemonJump ()) {
 		self.attack_state = AS_MISSILE;
         sound (self, CHAN_VOICE, "demon/djump.wav", 1, ATTN_NORM);
 		return TRUE;
@@ -299,7 +285,7 @@ float()	DemonCheckAttack =
 
 void(float side)	Demon_Melee =
 {
-	local	float	ldmg;
+	local float		ldmg;
 	local vector	delta;
 	
 	ai_face ();
@@ -307,47 +293,42 @@ void(float side)	Demon_Melee =
 
 	delta = self.enemy.origin - self.origin;
 
-	if (vlen(delta) > 100)
+	if (vlen (delta) > 100)
 		return;
 	if (!CanDamage (self.enemy, self))
 		return;
 		
     sound (self, CHAN_WEAPON, "demon/dhit2.wav", 1, ATTN_NORM);
-	ldmg = 10 + 5*random();
+	ldmg = 10 + 5 * random ();
 	T_Damage (self.enemy, self, self, ldmg);	
 
 	makevectors (self.angles);
 	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
 };
 
-
 void()	Demon_JumpTouch =
 {
-	local	float	ldmg;
+	local float		ldmg;
 
 	if (self.health <= 0)
 		return;
 		
-	if (other.takedamage)
-	{
-		if ( vlen(self.velocity) > 400 )
-		{
-			ldmg = 40 + 10*random();
+	if (other.takedamage) {
+		if (vlen (self.velocity) > 400) {
+			ldmg = 40 + 10 * random ();
 			T_Damage (other, self, self, ldmg);	
 		}
 	}
 
-	if (!checkbottom(self))
-	{
-		if (self.flags & FL_ONGROUND)
-		{	// jump randomly to not get hung up
-//dprint ("popjump\n");
-	self.touch = SUB_Null;
-	self.think = demon1_jump1;
-	self.nextthink = time + 0.1;
+	if (!checkbottom (self)) {
+		if (self.flags & FL_ONGROUND) {	// jump randomly to not get hung up
+//			dprint ("popjump\n");
+			self.touch = SUB_Null;
+			self.think = demon1_jump1;
+			self.nextthink = time + 0.1;
 
-//			self.velocity_x = (random() - 0.5) * 600;
-//			self.velocity_y = (random() - 0.5) * 600;
+//			self.velocity_x = (random () - 0.5) * 600;
+//			self.velocity_y = (random () - 0.5) * 600;
 //			self.velocity_z = 200;
 //			self.flags = self.flags - FL_ONGROUND;
 		}
@@ -358,4 +339,3 @@ void()	Demon_JumpTouch =
 	self.think = demon1_jump11;
 	self.nextthink = time + 0.1;
 };
-

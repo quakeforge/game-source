@@ -1,11 +1,8 @@
-
 /*
-
 A monster is in fight mode if it thinks it can effectively attack its
 enemy.
 
 When it decides it can't attack, it goes into hunt mode.
-
 */
 
 float(float v) anglemod;
@@ -26,19 +23,18 @@ void(vector dest) ChooseTurn;
 
 void() ai_face;
 
-
 float	enemy_vis, enemy_infront, enemy_range;
 float	enemy_yaw;
-
 
 void() knight_attack =
 {
 	local float		len;
+
+	// decide if now is a good swing time
+	len = vlen (self.enemy.origin + self.enemy.view_ofs
+				- (self.origin + self.view_ofs));
 	
-// decide if now is a good swing time
-	len = vlen(self.enemy.origin+self.enemy.view_ofs - (self.origin+self.view_ofs));
-	
-	if (len<80)
+	if (len < 80)
 		knight_atk1 ();
 	else
 		knight_runatk1 ();
@@ -61,8 +57,8 @@ float() CheckAttack =
 	local float		chance;
 
 	targ = self.enemy;
-	
-// see if any entities are in the way of the shot
+
+	// see if any entities are in the way of the shot
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 
@@ -74,10 +70,8 @@ float() CheckAttack =
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
 
-	if (enemy_range == RANGE_MELEE)
-	{	// melee attack
-		if (self.th_melee)
-		{
+	if (enemy_range == RANGE_MELEE) {	// melee attack
+		if (self.th_melee) {
 			if (self.classname == "monster_knight")
 				knight_attack ();
 			else
@@ -85,8 +79,8 @@ float() CheckAttack =
 			return TRUE;
 		}
 	}
-	
-// missile attack
+
+	// missile attack
 	if (!self.th_missile)
 		return FALSE;
 		
@@ -95,39 +89,30 @@ float() CheckAttack =
 		
 	if (enemy_range == RANGE_FAR)
 		return FALSE;
-		
-	if (enemy_range == RANGE_MELEE)
-	{
+	if (enemy_range == RANGE_MELEE) {
 		chance = 0.9;
 		self.attack_finished = 0;
-	}
-	else if (enemy_range == RANGE_NEAR)
-	{
+	} else if (enemy_range == RANGE_NEAR) {
 		if (self.th_melee)
 			chance = 0.2;
 		else
 			chance = 0.4;
-	}
-	else if (enemy_range == RANGE_MID)
-	{
+	} else if (enemy_range == RANGE_MID) {
 		if (self.th_melee)
 			chance = 0.05;
 		else
 			chance = 0.1;
-	}
-	else
+	} else
 		chance = 0;
 
-	if (random () < chance)
-	{
+	if (random () < chance) {
 		self.th_missile ();
-		SUB_AttackFinished (2*random());
+		SUB_AttackFinished (2 * random ());
 		return TRUE;
 	}
 
 	return FALSE;
 };
-
 
 /*
 =============
@@ -163,9 +148,8 @@ void() ai_charge_side =
 {
 	local	vector	dtemp;
 	local	float	heading;
-	
-// aim to the left of the enemy for a flyby
 
+	// aim to the left of the enemy for a flyby
 	self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
 	ChangeYaw ();
 
@@ -175,7 +159,6 @@ void() ai_charge_side =
 	
 	walkmove(heading, 20);
 };
-
 
 /*
 =============
@@ -193,10 +176,10 @@ void() ai_melee =
 		
 	delta = self.enemy.origin - self.origin;
 
-	if (vlen(delta) > 60)
+	if (vlen (delta) > 60)
 		return;
 		
-	ldmg = (random() + random() + random()) * 3;
+	ldmg = (random () + random () + random ()) * 3;
 	T_Damage (self.enemy, self, self, ldmg);
 };
 
@@ -217,7 +200,7 @@ void() ai_melee_side =
 		return;
 	if (!CanDamage (self.enemy, self))
 		return;
-	ldmg = (random() + random() + random()) * 3;
+	ldmg = (random () + random () + random ()) * 3;
 	T_Damage (self.enemy, self, self, ldmg);
 };
 
@@ -239,8 +222,8 @@ float() SoldierCheckAttack =
 	local float		chance;
 
 	targ = self.enemy;
-	
-// see if any entities are in the way of the shot
+
+	// see if any entities are in the way of the shot
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 
@@ -251,15 +234,13 @@ float() SoldierCheckAttack =
 
 	if (trace_ent != targ)
 		return FALSE;	// don't have a clear shot
-			
-	
-// missile attack
+
+	// missile attack
 	if (time < self.attack_finished)
 		return FALSE;
-		
+
 	if (enemy_range == RANGE_FAR)
 		return FALSE;
-		
 	if (enemy_range == RANGE_MELEE)
 		chance = 0.9;
 	else if (enemy_range == RANGE_NEAR)
@@ -269,11 +250,10 @@ float() SoldierCheckAttack =
 	else
 		chance = 0;
 
-	if (random () < chance)
-	{
+	if (random () < chance) {
 		self.th_missile ();
-		SUB_AttackFinished (1 + random());
-		if (random() < 0.3)
+		SUB_AttackFinished (1 + random ());
+		if (random () < 0.3)
 			self.lefty = !self.lefty;
 
 		return TRUE;
@@ -296,10 +276,8 @@ float() ShamCheckAttack =
 	local vector	spot1, spot2;	
 	local entity	targ;
 
-	if (enemy_range == RANGE_MELEE)
-	{
-		if (CanDamage (self.enemy, self))
-		{
+	if (enemy_range == RANGE_MELEE) {
+		if (CanDamage (self.enemy, self)) {
 			self.attack_state = AS_MELEE;
 			return TRUE;
 		}
@@ -312,8 +290,8 @@ float() ShamCheckAttack =
 		return FALSE;
 		
 	targ = self.enemy;
-	
-// see if any entities are in the way of the shot
+
+	// see if any entities are in the way of the shot
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 
@@ -325,17 +303,16 @@ float() ShamCheckAttack =
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
 
-	if (trace_ent != targ)
-	{
+	if (trace_ent != targ) {
 		return FALSE;	// don't have a clear shot
 	}
-			
-// missile attack
+
+	// missile attack
 	if (enemy_range == RANGE_FAR)
 		return FALSE;
 		
 	self.attack_state = AS_MISSILE;
-	SUB_AttackFinished (2 + 2*random());
+	SUB_AttackFinished (2 + 2 * random ());
 	return TRUE;
 };
 
@@ -355,10 +332,8 @@ float() OgreCheckAttack =
 	local entity	targ;
 	local float		chance;
 
-	if (enemy_range == RANGE_MELEE)
-	{
-		if (CanDamage (self.enemy, self))
-		{
+	if (enemy_range == RANGE_MELEE) {
+		if (CanDamage (self.enemy, self)) {
 			self.attack_state = AS_MELEE;
 			return TRUE;
 		}
@@ -371,8 +346,8 @@ float() OgreCheckAttack =
 		return FALSE;
 		
 	targ = self.enemy;
-	
-// see if any entities are in the way of the shot
+
+	// see if any entities are in the way of the shot
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 
@@ -382,11 +357,9 @@ float() OgreCheckAttack =
 		return FALSE;			// sight line crossed contents
 
 	if (trace_ent != targ)
-	{
 		return FALSE;	// don't have a clear shot
-	}
-			
-// missile attack
+
+	// missile attack
 	if (time < self.attack_finished)
 		return FALSE;
 		
@@ -401,7 +374,6 @@ float() OgreCheckAttack =
 		chance = 0;
 
 	self.attack_state = AS_MISSILE;
-	SUB_AttackFinished (1 + 2*random());
+	SUB_AttackFinished (1 + 2 * random ());
 	return TRUE;
 };
-

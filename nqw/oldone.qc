@@ -16,7 +16,6 @@ void() finale_2;
 void() finale_3;
 void() finale_4;
 
-
 entity	shub;
 
 $frame old1 old2 old3 old4 old5 old6 old7 old8 old9 
@@ -78,7 +77,6 @@ void() old_idle44       =[      $old44, old_idle45      ] {};
 void() old_idle45       =[      $old45, old_idle46      ] {};
 void() old_idle46       =[      $old46, old_idle1       ] {};
 
-
 void() old_thrash1        =[ $shake1,  old_thrash2       ] {lightstyle(0, "m");};
 void() old_thrash2        =[      $shake2,  old_thrash3       ] {lightstyle(0, "k");};
 void() old_thrash3        =[      $shake3,  old_thrash4       ] {lightstyle(0, "k");};
@@ -93,10 +91,11 @@ void() old_thrash11       =[      $shake11, old_thrash12      ] {lightstyle(0, "
 void() old_thrash12       =[      $shake12, old_thrash13      ] {lightstyle(0, "i");};
 void() old_thrash13       =[      $shake13, old_thrash14      ] {lightstyle(0, "k");};
 void() old_thrash14       =[      $shake14, old_thrash15      ] {lightstyle(0, "m");};
-void() old_thrash15       =[      $shake15, old_thrash16      ] {lightstyle(0, "m");
-self.cnt = self.cnt + 1;
-if (self.cnt != 3)
-	self.think = old_thrash1;
+void() old_thrash15       =[      $shake15, old_thrash16      ] {
+	lightstyle (0, "m");
+	self.cnt = self.cnt + 1;
+	if (self.cnt != 3)
+		self.think = old_thrash1;
 };
 void() old_thrash16       =[      $shake16, old_thrash17      ] {lightstyle(0, "g");};
 void() old_thrash17       =[      $shake17, old_thrash18      ] {lightstyle(0, "c");};
@@ -127,8 +126,7 @@ void() finale_1 =
 	WriteString (MSG_ALL, "");
 
 	pl = find (world, classname, "player");
-	while (pl != world)
-	{
+	while (pl != world) {
 		pl.view_ofs = '0 0 0';
 		pl.angles = other.v_angle = pos.mangle;
 		pl.fixangle = TRUE;		// turn this way immediately
@@ -158,11 +156,8 @@ void() finale_2 =
 	// start a teleport splash inside shub
 
 	o = shub.origin - '0 100 0';
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_TELEPORT);
-	WriteCoord (MSG_BROADCAST, o_x);
-	WriteCoord (MSG_BROADCAST, o_y);
-	WriteCoord (MSG_BROADCAST, o_z);
+	WriteBytes (MSG_BROADCAST, SVC_TEMPENTITY, TE_TELEPORT);
+	WriteCoordV (MSG_BROADCAST, o);
 
 	sound (shub, CHAN_VOICE, "misc/r_tele1.wav", 1, ATTN_NORM);
 	
@@ -191,19 +186,16 @@ void() finale_4 =
 	oldo = self.origin;
 
 	z = 16;
-	while (z <= 144)
-	{
+	while (z <= 144) {
 		x = -64;
-		while (x <= 64)
-		{
+		while (x <= 64) {
 			y = -64;
-			while (y <= 64)
-			{
+			while (y <= 64) {
 				self.origin_x = oldo_x + x;
 				self.origin_y = oldo_y + y;
 				self.origin_z = oldo_z + z;
 
-				r = random();
+				r = random ();
 				if (r < 0.3)				
 					ThrowGib ("progs/gib1.mdl", -999);
 				else if (r < 0.6)
@@ -220,7 +212,7 @@ void() finale_4 =
 	WriteByte (MSG_ALL, SVC_FINALE);
 	WriteString (MSG_ALL, "Congratulations and well done! You have\nbeaten the hideous Shub-Niggurath, and\nher hundreds of ugly changelings and\nmonsters. You have proven that your\nskill and your cunning are greater than\nall the powers of Quake. You are the\nmaster now. Id Software salutes you.");
 
-// put a player model down
+	// put a player model down
 	n = spawn();
 	setmodel (n, "progs/player.mdl");
 	oldo = oldo - '32 264 0';
@@ -230,10 +222,8 @@ void() finale_4 =
 
 	remove (self);
 
-// switch cd track
-	WriteByte (MSG_ALL, SVC_CDTRACK);
-	WriteByte (MSG_ALL, 3);
-//	WriteByte (MSG_ALL, 3);
+	// switch cd track
+	WriteBytes (MSG_ALL, SVC_CDTRACK, 3.0);
 	lightstyle(0, "m");	
 };
 
@@ -246,13 +236,11 @@ void (entity attacker, float damage) nopain =
 
 //============================================================================
 
-
 /*QUAKED monster_oldone (1 0 0) (-16 -16 -24) (16 16 32)
 */
 void() monster_oldone =
 {
-	if (deathmatch)
-	{
+	if (deathmatch) {
 		remove(self);
 		return;
 	}
@@ -280,4 +268,3 @@ void() monster_oldone =
 	
 	total_monsters = total_monsters + 1;
 };
-

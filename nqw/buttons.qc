@@ -9,7 +9,7 @@ void() button_wait =
 	self.nextthink = self.ltime + self.wait;
 	self.think = button_return;
 	activator = self.enemy;
-	SUB_UseTargets();
+	SUB_UseTargets ();
 	self.frame = 1;			// use alternate textures
 };
 
@@ -27,11 +27,10 @@ void() button_return =
 		self.takedamage = DAMAGE_YES;	// can be shot again
 };
 
-
 void() button_blocked =
-{	// do nothing, just don't ome all the way back out
+{
+	// do nothing, just don't come all the way back out
 };
-
 
 void() button_fire =
 {
@@ -43,7 +42,6 @@ void() button_fire =
 	self.state = STATE_UP;
 	SUB_CalcMove (self.pos2, self.speed, button_wait);
 };
-
 
 void() button_use =
 {
@@ -67,7 +65,6 @@ void() button_killed =
 	button_fire ();
 };
 
-
 /*QUAKED func_button (0 .5 .8) ?
 When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again.
 
@@ -85,27 +82,25 @@ When a button is touched, it moves some distance in the direction of it's angle,
 */
 void() func_button =
 {
-	if (self.sounds == 0)
-	{
+	switch (self.sounds) {
+	case 0:
 		precache_sound ("buttons/airbut1.wav");
 		self.noise = "buttons/airbut1.wav";
-	}
-	if (self.sounds == 1)
-	{
+		break;
+	case 1:
 		precache_sound ("buttons/switch21.wav");
 		self.noise = "buttons/switch21.wav";
-	}
-	if (self.sounds == 2)
-	{
+		break;
+	case 2:
 		precache_sound ("buttons/switch02.wav");
 		self.noise = "buttons/switch02.wav";
-	}
-	if (self.sounds == 3)
-	{
+		break;
+	case 3:
 		precache_sound ("buttons/switch04.wav");
 		self.noise = "buttons/switch04.wav";
+		break;
 	}
-	
+
 	SetMovedir ();
 
 	self.movetype = MOVETYPE_PUSH;
@@ -115,13 +110,11 @@ void() func_button =
 	self.blocked = button_blocked;
 	self.use = button_use;
 
-	if (self.health)
-	{
+	if (self.health) {
 		self.max_health = self.health;
 		self.th_die = button_killed;
 		self.takedamage = DAMAGE_YES;
-	}
-	else
+	} else
 		self.touch = button_touch;
 
 	if (!self.speed)
@@ -134,6 +127,6 @@ void() func_button =
 	self.state = STATE_BOTTOM;
 
 	self.pos1 = self.origin;
-	self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
+	self.pos2 = self.pos1 + self.movedir * (fabs (self.movedir * self.size)
+											- self.lip);
 };
-

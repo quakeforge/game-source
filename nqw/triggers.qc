@@ -29,13 +29,11 @@ void() multi_wait =
 // so wait for the delay time before firing
 void() multi_trigger =
 {
-	if (self.nextthink > time)
-	{
+	if (self.nextthink > time) {
 		return;		// allready been triggered
 	}
 
-	if (self.classname == "trigger_secret")
-	{
+	if (self.classname == "trigger_secret") {
 		if (self.enemy.classname != "player")
 			return;
 		found_secrets = found_secrets + 1;
@@ -279,10 +277,11 @@ float	SILENT = 2;
 
 void() play_teleport =
 {
-	local	float v;
-	local	string tmpstr;
+	local float		v;
+	local string	tmpstr;
 
-	v = random() * 5;
+	v = 5 * random ();
+
 	if (v < 1)
 		tmpstr = "misc/r_tele1.wav";
 	else if (v < 2)
@@ -305,14 +304,10 @@ void(vector org) spawn_tfog =
 	s.nextthink = time + 0.2;
 	s.think = play_teleport;
 
-	WriteByte (MSG_MULTICAST, SVC_TEMPENTITY);
-	WriteByte (MSG_MULTICAST, TE_TELEPORT);
-	WriteCoord (MSG_MULTICAST, org_x);
-	WriteCoord (MSG_MULTICAST, org_y);
-	WriteCoord (MSG_MULTICAST, org_z);
+	WriteBytes (MSG_MULTICAST, SVC_TEMPENTITY, TE_TELEPORT);
+	WriteCoordV (MSG_MULTICAST, org);
 	multicast (org, MULTICAST_PHS);
 };
-
 
 void() tdeath_touch =
 {

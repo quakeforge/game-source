@@ -10,7 +10,6 @@
 //		<code>
 // };
 
-
 /*
 ================
 monster_use
@@ -30,9 +29,8 @@ void() monster_use =
 		return;
 	if (activator.classname != "player")
 		return;
-	
-// delay reaction so if the monster is teleported, its sound is still
-// heard
+
+	// delay reaction so if the monster is teleported, its sound is still heard
 	self.enemy = activator;
 	self.nextthink = time + 0.1;
 	self.think = FoundTarget;
@@ -48,7 +46,7 @@ enemy as activator.
 */
 void() monster_death_use =
 {
-// fall to ground
+	// fall to ground
 	if (self.flags & FL_FLY)
 		self.flags = self.flags - FL_FLY;
 	if (self.flags & FL_SWIM)
@@ -61,7 +59,6 @@ void() monster_death_use =
 	SUB_UseTargets ();
 };
 
-
 //============================================================================
 
 void() walkmonster_start_go =
@@ -69,8 +66,7 @@ void() walkmonster_start_go =
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
 	droptofloor();
 	
-	if (!walkmove(0,0))
-	{
+	if (!walkmove (0, 0)) {
 		dprint ("walkmonster in wall at: ");
 		dprint (vtos(self.origin));
 		dprint ("\n");
@@ -86,44 +82,38 @@ void() walkmonster_start_go =
 	
 	self.flags = self.flags | FL_MONSTER;
 	
-	if (self.target)
-	{
-		self.goalentity = self.movetarget = find(world, targetname, self.target);
-		self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
-		if (!self.movetarget)
-		{
+	if (self.target) {
+		self.goalentity = self.movetarget = find (world, targetname,
+												  self.target);
+		self.ideal_yaw = vectoyaw (self.goalentity.origin - self.origin);
+		if (!self.movetarget) {
 			dprint ("Monster can't find target at ");
 			dprint (vtos(self.origin));
 			dprint ("\n");
 		}
-// this used to be an objerror
+		// this used to be an objerror
 		if (self.movetarget.classname == "path_corner")
 			self.th_walk ();
 		else
 			self.pausetime = 99999999;
 			self.th_stand ();
-	}
-	else
-	{
+	} else {
 		self.pausetime = 99999999;
 		self.th_stand ();
 	}
 
-// spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
+	// spread think times so they don't all happen at same time
+	self.nextthink = self.nextthink + random () * 0.5;
 };
-
 
 void() walkmonster_start =
 {
-// delay drop to floor to make sure all doors have been spawned
-// spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
+	// delay drop to floor to make sure all doors have been spawned
+	// spread think times so they don't all happen at same time
+	self.nextthink = self.nextthink + random () * 0.5;
 	self.think = walkmonster_start_go;
 	total_monsters = total_monsters + 1;
 };
-
-
 
 void() flymonster_start_go =
 {
@@ -138,31 +128,27 @@ void() flymonster_start_go =
 	self.flags = self.flags | FL_FLY;
 	self.flags = self.flags | FL_MONSTER;
 
-	if (!walkmove(0,0))
-	{
+	if (!walkmove (0, 0)) {
 		dprint ("flymonster in wall at: ");
 		dprint (vtos(self.origin));
 		dprint ("\n");
 	}
 
-	if (self.target)
-	{
-		self.goalentity = self.movetarget = find(world, targetname, self.target);
-		if (!self.movetarget)
-		{
+	if (self.target) {
+		self.goalentity = self.movetarget = find (world, targetname,
+												  self.target);
+		if (!self.movetarget) {
 			dprint ("Monster can't find target at ");
 			dprint (vtos(self.origin));
 			dprint ("\n");
 		}
-// this used to be an objerror
+		// this used to be an objerror
 		if (self.movetarget.classname == "path_corner")
 			self.th_walk ();
 		else
 			self.pausetime = 99999999;
 			self.th_stand ();
-	}
-	else
-	{
+	} else {
 		self.pausetime = 99999999;
 		self.th_stand ();
 	}
@@ -170,18 +156,16 @@ void() flymonster_start_go =
 
 void() flymonster_start =
 {
-// spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
+	// spread think times so they don't all happen at same time
+	self.nextthink = self.nextthink + 0.5 * random ();
 	self.think = flymonster_start_go;
 	total_monsters = total_monsters + 1;
 };
 
-
 void() swimmonster_start_go =
 {
-	if (deathmatch)
-	{
-		remove(self);
+	if (deathmatch) {
+		remove (self);
 		return;
 	}
 
@@ -197,35 +181,30 @@ void() swimmonster_start_go =
 	self.flags = self.flags | FL_SWIM;
 	self.flags = self.flags | FL_MONSTER;
 
-	if (self.target)
-	{
-		self.goalentity = self.movetarget = find(world, targetname, self.target);
-		if (!self.movetarget)
-		{
+	if (self.target) {
+		self.goalentity = self.movetarget = find (world, targetname,
+												  self.target);
+		if (!self.movetarget) {
 			dprint ("Monster can't find target at ");
 			dprint (vtos(self.origin));
 			dprint ("\n");
 		}
-// this used to be an objerror
-		self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
+		// this used to be an objerror
+		self.ideal_yaw = vectoyaw (self.goalentity.origin - self.origin);
 		self.th_walk ();
-	}
-	else
-	{
+	} else {
 		self.pausetime = 99999999;
 		self.th_stand ();
 	}
 
-// spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
+	// spread think times so they don't all happen at same time
+	self.nextthink = self.nextthink + random () * 0.5;
 };
 
 void() swimmonster_start =
 {
-// spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
+	// spread think times so they don't all happen at same time
+	self.nextthink = self.nextthink + random () * 0.5;
 	self.think = swimmonster_start_go;
 	total_monsters = total_monsters + 1;
 };
-
-

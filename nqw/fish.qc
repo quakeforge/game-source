@@ -59,7 +59,7 @@ void() f_walk17 =[      $swim17, f_walk18 ] {ai_walk(8);};
 void() f_walk18 =[      $swim18, f_walk1 ] {ai_walk(8);};
 
 void() f_run1  =[      $swim1, f_run2 ] {ai_run(12);
-	if (random() < 0.5)
+	if (random () < 0.5)
 		sound (self, CHAN_VOICE, "fish/idle.wav", 1, ATTN_NORM);
 };
 void() f_run2  =[      $swim3, f_run3 ] {ai_run(12);};
@@ -78,14 +78,14 @@ void() fish_melee =
 
 	if (!self.enemy)
 		return;		// removed before stroke
-		
+
 	delta = self.enemy.origin - self.origin;
 
-	if (vlen(delta) > 60)
+	if (vlen (delta) > 60)
 		return;
-		
+
 	sound (self, CHAN_VOICE, "fish/bite.wav", 1, ATTN_NORM);
-	ldmg = (random() + random()) * 3;
+	ldmg = (random () + random ()) * 3;
 	T_Damage (self.enemy, self, self, ldmg);
 };
 
@@ -109,7 +109,7 @@ void() f_attack17       =[      $attack17,      f_attack18] {ai_charge(10);};
 void() f_attack18       =[      $attack18,      f_run1    ] {ai_charge(10);};
 
 void() f_death1 =[      $death1,        f_death2        ] {
-sound (self, CHAN_VOICE, "fish/death.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "fish/death.wav", 1, ATTN_NORM);
 };
 void() f_death2 =[      $death2,        f_death3        ] {};
 void() f_death3 =[      $death3,        f_death4        ] {};
@@ -144,22 +144,19 @@ void() f_pain9  =[      $pain9, f_run1 ] {ai_pain(6);};
 
 void(entity attacker, float damage)	fish_pain =
 {
-
-// fish allways do pain frames
+	// fish allways do pain frames
 	f_pain1 ();
 };
-
-
 
 /*QUAKED monster_fish (1 0 0) (-16 -16 -24) (16 16 24) Ambush
 */
 void() monster_fish =
 {
-	if (deathmatch)
-	{
-		remove(self);
+	if (deathmatch) {
+		remove (self);
 		return;
 	}
+
 	precache_model2 ("progs/fish.mdl");
 
 	precache_sound2 ("fish/death.wav");
@@ -183,4 +180,3 @@ void() monster_fish =
 	
 	swimmonster_start ();
 };
-

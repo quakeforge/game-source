@@ -1,8 +1,6 @@
 /*
-
 in nightmare mode, all attack_finished times become 0
 some monsters refire twice automatically
-
 */
 
 void(float normal) SUB_AttackFinished =

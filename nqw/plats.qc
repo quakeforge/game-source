@@ -1,5 +1,3 @@
-
-
 void() plat_center_touch;
 void() plat_outside_touch;
 void() plat_trigger_use;
@@ -13,9 +11,7 @@ void() plat_spawn_inside_trigger =
 	local entity	trigger;
 	local vector	tmin, tmax;
 
-//
-// middle trigger
-//	
+	// middle trigger
 	trigger = spawn();
 	trigger.touch = plat_center_touch;
 	trigger.movetype = MOVETYPE_NONE;
@@ -28,13 +24,11 @@ void() plat_spawn_inside_trigger =
 	if (self.spawnflags & PLAT_LOW_TRIGGER)
 		tmax_z = tmin_z + 8;
 	
-	if (self.size_x <= 50)
-	{
+	if (self.size_x <= 50) {
 		tmin_x = (self.mins_x + self.maxs_x) / 2;
 		tmax_x = tmin_x + 1;
 	}
-	if (self.size_y <= 50)
-	{
+	if (self.size_y <= 50) {
 		tmin_y = (self.mins_y + self.maxs_y) / 2;
 		tmax_y = tmin_y + 1;
 	}
@@ -93,7 +87,7 @@ void() plat_outside_touch =
 	if (other.health <= 0)
 		return;
 		
-//dprint ("plat_outside_touch\n");
+//	dprint ("plat_outside_touch\n");
 	self = self.enemy;
 	if (self.state == STATE_TOP)
 		plat_go_down ();
@@ -109,7 +103,7 @@ void() plat_trigger_use =
 
 void() plat_crush =
 {
-//dprint ("plat_crush\n");
+//	dprint ("plat_crush\n");
 
 	other.deathtype = "squish";
 	T_Damage (other, self, self, 1);
@@ -143,10 +137,7 @@ Set "sounds" to one of the following:
 1) base fast
 2) chain slow
 */
-
-
 void() func_plat =
-
 {
 	if (!self.t_length)
 		self.t_length = 80;
@@ -155,24 +146,21 @@ void() func_plat =
 
 	if (self.sounds == 0)
 		self.sounds = 2;
-// FIX THIS TO LOAD A GENERIC PLAT SOUND
 
-	if (self.sounds == 1)
-	{
+	// FIX THIS TO LOAD A GENERIC PLAT SOUND
+	if (self.sounds == 1) {
 		precache_sound ("plats/plat1.wav");
 		precache_sound ("plats/plat2.wav");
 		self.noise = "plats/plat1.wav";
 		self.noise1 = "plats/plat2.wav";
 	}
 
-	if (self.sounds == 2)
-	{
+	if (self.sounds == 2) {
 		precache_sound ("plats/medplat1.wav");
 		precache_sound ("plats/medplat2.wav");
 		self.noise = "plats/medplat1.wav";
 		self.noise1 = "plats/medplat2.wav";
 	}
-
 
 	self.mangle = self.angles;
 	self.angles = '0 0 0';
@@ -188,7 +176,7 @@ void() func_plat =
 	if (!self.speed)
 		self.speed = 150;
 
-// pos1 is the top position, pos2 is the bottom
+	// pos1 is the top position, pos2 is the bottom
 	self.pos1 = self.origin;
 	self.pos2 = self.origin;
 	if (self.height)
@@ -200,13 +188,10 @@ void() func_plat =
 
 	plat_spawn_inside_trigger ();	// the "start moving" trigger	
 
-	if (self.targetname)
-	{
+	if (self.targetname) {
 		self.state = STATE_UP;
 		self.use = plat_use;
-	}
-	else
-	{
+	} else {
 		setorigin (self, self.pos2);
 		self.state = STATE_BOTTOM;
 	}
@@ -230,17 +215,15 @@ void() train_use =
 {
 	if (self.think != func_train_find)
 		return;		// already activated
-	train_next();
+	train_next ();
 };
 
 void() train_wait =
 {
-	if (self.wait)
-	{
+	if (self.wait) {
 		self.nextthink = self.ltime + self.wait;
 		sound (self, CHAN_NO_PHS_ADD+CHAN_VOICE, self.noise, 1, ATTN_NORM);
-	}
-	else
+	} else
 		self.nextthink = self.ltime + 0.1;
 	
 	self.think = train_next;
@@ -263,15 +246,13 @@ void() train_next =
 };
 
 void() func_train_find =
-
 {
 	local entity	targ;
 
 	targ = find (world, targetname, self.target);
 	self.target = targ.target;
 	setorigin (self, targ.origin - self.mins);
-	if (!self.targetname)
-	{	// not triggered, so start immediately
+	if (!self.targetname) {	// not triggered, so start immediately
 		self.nextthink = self.ltime + 0.1;
 		self.think = train_next;
 	}
@@ -297,16 +278,14 @@ void() func_train =
 	if (!self.dmg)
 		self.dmg = 2;
 
-	if (self.sounds == 0)
-	{
+	if (self.sounds == 0) {
 		self.noise = ("misc/null.wav");
 		precache_sound ("misc/null.wav");
 		self.noise1 = ("misc/null.wav");
 		precache_sound ("misc/null.wav");
 	}
 
-	if (self.sounds == 1)
-	{
+	if (self.sounds == 1) {
 		self.noise = ("plats/train2.wav");
 		precache_sound ("plats/train2.wav");
 		self.noise1 = ("plats/train1.wav");
@@ -324,8 +303,8 @@ void() func_train =
 	setsize (self, self.mins , self.maxs);
 	setorigin (self, self.origin);
 
-// start trains on the second frame, to make sure their targets have had
-// a chance to spawn
+	// start trains on the second frame, to make sure their targets have had
+	// a chance to spawn
 	self.nextthink = self.ltime + 0.1;
 	self.think = func_train_find;
 };
@@ -357,9 +336,8 @@ void() misc_teleporttrain =
 	setsize (self, self.mins , self.maxs);
 	setorigin (self, self.origin);
 
-// start trains on the second frame, to make sure their targets have had
-// a chance to spawn
+	// start trains on the second frame, to make sure their targets have had
+	// a chance to spawn
 	self.nextthink = self.ltime + 0.1;
 	self.think = func_train_find;
 };
-
