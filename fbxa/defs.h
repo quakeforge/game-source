@@ -10,7 +10,6 @@
 //
 // system globals
 //
-@extern entity          self;
 @extern entity          other;
 @extern entity          world;
 @extern float           time;
