@@ -397,7 +397,7 @@ void(entity who) UpdateClient =
 {
 	local string bottomcolor = ftos (who.b_pants);
 	local string topcolor = ftos (who.b_shirt);
-	dprint (who.netname + "\n");
+
 	WriteByte(2, 14 );
 	WriteByte(2, (float)who.b_clientno);
 	WriteShort(2, who.frags);
