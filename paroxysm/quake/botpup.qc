@@ -30,7 +30,8 @@ void(entity bot) BotCheckPowerups =
 		
 	//POX v1.1 - change armour to Yellow
 	if (bot.armorvalue == 150)
-		bot.items = bot.items - (bot.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR2;
+		bot.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+		bot.items |= IT_ARMOR2;
 	}
 
 
@@ -124,9 +125,9 @@ void(entity bot) BotCheckPowerups =
 		if (!(deathmatch & DM_DARK))
 		{
 			if (bot.invincible_finished > time)
-				bot.effects = bot.effects | EF_DIMLIGHT;
+				bot.effects |= EF_DIMLIGHT;
 			else
-				bot.effects = bot.effects - (bot.effects & EF_DIMLIGHT);
+				bot.effects &= ~EF_DIMLIGHT;
 		}
 	}
 
@@ -167,9 +168,9 @@ void(entity bot) BotCheckPowerups =
 		if (!(deathmatch & DM_DARK))
 		{
 			if (bot.super_damage_finished > time)
-				bot.effects = bot.effects | EF_DIMLIGHT;
+				bot.effects |= EF_DIMLIGHT;
 			else
-				bot.effects = bot.effects - (bot.effects & EF_DIMLIGHT);
+				bot.effects &= ~EF_DIMLIGHT;
 		}
 	}	
 

@@ -116,7 +116,8 @@ local string snd;
 	
 	//set armour type
 	other.armortype = type;
-	other.items = other.items - (other.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + bit;
+	other.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+	other.items |= bit;
 	sound (other, CHAN_AUTO, snd, 1, ATTN_NORM);
 	
 	//POX - 1.01b - Don't allow armour to rot while recharging

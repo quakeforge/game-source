@@ -818,7 +818,7 @@ void() CamUpdValues =
  if ((self.enemy != self) && (self.enemy.classname != "bodyque") && (self.enemy.health > 0)) {
 // Mask out items which change view color
   it = IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD;
-  self.items = (self.enemy.items | it) - it;
+  self.items &= ~it;
   self.health = self.enemy.health;
   self.armorvalue = self.enemy.armorvalue;
   self.ammo_shells = self.enemy.ammo_shells;

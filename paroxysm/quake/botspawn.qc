@@ -123,7 +123,7 @@ local entity spot;
 	spawn_tdeath (self.origin, self);
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
+	self.flags &= ~FL_ONGROUND;
 	makevectors(self.angles);
 	self.velocity = self.velocity + v_forward*20;
 
@@ -197,7 +197,8 @@ local entity spot;
 	self.search_time = 0;
 	
 	// POX v1.1 - spawn with 50 armour points
-	self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR1;
+	self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+	self.items |= IT_ARMOR1;
 	self.armorvalue = 50;
 	self.armortype = 0.9;
 
@@ -311,7 +312,7 @@ if (botcounter == 8)
 	bot.th_missile = bot_attack;
 
 // arming and naming him
-	bot.items = bot.items | IT_TSHOT;
+	bot.items |= IT_TSHOT;
 	bot.currentammo = bot.ammo_shells = bot.ammo_shells + 25;
 	bot.weapon = IT_TSHOT;
 	bot.health = 100;
@@ -327,7 +328,8 @@ if (botcounter == 8)
 	bot.invincible_time = 0;
 
 // POX v1.1 - spawn with 50 armour points
-	self.items = self.items - (self.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + IT_ARMOR1;
+	self.items &= ~(IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3);
+	self.items |= IT_ARMOR1;
 	self.armorvalue = 50;
 	self.armortype = 0.9;
 	

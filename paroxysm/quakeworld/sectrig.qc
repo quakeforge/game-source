@@ -128,7 +128,7 @@ void() launch_megaplasma =
 	newmis.movetype = MOVETYPE_FLYMISSILE;
 	newmis.solid = SOLID_BBOX;
 	newmis.classname = "megaplasma";
-	newmis.effects = newmis.effects | EF_BLUE;
+	newmis.effects |= EF_BLUE;
 
 	// set speed
 	dir = aim ( self, 1000 );
@@ -788,15 +788,15 @@ void() W_SecondTrigger =
 	if (self.weapon == IT_COMBOGUN) { 
 	
 		if (self.ammo_rockets < 1) {	// check for rockets
-			self.items = self.items - ( self.items & (IT_SHELLS) );
-			self.items = self.items | IT_ROCKETS;
+			self.items &= ~IT_SHELLS;
+			self.items |= IT_ROCKETS;
 			self.currentammo = self.ammo_rockets;
 			self.which_ammo = 1;
 			sound (self, CHAN_WEAPON, "weapons/mfire1.wav", 1, ATTN_NORM);
 		} else {
 			if (self.st_pball < time) {
-				self.items = self.items - ( self.items & (IT_SHELLS) );
-				self.items = self.items | IT_ROCKETS;
+				self.items &= ~IT_SHELLS;
+				self.items |= IT_ROCKETS;
 				self.currentammo = self.ammo_rockets;
 				self.which_ammo = 1;
 				player_gshot1();

@@ -373,7 +373,7 @@ local vector	org;
 		stuffcmd (other, "fov 40;wait;fov 55;wait;fov 70;wait;fov 90;\n");
 	// - POX
 	}
-	other.flags = other.flags - other.flags & FL_ONGROUND;
+	other.flags &= ~FL_ONGROUND;
 };
 /*QUAKED info_teleport_destination (.5 .5 .5) (-8 -8 -8) (8 8 32)
 This is the destination marker for a teleporter.  It should have a "targetname" field with the same value as a teleporter's "target" field.

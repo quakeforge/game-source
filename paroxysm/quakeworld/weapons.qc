@@ -906,7 +906,7 @@ void() W_SetCurrentAmmo =
 {
 	player_run ();		// get out of any weapon firing states
 
-	self.items = self.items - ( self.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
+	self.items &= ~(IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS);
 	
 	if (self.weapon == IT_AXE)
 	{
@@ -919,7 +919,7 @@ void() W_SetCurrentAmmo =
 		self.currentammo = self.ammo_shells;
 		self.weaponmodel = "progs/v_tshot.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_SHELLS;
+		self.items |= IT_SHELLS;
 	}
 	else if (self.weapon == IT_COMBOGUN)
 	{
@@ -930,12 +930,12 @@ void() W_SetCurrentAmmo =
 		if (self.which_ammo == 1)
 		{
 			self.currentammo = self.ammo_rockets;
-			self.items = self.items | IT_ROCKETS;
+			self.items |= IT_ROCKETS;
 		}
 		else
 		{
 			self.currentammo = self.ammo_shells;
-			self.items = self.items | IT_SHELLS;
+			self.items |= IT_SHELLS;
 		}
 	}
 	else if (self.weapon == IT_PLASMAGUN)
@@ -943,28 +943,28 @@ void() W_SetCurrentAmmo =
 		self.currentammo = self.ammo_cells;
 		self.weaponmodel = "progs/v_plasma.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_CELLS;
+		self.items |= IT_CELLS;
 	}
 	else if (self.weapon == IT_SUPER_NAILGUN)
 	{
 		self.currentammo = self.ammo_nails;
 		self.weaponmodel = "progs/v_nailg.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_NAILS;
+		self.items |= IT_NAILS;
 	}
 	else if (self.weapon == IT_GRENADE_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
 		self.weaponmodel = "progs/v_gren.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_ROCKETS;
+		self.items |= IT_ROCKETS;
 	}
 	else if (self.weapon == IT_ROCKET_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
 		self.weaponmodel = "progs/v_rhino.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_ROCKETS;
+		self.items |= IT_ROCKETS;
 	}
 	else
 	{
@@ -1087,8 +1087,8 @@ void() W_Attack =
 		if (self.ammo_shells < 1)
 		{	
 			self.currentammo = self.ammo_shells;
-			self.items = self.items - ( self.items & (IT_ROCKETS) );
-			self.items = self.items | IT_SHELLS;
+			self.items &= ~IT_ROCKETS;
+			self.items |= IT_SHELLS;
 			self.which_ammo = 0;
 			sound (self, CHAN_AUTO, "weapons/mfire1.wav", 1, ATTN_NORM);
 			self.st_sshotgun = time + 0.7;
@@ -1097,8 +1097,8 @@ void() W_Attack =
 		else
 		{
 			self.currentammo = self.ammo_shells;
-			self.items = self.items - ( self.items & (IT_ROCKETS) );
-			self.items = self.items | IT_SHELLS;
+			self.items &= ~IT_ROCKETS;
+			self.items |= IT_SHELLS;
 			self.which_ammo = 0;
 			player_shot1 ();
 			W_FireSuperShotgun ();

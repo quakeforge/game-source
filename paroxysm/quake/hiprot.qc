@@ -842,7 +842,7 @@ void() func_rotate_train =
    self.dest1 = self.origin; // original position
 
 
-   self.flags = self.flags | FL_ONGROUND;
+   self.flags |= FL_ONGROUND;
    };
 
 //************************************************

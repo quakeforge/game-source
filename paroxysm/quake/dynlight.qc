@@ -25,13 +25,13 @@ void() start_dynlight =
 //POX v1.1 - changed this for QW support
 //No EF_BLUE or EF_RED in Quake - defaults to EF_DIMLIGHT
 	if (self.dynlight_style == 2)
-		self.effects = self.effects | EF_BRIGHTLIGHT;
+		self.effects |= EF_BRIGHTLIGHT;
 	
 	else if (self.dynlight_style == 3)
-		self.effects = self.effects | EF_BRIGHTFIELD;
+		self.effects |= EF_BRIGHTFIELD;
 		
 	else
-		self.effects = self.effects | EF_DIMLIGHT;
+		self.effects |= EF_DIMLIGHT;
 		
 	dynlight_next();
 };

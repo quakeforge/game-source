@@ -427,7 +427,7 @@ local vector	org;
 			stuffcmd (other, "tele_zoom\n");
 	
 	}
-	other.flags = other.flags - other.flags & FL_ONGROUND;
+	other.flags &= ~FL_ONGROUND;
 };
 
 /*QUAKED info_teleport_destination (.5 .5 .5) (-8 -8 -8) (8 8 32)
@@ -593,7 +593,7 @@ void() trigger_push_touch =
 	else if (other.health > 0)
 	{
 		if (other.classname == "bot")
-			other.flags = other.flags - (other.flags & FL_ONGROUND);
+			other.flags &= ~FL_ONGROUND;
 			
 		other.velocity = self.speed * self.movedir * 10;
 		
@@ -648,7 +648,7 @@ void() trigger_bounce_touch =
 	if ((other.classname == "player" || other.classname == "bot") && (other.health > 0))
 	{
 		if (other.classname == "bot")
-			other.flags = other.flags - (other.flags & FL_ONGROUND);
+			other.flags &= ~FL_ONGROUND;
 		
 		other.velocity = self.angles;
 		other.bounce_time = time + 0.8;

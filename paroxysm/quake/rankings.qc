@@ -155,7 +155,7 @@ marks the client's bit flag as being in use
 
 void( float clientno ) clientSetUsed =
 {
-   fActiveClients = fActiveClients | clientBitFlag( clientno );
+   fActiveClients |= clientBitFlag( clientno );
 };
 
 /*

@@ -719,7 +719,7 @@ void() func_rotate_train =
    self.cnt = 0.1;	     // start time
    self.dest2 = '0 0 0';     // delta
    self.dest1 = self.origin; // original position
-   self.flags = self.flags | FL_ONGROUND;
+   self.flags |= FL_ONGROUND;
    };
 //************************************************
 //

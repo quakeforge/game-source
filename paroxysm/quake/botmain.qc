@@ -399,7 +399,7 @@ local	float		bold;
 			bnew = self.weapon;
 		
 		bold = self.items;
-		self.items = self.items | bnew;
+		self.items |= bnew;
 		
 		//POX - Packs contain health in FFA mode, so check for it here
 		if (self.goalentity.healamount)
@@ -427,7 +427,7 @@ local	float		bold;
 		
 		//POX - Turn off the powerup's 'glow'
 		if (self.goalentity.classname == "item_artifact_super_damage" || self.goalentity.classname == "item_artifact_invulnerability" || self.goalentity.classname == "item_artifact_invisibility")
-			self.goalentity.effects = self.goalentity.effects - (self.goalentity.effects & EF_DIMLIGHT);
+			self.goalentity.effects &= ~EF_DIMLIGHT;
 			
 		//POX - respawn times vary for powerups
 		if (self.goalentity.touch == powerup_touch)
@@ -645,13 +645,13 @@ local float	ofs;
 		if (ofs == -90)
 			{
 			makevectors(self.angles);
-			self.flags = self.flags - (self.flags & FL_ONGROUND);
+			self.flags &= ~FL_ONGROUND;
 			self.velocity = self.velocity + v_right * 300;
 			}
 		else
 			{
 			makevectors(self.angles);
-			self.flags = self.flags - (self.flags & FL_ONGROUND);
+			self.flags &= ~FL_ONGROUND;
 			self.velocity = self.velocity + v_right * -300;
 			}
 		return;
@@ -664,13 +664,13 @@ local float	ofs;
 		if (ofs == -90)
 			{
 			makevectors(self.angles);
-			self.flags = self.flags - (self.flags & FL_ONGROUND);
+			self.flags &= ~FL_ONGROUND;
 			self.velocity = self.velocity + v_right * 300;
 			}
 		else
 			{
 			makevectors(self.angles);
-			self.flags = self.flags - (self.flags & FL_ONGROUND);
+			self.flags &= ~FL_ONGROUND;
 			self.velocity = self.velocity + v_right * -300;
 			}
 };
@@ -684,7 +684,7 @@ void() bot_ai_back=
 		bot_run_slide();
 	else
 	{
-		self.flags = self.flags - (self.flags & FL_ONGROUND);
+		self.flags &= ~FL_ONGROUND;
 		self.velocity = v_forward*-460;
 	}
 };
@@ -699,7 +699,7 @@ void() jump_forward =
 	if (!(self.flags & FL_ONGROUND))
 		return;
 
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
+	self.flags &= ~FL_ONGROUND;
 	makevectors(self.angles);
 	
 	self.velocity = self.velocity + (v_forward * 220);
@@ -750,7 +750,7 @@ void() check_for_water =
 		sound (self, CHAN_VOICE, "player/lburn1.wav", 1, ATTN_NORM);
 		}
 
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
+	self.flags &= ~FL_ONGROUND;
 	
 //POX - Give'm an extra boost if in deep
 	if (self.waterlevel > 2)
@@ -1564,37 +1564,37 @@ float() bot_bestweapon =
 void() bot_set_currentammo =
 // --------------------------------
 {
-	self.items = self.items - ( self.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
+	self.items &= ~(IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS);
 	
       if (self.weapon == IT_TSHOT)
 	{
 		self.currentammo = self.ammo_shells;
-		self.items = self.items | IT_SHELLS;
+		self.items |= IT_SHELLS;
 	}
 	else if (self.weapon == IT_COMBOGUN)
 	{
 		self.currentammo = self.ammo_shells;
-		self.items = self.items | IT_SHELLS;
+		self.items |= IT_SHELLS;
 	}
 	else if (self.weapon == IT_PLASMAGUN)
 	{
 		self.currentammo = self.ammo_cells;
-		self.items = self.items | IT_CELLS;
+		self.items |= IT_CELLS;
 	}
 	else if (self.weapon == IT_SUPER_NAILGUN)
 	{
 		self.currentammo = self.ammo_nails;
-		self.items = self.items | IT_NAILS;
+		self.items |= IT_NAILS;
 	}
 	else if (self.weapon == IT_GRENADE_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
-		self.items = self.items | IT_ROCKETS;
+		self.items |= IT_ROCKETS;
 	}
 	else if (self.weapon == IT_ROCKET_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
-		self.items = self.items | IT_ROCKETS;
+		self.items |= IT_ROCKETS;
 	}
 	else
 	{
@@ -1698,7 +1698,7 @@ void() bot_fire_MPlasma =
 	newmis.movetype = MOVETYPE_FLY;
 	newmis.solid = SOLID_BBOX;
 	newmis.classname = "megaplasma";
-	newmis.effects = newmis.effects | EF_BRIGHTFIELD | EF_BRIGHTLIGHT;
+	newmis.effects |= EF_BRIGHTFIELD | EF_BRIGHTLIGHT;
 
 	newmis.velocity = bot_aim_at_enemy() * 1200;
 	newmis.angles = vectoangles(newmis.velocity);
@@ -1799,7 +1799,7 @@ local vector dir;
 	self.currentammo = self.ammo_shells = self.ammo_shells - 2;
 	bot_face();
 	sound (self ,CHAN_WEAPON, "weapons/shotgn2.wav", 1, ATTN_NORM); 
-	self.effects = self.effects | EF_MUZZLEFLASH;
+	self.effects |= EF_MUZZLEFLASH;
 	dir = bot_aim_at_enemy();
 	FireBullets (14, dir, '0.14 0.1 0');
 
@@ -1835,7 +1835,7 @@ local vector dir;
 	bot_face();
 
 	sound (self, CHAN_WEAPON, "weapons/tsfire.wav", 1, ATTN_NORM);	
-	self.effects = self.effects | EF_MUZZLEFLASH;
+	self.effects |= EF_MUZZLEFLASH;
 
 	dir = bot_aim_at_enemy();
 	FireBullets (6, dir, '0.04 0.04 0');
@@ -1908,7 +1908,7 @@ void() bot_fire_grenade =
 	}
 	
 	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
-	self.effects = self.effects | EF_MUZZLEFLASH;
+	self.effects |= EF_MUZZLEFLASH;
 	sound (self, CHAN_WEAPON, "weapons/ssgrnde.wav", 1, ATTN_NORM);
 
 	bot_face();
@@ -2015,7 +2015,7 @@ void() bot_lightning =
 {
 	local	vector	org, dir;
 	
-	self.effects = self.effects | EF_MUZZLEFLASH;
+	self.effects |= EF_MUZZLEFLASH;
 
 	bot_face();
 
@@ -2171,19 +2171,19 @@ void()	bot_jump5		=[0,	bot_walk1	] {};
 
 //POX - Added a few things here, SuperDamage sound is checked, and the weapon fire calls support POX weapons
 
-void()	bot_rock1		=[	14,	bot_rock2	] {bot_strafe(); self.effects = self.effects | EF_MUZZLEFLASH;
+void()	bot_rock1		=[	14,	bot_rock2	] {bot_strafe(); self.effects |= EF_MUZZLEFLASH;
 sound (self, CHAN_WEAPON, "weapons/rhino.wav", 1, ATTN_NORM); bot_fire_rocket(); SuperDamageSound();self.nextthink = time + 0.1;};
 void()	bot_rock2		=[	15,	bot_rock3	] {bot_strafe(); bot_fire_rocket();};
 void()	bot_rock3		=[	16,	bot_rock4	] {bot_strafe();};
 void()	bot_rock4		=[	16,	bot_run1		] {bot_strafe();};
 
-void()	bot_gren1		=[	15,	bot_gren2	] {bot_strafe(); self.effects = self.effects | EF_MUZZLEFLASH; bot_fire_grenade(); SuperDamageSound();};
+void()	bot_gren1		=[	15,	bot_gren2	] {bot_strafe(); self.effects |= EF_MUZZLEFLASH; bot_fire_grenade(); SuperDamageSound();};
 void()	bot_gren2		=[	16,	bot_gren3	] {bot_strafe();};
 void()	bot_gren3		=[	17,	bot_gren4	] {bot_strafe();};
 void()	bot_gren4		=[	18,	bot_gren5	] {bot_strafe();};
 void()	bot_gren5		=[	19,	bot_run1	] {bot_strafe();};
 
-void()	bot_shot1		=[	15,	bot_shot2	] {bot_strafe(); self.effects = self.effects | EF_MUZZLEFLASH; bot_fire_shotgun(); SuperDamageSound();};
+void()	bot_shot1		=[	15,	bot_shot2	] {bot_strafe(); self.effects  |= EF_MUZZLEFLASH; bot_fire_shotgun(); SuperDamageSound();};
 void()	bot_shot2		=[	16,	bot_shot3	] {bot_strafe();};
 void()	bot_shot3		=[	17,	bot_shot4	] {bot_strafe();};
 void()	bot_shot4		=[	18,	bot_shot5	] {bot_strafe();};
@@ -2191,7 +2191,7 @@ void()	bot_shot5		=[	19,	bot_run1	] {bot_strafe();};
 
 
 //POX - 102b - Made this simpler, and fixed attack_finished check
-void()	bot_nail1		=[	15,	bot_nail2	] {bot_strafe(); bot_fire_nailgun(); self.effects = self.effects | EF_MUZZLEFLASH; SuperDamageSound();};
+void()	bot_nail1		=[	15,	bot_nail2	] {bot_strafe(); bot_fire_nailgun(); self.effects |= EF_MUZZLEFLASH; SuperDamageSound();};
 void()	bot_nail2		=[	16,	bot_run1	] {bot_strafe();
 if (visible(self.enemy) && self.ammo_nails > 0 && self.enemy.health > 0)
 	bot_attack();
@@ -2393,7 +2393,7 @@ local float i;
 	
 	self.deadflag = DEAD_DYING;
 	self.solid = SOLID_NOT;
-	self.flags = self.flags - (self.flags & FL_ONGROUND);
+	self.flags &= ~FL_ONGROUND;
 	self.movetype = MOVETYPE_TOSS;
 	if (self.velocity_z < 10)
 		self.velocity_z = self.velocity_z + random()*300;

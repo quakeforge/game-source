@@ -102,7 +102,7 @@ void()	bot_grab_weapon =
 		}
 		
 		bound_bot_ammo();
-		self.items = self.items | weap;
+		self.items |= weap;
 		self.weapon = weap;
 		
 		/*TESTING
@@ -188,7 +188,7 @@ void() bot_grab_powerup =
 
 	sound (self, CHAN_VOICE, self.goalentity.noise, 1, ATTN_NORM);
 
-	self.items = self.items | self.goalentity.items;
+	self.items |= self.goalentity.items;
 
 // do the apropriate action
 	if (self.goalentity.classname == "item_artifact_envirosuit")
