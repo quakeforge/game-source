@@ -1,0 +1,13 @@
+#ifndef ENTNUM_qh
+#define ENTNUM_qh 1
+
+@extern {
+
+float(entity e) entnum;
+entity(float num) entfornum;
+
+string(entity e) etos;
+
+};
+
+#endif

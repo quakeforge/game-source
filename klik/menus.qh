@@ -1,0 +1,6 @@
+#ifndef MENUS_qh
+#define MENUS_qh 1
+
+void() menu_intro;
+
+#endif

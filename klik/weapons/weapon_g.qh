@@ -1,0 +1,11 @@
+#ifndef WEAPON_G_qh
+#define WEAPON_G_qh 1
+
+void() weapon_init_weapons;
+
+void() weapon_select_best;
+void(float imp) weapon_select_by_impulse;
+
+void() update_weapon_flags;
+
+#endif

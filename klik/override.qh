@@ -1,0 +1,49 @@
+#ifndef OVERRIDE_qh
+#define OVERRIDE_qh 1
+
+@extern {
+
+/* Returns an overrider with matching class, creating one if needed */
+entity(entity e, string override_class, float priority) override_create;
+
+/* Finalizes the above, call this once you set what you want to override. */
+void(entity ovr) override_finalize;
+
+/* Use this in your overrider to get your entity. Call it _EXACTLY ONCE_ per overrider */
+entity() override_findself;
+
+/* This _MUST_ be called if you don't continue down the chain! */
+void() override_halt;
+
+/* Guess. */
+void(entity e, entity ovr) override_destroy;
+
+/* FIXME: Use 'any' type when compiler supports it */
+void(entity e, .void() fld, void() func) override_set_v_v;
+void(entity e, .float(entity ent) fld, float(entity ent) func) override_set_f_e;
+void(entity e, .float(float flt) fld, float(float flt) func) override_set_f_f;
+void(entity e, .float() fld, float() func) override_set_f_v;
+void(entity e, .float(vector vec) fld, float(vector vec) func) override_set_f_c;
+void(entity e, .float(entity ent) fld, float(entity ent) func) override_set_f_e;
+
+#define override_set_th_takeitem(e, func) override_set_f_v(e, th_takeitem, func)
+
+#define override_set_th_attack(e, func) override_set_f_e(e, th_attack, func)
+
+#define override_set_th_takedamage(e, func) override_set_f_f(e, th_takedamage, func)
+#define override_set_th_dealdamage(e, func) override_set_f_f(e, th_dealdamage, func)
+
+#define override_set_th_die(e, func) override_set_v_v(e, th_die, func)
+#define override_set_th_kill(e, func) override_set_v_v(e, th_kill, func)
+
+#define override_set_prethink(e, func) override_set_v_v(e, prethink, func)
+#define override_set_actthink(e, func) override_set_v_v(e, actthink, func)
+#define override_set_postthink(e, func) override_set_v_v(e, postthink, func)
+
+#define override_set_th_teleport(e, func) override_set_f_c(e, th_teleport, func)
+
+#define override_set_th_projectile(e, func) override_set_f_e(e, th_projectile, func)
+
+};
+
+#endif

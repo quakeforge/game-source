@@ -1,0 +1,24 @@
+#ifndef MAPENTS_UTIL_qh
+#define MAPENTS_UTIL_qh 1
+
+#define SPAWNFLAGS_CHECK_ITEMS		16384
+#define SPAWNFLAGS_TAKE_ITEMS		32768
+
+.void() th_activate;
+
+void() util_map_entity_init;
+void() util_map_entity_cull;
+void() util_map_entity_drop;
+
+void() util_set_movedir;
+
+float() util_check_targets;
+float() util_use_targets;
+
+float(entity e) is_living;
+float(entity e) is_solid;
+float(entity e) is_teleportable;
+
+float(entity ent1, entity ent2) util_entities_touch;
+
+#endif

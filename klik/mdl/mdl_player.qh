@@ -1,0 +1,7 @@
+#ifndef MDL_PLAYER_qh
+#define MDL_PLAYER_qh 1
+
+void() mdl_player_init;
+void() mdl_setup_player;
+
+#endif

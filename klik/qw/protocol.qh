@@ -1,0 +1,40 @@
+#ifndef QW_PROTOCOL_qh
+#define QW_PROTOCOL_qh 1
+
+// protocol bytes
+#define	SVC_PRINT		8
+#define SVC_UPDATEFRAGS		14
+#define	SVC_MAKESTATIC		20
+#define	SVC_TEMPENTITY		23
+#define	SVC_CENTERPRINT		26
+#define	SVC_KILLEDMONSTER	27
+#define	SVC_FOUNDSECRET		28
+#define	SVC_INTERMISSION	30
+#define	SVC_FINALE		31
+#define	SVC_CDTRACK		32
+#define	SVC_SELLSCREEN		33
+#define	SVC_SMALLKICK		34
+#define	SVC_BIGKICK		35
+#define SVC_UPDATEPING		36
+#define SVC_UPDATEENTERTIME	37
+#define	SVC_MUZZLEFLASH		39
+#define SVC_UPDATEUSERINFO	40
+#define SVC_UPDATEPL		53
+
+// temp entities
+#define	TE_SPIKE		0
+#define	TE_SUPERSPIKE		1
+#define	TE_GUNSHOT		2
+#define	TE_EXPLOSION		3
+#define	TE_TAREXPLOSION		4
+#define	TE_LIGHTNING1		5
+#define	TE_LIGHTNING2		6
+#define	TE_WIZSPIKE		7
+#define	TE_KNIGHTSPIKE		8
+#define	TE_LIGHTNING3		9
+#define	TE_LAVASPLASH		10
+#define	TE_TELEPORT		11
+#define	TE_BLOOD		12
+#define	TE_LIGHTNINGBLOOD	13
+
+#endif

@@ -1,0 +1,10 @@
+#ifndef ACT_DEAD_qh
+#define ACT_DEAD_qh 1
+
+@extern {
+
+void() act_setup_dead;
+
+};
+
+#endif

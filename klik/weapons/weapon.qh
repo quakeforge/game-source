@@ -1,0 +1,37 @@
+#ifndef WEAPON_qh
+#define WEAPON_qh 1
+
+#include "weapon_g.qh"
+#include "mdl.qh"
+
+.float(float action) w_func;
+.float attack_finished;
+
+#define WEAPON_INIT		0
+#define WEAPON_AMMO		1
+#define WEAPON_WEIGHT		2
+#define WEAPON_SELECTABLE	3
+#define WEAPON_SELECT		4
+#define WEAPON_FIRE		5
+
+void() weapon_init;
+
+void() weapon_player_init;
+float() weapon_player_parm1;
+void(float parm) weapon_player_parm1_decode;
+float() weapon_player_parm1_default;
+
+void() weapon_select_best;
+void(float imp) weapon_select_by_impulse;
+void() weapon_set_ammo;
+
+void(string s) weaponprint;
+
+void() weapon_player_impulse;
+
+float(float impluse) util_impulse_to_IT;
+
+float(.float ammo_field, float ammo) util_weapon_use_ammo;
+float(.float ammo_field, float max_ammo, float ammo) util_weapon_give_ammo;
+
+#endif

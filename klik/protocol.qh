@@ -1,0 +1,6 @@
+#ifndef PROTOCOL_qh
+#define PROTOCOL_qh 1
+
+#include SYSTEM_DIR "protocol.qh"
+
+#endif

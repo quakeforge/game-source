@@ -1,0 +1,36 @@
+#ifndef MDL_qh
+#define MDL_qh 1
+
+.void(float func, float extra) mdl_func;
+.float mdl_mod;
+
+.void() mdl_think;
+.float mdl_thought;
+.float mdl_var;
+
+#define MDL_FUNC_IDLE	0
+#define MDL_FUNC_JUMP	1
+#define MDL_FUNC_PAIN	2
+#define MDL_FUNC_FIRE	3
+#define MDL_FUNC_DIE	4
+#define MDL_FUNC_GIB	5
+
+#define MDL_MOD_WEP_MASK		255
+#define MDL_MOD_WEP_AXE			1
+#define MDL_MOD_WEP_SHOTGUN		2
+#define MDL_MOD_WEP_SUPER_SHOTGUN	3
+#define MDL_MOD_WEP_NAILGUN		4
+#define MDL_MOD_WEP_SUPER_NAILGUN	5
+#define MDL_MOD_WEP_GRENADE_LAUNCHER	6
+#define MDL_MOD_WEP_ROCKET_LAUNCHER	7
+#define MDL_MOD_WEP_LIGHTNING_GUN	8
+
+#define MDL_MOD_SWIM_OVER		256
+#define MDL_MOD_SWIM_IN			512
+#define MDL_MOD_SWIM			(MDL_MOD_SWIM_IN|MDL_MOD_SWIM_OVER)
+
+void(float func, float extra) mdl_func_void;
+
+entity(float func, float extra) mdl_bodyque_and_func;
+
+#endif

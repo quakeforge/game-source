@@ -1,0 +1,10 @@
+#ifndef QW_BUILTINS_qh
+#define QW_BUILTINS_qh 1
+
+@extern {
+#include "qw/builtins.qc"
+};
+
+#include "sz_watch.qh"
+
+#endif

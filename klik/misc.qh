@@ -1,0 +1,73 @@
+#ifndef MISC_qh
+#define MISC_qh 1
+
+/* Random miscellaneous functions */
+
+@extern {
+
+entity(string clname) spawn;
+
+string(entity e) name;	/* Returns the pretty entity name */
+
+#define crandom()	(2.0*(random() - 0.5))
+
+void(entity e) makestatic;
+void(vector pos, string samp, float vol, float atten) ambientsound;
+
+void() SUB_remove;
+void(entity e) safe_remove;
+
+void() SUB_makestatic;
+void(entity e) safe_makestatic;
+
+void(vector org, string samp, float vol, float atten) sound_vector;
+entity(string clname, string mod, vector org, vector dir, float speed) spawn_missile;
+
+/* :) */
+void(.string fld, string match, void(entity e) func) foreach;
+void(.string fld, string match, .void() func) foreach_field;
+
+/* swaps self/other temporarily */
+float(entity newself, entity newother, float() func) switcheroo;
+
+/* Returns new value */
+float(float current, float increment, float max) increase_bound;
+
+/* Returns FALSE if not increased */
+float(.float fld, float increment, float max) increase_field;
+
+/* Calculate the player's current maximum speed, taking water/air in to account */
+float(entity e) calc_max_speed;
+
+/* sprint one string at a time, and get them all to the destination */
+void(entity client, float level) xprint_start;
+void(string str) xprint_str;
+
+#define is_activeplayer(e)	(e.flags & FL_CLIENT)
+
+#define is_cl(e)	(e.flags & FL_CLIENT)
+#define is_autothink(e)	(e.flags & FL_AUTOTHINK)
+
+/* Return a random entity that matches, or world */
+entity(.string fld, string str) find_random;
+
+/* Return something from the .enemy chain */
+entity(entity ech) random_enemy_chain;
+
+#define vieworigin(e) (e.origin + e.view_ofs)
+#define center(e) ((e.absmin + e.absmax) * 0.5)
+
+/* FIXME: Make this an mdl func? */
+#define shootorigin(e)	(vieworigin(e) - '0 0 6')
+
+/* Stuff for traceline "projectiles" to hit triggers like normal projectiles */
+void() tl_proj_begin;
+void() tl_proj_end;
+void(entity trigger, entity fake_proj) tl_touch;
+
+.float tl_notsolid;
+#define tl_issolid(ent) (!ent.tl_notsolid)
+
+};
+
+#endif

@@ -1,0 +1,11 @@
+#ifndef BODYQUE_qh
+#define BODYQUE_qh 1
+
+@extern {
+
+void() bodyque_init;
+entity(entity body) bodyque_que;
+
+};
+
+#endif

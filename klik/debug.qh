@@ -1,0 +1,10 @@
+#ifndef DEBUG_qh
+#define DEBUG_qh 1
+
+@extern {
+
+void() debug_impulse;
+
+};
+
+#endif

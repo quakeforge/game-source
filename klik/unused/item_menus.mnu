@@ -1,0 +1,64 @@
+menu_equip_primary
+"\b=\b=\b=\b Primary Weapons \b=\b=\b=\b"
+1	"Sniper Riffle"		4000
+2	"Chaingun"		3000
+3	"Rocket Launcher"	3000
+4	"Grenade Launcher"	2200
+5	"Lightning Gun"		2200
+6	"Super Nailgun"		2000
+""
+8	"Previous"		{ } { return ITEM_DISABLED; }
+9	"Next"			{ menu_set(menu_equip_secondary); nomenu = 1; }
+10	"Done"			{ menu_set(SUB_Null); nomenu = 1; }
+
+k_menu_secondary
+"\b=\b=\b=\b Secondary Weapons \b=\b=\b=\b"
+1	"Med-Kit"		1550	{
+		%6$s
+		if (status == FALSE || status == -1)
+			item_sell(self, ITEM___AUTO_MED_KIT, ITEM___AUTO_MED_KIT_PRICE);
+	}
+2	"\b..\bAuto Med-Kit"	750	{
+		if (item_query(self, ITEM_MED_KIT)) { %6$s }
+	} {
+		local float status;
+		status = item_query(self, ITEM_MED_KIT);
+		if (!status) return ITEM_DISABLED;
+		status = item_query(self, %1$s);
+		if (!status) return ITEM_DEFAULT;
+		return ITEM_SELECTED;
+	}
+3	"Knife"			700
+4	"Super Shotgun"		500
+5	"Laser"			500
+6	"Flame Thrower"		500
+""
+8	"Previous"		{ menu_set(menu_equip_primary); nomenu = 1; }
+9	"Next"			{ menu_set(menu_equip_tertiary); nomenu = 1; }
+10	"Done"			{ menu_set(SUB_Null); nomenu = 1; }
+
+menu_equip_tertiary
+"\b=\b=\b=\b Tertiary Weapons \b=\b=\b=\b"
+1	"Nailgun"		400
+2	"Shotgun"		50
+""
+"More weapons coming soon."
+""
+""
+""
+8	"Previous"		{ menu_set(menu_equip_secondary); nomenu = 1; }
+9	"Next"			{ menu_set(menu_equip_upgrades); nomenu = 1; }
+10	"Done"			{ menu_set(SUB_Null); nomenu = 1; }
+
+k_menu_upgrades
+"\b=\b=\b=\b Upgrades \b=\b=\b=\b"
+1	"Cluster Rockets"	1000
+2	"Pyro Toys"		1000
+3	"Extra Ammo"		500
+""
+"More upgrades coming soon."
+""
+""
+8	"Previous"		{ menu_set(k_menu_equip_tertiary); nomenu = 1; }
+9	"Next"			{ } { return K_DISABLED; }
+10	"Done"			{ menu_set(SUB_Null); nomenu = 1; }

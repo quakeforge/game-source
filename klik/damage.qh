@@ -1,0 +1,56 @@
+#ifndef DAMAGE_qh
+#define DAMAGE_qh 1
+
+@extern {
+
+#define DAMAGE_SHOULDDIE	16777214
+#define DAMAGE_MUSTDIE		16777215
+
+.entity dmg_attacker;
+
+.void() deathmsg;
+.string deathmsg1, deathmsg2, deathmsg3, deathmsg4, deathmsg5, deathmsg6;
+
+// You _MUST_ have th_takedamage if you .takedamage!
+// Return TRUE if you were damaged, FALSE otherwise.
+.float(float dmg) th_takedamage;
+
+/* Allows you to globally override damage you deal */
+/* self = you, other = target */
+/* returns new amount of damage, or < 0 for don't */
+.float(float dmg) th_dealdamage;
+
+/* Use this when you attack something.  It may modify missile. */
+/* You should have at least classname, velocity, dmg, and mass */
+#define damage_attack(missile) do{ if (self.th_attack) self.th_attack(missile); }while(0)
+
+.void(entity missile) th_attack;
+
+/* Update frags in these. */
+.void() th_die;
+.void() th_kill;
+
+/* ghost_inflictor is for radius and bullets...
+   Only guaranteed to have:
+	classname
+	velocity
+	mass
+*/
+entity ghost_inflictor;
+
+void() damage_init;
+
+void(entity from, entity to) deathmsg_copy;
+void() deathmsg_display;
+void() deathmsg_nodisplay;
+
+float(float d) damage_armor;
+void(float d) damage_push;
+float(entity ent, entity attacker, entity inflictor, float d, void() deathmessage) damage;
+
+/* Fill in appropriate fields, inflictor _WILL_ be modified. */
+void(entity ignore, entity attacker, entity inflictor, void() deathmessage) damage_radius;
+
+};
+
+#endif

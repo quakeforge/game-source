@@ -1,0 +1,17 @@
+#ifndef EFFECT_qh
+#define EFFECT_qh 1
+
+@extern {
+
+void() effect_muzzleflash;
+void(entity e) effect_smallkick;
+void(vector org, vector dir, float d) effect_blood;
+void(vector org, vector vel, float d) effect_gun_spark;
+void(vector org, vector vel) effect_nail_spark;
+void(vector org) effect_explosion;
+void(vector org) effect_teleport_fog;
+void(entity from, vector p1, vector p2) effect_lightning2;
+
+};
+
+#endif

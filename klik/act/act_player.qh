@@ -1,0 +1,11 @@
+#ifndef ACT_PLAYER_qh
+#define ACT_PLAYER_qh 1
+
+@extern {
+
+void() act_player_init;
+void() act_setup_player;
+
+};
+
+#endif

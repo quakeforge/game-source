@@ -1,0 +1,159 @@
+#ifndef DEFS_qh
+#define DEFS_qh 1
+
+#include "config.qh"
+
+// ========================================================================== //
+// ========================================================================== //
+
+/* These are defined in the C code */
+
+#define	FALSE		0
+#define	TRUE		1
+
+// edict.flags
+#define	FL_FLY			1
+#define	FL_SWIM			2
+#define	FL_CLIENT		8	/* set for all client edicts	*/
+#define	FL_INWATER		16	/* for enter / leave water splash	*/
+#define	FL_MONSTER		32
+#define	FL_GODMODE		64	/* player cheat	*/
+#define	FL_NOTARGET		128	/* player cheat	*/
+#define	FL_ITEM			256	/* extra wide size for bonus items	*/
+#define	FL_ONGROUND		512	/* standing on something	*/
+#define	FL_PARTIALGROUND	1024	/* not all corners are valid	*/
+#define	FL_WATERJUMP		2048	/* player jumping out of water	*/
+#define	FL_JUMPRELEASED		4096	/* for jump debouncing	*/
+
+// edict.movetype values
+#define	MOVETYPE_NONE		0	/* never moves	*/
+#define	MOVETYPE_ANGLENOCLIP	1	/* NO LONGER SUPPORTED. */
+#define	MOVETYPE_ANGLECLIP	2	/* NO LONGER SUPPORTED. */
+#define	MOVETYPE_WALK		3	/* players only	*/
+#define	MOVETYPE_STEP		4	/* discrete, not real time unless fall	*/
+#define	MOVETYPE_FLY		5
+#define	MOVETYPE_TOSS		6	/* gravity	*/
+#define	MOVETYPE_PUSH		7	/* no clip to world, push and crush	*/
+#define	MOVETYPE_NOCLIP		8
+#define	MOVETYPE_FLYMISSILE	9	/* fly with extra size against monsters	*/
+#define	MOVETYPE_BOUNCE		10
+#define	MOVETYPE_BOUNCEMISSILE	11	/* bounce with extra size	*/
+
+// edict.solid values
+#define	SOLID_NOT		0	/* no interaction with other objects	*/
+#define	SOLID_TRIGGER		1	/* touch on edge, but not blocking	*/
+#define	SOLID_BBOX		2	/* touch on edge, block	*/
+#define	SOLID_SLIDEBOX		3	/* touch on edge, but not an onground	*/
+#define	SOLID_BSP		4	/* bsp clip, touch on edge, block	*/
+
+// items
+#define	IT_AXE			4096
+#define	IT_SHOTGUN		1
+#define	IT_SUPER_SHOTGUN	2
+#define	IT_NAILGUN		4
+#define	IT_SUPER_NAILGUN	8
+#define	IT_GRENADE_LAUNCHER	16
+#define	IT_ROCKET_LAUNCHER	32
+#define	IT_LIGHTNING		64
+#define	IT_EXTRA_WEAPON		128
+
+#define	IT_SHELLS		256
+#define	IT_NAILS		512
+#define	IT_ROCKETS		1024
+#define	IT_CELLS		2048
+
+#define	IT_ARMOR1		8192
+#define	IT_ARMOR2		16384
+#define	IT_ARMOR3		32768
+#define	IT_SUPERHEALTH		65536
+
+#define	IT_KEY1			131072
+#define	IT_KEY2			262144
+
+#define	IT_INVISIBILITY		524288
+#define	IT_INVULNERABILITY	1048576
+#define	IT_SUIT			2097152
+#define	IT_QUAD			4194304
+
+// point content values
+#define	CONTENT_EMPTY	-1
+#define	CONTENT_SOLID	-2
+#define	CONTENT_WATER	-3
+#define	CONTENT_SLIME	-4
+#define	CONTENT_LAVA	-5
+#define	CONTENT_SKY	-6
+
+// origin, clipping hull stuff
+#define	VEC_ORIGIN	'0 0 0'
+#define	VEC_HULL_MIN	'-16 -16 -24'
+#define	VEC_HULL_MAX	'16 16 32'
+
+#define VEC_HULL2_MIN	'-32 -32 -24'
+#define VEC_HULL2_MAX	'32 32 64'
+
+// sound channels
+// channel 0 never willingly overrides
+// other channels (1-7) allways override a playing sound on that channel
+#define	CHAN_AUTO		0
+#define	CHAN_WEAPON		1
+#define	CHAN_VOICE		2
+#define	CHAN_ITEM		3
+#define	CHAN_BODY		4
+#define	CHAN_NO_PHS_ADD		8	/* ie: CHAN_BODY | CHAN_NO_PHS_ADD	*/
+
+#define	ATTN_NONE		0
+#define	ATTN_NORM		1
+#define	ATTN_IDLE		2
+#define	ATTN_STATIC		3
+
+// entity effects
+//#define	EF_BRIGHTFIELD		1	/* not in QW */
+//#define	EF_MUZZLEFLASH		2	/* not in QW */
+#define	EF_BRIGHTLIGHT		4
+#define	EF_DIMLIGHT		8
+#define	EF_FLAG1		16
+#define	EF_FLAG2		32
+// GLQuakeWorld Stuff
+#define	EF_BLUE			64	/* Blue Globe effect for Quad	*/
+#define	EF_RED			128	/* Red Globe effect for Pentagram	*/
+
+// messages
+#define	MSG_BROADCAST		0	/* unreliable to all	*/
+#define	MSG_ONE			1	/* reliable to one (msg_entity)	*/
+#define	MSG_ALL			2	/* reliable to all	*/
+#define	MSG_INIT		3	/* write to the init string	*/
+#define	MSG_MULTICAST		4	/* for multicast() call	*/
+
+// message levels
+#define	PRINT_LOW		0	/* pickup messages	*/
+#define	PRINT_MEDIUM		1
+#define	PRINT_DEATH		1	/* death messages	*/
+#define	PRINT_HIGH		2	/* critical messages	*/
+#define	PRINT_CHAT		3	/* also goes to chat console	*/
+
+// multicast sets
+#define	MULTICAST_ALL	0	/* every client	*/
+#define	MULTICAST_PHS	1	/* within hearing	*/
+#define	MULTICAST_PVS	2	/* within sight	*/
+#define	MULTICAST_ALL_R	3	/* every client, reliable	*/
+#define	MULTICAST_PHS_R	4	/* within hearing, reliable	*/
+#define	MULTICAST_PVS_R	5	/* within sight, reliable	*/
+
+// ========================================================================== //
+// ========================================================================== //
+
+// takedamage values
+#define	DAMAGE_NO		0
+#define	DAMAGE_YES		1
+#define	DAMAGE_AIM		2
+
+// deadflag, the C code doesn't actually use these.
+#define	DEAD_NO		0
+#define	DEAD_DYING	1
+#define	DEAD_DEAD	2
+#define	DEAD_NONLIVING	-1
+
+// Used by me
+#define FL_AUTOTHINK		FL_CLIENT
+
+#endif

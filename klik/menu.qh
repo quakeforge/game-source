@@ -1,0 +1,13 @@
+#ifndef MENU_qh
+#define MENU_qh 1
+
+#include "menus.qh"
+
+.float menu_state;
+.float menu_time;
+.void() menu_think;
+
+void(void() menu_func) menu_set;
+float() util_menu_needs_print;
+
+#endif

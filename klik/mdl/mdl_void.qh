@@ -1,0 +1,6 @@
+#ifndef MDL_VOID_qh
+#define MDL_VOID_qh 1
+
+void() mdl_setup_void;
+
+#endif

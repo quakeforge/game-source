@@ -1,0 +1,120 @@
+###############################################
+
+GAME=qw
+DEBUG=0
+
+###############################################
+
+CPP=cpp
+CPPFLAGS=-I. 
+
+QFCC=qfcc
+QFCCFLAGS=-q --warn all --code v6only $(CPPFLAGS)
+
+###############################################
+
+QW_SOURCES=	$(prefix qw/,								\
+			system.qc	builtins.qc	sz_watch.qc	effect.qc	\
+		)
+
+WEAPONS_SOURCES=weapon.qc	weapon_g.qc	\
+		w_void.qc	w_axe.qc	w_shotgun.qc	w_nailgun.qc		\
+		w_grenade_launcher.qc	w_rocket_launcher.qc	w_lightning_gun.qc
+
+ACT_SOURCES=	act.qc		act_player.qc	act_dead.qc
+
+MDL_SOURCES=	mdl.qc		mdl_void.qc	mdl_player.qc	mdl_eyes.qc
+
+MAPENTS_SOURCES=mapents_util.qc	\
+		\
+		mapents.qc		items.qc		\
+		mapents_triggers.qc	mapents_movewall.qc	mapents_traps.qc	\
+		id_compat.qc		mapents_items.qc	mapents_powerup.qc
+
+COMMON_SOURCES=system.qc	\
+	\
+	server.qc	worldspawn.qc	\
+	client.qc	spectate.qc	\
+	math.qc		\
+	misc.qc		\
+	teleport.qc	delays.qc	\
+	bodyque.qc	damage.qc	\
+	menu.qc		menus.qc	\
+	override.qc	\
+	\
+	$(prefix weapons/,	$(WEAPONS_SOURCES))	\
+	$(prefix act/,		$(ACT_SOURCES))		\
+	$(prefix mdl/,		$(MDL_SOURCES))		\
+	$(prefix mapents/,	$(MAPENTS_SOURCES))
+
+DEBUG_SOURCES=	debug.qc	entnum.qc
+
+ifeq ($(GAME),qw)
+PROGS=../qwprogs.dat
+CPPFLAGS+=-DSYSTEM_DIR=\"qw/\"
+SOURCES=$(QW_SOURCES) $(COMMON_SOURCES)
+else
+PROGS=../progs.dat
+CPPFLAGS+=-DSYSTEM_DIR=\"nq/\"
+SOURCES=$(NQ_SOURCES) $(COMMON_SOURCES)
+endif
+
+ifeq ($(DEBUG),1)
+CPPFLAGS+=-DDEBUG=1
+SOURCES+=$(DEBUG_SOURCES)
+endif
+
+OBJECTS=$(SOURCES:.qc=.qfo)
+
+GENERATED_SOURCES = equipid.qh equipid.qc weapon_g.qc
+
+all: $(PROGS)
+
+##########################
+
+$(PROGS): $(OBJECTS)
+	$(QFCC) $(QFCCFLAGS) -o $@ $^
+
+WEAPON_G_SOURCES=$(filter w_%.qc,$(SOURCES))
+weapon_g.qc: weapon_gen.sh $(WEAPON_G_SOURCES)
+	bash weapon_gen.sh $(WEAPON_G_SOURCES) > $@
+
+EQUIPID_SOURCES=$(filter-out $(GENERATED_SOURCES),$(SOURCES))
+equipid.qh equipid.qc: equipid_gen.pl Makefile $(EQUIPID_SOURCES)
+	cat $(EQUIPID_SOURCES) | perl equipid_gen.pl > equipid.qh
+
+clean:
+	rm -f $(OBJECTS) $(GENERATED_SOURCES)
+
+#########################
+
+%.qfo: %.qc
+	$(QFCC) $(QFCCFLAGS) -c $<
+
+#########################
+
+unused:
+	@echo $(filter-out $(SOURCES),$(wildcard *.qc))
+
+dep: Makefile.deps
+Makefile.deps: $(SOURCES)
+	echo "# Use 'make dep' to generate this file" > $@
+	for i in $(SOURCES); do \
+		$(CPP) $(CPPFLAGS) -MM "$$i" | sed -e 's:^.*\::$(PROGS)\::' >> $@; \
+	done
+
+#########################
+
+.PHONY: unused
+
+#########################
+
+#progs.src: Makefile
+#	echo $(PROGS) > $@
+#	for i in $(SOURCES); do echo "$$i" >> $@; done
+#
+#$(PROGS): progs.src $(SOURCES)
+#	$(QFCC) $(QFCCFLAGS)
+
+
+-include Makefile.deps

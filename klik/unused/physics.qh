@@ -1,0 +1,2 @@
+void() physics_touch_bounce;
+void() physics_think_float;

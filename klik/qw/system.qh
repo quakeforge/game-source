@@ -1,0 +1,8 @@
+#ifndef QW_SYSTEM_qh
+#define QW_SYSTEM_qh 1
+
+@extern {
+#include "qw/system.qc"
+};
+
+#endif

@@ -1,0 +1,37 @@
+#ifndef CONFIG_qh
+#define CONFIG_qh 1
+
+// ========== User configurable stuff ============
+
+#define CONFIG_STATS_DELAY	0.2
+
+#define	CONFIG_START_CURRENCY	15000
+
+#define	CONFIG_START_HEALTH	100
+#define	CONFIG_MAX_HEALTH	100
+
+#define	CONFIG_START_ARMOR	0
+#define	CONFIG_START_ARMOR_TYPE	0
+#define	CONFIG_MAX_ARMOR	200
+
+#define	CONFIG_START_SHELLS	15
+#define	CONFIG_MAX_SHELLS	100
+
+#define	CONFIG_START_NAILS	0
+#define	CONFIG_MAX_NAILS	200
+
+#define	CONFIG_START_ROCKETS	0
+#define	CONFIG_MAX_ROCKETS	100
+
+#define	CONFIG_START_CELLS	0
+#define	CONFIG_MAX_CELLS	100
+
+#define	CONFIG_GIB_HEALTH	-40
+
+#define	CONFIG_LAND_SOUND	600
+#define	CONFIG_LAND_HURT	1300
+
+#define CONFIG_BODYQUE_MAX		3
+#define CONFIG_BODYQUE_FADE_MAX		7
+
+#endif

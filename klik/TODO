@@ -1,0 +1,13 @@
+
+Make sure everything that's not living gets DEAD_NONLIVING
+
+Clean up util_* and friends.
+
+Go through and re-write all the QUAKED tags
+
+#define SPAWNFUNC to nothing, and prefix all spawn functions with it.
+
+Browse FIXME's :)
+
+Teleporting missiles (i.e., real entities) is a little hackish
+to get them teleporting every time.. find a better way..

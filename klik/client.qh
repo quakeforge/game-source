@@ -1,0 +1,16 @@
+#ifndef CLIENT_qh
+#define CLIENT_qh 1
+
+@extern {
+
+void() client_init;
+
+void() RemoveClientFromGame;
+void() PutClientInGame;
+
+void() ClientConnect;
+void() ClientDisconnect;
+
+};
+
+#endif

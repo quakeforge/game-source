@@ -1,0 +1,31 @@
+#ifndef EQUIP_qh
+#define EQUIP_qh 1
+
+#include "equipid.qh"
+
+@extern {
+
+#define EQUIP_STATE_CHOOSE 0
+#define EQUIP_STATE_CHOSEN 1
+
+.float equip_state;
+
+..float itemfield;
+.float itemfield_1;
+.float itemfield_2;
+.float itemfield_3;
+.float itemfield_4;
+
+float(entity e, float eid) equip_flag;
+
+float(entity e, float eid) equip_query;
+float(entity e, float eid) equip_grant;
+float(entity e, float eid) equip_remove;
+
+float(entity iteme) equip_iter;
+
+string(float eid) equip_id_to_string;
+
+};
+
+#endif
