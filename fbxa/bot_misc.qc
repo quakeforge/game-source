@@ -165,11 +165,11 @@ sisible
 Now this is getting ridiculous. Simple visible,
 used when we need just a simple traceline nothing else
 */
-float (entity ent, entity targ)
+float (entity ent, entity targ, vector targ_origin)
 sisible =
 {
-	traceline (ent.origin, targ.origin, TRUE, ent);
-	if (trace_ent == targ)
+	traceline (ent.origin, targ_origin, TRUE, ent);
+	if (targ && trace_ent == targ)
 		return TRUE;
 	else if (trace_fraction == 1)
 		return TRUE;

@@ -559,27 +559,41 @@ the bot finds things it wants to kill/grab.
 -(void)lookForCrap:(integer)scope
 {
 	local Target foe, best = NIL;
+	local Waypoint way;
 	local integer thatp, bestp;
-	local float dist;
+	local float radius;
 
 	if (scope == 1)
-		foe = [Target forEntity:findradius (ent.origin, 13000)];
+		radius = 13000;
 	else
-		foe = [Target forEntity:findradius (ent.origin, 500)];
+		radius = 500;
 
+	foe = [Target forEntity:findradius (ent.origin, radius)];
 	bestp = 1;
 	while (foe) {
 		thatp = [self priorityForThing:foe];
 		if (thatp)
 			if (!scope)
-				if (!sisible (ent, foe.ent))
+				if (!sisible (ent, foe.ent, foe.ent.origin))
 					thatp = 0;
 		if (thatp > bestp) {
 			bestp = thatp;
 			best = foe;
-			dist = vlen (ent.origin - foe.ent.origin);
 		}
 		foe = [Target forEntity:foe.ent.chain];
+	}
+	way = [Waypoint find:ent.origin radius:radius];
+	while (way) {
+		thatp = [self priorityForThing:way];
+		if (thatp)
+			if (!scope)
+				if (!sisible (ent, NIL, way.origin))
+					thatp = 0;
+		if (thatp > bestp) {
+			bestp = thatp;
+			best = way;
+		}
+		way = way.chain;
 	}
 	if (best == NIL)
 		return;

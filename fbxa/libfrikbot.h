@@ -37,6 +37,8 @@ typedef struct bot_data_t bot_data_t;
 	float items;
 	Waypoint enemy;
 	float search_time;
+
+	Waypoint chain;
 }
 +(void)clearAll;
 +(Waypoint)waypointForNum:(integer)num;
@@ -44,6 +46,7 @@ typedef struct bot_data_t bot_data_t;
 
 +(void)clearRouteTable;
 +(void)clearMyRoute:(Bot) bot;
++(Waypoint)find:(vector)org radius:(float)rad;
 
 -(void)fix;
 -(id)init;
@@ -299,7 +302,7 @@ typedef struct bot_data_t bot_data_t;
 
 // ai & misc
 @extern float(float y1, float y2)	angcomp;
-@extern float(entity ent, entity targ)		sisible;
+@extern float(entity ent, entity targ, vector targ_origin)		sisible;
 @extern vector(entity ent)		realorigin;
 @extern float(float v)			frik_anglemod;
 

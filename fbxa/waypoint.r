@@ -219,6 +219,28 @@ Waypoint Loading from file
 	[waypoint_array makeObjectsPerformSelector:@selector(fix)];
 }
 
++(Waypoint)find:(vector)org radius:(float)rad
+{
+	local vector dif;
+	local float dist;
+	local integer i, count;
+	local Waypoint way = NIL, w;
+
+	rad = rad * rad;			// radius squared
+
+	count = [waypoint_array count];
+	for (i = 1; i < count; i++) {
+		w = [waypoint_array getItemAt:i];
+		dif = w.origin - org;
+		dist = dif * dif;		// dist squared, really
+		if (dist < rad) {
+			w.chain = way;
+			way = w;
+		}
+	}
+	return way;
+}
+
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 

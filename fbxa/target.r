@@ -221,8 +221,7 @@ Finds the closest, fisible, waypoint to e
 		if (!(t.flags & AI_IGNORE_TYPES) || ishuman) {
 			tdst = vlen (t.origin - org);
 			if (tdst < dst) {
-				traceline (ent.origin, t.origin, TRUE, ent);
-				if (trace_fraction == 1) {
+				if (sisible (ent, NIL, t.origin)) {
 					dst = tdst;
 					best = t;
 				}
