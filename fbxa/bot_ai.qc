@@ -370,7 +370,7 @@ based b_aiflags.
 					keys &= ~KEY_MOVE;
 				else {
 					b_aiflags |= AI_PRECISION;
-					keys = [self keysForDir:v];
+					keys |= [self keysForDir:v];
 				}
 			}
 		}
@@ -714,7 +714,7 @@ generally making the bot look good.
 		keys &= ~KEY_LOOK;
 
 		if (angcomp (b_angle.y, v_angle.y) > 10)
-			keys = KEY_LOOKLEFT;
+			keys |= KEY_LOOKLEFT;
 		else if (angcomp(b_angle.y, v_angle.y) < -10)
 			keys |= KEY_LOOKRIGHT;
 		if (angcomp(b_angle.x, v_angle.x) < -10)
