@@ -487,7 +487,7 @@ void() ClientDisconnected =
 	if(self.b_clientno > 16)
 		active_clients2 = active_clients2 - (active_clients2 & ClientBitFlag(self.b_clientno - 16));
 	else
-		active_clients1 = active_clients1 | (active_clients1 & ClientBitFlag(self.b_clientno));
+		active_clients1 = active_clients1 - (active_clients1 & ClientBitFlag(self.b_clientno));
 };
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
