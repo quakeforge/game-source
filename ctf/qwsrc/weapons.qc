@@ -765,7 +765,7 @@ W_SetCurrentAmmo =
 		self.currentammo = self.ammo_rockets;
 		self.weaponmodel = "progs/v_rock.mdl";
 		self.weaponframe = 0;
-		self.items = self.items | IT_ROCKETS;
+		self.items |= IT_ROCKETS;
 		break;
 	case IT_ROCKET_LAUNCHER:
 		self.currentammo = self.ammo_rockets;
@@ -1123,7 +1123,7 @@ ServerflagsCommand =
 {
 	serverflags = serverflags * 2 + 1;
 	// ZOID:  Bug fix
-	serverflags = (serverflags & 15);
+	serverflags &= 15;
 };
 
 //ZOID:  Uhm, where am I?

@@ -472,8 +472,8 @@ TeamSkinAssign =
 		self.ctfskinno = 3;
 	if (random () < 0.5)
 		self.ctfskinno++;
-	self.player_flag -= self.player_flag & 65280;
-	self.player_flag += self.ctfskinno * 256;
+	self.player_flag  &= ~65280;
+	self.player_flag |= self.ctfskinno * 256;
 
 	TeamSkinSet ();
 };

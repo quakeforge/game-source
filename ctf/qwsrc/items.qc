@@ -173,7 +173,7 @@ health_touch =
 
 	// Megahealth = rot down the player's super health
 	if (self.healtype == 2) {
-		other.items = other.items | IT_SUPERHEALTH;
+		other.items |= IT_SUPERHEALTH;
 		self.nextthink = time + 5;
 		self.think = item_megahealth_rot;
 		self.owner = other;
@@ -851,7 +851,7 @@ key_touch =
 
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
-	other.items = other.items | self.items;
+	other.items |= self.items;
 
 	self.solid = SOLID_NOT;
 	self.model = string_null;

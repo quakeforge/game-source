@@ -144,9 +144,9 @@ SetNewParms =
 void ()
 DecodeLevelParms =
 {
-	self.player_flag = self.player_flag | parm16;
-	self.player_flag = self.player_flag - (self.player_flag & ITEM_RUNE_MASK);
-	self.player_flag = self.player_flag - (self.player_flag & ITEM_ENEMY_FLAG);
+	self.player_flag |= parm16;
+	self.player_flag &= ~ITEM_RUNE_MASK;
+	self.player_flag &= ~ITEM_ENEMY_FLAG;
 	self.statstate = parm14;
 
 	if (gamestart) {
@@ -910,7 +910,7 @@ PlayerJump =
 	if (!(self.flags & FL_JUMPRELEASED))
 		return;		// don't pogo stick
 
-	self.flags = self.flags - (self.flags & FL_JUMPRELEASED);	
+	self.flags &= ~FL_JUMPRELEASED;
 	self.button2 = 0;
 
 	// player jumping sound
