@@ -1,0 +1,131 @@
+#ifndef __paroxysm_rh_
+#define __paroxysm_rh_
+
+/****************************************************************************
+ *							ENGINE-DEFINED CONSTANTS						*
+ ****************************************************************************/
+
+// Booleans
+
+#define FALSE				0
+#define TRUE				1
+
+// Engine-defined point content values
+#define CONTENT_EMPTY		-1
+#define CONTENT_SOLID		-2
+#define CONTENT_WATER		-3
+#define CONTENT_SLIME		-4
+#define CONTENT_LAVA		-5
+#define CONTENT_SKY			-6
+
+// Entity flags
+#define	FL_FLY				1
+#define FL_SWIM				2
+// set for all client edicts
+#define FL_CLIENT			8
+// for enter / leave water splash
+#define FL_INWATER			16
+#define FL_MONSTER			32
+// cheats
+#define FL_GODMODE			64
+#define FL_NOTARGET			128
+// extra wide size for bonus items
+#define FL_ITEM				256
+// standing on something
+#define FL_ONGROUND			512
+// not all corners are valid
+#define FL_PARTIALGROUND	1024
+// player jumping out of water
+#define FL_WATERJUMP		2048
+// for jump debouncing
+#define FL_JUMPRELEASED		4096
+
+// Entity movetype values
+
+// never moves
+#define MOVETYPE_NONE			0
+#if 0
+# define MOVETYPE_ANGLENOCLIP	1
+# define MOVETYPE_ANGLECLIP		2
+#endif
+// players only
+#define MOVETYPE_WALK			3
+// discrete, not real time unless fall
+#define MOVETYPE_STEP			4
+#define MOVETYPE_FLY			5
+// gravity
+#define MOVETYPE_TOSS			6
+// Don't clip to world, push and crush entities
+#define MOVETYPE_PUSH			7
+// Don't clip to world
+#define MOVETYPE_NOCLIP			8
+// fly with extra size against monsters
+#define MOVETYPE_FLYMISSILE		9
+#define MOVETYPE_BOUNCE			10
+// bounce with extra size
+#define MOVETYPE_BOUNCEMISSILE	11
+
+/****************************************************************************
+ *							GAME-DEFINED CONSTANTS							*
+ ****************************************************************************/
+
+/*
+	Items
+*/
+
+// Weapons
+#define IT_TSHOT			1
+#define IT_COMBOGUN			2
+#define IT_PLASMAGUN		4
+#define IT_SUPER_NAILGUN	8
+#define IT_GRENADE_LAUNCHER	16
+#define IT_ROCKET_LAUNCHER	32
+#define IT_LIGHTNING		64
+#define IT_EXTRA_WEAPON		128
+
+// Ammo
+#define IT_SHELLS			256
+#define IT_NAILS			512
+#define IT_ROCKETS			1024
+#define IT_CELLS			2048
+
+// weird place for it, but...
+#define IT_AXE				4096
+
+// Armor/Health
+#define IT_ARMOR1			8192
+#define IT_ARMOR2			16384
+#define IT_ARMOR3			32768
+#define IT_SUPERHEALTH		65536
+
+// Keys
+#define IT_KEY1				131072
+#define IT_KEY2				262144
+
+// Misc. Items
+#define IT_INVISIBILITY		524288
+#define IT_INVULNERABILITY	1048576
+#define IT_SUIT				2097152
+#define IT_QUAD				4194304
+
+/*
+	GAME MODES
+
+	DM_PREDATOR:	Predator Mode - everyone's invisible
+	DM_DARK:		Dark Mode - lights off, give everyone a flashlight
+	DM_LMS:			Last Man Standing - start at fraglimit, you're "out" when
+						you reach 0. Last player with positive score wins.
+	DM_FFA:			Free For All - all weapons, no bonuses. Temporary invuln.
+	DM_GIB:			Gib Mode - if you die, you gib. No backpacks.
+	DM_AUTOSWITCH:	Automatic weapon switch when you run out of ammo.
+*/
+// All of these can be used together
+
+#define DM_PREDATOR			2
+#define DM_DARK				4
+#define DM_LMS				8
+#define DM_FFA				16
+#define DM_GIB				32
+#define DM_AUTOSWITCH		128
+
+#endif // __paroxysm_rh_

@@ -1,0 +1,269 @@
+Paroxysm II - Release Notes
+Copyright (C) 2002 Jeff Teunissen <deek@d2dc.net>
+Copyright (C) 2002 Contributors to the QuakeForge Project
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at
+your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+General Public License for more details.
+	
+You should have received a copy of the GNU Lesser General Public License
+along with this program; if not, write to:
+
+	Free Software Foundation, Inc.
+	59 Temple Place, Suite 330
+	Boston, MA 02111-1307 USA
+
+Paroxysm II is based on "Paroxysm", created and donated to the public
+domain by Frank "p0x" Condello <pox@planetquake.com>.
+
+Table of Contents
+~~~~~~~~~~~~~~~~~
+
+1	Special Thanks
+2	About Paroxysm II
+3	Requirements
+4	Installation
+5	New Commands
+6	Weapons
+7	Armor
+8	Configuring Deathmatch Options
+9	Troubleshooting
+10	Credits
+
+
+1	Special Thanks
+~~~~~~~~~~~~~~~~~~~~~~
+
+The QuakeForge Project would like to thank Frank "p0x" Condello, first for
+writing, and then donating Paroxysm to the public domain. You've created
+a great game, and we hope that Paroxysm II lives up to the high standard
+you've set.
+
+We would also like to thank Id Software, Inc. for writing and releasing
+Quake under the GNU General Public License. The Quake engine is a most
+excellent gift for the Free Software community, and has created an
+entire subculture dedicated to playing all the wonderful Quake
+modifications. Thank you!
+
+
+2	About Paroxysm II
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Paroxysm II (Pox2) is a Deathmatch game for the QuakeForge engine. While
+most (if not all) of Pox2 will work with non-QuakeForge Quake engines,
+it will take some work, and we will not go out of our way to support
+running Pox2 without QuakeForge servers and clients.
+
+
+3	Requirements
+~~~~~~~~~~~~~~~~~~~~
+
+Pox2 requires a QuakeForge engine built with compression support. The
+files in the package are gzip-compressed for small size and speed of
+loading.
+
+An OpenGL-supporting client is HIGHLY recommended. The game works in
+software mode, but it's nowhere near as cool. :)
+
+
+4	Installation
+~~~~~~~~~~~~~~~~~~~~
+
+Copy the "paroxysm" directory in the distribution to the directory in
+which your shared QuakeForge data files are located. On a Unix-based
+system, these will usually be in "/usr/local/share/games/quakeforge"; on
+a Windows system, this will usually be C:\QUAKE or something similar. 
+Create a subdirectory called "paroxysm" in your unshared data files (on
+a Unix system, typically ~/.quakeforge/ -- on a Windows system, it's
+usually the same as the shared directory), and copy the autoexec.cfg
+there. You should edit this file to create a standard configuration for
+yourself.
+
+NOTE: Make sure the "secondtrigger" command is bound to a key or button
+that you have fast, ready access to; you won't be very formidable in a
+deathmatch if you can't use the special features of the weapons! :)
+
+
+5	New Commands
+~~~~~~~~~~~~~~~~~~~~
+
+These commands can by typed into the console, or bound to a key.
+
+The default bindings can be changed in the autoexec.cfg file (note: this
+will change in the future -- there will be a "bindkeys" command that
+will rebind the default keys for you, allowing you to use autoexec.cfg
+for your own stuff.
+
+Command		Description
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+secondtrigger	- Activate the current weapon's secondary trigger.
+		- Default key binding: ALT
+		- This command is used a LOT. The Paroxysm II weapons
+		  are most powerful when you learn how to use both of
+		  their functions.
+idtarget	- Display the names of players that pass through your
+		  line-of-sight. (toggles)
+		- Default key binding: I
+rules		- Display the state of all Deathmatch modifiers.
+
+
+6	Weapons
+~~~~~~~~~~~~~~~
+
+Pox2's weapons are substantially different from Quake's. Paroxysm II
+contains a number of rule changes that you may not be used to:
+
+There is no weapon auto switching when you run out of ammo. You will
+hear some sort of click or buzz indicating you need more ammo. (Although
+you can run out of ammo, you still can't cycle to a weapon if you have
+no ammo for it.)
+
+NOTE: This rule can be overridden by using the Weapon Autoswitch Option.
+
+If you touch a weapon, it becomes your active weapon (no auto best
+weapon). Picking up a backpack that contains a weapon will NOT change your current weapon.
+
+NOTE: This rule can be overriden by using the Weapon Autoswitch Option.
+
+You can not pick up a weapon if you already have it. The chief reason
+for this is that it prevents things like respawn camping of certain
+powerful weapons to dominate a map.
+
+Here is a table of the weapons, what they are and what they do.
+
+Weapon (#)	Description
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+T-Shot (2)	A rotating triple-barreled shotgun. The secondary
+		trigger primes all three barrels for a powerful
+		triple-blast.
+		(you spawn with this weapon)
+
+Combo Gun (3)	Double-barreled shotgun. The secondary trigger fires a
+		short-range impact grenade.
+
+Plasma Gun (4)	Fires short, fast-moving bursts of charged plasma. The
+		secondary trigger overloads the weapon, firing a large
+		plasma burst with high radial damage...but it takes time
+		to recharge when you do.
+
+Nail Gun (5)	The gift that keeps on giving, the Nail Gun has a
+		secondary trigger that launches a Shrapnel Bomb. A
+		second press on the second trigger detonates your
+		deployed shrapnel bomb.
+
+Grenade		Primary trigger fires "bouncy" grenades. Secondary
+Launcher (6)	trigger plants phase mines. Phase mines fuse with
+		inanimate objects and arm themselves on contact. They
+		are triggered by touch, damage, or movement. Phase mines
+		explode after 60 seconds, and can be placed inside
+		powerups, dead bodies, attached to walls or ceilings,
+		etc. In a future version, phase mines may become
+		invisible, but do less damage.
+
+Annihilator (7)	The Annihilator is the weapon your mother warned you
+		about (or should have). It's a semi-automatic,
+		shoulder-mounted, double-barreled high-impact grenade
+		launcher. It fires two grenades per shot, and must be
+		reloaded after four shots. Because its main function can
+		be so devastating, the secondary trigger performs a
+		reload instead of some other offensive capability.
+
+
+7	Armor
+~~~~~~~~~~~~~
+
+Like Paroxysm before it, Paroxysm II deals with armor in a different way
+than Quake does. You don't pick up armor, you stand in a regeneration
+station. There are three types of regeneration stations; blue, yellow,
+and red. This color coding shows how high the station can recharge your
+armor; blue can give you 50 armor points, yellow 150, red 250. Your
+powered armor only has the capacity to hold 150 power units without
+losing some over time...so if your armor meter shows red, you will lose
+armor points over time until it reaches 150.
+
+The color of the armor indicator only shows how much armor you have --
+unlike Quake, there are not multiple armor types, they all protect
+equally.
+
+
+8	Deathmatch Options
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Server administrators can change how Paroxysm II plays by setting the
+"deathmatch" Cvar in the server console. Deathmatch modifiers are
+"bitfields" -- to combine two modifiers, add their values.
+
+NOTE: Normal deathmatch has a flag of 1.
+
+The "fraglimit" and "timelimit" Cvars still apply, but may not work the
+same in various game modes.
+
+Mode (value)		Description
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Predator Mode (2)	All players are cloaked (eyes only)
+
+Dark Mode (4)		Lighting is dimmed, and players are equipped
+			with flashlights.
+
+Last Man Standing (8)	Players start with a set number of frags, and
+			lose a frag when they die. When only one player
+			remains, the game is over.
+			* fraglimit sets the initial frags for players
+
+Free For All (16)	Players spawn with full health (200), armor, all
+			weapons, and 5 seconds of invulnerability.
+			Shield generators, quad damage, cloak, and
+			MegaShields are the only power-ups.
+			Backpacks contain health and any ammo left when
+			its owner died.
+
+Gib Mode (32)		Players always gib when killed, and never drop
+			backpacks.
+
+Weapon Autoswitch (128)	Similar to the original Quake weapon pickup
+			rules; Switches to another weapon when you run
+			out of ammo, selects your best weapon when you
+			pick up weapons or ammo.
+			
+			(NOTE: You still can't pick up a weapon you
+			already have)
+
+
+9	Troubleshooting
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Problem: My flashlight doesn't work in dark mode when using OpenGL!
+Fix: Hit "L" to toggle the gl_dlight_lightmap Cvar. This may slow your
+gameplay down a bit, but it is necessary for dark mode to work in GL.
+
+Problem: There's not enough ammo on (insert map here).
+Explanation: Although Paroxysm II is compatible with existing DeathMatch
+maps, some maps may not be ideal. Due to weapon and rule changes, many
+(mostly older) maps will not have enough ammo for a solid game.
+Unfortunately, none of the original Quake Deathmatch maps are
+ideal Paroxysm II maps. For this reason, we are compiling a list of maps
+that are known to work well with Paroxysm II. If you know of a map that
+works well with Paroxysm II, please let us know via email, at:
+"Quake-User" <quake-user@lists.sourceforge.net>
+
+10	Credits
+~~~~~~~~~~~~~~~
+
+All models, and all skins (except for the Plasma Gun) were created by
+Frank Condello. The Plasma Gun was skinned by Forest "LordHavoc" Hale
+with help from Jeff "Deek" Teunissen.
+
+The QuakeC code was written by Frank Condello. It is currently being
+maintained by Jeff Teunissen.
+
+
+		Ok, that's all of it. Really, no foolin'.
+
+
+				GO PLAY!

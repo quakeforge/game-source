@@ -1,0 +1,39 @@
+qwprogs.dat
+
+defs.r
+builtins.r		// Builtin functions
+
+poxdefs.r		// POX - some extra prototypes and variables
+
+subs.r
+combat.r
+items.r
+
+sectrig.r		// POX - Second Trigger Functions
+targid.r		// POX - Target Identifier
+
+weapons.r
+world.r
+
+flash.r			// POX - Flashlight code (for DarkMode)
+observe.r		// POX - Last Man Standing Observer
+
+client.r
+spectate.r
+player.r
+doors.r
+buttons.r
+triggers.r
+plats.r
+misc.r
+
+server.r
+
+// POX - new files below...
+shields.r		//Regen Station
+wall.r			//Gibbable object
+dynlight.r		//Dynamic Lighting
+
+specfx.r		//Misc Special Entities
+
+

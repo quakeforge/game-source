@@ -1,0 +1,22 @@
+#! /bin/sh
+gamename=paroxysm
+LOCALRUNDIR=$HOME/.quake/paroxysm
+
+gzip -9rv gfx maps progs sound
+pushd source
+make
+cp qwprogs.dat qwprogs.sym ..
+popd
+for i in gfx.wad quake.rc qwprogs.dat qwprogs.sym; do
+	cat $i | gzip -9v > $i.gz
+done
+
+find gfx/ > file.list
+find maps/ >> file.list
+find progs/ >> file.list
+find sound/ >> file.list
+sort file.list -o file.list
+echo gfx.wad.gz quake.rc.gz >> file.list
+
+pak -cv -fpak0.pak `cat file.list`
+cp pak0.pak qwprogs.*.gz $LOCALRUNDIR

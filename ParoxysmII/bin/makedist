@@ -1,0 +1,10 @@
+#! /bin/sh
+mkdir paroxysm
+mkdir paroxysm/source
+cp -a COPYING README defaults qwprogs.dat.gz qwprogs.sym.gz pak0.pak paroxysm
+cp -a source/*.{r,rh,qw,nq} source/progs.src paroxysm/source
+tar -cho paroxysm | gzip -9 > paroxysm.tar.gz
+tar -cho paroxysm | bzip2 -9 > paroxysm.tar.bz2
+rm -f paroxysm.zip
+zip -9r paroxysm.zip paroxysm
+rm -rf paroxysm

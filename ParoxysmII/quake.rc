@@ -1,0 +1,57 @@
+// load the base configuration
+exec default.cfg
+
+// load the last saved configuration
+exec config.cfg
+
+// run a user script file if present
+exec autoexec.cfg
+
+// stuff command line statements
+stuffcmds
+
+v_idlescale 0.54
+v_ipitch_cycle 3.5
+v_ipitch_level 0.4
+v_iroll_level 0.1
+v_iyaw_level 0
+
+v_kickpitch 0.8
+v_kickroll 0.8
+
+sv_friction 3.12
+
+scr_conspeed 900
+
+cl_bobcycle 0.8
+cl_bobup 0
+cl_bob 0.015
+sv_aim 2
+
+alias addbot "impulse 251"
+alias teambot "impulse 252"
+
+alias kaskam "impulse 250"
+
+alias secondtrigger "impulse 15"
+
+alias autocam "kaskam;wait;+lookup;wait;+lookdown"
+
+alias rules "impulse 253"
+
+alias tele_zoom "fov 35;wait;fov 40;wait;fov 50;wait;fov 60;wait;fov 70;wait;fov 90;"
+
+alias chasecam "impulse 254"
+alias camup "impulse 150"
+alias camright "impulse 151"
+alias camforward "impulse 152"
+alias camdown "impulse 153"
+alias camleft "impulse 154"
+alias cambackward "impulse 155"
+
+alias idtarget "impulse 16"
+alias gllight "impulse 17"
+
+menu_main
+
+//startdemos
