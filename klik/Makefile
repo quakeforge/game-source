@@ -52,11 +52,11 @@ COMMON_SOURCES=system.qc	\
 DEBUG_SOURCES=	debug.qc	entnum.qc
 
 ifeq ($(GAME),qw)
-PROGS=../qwprogs.dat
+PROGS=qwprogs.dat
 CPPFLAGS+=-I qw
 SOURCES=$(QW_SOURCES) $(COMMON_SOURCES)
 else
-PROGS=../progs.dat
+PROGS=progs.dat
 CPPFLAGS+=-I nq
 SOURCES=$(NQ_SOURCES) $(COMMON_SOURCES)
 endif
