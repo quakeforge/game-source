@@ -5,7 +5,7 @@ SRC=	buttons.r builtins.r client.r combat.r defs.r doors.r dynlight.r \
 
 HEADERS = client.rh paroxysm.rh config.rh
 
-RFLAGS += -Wall -Werror -g
+RFLAGS += -DQUAKEWORLD -Wall -Werror -g
 QFCC = qfcc
 
 INSTALLDIR = $(HOME)/.quake/paroxysm/
@@ -17,7 +17,6 @@ DEP = $(addprefix .deps/,$(addsuffix .d,$(basename $(SRC))))
 	@mkdir -p .deps
 	@$(QFCC) -M -q $(RFLAGS) -c $< | sed -e 's/\(\.r\)\?\.o\>/.o/' > .deps/`basename $@ .o`.d
 	$(QFCC) $(RFLAGS) -q -c -o $@ $<
-
 
 all: qwprogs.dat
 

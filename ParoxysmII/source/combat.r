@@ -96,11 +96,10 @@ void (entity targ, entity attacker) Killed =
 
 
 /*
-============
-T_Damage
-The damage is coming from inflictor, but get mad at attacker
-This should be the only function that ever reduces health.
-============
+	T_Damage
+
+	The damage is coming from inflictor, but get mad at attacker
+	This should be the only function that ever reduces health.
 */
 void (entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 {
@@ -108,29 +107,32 @@ void (entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	local entity	oldself;
 	local float		save;
 	local float		take;
+#ifdef QUAKEWORLD
 	local string	attackerteam, targteam;
+#else
+	local float 	attackerteam, targteam;
+#endif
 
 	if (!targ.takedamage)
 		return;
+
+
+	if (targ.flags & FL_GODMODE)	// godmode completely unaffected by damage
+		return;
+
+	// check for invincibility
+	if (targ.invincible_finished >= time && @self.invincible_sound < time) {
+		sound (targ, CHAN_ITEM, "items/protect3.wav", 1, ATTN_NORM);
+		@self.invincible_sound = time + 2;
+		return;
+	}
 
 	// used by buttons and triggers to set activator for target firing
 	damage_attacker = attacker;
 
 	// check for quad damage powerup on the attacker
 	if (attacker.super_damage_finished > time && inflictor.classname != "door")
-		damage = damage * 4;
-
-//POX - this was moved from below the armour save routines to above so armour isn't lost
-
-	// check for godmode or invincibility
-	if (targ.flags & FL_GODMODE)
-		return;
-
-	if (targ.invincible_finished >= time && @self.invincible_sound < time) {
-		sound (targ, CHAN_ITEM, "items/protect3.wav", 1, ATTN_NORM);
-		@self.invincible_sound = time + 2;
-		return;
-	}
+		damage *= 4;
 
 	// save damage based on the target's armor level
 	save = ceil (targ.armortype * damage);
@@ -157,10 +159,10 @@ void (entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	
 	take = ceil (damage - save);
 
-/*
-	Add to the damage total for clients, which will be sent as a single
-	message at the end of the frame
-*/
+	/*
+		Add to the damage total for clients, which will be sent as a single
+		message at the end of the frame
+	*/
 	// FIXME: remove after combining shotgun blasts?
 	if (targ.flags & FL_CLIENT) {
 		targ.dmg_take += take;
@@ -188,9 +190,14 @@ void (entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	}
 
 	// team play damage avoidance
-	//ZOID 12-13-96: @self.team doesn't work in QW.	Use keys
+	// ZOID 12-13-96: self.team doesn't work in QW.	Use keys
+#ifdef QUAKEWORLD
 	attackerteam = infokey (attacker, "team");
 	targteam = infokey (targ, "team");
+#else
+	attackerteam = attacker.team;
+	targteam = targ.team;
+#endif
 
 	if (((teamplay == 1) || (teamplay == 3))
 			&& (attacker.classname == "player")

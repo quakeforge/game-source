@@ -33,5 +33,6 @@
 
 #define BPRINT(a,b) 	bprint ((b))
 #define LOGFRAG(a,b)
+#define	INFOKEY(a,b)	""
 
 #endif	// __config_nq_

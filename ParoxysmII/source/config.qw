@@ -29,9 +29,8 @@
 #ifndef __config_qw_
 #define __config_qw_
 
-#define QUAKEWORLD 1
-
 #define BPRINT(a,b) 	bprint ((a), (b))
 #define LOGFRAG(a,b)	logfrag ((a), (b))
+#define INFOKEY(a,b)	infokey ((a), (b))
 
 #endif	// __config_qw_

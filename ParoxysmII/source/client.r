@@ -50,8 +50,17 @@ void() SetNewParms =
 
 void() DecodeLevelParms =
 {
+#ifdef QUAKEWORLD
 	localcmd ("serverinfo playerfly 1");
+#endif
+
 	//POX v1.2 - parms are used to store the Taget ID toggle, and to prevent running autoexec.cfg more than once per session
+	if(!@self.target_id_toggle && !@self.target_id_temp)
+		@self.target_id_toggle = parm1;
+
+#ifdef QUAKEWORLD
+	@self.configed = parm2;
+
 	if(!@self.target_id_toggle && !@self.target_id_temp)
 		@self.target_id_toggle = parm1;
 	
@@ -60,12 +69,15 @@ void() DecodeLevelParms =
 	//POX v1.2 - run autoexec.cfg ONCE when first joining server only!
 	if (!@self.configed) {
 		@self.configed = TRUE;
-		stuffcmd(@self, "exec autoexec.cfg\n");
+		stuffcmd (@self, "exec autoexec.cfg\n");
 	}
+#endif
 };
+
 /*
 ============
 FindIntermission
+
 Returns the entity to view from
 ============
 */
@@ -73,10 +85,9 @@ entity() FindIntermission =
 {
 	local	entity spot;
 	local	float cyc;
-// look for info_intermission first
-	spot = find (world, classname, "info_intermission");
-	if (spot)
-	{	// pick a random one
+
+	// look for info_intermission first
+	if (spot = find (world, classname, "info_intermission")) {	// pick a random one
 		cyc = random() * 4;
 		while (cyc > 1) {
 			spot = find (spot, classname, "info_intermission");
@@ -86,25 +97,26 @@ entity() FindIntermission =
 		}
 		return spot;
 	}
-// then look for the start position
-	spot = find (world, classname, "info_player_start");
-	if (spot)
+
+	// then look for the start position
+	if (spot = find (world, classname, "info_player_start"))
 		return spot;
-	
+
 	objerror ("FindIntermission: no spot");
 };
 
 void() GotoNextMap =
 {
-	local string newmap;
+	/*
+		configurable map lists, see if the current map exists as a
+		serverinfo/localinfo var
+	*/
+	local string	newmap = INFOKEY (world, mapname);
 
 	//ZOID: 12-13-96, samelevel is overloaded, only 1 works for same level
-	if (cvar ("samelevel") == 1)	// if samelevel is set, stay on same level
+	if (cvar ("samelevel") == 1) {	// if samelevel is set, stay on same level
 		changelevel (mapname);
-	else {
-		// configurable map lists, see if the current map exists as a
-		// serverinfo/localinfo var
-		newmap = infokey(world, mapname);
+	} else {
 		if (newmap != "")
 			changelevel (newmap);
 		else
@@ -481,9 +493,7 @@ void() PutClientInServer =
 	spawn_tdeath (@self.origin, @self);
 
 	// Set Rocket Jump Modifiers
-	if (stof (infokey (world, "rj"))) {
-		rj = stof (infokey (world, "rj"));
-	} else {
+	if (!(rj = stof (INFOKEY (world, "rj")))) {
 		rj = 1;
 	}
 
@@ -1260,13 +1270,16 @@ called when a player connects to a server
 */
 void() ClientConnect =
 {
-// + POX - I hard coded some environmental changes to prevent tampering....
-// NOTE: autoexec.cfg is called at DecodeLevelParms (QW ignores it when called from quake.rc - which is also ignored)
-// POX v1.12 added 'fov 90' (mostly for lms_observer additions)
-	stuffcmd (@self, "alias rules impulse 253;alias secondtrigger impulse 15;alias idtarget impulse 16;alias gllight impulse 17;wait;fov 90;v_idlescale 0.54;v_ipitch_cycle 3.5;v_ipitch_level 0.4;v_iroll_level 0.1;v_iyaw_level 0;v_kickpitch 0.8;v_kickroll 0.8;scr_conspeed 900;cl_bobcycle 0.8;cl_bobup 0;cl_bob 0.015\n");
-// - POX
+	/*
+		Hard-code some environmental changes to prevent tampering a little...
 
-	// + POX LMS late joiners get booted to spectate
+		NOTE: autoexec.cfg is called at DecodeLevelParms (QW ignores it when
+		called from quake.rc - which is also ignored)
+	*/
+	// POX v1.12 added 'fov 90' (mostly for lms_observer additions)
+	stuffcmd (@self, "alias rules impulse 253; alias secondtrigger impulse 15; alias idtarget impulse 16; alias gllight impulse 17; wait; fov 90; v_idlescale 0.54; v_ipitch_cycle 3.5; v_ipitch_level 0.4; v_iroll_level 0.1; v_iyaw_level 0; v_kickpitch 0.8; v_kickroll 0.8; scr_conspeed 900; cl_bobcycle 0.8; cl_bobup 0; cl_bob 0.015\n");
+
+	// LMS late-joiners get booted to spectate
 	if (!(deathmatch & DM_LMS)) {
 		BPRINT (PRINT_HIGH, @self.netname);
 		BPRINT (PRINT_HIGH, " entered the game\n");
@@ -1276,14 +1289,14 @@ void() ClientConnect =
 		BPRINT (PRINT_HIGH, " entered the game\n");
 			
 		if (!lms_plrcount)
-			centerprint(@self, "Paroxysm II v1.2.0\nLast Man Standing Rules Apply.\n\nWaiting for players...");
+			centerprint (@self, "Paroxysm II v1.2.0\nLast Man Standing Rules Apply.\n\nWaiting for players...");
 		else
-			centerprint(@self, "Paroxysm II v1.2.0\nLast Man Standing Rules Apply.");
-	} else {	//After 40 secs, If there are two or more players, go into observer mode
+			centerprint (@self, "Paroxysm II v1.2.0\nLast Man Standing Rules Apply.");
+	} else {	// After 40 secs, If there are two or more players, go into observer mode
 		if (!lms_plrcount) {	//First player arrived, let him wait around
 			BPRINT (PRINT_HIGH, @self.netname);
 			BPRINT (PRINT_HIGH, " entered the game\n");
-			centerprint(@self, "Paroxysm II v1.2.0\nLast Man Standing Rules Apply.\n\nWaiting for players...");
+			centerprint (@self, "Paroxysm II v1.2.0\nLast Man Standing Rules Apply.\n\nWaiting for players...");
 		} else if (lms_plrcount == 1) { // second player arrived, so go to the next map (for a fair start)
 			BPRINT (PRINT_HIGH, @self.netname);
 			BPRINT (PRINT_HIGH, " entered the game\n");
@@ -1291,21 +1304,20 @@ void() ClientConnect =
 		} else {	// LMS Game allready started so boot to observe
 			BPRINT (PRINT_HIGH, @self.netname);
 			BPRINT (PRINT_HIGH, " entered the game late!");
-			//LMS reconnect as spectator
+			// LMS reconnect as spectator
 			@self.LMS_observer = 1;
 		}
-		
 	}
-		
+
 	// a client connecting during an intermission can cause problems
 	if (intermission_running)
 		GotoNextMap ();
 };
+
 /*
-===========
-ClientDisconnect
-called when a player disconnects from a server
-============
+	ClientDisconnect
+
+	called when a player disconnects from a server
 */
 void() ClientDisconnect =
 {
@@ -1315,15 +1327,13 @@ void() ClientDisconnect =
 	BPRINT (PRINT_HIGH, ftos (@self.frags));
 	BPRINT (PRINT_HIGH, " frags\n");
 	sound (@self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NONE);
-// + POX
-	if ((deathmatch & DM_LMS) && (@self.LMS_registered))
-	{
-		lms_plrcount = lms_plrcount - 1;
+
+	if ((deathmatch & DM_LMS) && (@self.LMS_registered)) {
+		lms_plrcount--;
 		
-		if (lms_plrcount <= 1) //One or no players left so end the game 
+		if (lms_plrcount <= 1) // 1 or 0 players left, end the game 
 			NextLevel ();
 	}
-// - POX
 	
 	set_suicide_frame ();
 };
@@ -1341,24 +1351,29 @@ void(entity targ, entity attacker) ClientObituary =
 	local string	attackerteam;
 	local string	targteam;
 #else
-	local entity	nar;
+	local float	attackerteam;
+	local float	targteam;
 #endif
+	local integer	gibbed = (targ.health < -40);
 
 #ifdef QUAKEWORLD
-	attackerteam = infokey (attacker, "team");
-	targteam = infokey (targ, "team");
+	attackerteam = INFOKEY (attacker, "team");
+	targteam = INFOKEY (targ, "team");
+#else
+	attackerteam = attacker.team;
+	targteam = targ.team;
 #endif
-	rnum = random ();	
+
+	rnum = random ();
 
 	if (targ.classname == "player") {
 		if (deathmatch & DM_LMS) {	// Last Man Standing frag stuff...
-			targ.frags = targ.frags - 1;
+			targ.frags--;
 			//LOGFRAG (attacker, targ); // we don't log frags until the end
 
 			if (targ.frags <= 0) {
-				BPRINT (PRINT_HIGH, targ.netname);
-				BPRINT (PRINT_HIGH, " is eliminated!\n");
-				lms_plrcount = lms_plrcount - 1;
+				BPRINT (PRINT_HIGH, targ.netname + " is eliminated!\n");
+				lms_plrcount--;
 
 				sound (targ, CHAN_BODY, "nar/n_elim.wav", 1, ATTN_NONE);
 
@@ -1378,12 +1393,12 @@ void(entity targ, entity attacker) ClientObituary =
 			LOGFRAG (attacker.owner, targ);
 
 			if (!(deathmatch & DM_LMS)) // don't add frags in Last Man Standing
-				attacker.owner.frags = attacker.owner.frags + 1;
+				attacker.owner.frags++;
 
-			BPRINT (PRINT_MEDIUM, targ.netname);
-			BPRINT (PRINT_MEDIUM, " was telefragged by ");
-			BPRINT (PRINT_MEDIUM, attacker.owner.netname);
-			BPRINT (PRINT_MEDIUM, "\n");
+			BPRINT (PRINT_MEDIUM, targ.netname
+									+ " was telefragged by "
+									+ attacker.owner.netname
+									+ "\n");
 			return;
 		}
 
@@ -1391,11 +1406,11 @@ void(entity targ, entity attacker) ClientObituary =
 			LOGFRAG (targ, targ);
 
 			if (!(deathmatch & DM_LMS))
-				targ.frags = targ.frags - 1;
+				targ.frags--;
 
-			BPRINT (PRINT_MEDIUM, "MegaShields deflect ");
-			BPRINT (PRINT_MEDIUM, targ.netname);
-			BPRINT (PRINT_MEDIUM, "'s telefrag\n");
+			BPRINT (PRINT_MEDIUM, "MegaShields deflect "
+									+ targ.netname
+									+ "'s telefrag!\n");
 			return;
 		}
 
@@ -1404,13 +1419,12 @@ void(entity targ, entity attacker) ClientObituary =
 			LOGFRAG (targ, targ);
 
 			if (!(deathmatch & DM_LMS)) // do regular obituary taunts in LMS
-				targ.frags = targ.frags - 1;
+				targ.frags--;
 
-			BPRINT (PRINT_MEDIUM, targ.netname);
-			BPRINT (PRINT_MEDIUM, " was telefragged by ");
-			BPRINT (PRINT_MEDIUM, attacker.owner.netname);
-			BPRINT (PRINT_MEDIUM, "'s MegaShield's power\n");
-
+			BPRINT (PRINT_MEDIUM, targ.netname
+									+ " was telefragged by "
+									+ attacker.owner.netname
+									+ "'s MegaShield's power\n");
 			return;
 		}
 
@@ -1421,11 +1435,9 @@ void(entity targ, entity attacker) ClientObituary =
 						LOGFRAG (attacker, attacker);
 
 						if (!(deathmatch & DM_LMS))
-							attacker.frags = attacker.frags - 1;
+							attacker.frags--;
 
-						BPRINT (PRINT_MEDIUM, attacker.netname);
-						BPRINT (PRINT_MEDIUM, " squished a teammate\n");
-
+						BPRINT (PRINT_MEDIUM, attacker.netname + " squished a teammate\n");
 						return;
 					}
 				}
@@ -1434,86 +1446,105 @@ void(entity targ, entity attacker) ClientObituary =
 					LOGFRAG (attacker, targ);
 
 					if (!(deathmatch & DM_LMS))
-						attacker.frags = attacker.frags + 1;
+						attacker.frags++;
 
-					BPRINT (PRINT_MEDIUM, attacker.netname);
-					BPRINT (PRINT_MEDIUM, " squishes ");
-					BPRINT (PRINT_MEDIUM, targ.netname);
-					BPRINT (PRINT_MEDIUM, "\n");
-
+					BPRINT (PRINT_MEDIUM, attacker.netname + " squishes "
+											+ targ.netname + "\n");
 					return;
 				}
 			} else {
 				LOGFRAG (targ, targ);
 
 				if (!(deathmatch & DM_LMS))
-					targ.frags = targ.frags - 1;
+					targ.frags--;
 
-				BPRINT (PRINT_MEDIUM, targ.netname);
-				BPRINT (PRINT_MEDIUM, " was squished\n");
-
+				BPRINT (PRINT_MEDIUM, targ.netname + " was squished\n");
 				return;
 			}
 		}
 
 		if (attacker.classname == "player") {
-			if (targ == attacker) { 	// killed @self (dumbass!)
+			if (targ == attacker) { 	// killed self (dumbass!)
 				LOGFRAG (attacker, attacker);
 				
 				if (!(deathmatch & DM_LMS))
-					attacker.frags = attacker.frags - 1;
+					attacker.frags--;
 
 				deathstring2 = "\n";
 
-				if (targ.deathtype == "grenade") {
-					if (rnum < 0.5)
-						deathstring = " tries to put the pin back in";
-					else
-						deathstring = " throws the pin";
-				} else if (targ.deathtype == "impactgrenade") {
-					deathstring = " eats his own impact grenade";
-				} else if (targ.deathtype == "megaplasma") {
-					deathstring = " plays with the plasma";
-				} else if (targ.deathtype == "mine") {
-					if (rnum < 0.67)
-						deathstring = " forgot where his phase mine was";
-					else
-						deathstring = " found his phase mine";
-				} else if (targ.deathtype == "nail") {
-					deathstring = " nails himself to the wall";
-				} else if (targ.deathtype == "rocket") {
-					if (rnum < 0.5)
-						deathstring = " finds his rocket tasty";
-					else
-						deathstring = " plays \"Doctor Strangelove\"";
-				} else if (targ.deathtype == "shrapnel") {
-					if (rnum < 0.9)
-						deathstring = " finds out what a shrapnel bomb does";
-					else
-						deathstring = " give us up the bomb";
-				} else if (targ.deathtype == "supernail") {
-					deathstring = " decides to use himself for a pin cushion";
-				} else if (targ.weapon == IT_PLASMAGUN && targ.waterlevel > 1) {
-					deathstring = " discharges into the ";
-					if (targ.watertype == CONTENT_SLIME)
-						deathstring2 = "slime\n";
-					else if (targ.watertype == CONTENT_LAVA)
-						deathstring2 = "lava\n";
-					else
-						deathstring2 = "water\n";
-				} else {
-					deathstring = " becomes bored with life";
+				switch (targ.deathtype) {
+					case "grenade":
+						if (rnum < 0.5)
+							deathstring = " tries to put the pin back in";
+						else
+							deathstring = " throws the pin";
+						break;
+
+					case "impactgrenade":
+						deathstring = " eats his own impact grenade";
+						break;
+
+					case "megaplasma":
+						deathstring = " plays with the plasma";
+						break;
+
+					case "mine":
+						if (rnum < 0.67)
+							deathstring = " forgot where his phase mine was";
+						else
+							deathstring = " found his phase mine";
+						break;
+
+					case "nail":
+						deathstring = " nails himself to the wall";
+						break;
+
+					case "rocket":
+						if (rnum < 0.5)
+							deathstring = " finds his rocket tasty";
+						else
+							deathstring = " plays \"Doctor Strangelove\"";
+						break;
+
+					case "shrapnel":
+						if (rnum < 0.9)
+							deathstring = " finds out what a shrapnel bomb does";
+						else
+							deathstring = " give us up the bomb";
+						break;
+
+					case "supernail":
+						deathstring = " decides to use himself for a pin cushion";
+						break;
+
+					default:
+						if (targ.weapon == IT_PLASMAGUN
+								&& targ.waterlevel > 1) {
+							deathstring = " discharges into the ";
+							if (targ.watertype == CONTENT_SLIME)
+								deathstring2 = "slime\n";
+							else if (targ.watertype == CONTENT_LAVA)
+								deathstring2 = "lava\n";
+							else
+								deathstring2 = "water\n";
+						} else {
+							deathstring = " becomes bored with life";
+						}
 				}
+
 				BPRINT (PRINT_MEDIUM, targ.netname);
 				BPRINT (PRINT_MEDIUM, deathstring);
 				BPRINT (PRINT_MEDIUM, deathstring2);
 
 				return;
-			} else if ((teamplay == 2) && (targteam == attackerteam) &&	(attackerteam != "")) {
+			} else if ((teamplay & 2)
+						&& (targteam == attackerteam)
+						&& (attackerteam != "")) {
+
 				LOGFRAG (attacker, attacker);
 				
 				if (!(deathmatch & DM_LMS))
-					attacker.frags = attacker.frags - 1;
+					attacker.frags--;
 
 				if (rnum < 0.25)
 					deathstring = " mows down a teammate\n";
@@ -1532,94 +1563,111 @@ void(entity targ, entity attacker) ClientObituary =
 				LOGFRAG (attacker, targ);
 				
 				if (!(deathmatch & DM_LMS))
-					attacker.frags = attacker.frags + 1;
+					attacker.frags++;
 				
 				deathstring2 = "\n";
 
-				if (targ.deathtype == "nail") {
-					deathstring = " was nailed by ";
-				} else if (targ.deathtype == "supernail") {
-					deathstring = " was punctured by ";
-				} else if (targ.deathtype == "grenade") {
-					deathstring = " eats ";
-					deathstring2 = "'s pineapple\n";
-					if (targ.health < -40) {
-						deathstring = " was gibbed by ";
-						deathstring2 = "'s grenade\n";
-					}
-				} else if (targ.deathtype == "rocket") {
-					if (attacker.super_damage_finished > 0 && targ.health < -40) {
-						if (rnum < 0.3) {
-							deathstring = " was brutalized by ";
-						} else if (rnum < 0.6) {
-							deathstring = " was smeared by ";
-						} else {
-							BPRINT (PRINT_MEDIUM, attacker.netname);
-							BPRINT (PRINT_MEDIUM, " rips ");
-							BPRINT (PRINT_MEDIUM, targ.netname);
-							BPRINT (PRINT_MEDIUM, " a new one\n");
-							return;
+				switch (targ.deathtype) {
+					case "nail":
+						deathstring = " was nailed by ";
+						break;
+
+					case "supernail":
+						deathstring = " was punctured by ";
+						break;
+
+					case "grenade":
+						if (gibbed) {
+							deathstring = " was gibbed by ";
+							deathstring2 = "'s grenade\n";
+							break;
 						}
-						deathstring2 = "'s quad rocket\n";
-					} else {
-						if (targ.health < -40)
+						deathstring = " eats ";
+						deathstring2 = "'s pineapple\n";
+						break;
+
+					case "rocket":
+						if (attacker.super_damage_finished > 0)
+							deathstring2 = "'s quad rocket\n";
+						else 
+							deathstring2 = "'s rocket\n";
+
+						if (gibbed) {
+							if (rnum < 0.3) {
+								deathstring = " was brutalized by ";
+							} else if (rnum < 0.6) {
+								deathstring = " was smeared by ";
+							} else {
+								BPRINT (PRINT_MEDIUM, attacker.netname
+													+ " rips " + targ.netname
+													+ " a new one!\n");
+								return;
+							}
+						} else {
+							deathstring = " rides ";
+						}
+						break;
+
+					case "megaplasma":
+						if (gibbed)
+							deathstring = " was discombobulated by ";
+						else
+							deathstring = " bites ";
+						deathstring2 = "'s plasma burst\n";
+						break;
+
+					case "impactgrenade":
+						if (gibbed)
 							deathstring = " was gibbed by ";
 						else
-							deathstring = " rides ";
-						deathstring2 = "'s rocket\n";
-					}
-				} else if (targ.deathtype == "megaplasma") {	
-					if (targ.health < -40)
-						deathstring = " was discombobulated by ";
-					else
-						deathstring = " bites ";
-					deathstring2 = "'s plasma burst\n";
-				} else if (targ.deathtype == "impactgrenade") {	
-					if (targ.health < -40)
-						deathstring = " was gibbed by ";
-					else
-						deathstring = " swallows ";
-					deathstring2 = "'s impact grenade\n";
-				} else if (targ.deathtype == "mine") {	
-					if (targ.health < -40)
-						deathstring = " is chum thanks to ";
-					else
-						deathstring = " stepped on ";
-					deathstring2 = "'s phase mine\n";
-				} else if (targ.deathtype == "shrapnel") {	
-					if (targ.health < -40)
-						deathstring = " gets a face full of ";
-					else
-						deathstring = " got too close to ";
-					deathstring2 = "'s shrapnel bomb\n";
+							deathstring = " swallows ";
+						deathstring2 = "'s impact grenade\n";
+						break;
+
+					case "mine":
+						if (gibbed)
+							deathstring = " is chum thanks to ";
+						else
+							deathstring = " stepped on ";
+						deathstring2 = "'s phase mine\n";
+						break;
+
+					case "shrapnel":
+						if (gibbed)
+							deathstring = " gets a face full of ";
+						else
+							deathstring = " got too close to ";
+						deathstring2 = "'s shrapnel bomb\n";
+						break;
+					default:
 #ifdef QUAKEWORLD
-				} else if (attacker.weapon == IT_AXE) {
+						if (attacker.weapon == IT_AXE) {
 #else
-				} else if (attacker.weapon == IT_BONESAW) {
+						if (attacker.weapon == IT_BONESAW) {
 #endif
-					deathstring = " was butchered by ";
-					deathstring2 = "\n";
-				} else if (attacker.weapon == IT_TSHOT) {
-					deathstring = " chewed on ";
-					deathstring2 = "'s boomstick\n";
-				} else if (attacker.weapon == IT_COMBOGUN) {
-					deathstring = " ate 2 loads of ";
-					deathstring2 = "'s buckshot\n";
-				} else if (attacker.weapon == IT_PLASMAGUN) {
-					deathstring = " got burned by ";
-					deathstring2 = "'s plasma\n";
+							deathstring = " was butchered by ";
+							deathstring2 = "\n";
+						} else if (attacker.weapon == IT_TSHOT) {
+							deathstring = " chewed on ";
+							deathstring2 = "'s boomstick\n";
+						} else if (attacker.weapon == IT_COMBOGUN) {
+							deathstring = " ate 2 loads of ";
+							deathstring2 = "'s buckshot\n";
+						} else if (attacker.weapon == IT_PLASMAGUN) {
+							deathstring = " got burned by ";
+							deathstring2 = "'s plasma\n";
+						}
+						break;
 				}
-				BPRINT (PRINT_MEDIUM, targ.netname);
-				BPRINT (PRINT_MEDIUM, deathstring);
-				BPRINT (PRINT_MEDIUM, attacker.netname);
-				BPRINT (PRINT_MEDIUM, deathstring2);
+				BPRINT (PRINT_MEDIUM, targ.netname + deathstring
+									+ attacker.netname + deathstring2);
 			}
 			return;
 		} else {	// traps, world stuff
 			LOGFRAG (targ, targ);
 
 			if (!(deathmatch & DM_LMS)) //POX 1.2 - do regular obituary taunts in LMS mode
-				targ.frags = targ.frags - 1;		// killed @self
+				targ.frags--;
 
 			if (attacker.classname == "explo_box" || attacker.classname == "explo_bsp")	{
 				deathstring = " blew up\n";
@@ -1658,8 +1706,7 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " died\n";
 			}
 
-			BPRINT (PRINT_MEDIUM, targ.netname);
-			BPRINT (PRINT_MEDIUM, deathstring);
+			BPRINT (PRINT_MEDIUM, targ.netname + deathstring);
 			return;
 		}
 	}
