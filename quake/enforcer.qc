@@ -74,7 +74,7 @@ void() Laser_Touch =
 void(vector org, vector vec) LaunchLaser =
 {
 	local	vector	vec;
-		
+
 	if (self.classname == "monster_enforcer")
 		sound (self, CHAN_WEAPON, "enforcer/enfire.wav", 1, ATTN_NORM);
 
@@ -97,6 +97,7 @@ void(vector org, vector vec) LaunchLaser =
 	newmis.nextthink = time + 5;
 	newmis.think = SUB_Remove;
 	newmis.touch = Laser_Touch;
+traceoff();
 };
 
 
@@ -109,7 +110,7 @@ void() enforcer_fire =
 	makevectors (self.angles);
 	
 	org = self.origin + v_forward * 30 + v_right * 8.5 + '0 0 16';
-
+traceon();
 	LaunchLaser(org, self.enemy.origin - self.origin);
 };
 
