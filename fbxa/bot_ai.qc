@@ -477,7 +477,7 @@ confused
 				if ((trace_ent.health > 0) && (ent.enemy == NIL)) {
 					ent.enemy = trace_ent;
 					[self weaponSwitch:1];
-					b_aiflags = b_aiflags | AI_BLIND; // nick knack paddy hack
+					b_aiflags |= AI_BLIND; // nick knack paddy hack
 				} else if (trace_ent.targetname) {
 					e = find (NIL, target, trace_ent.targetname);
 					if (e.health > 0) {

@@ -345,46 +345,46 @@ bot_menu_display =
 			if (self.current_way) {
 				if (self.impulse == 1) {
 					if (self.current_way.b_aiflags & AI_DOORFLAG)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_DOORFLAG);
+						self.current_way.b_aiflags &= ~AI_DOORFLAG;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_DOORFLAG;
+						self.current_way.b_aiflags |= AI_DOORFLAG;
 	
 					self.b_menu_time = time;
 				} else if (self.impulse == 2) {
 					if (self.current_way.b_aiflags & AI_PRECISION)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_PRECISION);
+						self.current_way.b_aiflags &= ~AI_PRECISION;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_PRECISION;
+						self.current_way.b_aiflags |= AI_PRECISION;
 					self.b_menu_time = time;
 				} else if (self.impulse == 3) {
 					if (self.current_way.b_aiflags & AI_SURFACE)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_SURFACE);
+						self.current_way.b_aiflags &= ~AI_SURFACE;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_SURFACE;
+						self.current_way.b_aiflags |= AI_SURFACE;
 					self.b_menu_time = time;
 				} else if (self.impulse == 4) {
 					if (self.current_way.b_aiflags & AI_BLIND)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_BLIND);
+						self.current_way.b_aiflags &= ~AI_BLIND;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_BLIND;
+						self.current_way.b_aiflags |= AI_BLIND;
 					self.b_menu_time = time;
 				} else if (self.impulse == 5) {
 					if (self.current_way.b_aiflags & AI_JUMP)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_JUMP);
+						self.current_way.b_aiflags &= ~AI_JUMP;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_JUMP;
+						self.current_way.b_aiflags |= AI_JUMP;
 					self.b_menu_time = time;
 				} else if (self.impulse == 6) {
 					if (self.current_way.b_aiflags & AI_DIRECTIONAL)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_DIRECTIONAL);
+						self.current_way.b_aiflags &= ~AI_DIRECTIONAL;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_DIRECTIONAL;
+						self.current_way.b_aiflags |= AI_DIRECTIONAL;
 					self.b_menu_time = time;
 				} else if (self.impulse == 7) {
 					if (self.current_way.b_aiflags & AI_SUPER_JUMP)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_SUPER_JUMP);
+						self.current_way.b_aiflags &= ~AI_SUPER_JUMP;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_SUPER_JUMP;
+						self.current_way.b_aiflags |= AI_SUPER_JUMP;
 					self.b_menu_time = time;
 				}
 			}
@@ -400,44 +400,44 @@ bot_menu_display =
 			if (self.current_way) {
 				if (self.impulse == 1) {
 					if (self.current_way.b_aiflags & AI_DIFFICULT)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_DIFFICULT);
+						self.current_way.b_aiflags &= ~AI_DIFFICULT;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_DIFFICULT;								self.b_menu_time = time;	
+						self.current_way.b_aiflags |= AI_DIFFICULT;								self.b_menu_time = time;	
 				} else if (self.impulse == 2) {
 					if (self.current_way.b_aiflags & AI_PLAT_BOTTOM)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_PLAT_BOTTOM);
+						self.current_way.b_aiflags &= ~AI_PLAT_BOTTOM;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_PLAT_BOTTOM;
+						self.current_way.b_aiflags |= AI_PLAT_BOTTOM;
 					self.b_menu_time = time;
 				} else if (self.impulse == 3) {
 					if (self.current_way.b_aiflags & AI_RIDE_TRAIN)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_RIDE_TRAIN);
+						self.current_way.b_aiflags &= ~AI_RIDE_TRAIN;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_RIDE_TRAIN;
+						self.current_way.b_aiflags |= AI_RIDE_TRAIN;
 					self.b_menu_time = time;
 				} else if (self.impulse == 4) {
 					if (self.current_way.b_aiflags & AI_DOOR_NO_OPEN)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_DOOR_NO_OPEN);
+						self.current_way.b_aiflags &= ~AI_DOOR_NO_OPEN;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_DOOR_NO_OPEN;
+						self.current_way.b_aiflags |= AI_DOOR_NO_OPEN;
 					self.b_menu_time = time;
 				} else if (self.impulse == 5) {
 					if (self.current_way.b_aiflags & AI_AMBUSH)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_AMBUSH);
+						self.current_way.b_aiflags &= ~AI_AMBUSH;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_AMBUSH;
+						self.current_way.b_aiflags |= AI_AMBUSH;
 					self.b_menu_time = time;
 				} else if (self.impulse == 6) {
 					if (self.current_way.b_aiflags & AI_SNIPER)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_SNIPER);
+						self.current_way.b_aiflags &= ~AI_SNIPER;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_SNIPER;
+						self.current_way.b_aiflags |= AI_SNIPER;
 					self.b_menu_time = time;
 				} else if (self.impulse == 7) {
 					if (self.current_way.b_aiflags & AI_TRACE_TEST)
-						self.current_way.b_aiflags = self.current_way.b_aiflags - (self.current_way.b_aiflags & AI_TRACE_TEST);
+						self.current_way.b_aiflags &= ~AI_TRACE_TEST;
 					else
-						self.current_way.b_aiflags = self.current_way.b_aiflags | AI_TRACE_TEST;
+						self.current_way.b_aiflags |= AI_TRACE_TEST;
 					self.b_menu_time = time;
 				}
 
