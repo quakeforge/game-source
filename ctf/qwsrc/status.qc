@@ -1,5 +1,5 @@
 /*
-	#FILENAME#
+	status.qc
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -22,51 +22,61 @@
 	$Id$
 */
 
-
 .float laststattime;		// time of last status update
 .float motd_count;
 .float statstate;			// is the status bar on?
 
 float PLAYERSTATTIME = 1.75;
 
-void() MOTD =
+void ()
+MOTD =
 {
 	if (self.motd_count < 4) {
 		self.motd_count = self.motd_count + 1;
 		if (self.classname == "spectator") {
-			centerprint(self, "Welcome!\nRunning ThreeWave CTF 4.21\n\nцаптуре тхе флаг!\n");
+			centerprint (self, "Welcome!\nRunning ThreeWave CTF 4.21\n\n"
+						 "цаптуре тхе флаг!\n");
 			return;
 		}
 
 		if (gamestart) {
-			centerprint(self, "Welcome!\nRunning ThreeWave CTF 4.21\n\nцаптуре тхе флаг!\n\nChoose an exit...\n"); //red
+			centerprint (self, "Welcome!\nRunning ThreeWave CTF 4.21\n\n"
+						 "цаптуре тхе флаг!\n\nChoose an exit...\n"); //red
 			return;
 		}
 		if (self.steam == TEAM_COLOR1)
-			centerprint(self, "Welcome!\nRunning ThreeWave CTF 4.21\n\nцаптуре тхе флаг!\n\nYou are ред team\n"); //red
+			centerprint (self, "Welcome!\nRunning ThreeWave CTF 4.21\n\n"
+						 "цаптуре тхе флаг!\n\nYou are ред team\n"); //red
 		else
-			centerprint(self, "Welcome!\nRunning Threewave CTF 4.21\n\nцаптуре тхе флаг!\n\nYou are блуе team"); //blue
+			centerprint (self, "Welcome!\nRunning Threewave CTF 4.21\n\n"
+						 "цаптуре тхе флаг!\n\nYou are блуе team"); //blue
 		return;
 	}
-	sprint(self, PRINT_HIGH, "Impulse 70 to turn off status bar\n");
-	sprint(self, PRINT_HIGH, "Impulse 71 through 81 to set status bar resolution\n");
-	sprint(self, PRINT_HIGH, "71:200 72:240 73:300 74:350 75:384 76:400 77:480 78:600 79:768 81:1024\n");
+	sprint (self, PRINT_HIGH, "Impulse 70 to turn off status bar\n");
+	sprint (self, PRINT_HIGH, "Impulse 71 through 81 to set status bar "
+			"resolution\n");
+	sprint (self, PRINT_HIGH, "71:200 72:240 73:300 74:350 75:384 76:400 "
+			"77:480 78:600 79:768 81:1024\n");
 	self.motd_count = 0;
 };
 
-void() MOTD_ChooseTeam =
+void ()
+MOTD_ChooseTeam =
 {
 	if (self.motd_count < 6) {
 		self.motd_count = self.motd_count + 1;
-		centerprint(self, "Welcome!\nRunning ThreeWave CTF 4.2\n\nцаптуре тхе флаг!\n\nPress 1 for ред team\nPress 2 for блуе team\nOr Press Jump for automatic team\n");
+		centerprint (self, "Welcome!\nRunning ThreeWave CTF 4.2\n\nцаптуре "
+					 "тхе флаг!\n\nPress 1 for ред team\nPress 2 for блуе "
+					 "team\nOr Press Jump for automatic team\n");
 		return;
 	}
 	self.motd_count = 0;
 };
 
-void() TeamCaptureCheckUpdate =
+void ()
+TeamCaptureCheckUpdate =
 {
-	local entity p;
+	local entity	p;
 
 	if (gamestart)
 		return; // handled by vote exit
@@ -77,25 +87,27 @@ void() TeamCaptureCheckUpdate =
 
 	// count up teamscr
 	teamscr1 = teamscr2 = 0;
-	p = find(world, classname, "player");
+	p = find (world, classname, "player");
 	while (p != world) {
 		if (p.steam == TEAM_COLOR1)
 			teamscr1 = teamscr1 + p.frags;
 		else if (p.steam == TEAM_COLOR2)
 			teamscr2 = teamscr2 + p.frags;
-		p = find(p, classname, "player");
+		p = find (p, classname, "player");
 	}
 };
 
-void() TeamCaptureResetUpdate =
+void ()
+TeamCaptureResetUpdate =
 {
 	lastteamscrtime = 0;
 	TeamCaptureCheckUpdate();
 };
 
-void() TeamEndScore = 
+void ()
+TeamEndScore = 
 {
-	local string s;
+	local string	s;
 
 	if (gamestart)
 		return;
@@ -104,89 +116,96 @@ void() TeamEndScore =
 	TeamCaptureCheckUpdate();
 
 	if (teamscr1 > teamscr2) {
-		bprint(PRINT_HIGH, "ред team won the level with ");
-		s = ftos(teamscr1);
-		bprint(PRINT_HIGH, s);
-		bprint(PRINT_HIGH, " points!\n");
-		bprint(PRINT_HIGH, "блуе team lost with ");
-		s = ftos(teamscr2);
-		bprint(PRINT_HIGH, s);
-		bprint(PRINT_HIGH, " points.\n");
+		bprint (PRINT_HIGH, "ред team won the level with ");
+		s = ftos (teamscr1);
+		bprint (PRINT_HIGH, s);
+		bprint (PRINT_HIGH, " points!\n");
+		bprint (PRINT_HIGH, "блуе team lost with ");
+		s = ftos (teamscr2);
+		bprint (PRINT_HIGH, s);
+		bprint (PRINT_HIGH, " points.\n");
 	} else if (teamscr1 < teamscr2) {
-		bprint(PRINT_HIGH, "блуе team won the level with ");
-		s = ftos(teamscr2);
-		bprint(PRINT_HIGH, s);
-		bprint(PRINT_HIGH, " points!\n");
-		bprint(PRINT_HIGH, "ред team lost with ");
-		s = ftos(teamscr1);
-		bprint(PRINT_HIGH, s);
-		bprint(PRINT_HIGH, " points.\n");
+		bprint (PRINT_HIGH, "блуе team won the level with ");
+		s = ftos (teamscr2);
+		bprint (PRINT_HIGH, s);
+		bprint (PRINT_HIGH, " points!\n");
+		bprint (PRINT_HIGH, "ред team lost with ");
+		s = ftos (teamscr1);
+		bprint (PRINT_HIGH, s);
+		bprint (PRINT_HIGH, " points.\n");
 	} else {
-		bprint(PRINT_HIGH, "блуе and ред team tied level with ");
-		s = ftos(teamscr1);
-		bprint(PRINT_HIGH, s);
-		bprint(PRINT_HIGH, " points!\n");
+		bprint (PRINT_HIGH, "блуе and ред team tied level with ");
+		s = ftos (teamscr1);
+		bprint (PRINT_HIGH, s);
+		bprint (PRINT_HIGH, " points!\n");
 	}
 };
 
-string(entity who) TeamSetStatRes =
+string (entity who)
+TeamSetStatRes =
 {
-	if (who.statstate > 7) // 768 
+	switch (who.statstate) {
+	default:		// > 7 = 768+
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 7) // 600 
+	case 7:			// 600
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 6) // 480 
+	case 6:			// 480
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 5) // 400
+	case 5:			// 400:
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 4) // 384 
+	case 4:			// 384
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 3) // 350 
+	case 3:			// 350
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 2) // 300 
+	case 2:			// 300
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 1) // 240 
+	case 1:			// 240:
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	// 200 
-	return "\n\n\n\n\n\n\n\n\n\n\n\n";
+	case 0:			// 200
+		return "\n\n\n\n\n\n\n\n\n\n\n\n";
+	}
 };
 
-string(entity who) TeamSetStatRes2 =
+string (entity who)
+TeamSetStatRes2 =
 {
-	if (who.statstate > 7) // 768 
+	switch (who.statstate) {
+	default:			// >7 = 768+
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 7) // 600 
+	case 7:			// 600
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 6) // 480 
+	case 6:			// 480
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 5) // 400
+	case 5:			// 400
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 4) // 384 
+	case 4:			// 384
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 3) // 350 
+	case 3:			// 350
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 2) // 300 
+	case 2:			// 300
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	else if (who.statstate == 1) // 240 
+	case 1:			// 240
 		return "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	// 200 
-	return "\n\n\n\n\n\n\n\n\n\n\n";
+	case 0:			// 200
+		return "\n\n\n\n\n\n\n\n\n\n\n";
+	}
 };
 
-void() TeamCapturePlayerUpdate =
+void ()
+TeamCapturePlayerUpdate =
 {
-	local entity e;
-	local string n, t, s1, s2, s3, res;
+	local entity	e;
+	local string	n, t, s1, s2, s3, res;
 
 	if (self.laststattime > time)
 		return;
 
-	TeamCaptureCheckUpdate();
+	TeamCaptureCheckUpdate ();
 
 	self.laststattime = time + PLAYERSTATTIME;
 
 	if (self.motd_count) {
-		MOTD();
+		MOTD ();
 		return;
 	}
 
@@ -197,12 +216,12 @@ void() TeamCapturePlayerUpdate =
 
 	if (gamestart) {
 		if (vote_leader == world)
-			centerprint2(self, res, "                    Choose an exit...");
+			centerprint2 (self, res, "                    Choose an exit...");
 		else {
-			res = TeamSetStatRes2(vote_leader);
-			n = ftos(voteexit_time - time);
-			centerprint5(self, res, vote_leader.message,
-				" leads\n", n, " seconds until exit");
+			res = TeamSetStatRes2 (vote_leader);
+			n = ftos (voteexit_time - time);
+			centerprint5 (self, res, vote_leader.message,
+						  " leads\n", n, " seconds until exit");
 		}
 		return;
 	}
@@ -221,8 +240,8 @@ void() TeamCapturePlayerUpdate =
 		s1 = "Regen   ┘";
 	else
 		s1 = "        ┘";
-	
-	e = find(world, classname, "item_flag_team1");
+
+	e = find (world, classname, "item_flag_team1");
 	if (e.cnt == FLAG_AT_BASE)
 		s2 = " ┘";
 	else if (e.cnt == FLAG_CARRIED)
@@ -230,7 +249,7 @@ void() TeamCapturePlayerUpdate =
 	else
 		s2 = "р┘";
 
-	e = find(world, classname, "item_flag_team2");
+	e = find (world, classname, "item_flag_team2");
 	if (e.cnt == FLAG_AT_BASE)
 		s3 = " ┘";
 	else if (e.cnt == FLAG_CARRIED)
@@ -239,14 +258,13 @@ void() TeamCapturePlayerUpdate =
 		s3 = "б┘";
 		
 	if (teamscr1 == 0 && teamscr2 == 0) {
-		centerprint5(self, res, s1, s2, s3, "         Capture The Flag");		// CTFBOT
+		// CTFBOT
+		centerprint5 (self, res, s1, s2, s3, "         Capture The Flag");
 		return;
 	}
-	
-	if (time < (last_flag_capture + 6))
-	{
-		if (last_capture_team == TEAM_COLOR1)
-		{
+
+	if (time < (last_flag_capture + 6)) {
+		if (last_capture_team == TEAM_COLOR1) {
 			if (teamscr1 > teamscr2) {
 				t = "Red Capture!   RED ";
 				n = ftos(teamscr1 - teamscr2);
@@ -257,9 +275,7 @@ void() TeamCapturePlayerUpdate =
 				t = "Red Capture!  TIED ";
 				n = "";
 			}
-		}
-		else
-		{
+		} else {
 			if (teamscr1 > teamscr2) {
 				t = "Blue Capture!  RED ";
 				n = ftos(teamscr1 - teamscr2);
@@ -271,9 +287,7 @@ void() TeamCapturePlayerUpdate =
 				n = "";
 			}
 		}
-	}
-	else
-	{
+	} else {
 		if (teamscr1 > teamscr2) {
 			t = "               RED ";
 			n = ftos(teamscr1 - teamscr2);
@@ -288,7 +302,8 @@ void() TeamCapturePlayerUpdate =
 	centerprint7(self, res, s1, s2, s3, "    ", t, n);		//
 };
 
-void(entity who, string s) TeamPlayerUpdate =
+void (entity who, string s)
+TeamPlayerUpdate =
 {
 	local string n, res;
 
@@ -314,32 +329,36 @@ void(entity who, string s) TeamPlayerUpdate =
 		centerprint3(who, res, s, "\n                               TIED");
 };
 
-void(entity who, string s1, string s2) TeamPlayerUpdate2 =
+void (entity who, string s1, string s2)
+TeamPlayerUpdate2 =
 {
-	local string n, res;
+	local string	res, n;
 
-	TeamCaptureCheckUpdate();
+	TeamCaptureCheckUpdate ();
 	who.laststattime = time + PLAYERSTATTIME;
 
 	if (who.statstate < 0) {
-		centerprint2(who, s1, s2);
+		centerprint2 (who, s1, s2);
 		return;
 	}
 
-	res = TeamSetStatRes2(who);
+	res = TeamSetStatRes2 (who);
 
 	if (teamscr1 == 0 && teamscr2 == 0) {
-		centerprint4(who, res, s1, s2, "\n                       Capture The Flag");
+		centerprint4 (who, res, s1, s2,
+					  "\n                       Capture The Flag");
 		return;
 	} else if (teamscr1 > teamscr2) {
 		n = ftos(teamscr1 - teamscr2);
-		centerprint5(who, res, s1, s2, "\n                               RED ", n);
+		centerprint5 (who, res, s1, s2,
+					  "\n                               RED ", n);
 	} else if (teamscr1 < teamscr2) {
 		n = ftos(teamscr2 - teamscr1);
-		centerprint5(who, res, s1, s2, "\n                               BLUE ", n);
+		centerprint5 (who, res, s1, s2,
+					  "\n                               BLUE ", n);
 	} else {
-		centerprint4(who, res, s1, s2, "\n                               TIED");
+		centerprint4 (who, res, s1, s2,
+					  "\n                               TIED");
 		return;
 	}
 };
-

@@ -1,5 +1,5 @@
 /*
-	#FILENAME#
+	buttons.qc
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -24,25 +24,28 @@
 
 // button and multiple button
 
-void() button_wait;
-void() button_return;
+void () button_wait;
+void () button_return;
 
-void() button_wait =
+void ()
+button_wait =
 {
 	self.state = STATE_TOP;
 	self.nextthink = self.ltime + self.wait;
 	self.think = button_return;
 	activator = self.enemy;
-	SUB_UseTargets();
+	SUB_UseTargets ();
 	self.frame = 1;			// use alternate textures
 };
 
-void() button_done =
+void ()
+button_done =
 {
 	self.state = STATE_BOTTOM;
 };
 
-void() button_return =
+void ()
+button_return =
 {
 	self.state = STATE_DOWN;
 	SUB_CalcMove (self.pos1, self.speed, button_done);
@@ -52,12 +55,14 @@ void() button_return =
 };
 
 
-void() button_blocked =
-{	// do nothing, just don't ome all the way back out
+void ()
+button_blocked =
+{	// do nothing, just don't come all the way back out
 };
 
 
-void() button_fire =
+void ()
+button_fire =
 {
 	if (self.state == STATE_UP || self.state == STATE_TOP)
 		return;
@@ -68,29 +73,31 @@ void() button_fire =
 	SUB_CalcMove (self.pos2, self.speed, button_wait);
 };
 
-
-void() button_use =
+void ()
+button_use =
 {
 	self.enemy = activator;
 	button_fire ();
 };
 
-void() button_touch =
+void ()
+button_touch =
 {
 	if (other.classname != "player")
 		return;
+
 	self.enemy = other;
 	button_fire ();
 };
 
-void() button_killed =
+void ()
+button_killed =
 {
 	self.enemy = damage_attacker;
 	self.health = self.max_health;
 	self.takedamage = DAMAGE_NO;	// wil be reset upon return
 	button_fire ();
 };
-
 
 /*QUAKED func_button (0 .5 .8) ?
 When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again.
@@ -107,27 +114,26 @@ When a button is touched, it moves some distance in the direction of it's angle,
 2) metallic click
 3) in-out
 */
-void() func_button =
+void ()
+func_button =
 {
-	if (self.sounds == 0)
-	{
+	switch (self.sounds) {
+	case 0:
 		precache_sound ("buttons/airbut1.wav");
 		self.noise = "buttons/airbut1.wav";
-	}
-	if (self.sounds == 1)
-	{
+		break;
+	case 1:
 		precache_sound ("buttons/switch21.wav");
 		self.noise = "buttons/switch21.wav";
-	}
-	if (self.sounds == 2)
-	{
+		break;
+	case 2:
 		precache_sound ("buttons/switch02.wav");
 		self.noise = "buttons/switch02.wav";
-	}
-	if (self.sounds == 3)
-	{
+	case 3:
 		precache_sound ("buttons/switch04.wav");
 		self.noise = "buttons/switch04.wav";
+	default:
+		break;
 	}
 	
 	SetMovedir ();
@@ -139,13 +145,11 @@ void() func_button =
 	self.blocked = button_blocked;
 	self.use = button_use;
 
-	if (self.health)
-	{
+	if (self.health) {
 		self.max_health = self.health;
 		self.th_die = button_killed;
 		self.takedamage = DAMAGE_YES;
-	}
-	else
+	} else
 		self.touch = button_touch;
 
 	if (!self.speed)
@@ -158,6 +162,6 @@ void() func_button =
 	self.state = STATE_BOTTOM;
 
 	self.pos1 = self.origin;
-	self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
+	self.pos2 = self.pos1 + self.movedir * (fabs (self.movedir * self.size)
+											- self.lip);
 };
-

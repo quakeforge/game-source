@@ -1,5 +1,5 @@
 /*
-	#FILENAME#
+	spectate.qc
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -40,7 +40,8 @@ SpectatorConnect
 called when a spectator connects to a server
 ============
 */
-void() SpectatorConnect =
+void ()
+SpectatorConnect =
 {
 	bprint (PRINT_MEDIUM, "Spectator ");
 	bprint (PRINT_MEDIUM, self.netname);
@@ -58,7 +59,8 @@ SpectatorDisconnect
 called when a spectator disconnects from a server
 ============
 */
-void() SpectatorDisconnect =
+void ()
+SpectatorDisconnect =
 {
 	bprint (PRINT_MEDIUM, "Spectator ");
 	bprint (PRINT_MEDIUM, self.netname);
@@ -73,40 +75,47 @@ SpectatorImpulseCommand
 Called by SpectatorThink if the spectator entered an impulse
 ================
 */
-void() SpectatorImpulseCommand =
+void ()
+SpectatorImpulseCommand =
 {
-	if (self.impulse == 1) {
+	switch (self.impulse) {
+	case 1:
 		// teleport the spectator to the next spawn point
-		// note that if the spectator is tracking, this doesn't do
-		// much
-		self.goalentity = find(self.goalentity, classname, "info_player_deathmatch");
+		// note that if the spectator is tracking, this doesn't do  much
+		self.goalentity = find(self.goalentity, classname,
+							   "info_player_deathmatch");
 		if (self.goalentity == world)
-			self.goalentity = find(self.goalentity, classname, "info_player_deathmatch");
-		if (self.goalentity != world) {
+			self.goalentity = find (self.goalentity, classname,
+									"info_player_deathmatch");
+		else {
 			setorigin(self, self.goalentity.origin);
 			self.angles = self.goalentity.angles;
 			self.fixangle = TRUE;           // turn this way immediately
 		}
-	} else if (self.impulse == 23) 
-		TeamFlagStatusReport();
-
-	else if (self.impulse == 25)
+		break;
+	case 23:
+		TeamFlagStatusReport ();
+		break;
+	case 25:
 		TeamPrintSettings ();
-
-	else if (self.impulse == 70) {
+		break;
+	case 70:
 		if (self.statstate < 0) {
 			self.statstate = 0;
-			sprint(self, PRINT_HIGH, "Status bar on (impulse 71 to 81 to set size)\n");
+			sprint (self, PRINT_HIGH, "Status bar on (impulse 71 to 81 to "
+					"set size)\n");
 		} else {
 			self.statstate = -1;
 			sprint(self, PRINT_HIGH, "Status bar off.\n");
 		}
-
-	} else if (self.impulse >= 71 && self.impulse <= 81) {
-		self.statstate = self.impulse - 71;
-		sprint(self, PRINT_HIGH, "Status bar set\n");
+		break;
+	default:
+		if (self.impulse >= 71 && self.impulse <= 81) {
+			self.statstate = self.impulse - 71;
+			sprint (self, PRINT_HIGH, "Status bar set\n");
+		}
+		break;
 	}
-
 	self.impulse = 0;
 };
 
@@ -117,15 +126,14 @@ SpectatorThink
 Called every frame after physics are run
 ================
 */
-void() SpectatorThink =
+void ()
+SpectatorThink =
 {
 	// self.origin, etc contains spectator position, so you could
 	// do some neat stuff here
 
-	TeamCapturePlayerUpdate();
+	TeamCapturePlayerUpdate ();
 
 	if (self.impulse)
-		SpectatorImpulseCommand();
+		SpectatorImpulseCommand ();
 };
-
-

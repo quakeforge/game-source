@@ -1,5 +1,5 @@
 /*
-	#FILENAME#
+	ident.qc
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -31,42 +31,40 @@
 
 // This is called with the player who wants to know whose in front
 // of him as "self."  I call it with an impulse in weapons.qc 
-entity(float disp) identify_player =
+entity (float disp)
+identify_player =
 {
 	// e is a temp entity; guy is our current best guess
 	// as to at whom the player is pointing
-	local entity e, guy = world;
-
+	local entity	e, guy = world;
 	// The best "closeness" heuristic so far.
-	local float closeness = -1;
-
+	local float		closeness = -1;
 	// Temp vars.
-	local vector diff, point;
-	local float currclose;
+	local float		currclose;
+	local vector	diff, point;
 
 	// Walk the list of players...
-	e=find(world, classname, "player");
-	while (e!=world)
-	{
+	e = find (world, classname, "player");
+	while (e != world) {
 		// Get a vector pointing from the viewer to the current
 		// player under consideration
-		diff=e.origin - self.origin;
+		diff = e.origin - self.origin;
 
 		// Normalize it since we only care where he's pointing,
 		// not how far away the guy is.
-		diff=normalize(diff);
+		diff = normalize (diff);
 
 		// Normalize self.angles so we can do a length-independent
 		// consideration
-		point=normalize(self.angles);
+		point = normalize (self.angles);
 
 		// Find the different between the current player's angle
 		// and the viewer's vision angle
-		diff=diff - point;
+		diff -= point;
 
 		// The length is going to be our definition of closeness
-		currclose=vlen(diff);
-		traceline(self.origin, e.origin, FALSE, self);
+		currclose = vlen (diff);
+		traceline (self.origin, e.origin, FALSE, self);
 		if (trace_ent == e) {
 			if (closeness == -1) {
 				closeness = currclose;
@@ -76,18 +74,18 @@ entity(float disp) identify_player =
 				guy = e;
 			}
 		}
-		e=find(e, classname, "player");
+		e = find (e, classname, "player");
 	}
 
 	// Now we display.
-	if (disp==0)
+	if (disp == 0)
 		return guy;
-	if (guy == world)
-	{
+	if (guy == world) {
 		TeamPlayerUpdate(self, "You're not looking at anyone!");
 		return world;
 	}
-	TeamPlayerUpdate2(self, "You are looking at ", guy.netname);
+
+	TeamPlayerUpdate2 (self, "You are looking at ", guy.netname);
 	return guy;
 };	 
 

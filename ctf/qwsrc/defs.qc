@@ -1,5 +1,5 @@
 /*
-	#FILENAME#
+	defs.qc
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -22,18 +22,9 @@
 	$Id$
 */
 
+// SOURCE FOR GLOBALVARS_T C STRUCTURE ========================================
 
-/*
-==============================================================================
-
-			SOURCE FOR GLOBALVARS_T C STRUCTURE
-
-==============================================================================
-*/
-
-//
-// system globals
-//
+// system globals =============================================
 entity		self;
 entity		other;
 entity		world;
@@ -43,7 +34,6 @@ float		frametime;
 entity		newmis;				// if this is set, the entity that just
 								// run created a new missile that should
 								// be simulated immediately
-
 
 float		force_retouch;		// force all entities to touch triggers
 								// next frame.  this is needed because
@@ -57,22 +47,20 @@ string		mapname;
 
 float		serverflags;		// propagated from level to level, used to
 								// keep track of completed episodes
-
 float		total_secrets;
 float		total_monsters;
 
 float		found_secrets;		// number of secrets found
 float		killed_monsters;	// number of monsters killed
 
-
 // spawnparms are used to encode information about clients across server
 // level changes
-float		parm1, parm2, parm3, parm4, parm5, parm6, parm7, parm8, parm9, parm10, parm11, parm12, parm13, parm14, parm15, parm16;
+float		parm1, parm2, parm3, parm4, parm5, parm6, parm7, parm8, parm9,
+			parm10, parm11, parm12, parm13, parm14, parm15, parm16;
 
-//
-// global variables set by built in functions
-//	
-vector		v_forward, v_up, v_right;	// set by makevectors()
+// global variables set by built in functions =================
+
+vector		v_forward, v_up, v_right;	// set by makevectors ()
 	
 // set by traceline / tracebox
 float		trace_allsolid;
@@ -87,21 +75,14 @@ float		trace_inwater;
 
 entity		msg_entity;				// destination of single entity writes
 
-//
 // required prog functions
-//
-void() 		main;						// only for testing
-
 void()		StartFrame;
-
 void() 		PlayerPreThink;
 void() 		PlayerPostThink;
-
 void()		ClientKill;
 void()		ClientConnect;
 void() 		PutClientInServer;		// call after setting the parm1... parms
 void()		ClientDisconnect;
-
 void()		SetNewParms;			// called when a client first connects to
 									// a server. sets parms so they can be
 									// saved off for restarts
@@ -109,22 +90,13 @@ void()		SetNewParms;			// called when a client first connects to
 void()		SetChangeParms;			// call to set parms for self so they can
 									// be saved for a level transition
 
-
-//================================================
+//====================================
 void		end_sys_globals;		// flag for structure dumping
-//================================================
+//====================================
 
-/*
-==============================================================================
+// SOURCE FOR ENTVARS_T C STRUCTURE ===========================================
 
-			SOURCE FOR ENTVARS_T C STRUCTURE
-
-==============================================================================
-*/
-
-//
-// system fields (*** = do not set in prog code, maintained by C code)
-//
+// system fields (*** = do not set in prog code, maintained by C code) ====
 .float		modelindex;		// *** model index in the precached list
 .vector		absmin, absmax;	// *** origin + mins / maxs
 
@@ -173,7 +145,6 @@ void		end_sys_globals;		// flag for structure dumping
 .float		deadflag;
 
 .vector		view_ofs;			// add to origin to get eye point
-
 
 .float		button0;		// fire
 .float		button1;		// use
@@ -230,23 +201,13 @@ void		end_sys_globals;		// flag for structure dumping
 
 .string		noise, noise1, noise2, noise3;	// contains names of wavs to play
 
-//================================================
+//====================================
 void		end_sys_fields;			// flag for structure dumping
-//================================================
+//====================================
 
-/*
-==============================================================================
+// VARS NOT REFERENCED BY C CODE ==============================================
 
-				VARS NOT REFERENCED BY C CODE
-
-==============================================================================
-*/
-
-
-//
-// constants
-//
-
+// constants =======================
 float	FALSE					= 0;
 float 	TRUE					= 1;
 
@@ -292,14 +253,12 @@ float	RANGE_MID				= 2;
 float	RANGE_FAR				= 3;
 
 // deadflag values
-
 float	DEAD_NO					= 0;
 float	DEAD_DYING				= 1;
 float	DEAD_DEAD				= 2;
 float	DEAD_RESPAWNABLE		= 3;
 
 // takedamage values
-
 float	DAMAGE_NO				= 0;
 float	DAMAGE_YES				= 1;
 float	DAMAGE_AIM				= 2;
@@ -313,7 +272,7 @@ float	IT_SUPER_NAILGUN		= 8;
 float	IT_GRENADE_LAUNCHER		= 16;
 float	IT_ROCKET_LAUNCHER		= 32;
 float	IT_LIGHTNING			= 64;
-float   IT_GRAPPLE                 = 128;
+float   IT_GRAPPLE              = 128;
 
 float	IT_SHELLS				= 256;
 float	IT_NAILS				= 512;
@@ -339,7 +298,6 @@ float	IT_SIGIL3				= 1073741824;
 float	IT_SIGIL4				= 2147483648;
 
 // point content values
-
 float	CONTENT_EMPTY			= -1;
 float	CONTENT_SOLID			= -2;
 float	CONTENT_WATER			= -3;
@@ -370,7 +328,6 @@ float	SVC_SELLSCREEN		= 33;
 float	SVC_SMALLKICK		= 34;
 float	SVC_BIGKICK			= 35;
 float	SVC_MUZZLEFLASH		= 39;
-
 
 float	TE_SPIKE		= 0;
 float	TE_SUPERSPIKE	= 1;
@@ -403,21 +360,18 @@ float	ATTN_IDLE		= 2;
 float	ATTN_STATIC		= 3;
 
 // update types
-
 float	UPDATE_GENERAL	= 0;
 float	UPDATE_STATIC	= 1;
 float	UPDATE_BINARY	= 2;
 float	UPDATE_TEMP		= 3;
 
 // entity effects
-
 //float	EF_BRIGHTFIELD	= 1;
 //float	EF_MUZZLEFLASH 	= 2;
 float	EF_BRIGHTLIGHT 	= 4;
 float	EF_DIMLIGHT 	= 8;
 float	EF_FLAG1	 	= 16;
 float	EF_FLAG2	 	= 32;
-
 
 // messages
 float	MSG_BROADCAST	= 0;		// unreliable to all
@@ -447,9 +401,7 @@ float	gamestart;		// at start
 
 //================================================
 
-//
-// globals
-//
+// globals ===============
 float	movedist;
 float	gameover;		// set when a rule exits
 
@@ -461,20 +413,15 @@ entity	activator;		// the entity that activated a trigger or brush
 entity	damage_attacker;	// set by T_Damage
 float	framecount;
 
-//
 // cvars checked each frame
-//
 float		teamplay;
 float		timelimit;
 float		fraglimit;
 float		deathmatch;
 
-
 //================================================
 
-//
 // world fields (FIXME: make globals)
-//
 .string		wad;
 .string 	map;
 .float		worldtype;	// 0=medieval 1=metal 2=base
@@ -483,16 +430,11 @@ float		deathmatch;
 
 .string		killtarget;
 
-//
 // quakeed fields
-//
 .float		light_lev;		// not used by game, but parsed by light util
 .float		style;
 
-
-//
 // monster ai
-//
 .void()		th_stand;
 .void()		th_walk;
 .void()		th_run;
@@ -505,8 +447,8 @@ float		deathmatch;
 
 .float		speed;
 
-.float  lefty;// Monsters use this. I use it to flag the player's CHAN_WEAP
-              // to be cleared (see client.qc) -Wedge
+.float  lefty;	// Monsters use this. I use it to flag the player's CHAN_WEAP
+				// to be cleared (see client.qc) -Wedge
 
 .float	search_time;
 .float	attack_state;
@@ -516,12 +458,9 @@ float	AS_SLIDING		= 2;
 float	AS_MELEE		= 3;
 float	AS_MISSILE		= 4;
 
-//
-// player only fields
-//
+// player only fields ============
 
 // *TEAMPLAY*
-
 .float			steam;			// Current team player is on
 .float			lastteamset;	// time of last team set
 .string			ctfskin;		// selected ctf skin
@@ -530,14 +469,12 @@ float	AS_MISSILE		= 4;
 // *XXX* EXPERT CTF ALTERNATE SCORING
 
 // time values
-
 .float 		flag_since; 		// how long a player has had the flag
 .float		last_returned_flag; 	// last time player returned his own flag
 .float		last_fragged_carrier; 	// last time player fragged a flag carrier
 .float		last_hurt_carrier; 	// last time player hurt the flag carrier
 
 // *XXX* end 
-
 .float		walkframe;
 
 // Zoid Additions
@@ -600,9 +537,7 @@ float		PF_GHOST			= 64;
 //McBain: PreviousWeaponCommand
 .float		previous_weapon;	// one of the IT_SHOTGUN, etc flags
 
-//
-// object stuff
-//
+// object stuff ==============
 .string		mdl;
 .vector		mangle;			// angle at start
 
@@ -610,77 +545,50 @@ float		PF_GHOST			= 64;
 
 .float		t_length, t_width;
 
-
-//
-// doors, etc
-//
+// doors, etc ================
 .vector		dest, dest1, dest2;
 .float		wait;			// time from firing to restarting
 .float		delay;			// time from activation to firing
 .entity		trigger_field;	// door's trigger entity
 .string		noise4;
 
-//
 // monsters
-//
 .float 		pausetime;
 .entity 	movetarget;
 
-
-//
 // doors
-//
 .float		aflag;
 .float		dmg;			// damage done by door when hit
 	
-//
 // misc
-//
 .float		cnt; 			// misc flag
 	
-//
 // subs
-//
 .void()		think1;
 .vector		finaldest, finalangle;
 
-//
 // triggers
-//
 .float		count;			// for counting triggers
 
-
-//
 // plats / doors / buttons
-//
 .float		lip;
 .float		state;
 .vector		pos1, pos2;		// top and bottom positions
-.float          height;
+.float      height;
 
-//
 // sounds
-//
 .float		waitmin, waitmax;
 .float		distance;
 .float		volume;
 
-
-
-
 //===========================================================================
-	
 
-//
 // builtin functions
-//
-
 void(vector ang)	makevectors		= #1;		// sets v_forward, etc globals
 void(entity e, vector o) setorigin	= #2;
 void(entity e, string m) setmodel	= #3;		// set movetype and solid first
 void(entity e, vector min, vector max) setsize = #4;
-// #5 was removed
-void() break						= #6;
+//void() break						= #6;
 float() random						= #7;		// returns 0 - 1
 void(entity e, float chan, string samp, float vol, float atten) sound = #8;
 vector(vector v) normalize			= #9;
@@ -696,7 +604,7 @@ void(entity e) remove				= #15;
 // An entity will also be ignored for testing if forent == test,
 // forent->owner == test, or test->owner == forent
 // a forent of world is ignored
-void(vector v1, vector v2, float nomonsters, entity forent) traceline = #16;	
+void(vector v1, vector v2, float nomonsters, entity forent) traceline = #16;
 
 entity() checkclient				= #17;	// returns a client to look for
 entity(entity start, .string fld, string match) find = #18;
@@ -714,30 +622,23 @@ void() traceon						= #29;		// turns statment trace on
 void() traceoff						= #30;
 void(entity e) eprint				= #31;		// prints an entire edict
 float(float yaw, float dist) walkmove	= #32;	// returns TRUE or FALSE
-// #33 was removed
 float() droptofloor= #34;	// TRUE if landed on floor
 void(float style, string value) lightstyle = #35;
 float(float v) rint					= #36;		// round to nearest int
 float(float v) floor				= #37;		// largest integer <= v
 float(float v) ceil					= #38;		// smallest integer >= v
-// #39 was removed
 float(entity e) checkbottom			= #40;		// true if self is on ground
 float(vector v) pointcontents		= #41;		// returns a CONTENT_*
-// #42 was removed
 float(float f) fabs = #43;
 vector(entity e, float speed) aim = #44;		// returns the shooting vector
 float(string s) cvar = #45;						// return cvar.value
 void(string s) localcmd = #46;					// put string into local que
 entity(entity e) nextent = #47;					// for looping through all ents
-// #48 was removed
 void() ChangeYaw = #49;						// turn towards self.ideal_yaw
 											// at self.yaw_speed
-// #50 was removed
 vector(vector v) vectoangles			= #51;
 
-//
 // direct client message generation
-//
 void(float to, float f) WriteByte		= #52;
 void(float to, float f) WriteChar		= #53;
 void(float to, float f) WriteShort		= #54;
@@ -746,6 +647,9 @@ void(float to, float f) WriteCoord		= #56;
 void(float to, float f) WriteAngle		= #57;
 void(float to, string s) WriteString	= #58;
 void(float to, entity s) WriteEntity	= #59;
+void(float to, ...) WriteBytes			= #0;
+void(float to, vector v) WriteCoordV	= #0;
+void(float to, vector v) WriteAngleV	= #0;
 
 // several removed
 
@@ -754,8 +658,6 @@ void(float step) movetogoal				= #67;
 string(string s) precache_file		= #68;	// no effect except for -copy
 void(entity e) makestatic		= #69;
 void(string s) changelevel = #70;
-
-//#71 was removed
 
 void(string var, string val) cvar_set = #72;	// sets cvar.value
 
@@ -785,9 +687,7 @@ void(vector where, float set) multicast	= #82;	// sends the temp message to a se
 
 //============================================================================
 
-//
 // subs.qc
-//
 void(vector tdest, float tspeed, void() func) SUB_CalcMove;
 void(entity ent, vector tdest, float tspeed, void() func) SUB_CalcMoveEnt;
 void(vector destangle, float tspeed, void() func) SUB_CalcAngleMove;
@@ -797,22 +697,14 @@ void() SUB_Null;
 void() SUB_UseTargets;
 void() SUB_Remove;
 
-//
 //	combat.qc
-//
 void(entity targ, entity inflictor, entity attacker, float damage) T_Damage;
-
 
 float (entity e, float healamount, float ignore) T_Heal; // health function
 
 float(entity targ, entity inflictor) CanDamage;
 
-
-//
 // Grapple.qc - Wedge 
-//
 .float  on_hook;// TRUE if hook is anchored and client is being pulled
 .float  hook_out;// TRUE if hook is in use
 .entity hook;// pointer to client's hook
-
-

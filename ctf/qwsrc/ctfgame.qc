@@ -1,5 +1,5 @@
 /*
-	#FILENAME#
+	ctfgame.qc
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -22,21 +22,21 @@
 	$Id$
 */
 
-
 float VOTEEXIT_TIME_LIMIT	=	60;		// 60 seconds after first vote
 float voteexit_time;
 entity vote_leader;		// current leader
 entity lastvotespawn;
 
-void(vector org) spawn_tfog;
-void(vector org, entity death_owner) spawn_tdeath;
-void() InitTrigger;
+void (vector org) spawn_tfog;
+void (vector org, entity death_owner) spawn_tdeath;
+void () InitTrigger;
 
 /*QUAKED info_vote_destination (.5 .5 .5) (-8 -8 -8) (8 8 32)
 This is the destination marker for a voteexit.  It should have a "targetname" 
 field with the same value as a voteexit's "target" field.
 */
-void() info_vote_destination =
+void ()
+info_vote_destination =
 {
 	// this does nothing, just serves as a target spot
 	self.mangle = self.angles;
@@ -47,39 +47,41 @@ void() info_vote_destination =
 		objerror ("no targetname");
 };
 
-void() voteexit_teleport =
+void ()
+voteexit_teleport =
 {
-local entity	t;
-local vector	org;
+	local entity	t;
+	local vector	org;
 
-// put a tfog where the player was
+	// put a tfog where the player was
 	spawn_tfog (other.origin);
 
-// if we aren't in custom mode, just find a deathmatch target
+	// if we aren't in custom mode, just find a deathmatch target
 	// find the destination 
 	if (!self.target) {
-		lastvotespawn = find(lastvotespawn, classname, "info_player_deathmatch");
+		lastvotespawn = find (lastvotespawn, classname,
+							  "info_player_deathmatch");
 		if (lastvotespawn == world)
-			lastvotespawn = find (lastvotespawn, classname, "info_player_deathmatch");
+			lastvotespawn = find (lastvotespawn, classname,
+								  "info_player_deathmatch");
 		t = lastvotespawn;
 	} else
 		t = find (world, targetname, self.target);
 
 	if (!t)
 		objerror ("couldn't find target");
-		
-// spawn a tfog flash in front of the destination
+
+	// spawn a tfog flash in front of the destination
 	makevectors (t.mangle);
 	org = t.origin + 32 * v_forward;
 
 	spawn_tfog (org);
 	spawn_tdeath(t.origin, other);
 
-// move the player and lock him down for a little while
-	if (!other.health)
-	{
+	// move the player and lock him down for a little while
+	if (!other.health) {
 		other.origin = t.origin;
-		other.velocity = (v_forward * other.velocity_x) + (v_forward * other.velocity_y);
+		other.velocity = v_forward * (other.velocity_x + other.velocity_y);
 		return;
 	}
 	setorigin (other, t.origin);
@@ -89,26 +91,26 @@ local vector	org;
 	other.teleport_time = time + 0.7;
 
 	if (other.flags & FL_ONGROUND)
-		other.flags = other.flags - FL_ONGROUND;
+		other.flags &= ~FL_ONGROUND;
 	other.velocity = v_forward * 300;
 };
 
-void() voteexit_touch =
+void ()
+voteexit_touch =
 {
-local entity	t;
+	local entity	t;
 
 	if (other.classname != "player")
 		return;
 
-// only teleport living creatures
+	// only teleport living creatures
 	if (other.health <= 0 || other.solid != SOLID_SLIDEBOX)
 		return;
-
 	if (other.voted) {
 		if (other.voted < time)
-			TeamPlayerUpdate(other, "You have already voted.");
+			TeamPlayerUpdate (other, "You have already voted.");
 		other.voted = time + 1;
-		voteexit_teleport();
+		voteexit_teleport ();
 		return;
 	}
 
@@ -117,13 +119,13 @@ local entity	t;
 
 	SUB_UseTargets ();
 
-	bprint(PRINT_HIGH, other.netname);
-	bprint(PRINT_HIGH, " has voted for ");
-	bprint(PRINT_HIGH, self.message);
-	bprint(PRINT_HIGH, "\n");
+	bprint (PRINT_HIGH, other.netname);
+	bprint (PRINT_HIGH, " has voted for ");
+	bprint (PRINT_HIGH, self.message);
+	bprint (PRINT_HIGH, "\n");
 
-// ok, the player has voted for this exit
-	self.cnt = self.cnt + 1;
+	// ok, the player has voted for this exit
+	self.cnt++;
 
 	// find new leader
 	// we're on the start map, something special is happening
@@ -146,9 +148,9 @@ local entity	t;
 		voteexit_time = time + VOTEEXIT_TIME_LIMIT;
 
 	// notify everyone about the change
-	TeamCaptureResetUpdate();
+	TeamCaptureResetUpdate ();
 
-	voteexit_teleport();
+	voteexit_teleport ();
 };
 
 /*QUAKED trigger_voteexit (.5 .5 .5) ?
@@ -160,10 +162,10 @@ Any object touching this will be transported to the corresponding
 info_vote_destination entity. You must set the "target" field, and 
 create an object with a "targetname" field that matches.
 */
-void() trigger_voteexit =
+void ()
+trigger_voteexit =
 {
 	InitTrigger ();
 	self.touch = voteexit_touch;
 	self.cnt = 0;
 };
-

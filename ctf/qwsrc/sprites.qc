@@ -1,5 +1,5 @@
 /*
-	#FILENAME#
+	sprites.qc
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
@@ -22,7 +22,6 @@
 	$Id$
 */
 
-
 // these are the only sprites still in the game...
 
 $spritename s_explod
@@ -35,16 +34,13 @@ $frame	24	88	56	56
 $frame	120	88	56	56
 $frame	216	88	56	56
 
-
 $spritename s_bubble
 $type vp_parallel
 $load id1/gfx/sprites/bubble.lbm
 $frame	16	16	16	16
 $frame	40	16	16	16
 
-
 $spritename s_light
 $type vp_parallel
 $load id1/gfx/sprites/light.lbm
 $frame	104	32	32	32
-
