@@ -74,6 +74,13 @@ Array waypoint_array;
 {
 	[self init];
 	[waypoint_array addItem: self];
+
+	if ([waypoint_array count] == 2) {
+		local id obj = [Waypoint class];
+		local IMP imp = [obj methodForSelector: @selector (fixWaypoints)];
+		waypoint_thinker.think = (void ()) imp;
+		waypoint_thinker.nextthink = time;
+	}
 	return self;
 }
 
@@ -208,10 +215,12 @@ Waypoint Loading from file
 
 -(void)fix
 {
-	links[0] = [Waypoint waypointForNum:b_pants];
-	links[1] = [Waypoint waypointForNum:b_skill];
-	links[2] = [Waypoint waypointForNum:b_shirt];
-	links[3] = [Waypoint waypointForNum:b_frags];
+	local integer i, tmp;
+
+	for (i = 0; i < 3; i++) {
+		tmp = (integer)links[i];
+		links[i] = [Waypoint waypointForNum:tmp];
+	}
 }
 
 +(void) fixWaypoints
@@ -271,7 +280,7 @@ Route & path table management
 
 +(void)clearMyRoute:(Bot) bot
 {
-	[waypoint_array makeObjectsPerformSelector:@selector (clearRoute)
+	[waypoint_array makeObjectsPerformSelector:@selector (clearRouteForBot)
 					withObject:bot];
 }
 
@@ -350,7 +359,7 @@ tripping the runaway loop counter
 	if (waypoint_thinker.@this = [waypoint_queue removeItemAtHead]) {
 		local id obj = waypoint_thinker.@this;
 		local IMP imp = [obj methodForSelector: @selector (waypointThink)];
-		(IMP)waypoint_thinker.think = imp;
+		waypoint_thinker.think = (void ()) imp;
 		waypoint_thinker.nextthink = time;
 	}
 }
@@ -361,7 +370,7 @@ tripping the runaway loop counter
 		[waypoint_queue addItemAtTail: self];
 	} else {
 		local IMP imp = [self methodForSelector: @selector (waypointThink)];
-		(IMP)waypoint_thinker.think = imp;
+		waypoint_thinker.think = (void ()) imp;
 		waypoint_thinker.nextthink = time;
 		waypoint_thinker.@this = self;
 	}
@@ -420,18 +429,10 @@ void() waypoint =
 void(vector org, vector bit1, integer bit4, integer flargs) make_way =
 {
 	local Waypoint y = [[Waypoint alloc] initAt:org];
-	//local entity y;
-	//waypoint_mode = WM_LOADED;
-	//y = make_waypoint(org);
+	waypoint_mode = WM_LOADED;
 	y.flags = flargs;
-	y.b_pants = (integer)bit1_x;
-	y.b_skill = (integer)bit1_y;
-	y.b_shirt = (integer)bit1_z;
-	y.b_frags = bit4;
-	/*
-	if (y.count == 1) {
-		y.think = FixWaypoints; // wait until all qc loaded points are spawned
-		y.nextthink = time;
-	}
-	*/
+	y.links[0] = (Waypoint) (integer) bit1_x;
+	y.links[1] = (Waypoint) (integer) bit1_y;
+	y.links[2] = (Waypoint) (integer) bit1_z;
+	y.links[3] = (Waypoint) (integer) bit4;
 };

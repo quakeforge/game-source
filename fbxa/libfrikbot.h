@@ -32,7 +32,7 @@ typedef struct bot_data_t bot_data_t;
 	integer flags;
 	vector origin;
 
-	integer b_pants, b_skill, b_shirt, b_frags, b_sound;
+	integer b_sound;
 	integer keys;
 	float items;
 	Waypoint enemy;
