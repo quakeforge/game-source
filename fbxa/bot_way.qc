@@ -43,8 +43,9 @@ this notice in its entirety.
 */
 
 #include "libfrikbot.h"
+#include "Array.h"
 
-Waypoint way_foot; // Ugh. Do I need a foot for this or not?
+@static Array waypoint_array;
 
 @implementation Target
 
@@ -75,6 +76,57 @@ Waypoint way_foot; // Ugh. Do I need a foot for this or not?
 // Waypoint Linking code ======================================================
 
 @implementation Waypoint
+
+-(id)init
+{
+	if (!waypoint_array)
+		waypoint_array = [[Array alloc] init];
+	return [super init];
+}
+
+-(id)initAt:(vector)org
+{
+	[self init];
+	[waypoint_array addItem: self];
+	return self;
+}
+
+-(id)initFromEntity:(entity)ent
+{
+	[self initAt:ent.origin];
+}
+/*
+entity (vector org)
+make_waypoint = 
+{
+	local entity point;
+
+	point = spawn ();
+	point.classname = "waypoint";
+
+	point.search_time = time; // don't double back for me;
+	point.solid = SOLID_TRIGGER;
+	point.movetype = MOVETYPE_NONE;
+	point.items = -1;
+	setorigin (point, org);
+	
+	setsize (point, VEC_HULL_MIN, VEC_HULL_MAX);
+	waypoints++;
+	if (!way_head) {
+		way_head = point;
+		way_foot = point;
+	} else {
+		way_foot._next = point;
+		point._last = way_foot;
+		way_foot = point;
+	}
+
+	point.count = waypoints;
+	if (waypoint_mode > WM_LOADED) // editor modes
+		setmodel (point, "progs/s_bubble.spr"); 
+	return point;
+};
+*/
 
 -(integer)isLinkedTo:(Waypoint)way
 {
@@ -148,59 +200,6 @@ Waypoint way_foot; // Ugh. Do I need a foot for this or not?
 	}
 }
 
-// Waypoint Spawning Code =====================================================
-
--(id)initAt:(vector)org
-{
-	count = ++waypoints;
-	if (!way_head) {
-		way_head = self;
-		way_foot = self;
-	} else {
-		way_foot.next = self;
-		self.prev = way_foot;
-		way_foot = self;
-	}
-	return self;
-}
-
--(id)initFromEntity:(entity)ent
-{
-	[self initAt:ent.origin];
-}
-/*
-entity (vector org)
-make_waypoint = 
-{
-	local entity point;
-
-	point = spawn ();
-	point.classname = "waypoint";
-
-	point.search_time = time; // don't double back for me;
-	point.solid = SOLID_TRIGGER;
-	point.movetype = MOVETYPE_NONE;
-	point.items = -1;
-	setorigin (point, org);
-	
-	setsize (point, VEC_HULL_MIN, VEC_HULL_MAX);
-	waypoints++;
-	if (!way_head) {
-		way_head = point;
-		way_foot = point;
-	} else {
-		way_foot._next = point;
-		point._last = way_foot;
-		way_foot = point;
-	}
-
-	point.count = waypoints;
-	if (waypoint_mode > WM_LOADED) // editor modes
-		setmodel (point, "progs/s_bubble.spr"); 
-	return point;
-};
-*/
-
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -211,33 +210,13 @@ Waypoint Loading from file
 
 +(void)clearAll
 {
-
-	local Waypoint t, n;
-
-	t = way_head;
-	while(t) {
-		n = t.next;
-		[t free];
-		t = n;
-	}
-	way_head = NIL;
-	way_foot = NIL;
-	waypoints = 0;
+	[waypoint_array free];
+	waypoint_array = [[Array alloc] init];
 }
 
 +(Waypoint)waypointForNum:(integer)num
 {
-	local Waypoint t;
-	if (!num)
-		return NIL;
-
-	t = way_head;
-	while (t) {
-		if (t.count == num)
-			return t;
-		t = t.next;
-	}
-	return NIL;
+	return [waypoint_array getItemAt:num];
 }
 
 -(void)fix
@@ -250,10 +229,7 @@ Waypoint Loading from file
 
 +(void) fixWaypoints
 {
-	local Waypoint way;
-
-	for (way = way_head; way; way = way.next)
-		[way fix];
+	[waypoint_array makeObjectsPerformSelector:@selector(fix)];
 }
 
 /*
@@ -264,32 +240,30 @@ Route & path table management
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
+-(void)clearRoute
+{
+	keys = FALSE;
+	enemy = NIL;
+	items = -1; // not in table
+}
+
 +(void)clearRouteTable
 {
 	// cleans up route table
+	[waypoint_array makeObjectsPerformSelector:@selector (clearRoute)];
+}
 
-	local Waypoint t;
-	t = way_head;
-	while (t) {
-		t.keys = FALSE;
-		t.enemy = NIL;
-		t.items = -1; // not in table
-		t = t.next;
-	}
+-(void)clearRouteForBot:(Bot)bot
+{
+	local integer flag;
+	flag = ClientBitFlag(bot.b_clientno);
+	b_sound &= ~flag;
 }
 
 +(void)clearMyRoute:(Bot) bot
 {
-	local integer flag;
-	local Waypoint t;
-
-	flag = ClientBitFlag(bot.b_clientno);
-
-	t = way_head;
-	while (t) {
-		t.b_sound &= ~flag;
-		t = t.next;
-	}
+	[waypoint_array makeObjectsPerformSelector:@selector (clearRoute)
+					withObject:bot];
 }
 
 /*
@@ -441,59 +415,41 @@ Finds the closest, fisible, waypoint to e
 	local Waypoint best, t;
 	local float dst, tdst;
 	local vector org;
+	local integer count, i;
 
 	org = realorigin (ent);
 
-	t = way_head;
-	if (start != NIL) {
+	if (start) {
 		dst = vlen (start.origin - org);
 		best = start;
 	} else {
 		dst = 100000;
 		best = NIL;
 	}
-	while (t) {
+	count = [waypoint_array count];
+	for (i = 0; i < count; i++) {
+		t = [waypoint_array getItemAt:i];
 		// real players cut through ignore types
 		if (dst < 20)
 			return best;
 		if (!(t.flags & AI_IGNORE_TYPES) || ishuman) {
 			tdst = vlen (t.origin - org);
 			if (tdst < dst) {
-				/*XXX
-				if (sisible (t)) {
+				if (sisible (ent, t.ent)) {
 					dst = tdst;
 					best = t;
 				}
-				*/
 			}
 		}
-		t = t.next;
 	} 
 	return best;
 }
 
 -(void)deleteWaypoint:(Waypoint)what
 {
-	local Waypoint t;
-
-	if (way_head == what)
-		way_head = what.next;
-	if (way_foot == what)
-		way_foot = what.prev;
-	if (what.prev)
-		what.prev.next = what.next;
-	if (what.next)
-		what.next.prev = what.prev;
-	waypoints = 0;
-	t = way_head;
-	while(t) {
-		t.count = waypoints = waypoints + 1;
-		if ([t isLinkedTo:what])
-			[t unlinkWay:what];
-		t = t.next;
-	}
 	if (self.current_way == what)
 		self.current_way = NIL;
+	[waypoint_array removeItem:what];
 	[what free];
 }
 
@@ -545,12 +501,14 @@ an object.
 	local Waypoint t, best;
 	local float dst, tdst;
 	local integer flag;
+	local integer count, i;
 
 	flag = ClientBitFlag(b_clientno);
-	t = way_head;
 	dst = 100000;
 	best = NIL;
-	while(t) {
+	count = [waypoint_array count];
+	for (i = 0; i < count; i++) {
+		t = [waypoint_array getItemAt:i];
 		tdst = vlen(t.origin - ent.origin);
 		if ((tdst < dst) &&  (t.b_sound & flag)) {
 			if ((lastone == NIL) || ([lastone isLinkedTo:t])) {
@@ -558,7 +516,6 @@ an object.
 				best = t;
 			}
 		} 
-		t = t.next;
 	} 
 	return best;
 }

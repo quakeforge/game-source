@@ -14,10 +14,8 @@
 {
 @public
 	Waypoint [4] targets;
-	Waypoint next, prev;
 	integer flags;
 	vector origin;
-	integer count;
 
 	integer b_pants, b_skill, b_shirt, b_frags, b_sound;
 	integer keys;
@@ -33,7 +31,7 @@
 +(void)clearMyRoute:(Bot) bot;
 
 -(void)fix;
-//-(id)init;
+-(id)init;
 -(id)initAt:(vector)org;
 -(id)initFromEntity:(entity)ent;
 
@@ -44,6 +42,9 @@
 
 -(void)followLink:(Waypoint)e2 :(integer)b_bit;
 -(void)waypointThink;
+
+-(void)clearRoute;
+-(void)clearRouteForBot:(Bot)bot;
 @end
 
 @interface Bot: Target
@@ -232,14 +233,12 @@
 @extern float		real_frametime;
 @extern float		bot_count, b_options, lasttime;
 @extern float		waypoint_mode, dump_mode; 
-@extern integer		waypoints;
 @extern float		direct_route, userid;
 @extern float		sv_friction, sv_gravity;
 @extern float		sv_accelerate, sv_maxspeed, sv_stopspeed;
 @extern entity		fixer;
 @extern Bot			route_table;
 @extern entity		b_temp1, b_temp2, b_temp3;
-@extern Waypoint	way_head;
 @extern float		busy_waypoints;
 
 @extern float coop;
