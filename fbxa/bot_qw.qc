@@ -208,7 +208,7 @@ float		sv_accelerate, sv_maxspeed, sv_stopspeed;
 entity		fixer;
 entity		route_table;
 entity		b_temp1, b_temp2, b_temp3;
-entity 		player_head, phys_head, way_head;
+entity 		player_head, player_tail, phys_head, way_head;
 float		busy_waypoints;
 
 float coop = 0; // hack
@@ -444,10 +444,52 @@ void() ClientFixRankings =
 void() ClientInRankings =
 {
 	local float cno;
+
+	if (!self.phys_obj) {
+		// oh no, the server killed our data. THE BASTARD!
+		// ie, incoming player
+		local entity e;
+
+		// repair the link
+		if (player_head != self) {
+			e = player_head;
+			while (e) {
+				if (e._next == self) {
+					self._last = e;
+					e = world;
+				} else {
+					e = e._next;
+				}
+			}
+		}
+		if (player_tail != self) {
+			e = player_tail;
+			while (e) {
+				if (e._last == self) {
+					self._next = e;
+					e = world;
+				} else {
+					e = e._last;
+				}
+			}
+		}
+		// unlink it again
+		if (self._last)
+			self._last._next = self._next;
+		else if (self._next)
+			player_head = self._next;
+		if (self._next)
+			self._next._last = self._last;
+		else if (self._last)
+			player_tail = self._last;
+		self._last = self._next = world;
+	}
 	if (player_head)
 		player_head._last = self;
 	self._next = player_head;
 	player_head = self;
+	if (!player_tail)
+		player_tail = self;
 	userid = userid + 1;
 	self.b_userid = userid;
 	
@@ -480,6 +522,8 @@ void() ClientDisconnected =
 {
 	if (player_head == self)
 		player_head = self._next;
+	if (player_tail == self)
+		player_tail = self._last;
 	if (self._next)
 		self._next._last = self._last;
 	if (self._last)
