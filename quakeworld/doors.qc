@@ -206,6 +206,7 @@ door_touch =
 			case 0:
 				centerprint (other, "You need the silver key");
 				sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
+				break;
 			default:
 				break;
 			}
@@ -222,6 +223,7 @@ door_touch =
 			case 0:
 				centerprint (other, "You need the gold key");
 				sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
+				break;
 			default:
 				break;
 			}
@@ -425,6 +427,7 @@ func_door =
 		precache_sound ("doors/ddoor2.wav");
 		self.noise1 = "doors/ddoor2.wav";
 		self.noise2 = "doors/ddoor1.wav";
+		break;
 	default:
 		break;
 	}

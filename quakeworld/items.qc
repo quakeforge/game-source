@@ -357,6 +357,7 @@ armor_touch =
 		type = 0.8;
 		value = 200;
 		bit = IT_ARMOR3;
+		break;
 	default:
 		break;
 	}
@@ -1003,6 +1004,7 @@ key_setsounds =
 	case 2:
 		precache_sound2 ("misc/basekey.wav");
 		self.noise = "misc/basekey.wav";
+		break;
 	default:
 		break;
 	}
@@ -1036,6 +1038,7 @@ item_key1 =
 		precache_model2 ("progs/b_s_key.mdl");
 		setmodel (self, "progs/b_s_key.mdl");
 		self.netname = "silver keycard";
+		break;
 	default:
 		break;
 	}
@@ -1075,6 +1078,7 @@ item_key2 =
 		precache_model2 ("progs/b_g_key.mdl");
 		setmodel (self, "progs/b_g_key.mdl");
 		self.netname = "gold keycard";
+		break;
 	default:
 		break;
 	}
@@ -1192,6 +1196,8 @@ powerup_touch =
 		}
 		other.super_time = 1;
 		other.super_damage_finished = time + 30;
+		self.nextthink = time + 60;
+		break;
 	default:
 		self.nextthink = time + 60;
 		break;

@@ -439,6 +439,7 @@ DeathSound =
 		break;
 	case 5:
 		self.noise = "player/death5.wav";
+		break;
 	default:
 		break;
 	}

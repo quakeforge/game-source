@@ -163,6 +163,7 @@ func_plat =
 		precache_sound ("plats/medplat2.wav");
 		self.noise = "plats/medplat1.wav";
 		self.noise1 = "plats/medplat2.wav";
+		break;
 	default:
 		break;
 	}

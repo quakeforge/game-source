@@ -114,6 +114,7 @@ trigger_multiple =
 	case 2:
 		precache_sound ("misc/talk.wav");
 		self.noise = "misc/talk.wav";
+		break;
 	case 3:
 		precache_sound ("misc/trigger1.wav");
 		self.noise = "misc/trigger1.wav";

@@ -1036,6 +1036,7 @@ CycleWeaponReverseCommand =
 			self.weapon = IT_LIGHTNING;
 			if (self.ammo_cells < 1)
 				am = 1;
+			break;
 		}
 
 		if ((self.items & self.weapon) && am == 0) {
@@ -1113,6 +1114,7 @@ ImpulseCommands =
 		break;
 	case 12:
 		CycleWeaponReverseCommand ();
+		break;
 	default:
 		break;
 	}
