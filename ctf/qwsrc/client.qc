@@ -26,7 +26,7 @@
 // prototypes
 void () W_WeaponFrame;
 void() W_SetCurrentAmmo;
-void() player_pain;
+void(entity attacker, float damage) player_pain;
 void() player_stand1;
 void (vector org) spawn_tfog;
 void (vector org, entity death_owner) spawn_tdeath;
@@ -306,8 +306,6 @@ void() execute_changelevel =
 
 void() changelevel_touch =
 {
-	local entity	pos;
-
 	if (other.classname != "player")
 		return;
 
@@ -430,8 +428,7 @@ Returns the entity to spawn at
 */
 entity() SelectSpawnPoint =
 {
-	local	entity spot, thing;
-	local	float	pcount;
+	local	entity spot;
 
 // testinfo_player_start is only found in regioned levels
 	spot = find (world, classname, "testplayerstart");
@@ -811,7 +808,6 @@ void() CheckRules =
 
 void() PlayerDeathThink =
 {
-	local entity	old_self;
 	local float		forward;
 
 	if ((self.flags & FL_ONGROUND))
@@ -846,8 +842,6 @@ void() PlayerDeathThink =
 
 void() PlayerJump =
 {
-	local vector start, end;
-
 	if (self.flags & FL_WATERJUMP)
 		return;
 	
@@ -1006,9 +1000,6 @@ Called every frame before physics are run
 */
 void() PlayerPreThink =
 {
-	local	float	mspeed, aspeed;
-	local	float	r;
-
 	if (intermission_running > 0)
 	{
 		IntermissionThink ();	// otherwise a button could be missed between
@@ -1260,9 +1251,6 @@ Called every frame after physics are run
 */
 void() PlayerPostThink =
 {
-	local	float	mspeed, aspeed;
-	local	float	r;
-
 //dprint ("post think\n");
 	if (self.view_ofs == '0 0 0')
 		return;		// intermission or finale
@@ -1610,6 +1598,7 @@ void(entity targ, entity attacker) ClientObituary =
  				// offset the one frag penalty for dying.
 				TeamDeathPenalty(targ, attacker);
 
+				deathstring = deathstring2 = "uninit";
 				rnum = attacker.weapon;
 				if (rnum == IT_AXE)
 				{

@@ -199,7 +199,7 @@ void() TeamCapturePlayerUpdate =
 		if (vote_leader == world)
 			centerprint2(self, res, "                    Choose an exit...");
 		else {
-			res = TeamSetStatRes2();
+			res = TeamSetStatRes2(vote_leader);
 			n = ftos(voteexit_time - time);
 			centerprint5(self, res, vote_leader.message,
 				" leads\n", n, " seconds until exit");

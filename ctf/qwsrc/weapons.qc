@@ -139,7 +139,6 @@ SpawnMeatSpray
 void(vector org, vector vel) SpawnMeatSpray =
 {
 	local	entity missile;
-	local	vector	org;
 
 	missile = spawn ();
 	missile.owner = self;
@@ -716,7 +715,6 @@ void(vector org, vector dir) launch_spike =
 void() W_FireSuperSpikes =
 {
 	local vector	dir;
-	local entity	old;
 	
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
@@ -734,7 +732,6 @@ void() W_FireSuperSpikes =
 void(float ox) W_FireSpikes =
 {
 	local vector	dir;
-	local entity	old;
 	
 	makevectors (self.v_angle);
 	
@@ -766,7 +763,6 @@ void(float ox) W_FireSpikes =
 .float hit_z;
 void() spike_touch =
 {
-local float rand;
 	if (other == self.owner)
 		return;
 
@@ -811,7 +807,6 @@ local float rand;
 
 void() superspike_touch =
 {
-local float rand;
 	if (other == self.owner)
 		return;
 
@@ -1101,7 +1096,7 @@ W_ChangeWeapon
 */
 void() W_ChangeWeapon =
 {
-	local	float	it, am, fl;
+	local	float	it, am, fl = 0;
 
 	it = self.items;
 	am = 0;
@@ -1438,7 +1433,7 @@ void() ImpulseCommands =
 		TeamFlagStatusReport();
 
 	else if (self.impulse == 141)
-		identify_player();
+		identify_player(1);
 
 	else if (self.impulse == 70) {
 		if (self.statstate < 0) {

@@ -518,7 +518,7 @@ Check for team changing and perform whatever actions are neccessary.
 void() TeamCheckLock =
 {
         local   float   n;
-        local   string  s, t;
+        local   string  s;
 		local	float	pteam;
 
         // Don't do anything if teamplay is negative
@@ -827,7 +827,7 @@ void() TossBackpack =
 
 void() Team_weapon_touch =
 {
-	local	float	hadammo, best, new, old;
+	local	float	hadammo, best, new = 0, old;
 	local entity stemp;
 
 	if (!(other.flags & FL_CLIENT))
@@ -1028,7 +1028,6 @@ void () TeamCaptureRegenFlags =
 
 void(entity flg) TeamDropFlag =
 {
-	local entity item, f, oself;
 	local entity p;
 
 	p = flg.owner;
@@ -1139,7 +1138,7 @@ void() LoopThroughPlayersAfterCapture =
 
 void() TeamCaptureFlagTouch =
 {
-	local entity p, oself;
+	local entity p;
 
 	if (other.classname != "player")
 		return;
@@ -1234,11 +1233,6 @@ void() TeamCaptureFlagTouch =
 
 void() TeamCaptureFlagThink =
 {
-	local entity e;
-	local vector v;
-	local float f;
-	local string s;
-
 	self.nextthink = time + 0.1;
 
 	if (self.cnt == FLAG_AT_BASE)

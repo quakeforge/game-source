@@ -162,8 +162,6 @@ create an object with a "targetname" field that matches.
 */
 void() trigger_voteexit =
 {
-	local vector o;
-
 	InitTrigger ();
 	self.touch = voteexit_touch;
 	self.cnt = 0;

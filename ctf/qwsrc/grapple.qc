@@ -114,7 +114,7 @@ void () Grapple_Track =
 //
 // MakeLink - spawns the chain link entities
 //
-entity (float head) MakeLink =
+entity () MakeLink =
 {
         newmis = spawn ();
 
@@ -254,8 +254,6 @@ float () Check_Overhead =
 //
 void () Anchor_Grapple =
 {
-        local   float   test;
-
         if (other == self.owner)
                 return;
 
@@ -393,7 +391,7 @@ void () Throw_Grapple =
 //
 void () Service_Grapple =
 {
-        local   vector  hook_dir;
+        local   vector  hook_dir = '0 0 0';
 
         // drop the hook if player lets go of button
         if (!self.button0)

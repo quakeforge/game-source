@@ -173,7 +173,6 @@ void() item_health =
 
 void() health_touch =
 {
-	local	float amount;
 	local	string	s;
 	
 	if (other.classname != "player")
@@ -261,7 +260,7 @@ void() armor_touch;
 
 void() armor_touch =
 {
-	local	float	type, value, bit;
+	local	float	type = 0, value = 0, bit = 0;
 	
 	if (other.health <= 0)
 		return;
@@ -435,7 +434,7 @@ float() W_BestWeapon;
 
 void() weapon_touch =
 {
-	local	float	hadammo, best, new, old;
+	local	float	hadammo, best, new = 0, old;
 	local	entity	stemp;
 	local	float	leave;
 //McBain: added prevweapon local variable
@@ -936,9 +935,6 @@ KEYS
 
 void() key_touch =
 {
-local entity	stemp;
-local float		best;
-
 	if (other.classname != "player")
 		return;
 	if (other.health <= 0)
@@ -1069,9 +1065,6 @@ END OF LEVEL RUNES
 
 void() sigil_touch =
 {
-local entity	stemp;
-local float		best;
-
 	if (other.classname != "player")
 		return;
 	if (other.health <= 0)
@@ -1142,9 +1135,6 @@ void() powerup_touch;
 
 void() powerup_touch =
 {
-local entity	stemp;
-local float		best;
-
 	if (other.classname != "player")
 		return;
 	if (other.health <= 0)
@@ -1294,7 +1284,7 @@ void() BackpackTouch =
 	local	float	best, old, new;
 	local		entity	stemp;
 	local	float	acount;
-	local   float   b_switch;
+	local   float   b_switch = 0; // XXX eh?
 	
 	if (other.classname != "player")
 		return;
@@ -1478,10 +1468,6 @@ entity() SelectRuneSpawnPoint =
 
 void() RuneTouch =
 {
-	local string	s;
-	local	float	best;
-	local		entity	stemp;
-	
 	if (other.classname != "player")
 		return;
 	if (other.health <= 0)
