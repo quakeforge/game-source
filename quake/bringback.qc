@@ -3,7 +3,7 @@
 // void bringback ();  declared in ogre.qc ( first file its referanced in);
 // void savecritter ();  ""
 
-integer respawn_enabled;
+integer respawn_enabled = 1;
 
 @static {
 
@@ -18,7 +18,7 @@ void () no_hes_not = [ self.frame, im_alive, 5 ]
 	setmodel (self, "");
 }
 
-void () im_alive =
+void () im_alive = [ 0, (self.th_run), 0.2 ]
 {
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -57,9 +57,7 @@ void () im_alive =
 	
 	spawn_tfog (self.origin);
 	spawn_tdeath (self.origin, self);
-	if (FindTarget) {
-		self.think = self.th_run;
-	} else {
+	if (!FindTarget) {
 		self.think = self.th_walk;
 	}
 
