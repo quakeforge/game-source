@@ -193,9 +193,6 @@ typedef struct bot_data_t bot_data_t;
 @extern .vector	punchangle; // HACK - Don't want to screw with bot_phys
 
 // --------defines-----
-#define SVC_UPDATENAME	13
-#define SVC_UPDATEFRAGS	14
-#define SVC_UPDATECOLORS	17
 
 // used for the physics & movement AI
 #define KEY_MOVEUP 		0x001
@@ -292,11 +289,6 @@ typedef struct bot_data_t bot_data_t;
 @extern void () map_dm4;
 @extern void () map_dm5;
 @extern void () map_dm6;
-
-// physics & movement
-@extern void()				SV_Physics_Client;
-@extern void()				SV_ClientThink;
-@extern void() 				CL_KeyMove;
 
 // ai & misc
 @extern float(float y1, float y2)	angcomp;
