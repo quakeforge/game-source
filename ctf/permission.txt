@@ -1,0 +1,15 @@
+Date: Fri, 24 Jan 2003 12:31:28 -0600
+From: "Zoid Kirsch" <zoid@threewave.com>
+Subject: RE: [bill: CTF (quakeworld) licensing]
+To: "'Bill Currie'" <bill@taniwha.org>
+X-Mailer: Microsoft Outlook, Build 10.0.2627
+
+You're actually the first guy who used the password.  I installed it
+earlier today.  :)
+
+Feel free to take the Threewave source, GPL it and include it with your
+source tree.  You have my explicit permission to do so.
+
+Hard to believe that I build CTF over six years ago now.  :)
+
+/// Zoid.

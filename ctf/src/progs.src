@@ -1,0 +1,25 @@
+../progs.dat
+
+defs.qc
+log.qc			// Console logging of game actions
+teamplay.qc     // Compile the teamplay file
+ctfgame.qc		// vote exit stuff
+status.qc		// team status stuff
+ident.qc
+subs.qc
+combat.qc
+items.qc
+observ.qc
+weapons.qc
+telefrag.qc		// from server modules
+world.qc
+client.qc
+player.qc
+doors.qc
+buttons.qc
+triggers.qc
+plats.qc
+misc.qc
+hook.qc
+server.qc
+admin.qc		// Remote admin functions

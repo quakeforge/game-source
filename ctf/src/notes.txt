@@ -1,0 +1,8 @@
+
+- change color with flag, crash
+- <Fezzik> also, if you set color to x 0, person can kill but not get hurt
+<Fezzik> and sometime server won't reset them back to 4 or 13
+<Fezzik> and then when level changes, poof!
+<Fezzik> server crashes
+- add ot's anti-crossdressing code
+

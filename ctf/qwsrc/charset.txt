@@ -1,0 +1,26 @@
+/*
+Earth Magic     = Åבעפט Íבחיד
+Resistance      = Òוףיףפבמדו
+Black Magic     = Âלדבכ Íבחיד
+Strength        = Óפעומחפט
+Hell Magic      = Èולל Íבחיד
+Haste           = Èבףפו
+Elder Magic     = Åלהוע Íבחיד
+Regeneration    = Òוחומועבפיןמ
+BLUE            = ÂÌÕÅ
+RED             = ÒÅÄ
+FLAG            = ÆÌÁÇ
+YOU GOT THE ENEMY FLAG = ÙÏÕ ÇÏÔ ÔÈÅ ÅÎÅÍÙ ÆÌÁÇ
+RETURN TO BASE = ÒÅÔÕÒÎ ÔÏ ÂÁÓÅ
+CAPTURE THE FLAG = ÃÁÐÔÕÒÅ ÔÈÅ ÆÌÁÇ
+captured        = דבנפץעוה
+got             = חןפ
+lost            = לןףפ
+returned        = עופץעמוה
+
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+ÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚ
+
+abcdefghijklmnopqrstuvwxyz
+בגדהוזחטיךכלםמןנסעףפץצקרשû
+*/
