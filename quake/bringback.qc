@@ -18,7 +18,7 @@ void () no_hes_not = [ self.frame, im_alive, 5 ]
 	setmodel (self, "");
 }
 
-void () im_alive = [ 0, (self.th_run), 0.2 ]
+void () im_alive = [ 0, (self.th_walk), 0.2 ]
 {
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -59,10 +59,9 @@ void () im_alive = [ 0, (self.th_run), 0.2 ]
 
 	//Don't stay angry at everyone.
 	self.enemy = NIL;
-	self.think = self.th_walk;
 
 	if (!(self.flags & FL_FLY) && !(self.flags & FL_SWIM)) {
-		self.origin_z = self.origin_z + 1;	
+		setorigin (self, self.origin + '0 0 1');
 		droptofloor ();
 	}
 }
