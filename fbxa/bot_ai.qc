@@ -299,7 +299,8 @@ void() bot_handle_ai =
 	if (self.b_aiflags & AI_WAIT)
 		self.keys = self.keys & 960;
 
-	if (self.b_aiflags & AI_DOORFLAG) // was on a door when spawned {
+	if (self.b_aiflags & AI_DOORFLAG) {
+		// was on a door when spawned
 		b_temp3 = self;
 		self = self.last_way;
 		// if there is nothing there now
@@ -459,7 +460,8 @@ void() bot_path =
 	self.b_aiflags = (jj.b_aiflags & AI_READAHEAD_TYPES) | (self.last_way.b_aiflags & AI_POINT_TYPES);
 	target_add(jj);
 	if (self.last_way) {
-		if (CheckLinked(self.last_way, jj) == 2) // waypoints are telelinked {
+		if (CheckLinked(self.last_way, jj) == 2) {
+			// waypoints are telelinked
 			tele = FindThing("trigger_teleport"); // this is probbly the teleport responsible
 			target_add(tele);
 		}
