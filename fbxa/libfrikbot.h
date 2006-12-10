@@ -38,9 +38,9 @@ typedef struct bot_data_t bot_data_t;
 
 	integer is_temp;
 
-	integer b_sound;
+	integer bot_bits;
 	integer busy;	//???
-	float items;
+	float distance;
 	Waypoint enemy;
 	float search_time;
 

@@ -76,13 +76,7 @@ Array waypoint_array;
 	[waypoint_array addItem: self];
 	origin = org;
 	search_time = time;
-	items = -1;
-	if ([waypoint_array count] == 1) {
-		local id obj = [Waypoint class];
-		local IMP imp = [obj methodForSelector: @selector (fixWaypoints)];
-		waypoint_thinker.think = (void ()) imp;
-		waypoint_thinker.nextthink = time;
-	}
+	distance = -1;
 	return self;
 }
 
@@ -211,9 +205,40 @@ Waypoint Loading from file
 	}
 }
 
+#if 0
+// you don't want this. it's harsh. overflows normal servers and clients
+-(void) debug
+{
+	local integer i;
+	local vector dir, dest, pos;
+
+	@self = spawn ();
+	@self.origin = origin;
+	light_globe ();
+
+	for (i = 0; i < 4; i++) {
+		if (!links[i])
+			continue;
+		dest = [links[i] origin];
+		dir = normalize (dest - origin) * 15;
+		pos = origin;
+		while ((pos-origin)*(pos-origin) < (dest-origin)*(dest-origin)) {
+			@self = spawn ();
+			@self.origin = pos;
+			precache_model ("progs/s_bubble.spr");
+			setmodel (@self, "progs/s_bubble.spr");
+			makestatic (@self);
+			pos += dir;
+		}
+	}
+}
+#endif
+
 +(void) fixWaypoints
 {
 	[waypoint_array makeObjectsPerformSelector:@selector(fix)];
+	//see -debug above
+	//[waypoint_array makeObjectsPerformSelector:@selector(debug)];
 }
 
 +(Waypoint)find:(vector)org radius:(float)rad
@@ -250,7 +275,7 @@ Route & path table management
 {
 	busy = FALSE;
 	enemy = NIL;
-	items = -1; // not in table
+	distance = -1; // not in table
 }
 
 +(void)clearRouteTable
@@ -261,9 +286,7 @@ Route & path table management
 
 -(void)clearRouteForBot:(Bot)bot
 {
-	local integer flag;
-	flag = bot.b_clientflag;
-	b_sound &= ~flag;
+	bot_bits &= ~bot.b_clientflag;
 }
 
 +(void)clearMyRoute:(Bot) bot
@@ -288,9 +311,9 @@ tripping the runaway loop counter
 	local float dist;
 	
 	if (flags & bBit)
-		dist = items;
+		dist = distance;
 	else
-		dist = vlen(origin - e2.origin) + items;
+		dist = vlen(origin - e2.origin) + distance;
 
 	// check if this is an RJ link
 	if (e2.flags & AI_SUPER_JUMP) {
@@ -302,11 +325,11 @@ tripping the runaway loop counter
 
 	dist = dist + random() * 100; // add a little chaos
 
-	if ((dist < e2.items) || (e2.items == -1)) {
+	if ((dist < e2.distance) || (e2.distance == -1)) {
 		if (!e2.busy)
 			busy_waypoints = busy_waypoints + 1;
 		e2.busy = TRUE;
-		e2.items = dist;
+		e2.distance = dist;
 		e2.enemy = self;
 		[e2 queueForThink];
 	}
@@ -316,7 +339,7 @@ tripping the runaway loop counter
 {
 	local integer i;
 
-	if (items == -1)
+	if (distance == -1)
 		return;
 	// can you say ugly?
 	if (flags & AI_TRACE_TEST) {
@@ -405,6 +428,15 @@ void() waypoint =
 	local Waypoint way = [[Waypoint alloc] initFromEntity: @self];
 };
 
+/*	create a new waypoint using frikbot style info
+	org		origin of the waypoint
+	bit1	first 3 links (cast to integer)
+	bit4	fourth link
+	flargs	various flags
+
+	links are 1 based with 0 being no link and 1 being the first waypoint
+	created, 2 the second and so on.
+*/
 void(vector org, vector bit1, integer bit4, integer flargs) make_way =
 {
 	local Waypoint y = [[Waypoint alloc] initAt:org];

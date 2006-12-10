@@ -115,7 +115,7 @@ an object.
 	for (i = 0; i < count; i++) {
 		t = [waypoint_array getItemAt:i];
 		tdst = vlen(t.origin - ent.origin);
-		if ((tdst < dst) &&  (t.b_sound & flag)) {
+		if ((tdst < dst) &&  (t.bot_bits & flag)) {
 			if ((lastone == NIL) || ([lastone isLinkedTo:t])) {
 				dst = tdst;
 				best = t;
@@ -161,11 +161,11 @@ different bot.
 	flag = b_clientflag;
 
 	while(t) {
-		if (t.b_sound & flag)
+		if (t.bot_bits & flag)
 			return;
 		if (t == last_way)
 			return;
-		t.b_sound |= flag;
+		t.bot_bits |= flag;
 		t = t.enemy; 	
 	}
 }
@@ -204,7 +204,7 @@ Boy it's confusing.
 	last_way = [self findWaypoint:current_way];
 
 	if (last_way != NIL) {
-		last_way.items = vlen(last_way.origin - ent.origin);
+		last_way.distance = vlen(last_way.origin - ent.origin);
 		[last_way queueForThink];
 		last_way.busy = TRUE;
 		busy_waypoints = 1;

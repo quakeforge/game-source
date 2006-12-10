@@ -166,17 +166,17 @@ void (vector start, vector mins, vector maxs, vector end, float type,
 {
 	local integer ret;
 
+	if (!(ent.flags & FL_ONGROUND))
+		return FALSE;
 	ret = [super recognizePlat:flag];
-	if (ret) {
-		if (flag) {
-			// afect bot movement too
-			if (keys & KEY_MOVEUP) {
-				if (trace_ent.velocity_z > 0)
-					keys &= ~KEY_MOVE;
-			} else if (keys & KEY_MOVEDOWN) {
-				if (trace_ent.velocity_z < 0)
-					keys &= ~KEY_MOVE;
-			}
+	if (ret && flag) {
+		// afect bot movement too
+		if (keys & KEY_MOVEUP) {
+			if (trace_ent.velocity_z > 0)
+				keys &= ~KEY_MOVE;
+		} else if (keys & KEY_MOVEDOWN) {
+			if (trace_ent.velocity_z < 0)
+				keys &= ~KEY_MOVE;
 		}
 	}
 	return ret;
@@ -229,7 +229,7 @@ manuever around.
 
 	if (danger) {
 		b_aiflags |= AI_DANGER;
-		keys = [self keysForDir:'0 0 0' - whichway];
+		keys = [self keysForDir:-whichway];
 	}
 	if (b_aiflags & AI_PRECISION)
 		return;
@@ -354,9 +354,10 @@ Also responsible for jumping gaps.
 		}
 
 		if (targets[0]) {
+			local vector org = [targets[0] origin];
 			// getting furter away from my target?
-			test = vlen ([targets[0] origin] - (ang + ent.origin));
-			if (test > vlen ([targets[0] origin] - ent.origin)) {
+			test = vlen (org - (ang + ent.origin));
+			if (test > vlen (org - ent.origin)) {
 				if (conts < -3) {
 					// bad stuff down dare
 					[self obstructed: ang :TRUE];

@@ -557,10 +557,10 @@ the bot finds things it wants to kill/grab.
 
 	if (thing.current_way) {
 		// check to see if it's unreachable
-		if (thing.current_way.items == -1)
+		if (thing.current_way.distance == -1)
 			return 0;
 		else
-			p += (integer) ((13000 - thing.current_way.items) * 0.05);
+			p += (integer) ((13000 - thing.current_way.distance) * 0.05);
 	}
 	return p;
 }

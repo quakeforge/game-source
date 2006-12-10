@@ -104,6 +104,7 @@ bot_map_load =
 		map_dm6 ();
 		break;
 	}
+	[Waypoint fixWaypoints];
 };
 
 /*
