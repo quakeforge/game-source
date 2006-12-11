@@ -141,7 +141,6 @@ void (entity e, integer ping) SV_SetPing = #0;
 void (entity cl, float sec, vector angles, vector move, integer buttons, integer impulse) SV_UserCmd = #0;
 void (entity cl) SV_Spawn = #0;
 void () Break = #6;
-string (integer i) itos = #112;
 
 //----------------------------------------------------------------------------
 
@@ -243,7 +242,7 @@ ClientDisconnected =
 				[players[i] lost:p:0];
 		}
 	}
-	[p dealloc];
+	[p release];
 };
 
 // BotConnect and related functions. -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -329,6 +328,16 @@ bot_kick_f =
 	[Bot kick];
 };
 
+void ()
+bot_loadway_f =
+{
+	if (Cmd_Argc () != 2) {
+		dprint ("usage: bot_loadway <path>\n");
+		return;
+	}
+	[Waypoint loadFile:Cmd_Argv (1)];
+};
+
 // BotInit ====================================================================
 
 void ()
@@ -343,6 +352,7 @@ BotInit =
 	bot_map_load ();
 	Cmd_AddCommand ("bot_add", bot_add_f);
 	Cmd_AddCommand ("bot_kick", bot_kick_f);
+	Cmd_AddCommand ("bot_loadway", bot_loadway_f);
 };
 
 /*

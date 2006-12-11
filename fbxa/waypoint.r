@@ -45,6 +45,10 @@ this notice in its entirety.
 #include "libfrikbot.h"
 #include "Array.h"
 #include "List.h"
+#include "qfile.h"
+#include "qfs.h"
+#include "string.h"
+#include "PropertyList.h"
 
 Array waypoint_array;
 @static entity waypoint_thinker;
@@ -75,6 +79,21 @@ Array waypoint_array;
 	[self init];
 	[waypoint_array addItem: self];
 	origin = org;
+	search_time = time;
+	distance = -1;
+	return self;
+}
+
+-(id)initAt:(vector)org linkedTo:(integer[])link flags:(integer)flag
+{
+	[self init];
+	[waypoint_array addItem: self];
+	origin = org;
+	links[0] = (Waypoint) link[0];
+	links[1] = (Waypoint) link[1];
+	links[2] = (Waypoint) link[2];
+	links[3] = (Waypoint) link[3];
+	flags = flag;
 	search_time = time;
 	distance = -1;
 	return self;
@@ -181,10 +200,59 @@ Waypoint Loading from file
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
++(void)loadFile:(string)path
+{
+	local QFile file;
+	local PLItem plist;
+	local string plist_data, l;
+	local integer i, count;
+
+	file = QFS_OpenFile (path);
+	if (!file) {
+		dprint (sprintf ("could not load file: %s", path));
+		return;
+	}
+	plist_data = str_new ();
+	while ((l = Qgetline (file)))
+		str_cat (plist_data, l);
+	Qclose (file);
+	plist = [PLItem newFromString:plist_data];
+	str_free (plist_data);
+
+	[Waypoint clearAll];
+
+	count = [(PLArray)plist numObjects];
+	dprint (sprintf ("%i waypoints\n", count));
+	for (i = 0; i < count; i++) {
+		local PLItem way = [plist getObjectAtIndex:i];
+		local PLString s = (PLString) [way getObjectForKey:"origin"];
+		local vector org = stov (sprintf ("'%s'", [s string]));
+		local PLItem links = [way getObjectForKey:"link"];
+		//FIXME compiler/vm "bug" makes passing pointers to locals dangerous
+
+		s = (PLString) [way getObjectForKey:"flags"];
+		local integer flags = stoi ([s string]);
+
+		@static integer[4] link;
+		s = (PLString) [links getObjectAtIndex:0];
+		link[0] = stoi ([s string]);
+		s = (PLString) [links getObjectAtIndex:1];
+		link[1] = stoi ([s string]);
+		s = (PLString) [links getObjectAtIndex:2];
+		link[2] = stoi ([s string]);
+		s = (PLString) [links getObjectAtIndex:3];
+		link[3] = stoi ([s string]);
+
+		[[Waypoint alloc] initAt:org linkedTo:link flags:flags];
+	}
+	[Waypoint fixWaypoints];
+}
+
 +(void)clearAll
 {
+	dprint ("Waypoint clearAll\n");
 	if (waypoint_array)
-		[waypoint_array dealloc];
+		[waypoint_array release];
 	waypoint_init ();
 }
 
