@@ -88,8 +88,7 @@ struct target_s = {
 	if (t)
 		return t;
 
-	t = [[Target alloc] init];
-	t.ent = e;
+	t = [[Target alloc] initWithEntity:e];
 	Hash_AddElement (target_tab, t);
 	return t;
 }

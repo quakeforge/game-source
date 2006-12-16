@@ -67,11 +67,16 @@ Array waypoint_array;
 
 @implementation Waypoint
 
+-(integer)id
+{
+	return [waypoint_array findItem:self] + 1;
+}
+
 -(id)init
 {
 	if (!waypoint_array)
 		waypoint_init ();
-	return [super init];
+	return [super initWithEntity:NIL];
 }
 
 -(id)initAt:(vector)org
@@ -118,6 +123,11 @@ Array waypoint_array;
 -(vector)realorigin
 {
 	return origin;
+}
+
+-(void)clearLinks
+{
+	links[0] = links[1] = links[2] = links[3] = NIL;
 }
 
 -(integer)isLinkedTo:(Waypoint)way
@@ -309,6 +319,53 @@ Waypoint Loading from file
 	//[waypoint_array makeObjectsPerformSelector:@selector(debug)];
 }
 
+-(void)plitem:(PLItem)list
+{
+	local PLItem way = [PLItem newDictionary];
+	local PLItem l = [PLItem newArray];
+	local integer i;
+
+	[way addKey:"origin" value:[PLItem newString:vtos (origin)]];
+	for (i = 0; i < 4; i++) {
+		if (links[i])
+			[l addObject:[PLItem newString:itos ([links[i] id])]];
+		else
+			[l addObject:[PLItem newString:"0"]];
+	}
+	[way addKey:"flags" value:[PLItem newString:itos (flags)]];
+	[list addObject:way];
+}
+
++(PLItem) plist
+{
+	local PLItem list = [PLItem newArray];
+	[waypoint_array makeObjectsPerformSelector:@selector(plitem)
+					withObject:list];
+}
+
+-(void) checkWay:(Target)ent
+{
+	local integer i;
+	for (i = 0; i < 4; i++)
+		if (links[i])
+			break;
+	if (i == 4)
+		sprint (ent.ent, PRINT_HIGH,
+				sprintf ("Waypoitn %i has no outbount links\n", [self id]));
+	for (i = 0; i < 4; i++)
+		if (links[i] == self)
+			break;
+	if (i != 4)
+		sprint (ent.ent, PRINT_HIGH,
+				sprintf ("Waypoitn %i links to itself\n", [self id]));
+}
+
++(void) check:(Target)ent
+{
+	[waypoint_array makeObjectsPerformSelector:@selector(checkWay)
+					withObject:ent];
+}
+
 +(Waypoint)find:(vector)org radius:(float)rad
 {
 	local vector dif;
@@ -329,6 +386,52 @@ Waypoint Loading from file
 		}
 	}
 	return way;
+}
+
+-(void)show
+{
+	if (!ent) {
+		ent = spawn ();
+		own = 1;
+	}
+	ent.classname = "waypoint";
+	ent.solid = SOLID_TRIGGER;
+	ent.movetype = MOVETYPE_NONE;
+	setsize (ent, VEC_HULL_MIN, VEC_HULL_MAX);
+	setorigin (ent, origin);
+	setmodel (ent, "progs/s_bubble.spr");
+}
+
++(void)showAll
+{
+	[waypoint_array makeObjectsPerformSelector:@selector (show)];
+}
+
+-(void)hide
+{
+	if (ent) {
+		remove (ent);
+		own = 0;
+	}
+}
+
++(void)hideAll
+{
+	[waypoint_array makeObjectsPerformSelector:@selector (hide)];
+}
+
+-(void)select
+{
+	if (!ent)
+		[self show];
+	setmodel (ent, "progs/s_light.spr");
+}
+
+-(void)deselect
+{
+	if (!ent)
+		[self show];
+	setmodel (ent, "progs/s_bubble.spr");
 }
 
 /*

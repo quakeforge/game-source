@@ -402,7 +402,8 @@ bot_menu_display =
 					if (self.current_way.b_aiflags & AI_DIFFICULT)
 						self.current_way.b_aiflags &= ~AI_DIFFICULT;
 					else
-						self.current_way.b_aiflags |= AI_DIFFICULT;								self.b_menu_time = time;	
+						self.current_way.b_aiflags |= AI_DIFFICULT;
+					self.b_menu_time = time;	
 				} else if (self.impulse == 2) {
 					if (self.current_way.b_aiflags & AI_PLAT_BOTTOM)
 						self.current_way.b_aiflags &= ~AI_PLAT_BOTTOM;

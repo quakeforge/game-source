@@ -262,7 +262,7 @@ ClientNumber =
 	return f;
 };
 
-void (integer whatbot, integer whatskill)
+Bot (integer whatbot, integer whatskill)
 BotConnect =
 {
 	local entity cl;
@@ -272,7 +272,7 @@ BotConnect =
 	cl = SV_AllocClient ();
 	if (!cl) {
 		bprint (PRINT_HIGH, "Unable to connect a bot, server is full.\n");
-		return;
+		return NIL;
 	}
 
 	if (whatbot)
@@ -282,6 +282,7 @@ BotConnect =
 
 	bot = [[Bot alloc] initWithEntity: cl named:name skill:whatskill];
 	[bot startTopic:1];
+	return bot;
 };
 
 /*
@@ -471,6 +472,7 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
 	bot_count--;
 
 	SV_FreeClient (ent);
+	[bot_array removeItem:self];
 }
 
 -(void)frame

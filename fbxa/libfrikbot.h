@@ -1,7 +1,10 @@
 #include "Entity.h"
 
+@class PLItem;
+
 @class Bot;
 @class Waypoint;
+@class EditorState;
 
 struct bot_data_t = {
 	string name;
@@ -13,7 +16,9 @@ typedef struct bot_data_t bot_data_t;
 {
 @public
 	Waypoint current_way;
+	integer hold_select;
 	Target _last;
+	EditorState editor;
 }
 +(Target)forEntity:(entity)e;
 -(vector)realorigin;
@@ -49,12 +54,19 @@ typedef struct bot_data_t bot_data_t;
 +(void)clearAll;
 +(Waypoint)waypointForNum:(integer)num;
 +(void)fixWaypoints;
++(PLItem)plist;
++(void)check:(Target)ent;
 
 +(void)clearRouteTable;
 +(void)clearMyRoute:(Bot) bot;
 +(Waypoint)find:(vector)org radius:(float)rad;
 
--(void)fix;
++(void)showAll;
++(void)hideAll;
+-(void)deselect;
+-(void)select;
+
+-(integer)id;
 -(id)init;
 -(id)initAt:(vector)org;
 -(id)initFromEntity:(entity)ent;
@@ -67,6 +79,7 @@ typedef struct bot_data_t bot_data_t;
 -(void)followLink:(Waypoint)e2 :(integer)bBit;
 -(void)waypointThink;
 
+-(void)clearLinks;
 -(void)clearRoute;
 -(void)clearRouteForBot:(Bot)bot;
 
@@ -101,9 +114,6 @@ typedef struct bot_data_t bot_data_t;
 	integer b_num;
 	float b_chattime;
 	float b_entertime;
-	float b_menu;
-	float b_menu_time;
-	float b_menu_value;
 	integer route_failed;
 	integer dyn_flags;
 	integer dyn_plat;
@@ -158,6 +168,7 @@ typedef struct bot_data_t bot_data_t;
 -(integer)targetOnstack:(Target)scot;
 -(void)targetAdd:(Target)e;
 -(void)targetDrop:(Target)e;
+-(void)targetClearAll;
 -(void)lost:(Target)targ :(integer)success;
 -(void)checkLost:(Target)targ;
 -(void)handleAI;
@@ -288,6 +299,7 @@ typedef struct bot_data_t bot_data_t;
 
 // -------ProtoTypes------
 // external, in main code
+@extern Bot (integer whatbot, integer whatskill) BotConnect;
 @extern void()				ClientConnect;
 @extern void()				ClientDisconnect;
 @extern void()				SetNewParms;
@@ -305,6 +317,7 @@ typedef struct bot_data_t bot_data_t;
 @extern void () map_dm6;
 
 // ai & misc
+@extern Array bot_array;
 @extern float(float y1, float y2)	angcomp;
 @extern float(entity ent, entity targ, vector targ_origin)		sisible;
 @extern vector(entity ent)		realorigin;

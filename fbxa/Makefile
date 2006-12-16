@@ -18,6 +18,8 @@ libfrikbot_source = \
 	map_dm5.qc		\
 	map_dm6.qc		\
 	chat.r			\
+	editor.r		\
+	impulse_menu.r	\
 	target.r		\
 	waypoint.r
 
