@@ -77,6 +77,8 @@ b_originator == targ
 	WriteByte (MSG_ALL, 3);
 	WriteByte (MSG_ALL, 2);
 	WriteString (MSG_ALL, msg);
+	dprint (ent.netname);
+	dprint (msg);
 }
 
 -(void)say2:(string)msg
@@ -85,6 +87,7 @@ b_originator == targ
 	WriteByte (MSG_ALL, 3);
 	WriteByte (MSG_ALL, 2);
 	WriteString (MSG_ALL, msg);
+	dprint (msg);
 }
 
 -(void)sayTeam:(string)msg
@@ -98,6 +101,7 @@ b_originator == targ
 	WriteByte (MSG_ALL, 3);
 	WriteByte (MSG_ALL, 1);
 	WriteString (MSG_ALL, ent.netname);
+	dprint (ent.netname);
 }
 
 // I didn't like the old code so this is very stripped down
