@@ -1,19 +1,16 @@
-Patch file for making QF's version of frikbot part of QF's version
-of the quakeworld progs.
-
 Index: Makefile
 ===================================================================
-RCS file: /project/cvs/game-source/quakeworld/Makefile,v
-retrieving revision 1.3
-diff -u -r1.3 Makefile
---- Makefile	2 Mar 2003 04:06:46 -0000	1.3
-+++ Makefile	25 Aug 2003 01:17:32 -0000
+RCS file: /var/qfcvs/game-source/quakeworld/Makefile,v
+retrieving revision 1.4
+diff -u -r1.4 Makefile
+--- Makefile	20 Sep 2003 04:21:13 -0000	1.4
++++ Makefile	17 Dec 2006 10:52:50 -0000
 @@ -1,5 +1,7 @@
  all: qwprogs.dat
 -qwprogs.dat: progs.src *.qc
 -	qfcc -Werror -Wall -g --advanced
 +qwprogs.dat: qwprogs.o
-+	qfcc -g -o qwprogs.dat qwprogs.o -lfrikbot -lr
++	qfcc -g -o qwprogs.dat qwprogs.o -lfrikbot -lr -lqw
 +qwprogs.o: progs.src *.qc
 +	qfcc --advanced -Dself=@self -g -c -o qwprogs.o
  clean:
@@ -21,12 +18,20 @@ diff -u -r1.3 Makefile
 +	rm -f core *.dat *.sym progdefs.h *.o
 Index: client.qc
 ===================================================================
-RCS file: /project/cvs/game-source/quakeworld/client.qc,v
-retrieving revision 1.7
-diff -u -r1.7 client.qc
---- client.qc	4 Mar 2003 23:15:54 -0000	1.7
-+++ client.qc	25 Aug 2003 01:17:33 -0000
-@@ -969,6 +969,8 @@
+RCS file: /var/qfcvs/game-source/quakeworld/client.qc,v
+retrieving revision 1.8
+diff -u -r1.8 client.qc
+--- client.qc	8 Feb 2004 04:52:32 -0000	1.8
++++ client.qc	17 Dec 2006 10:52:50 -0000
+@@ -772,6 +772,7 @@
+ void ()
+ PlayerPreThink =
+ {
++	BotPreFrame ();
+ 	if (intermission_running) {
+ 		IntermissionThink ();   // otherwise a button could be missed between
+ 		return;                                 // the think tics
+@@ -969,6 +970,8 @@
  void ()
  PlayerPostThink =
  {
@@ -35,7 +40,7 @@ diff -u -r1.7 client.qc
  //	dprint ("post think\n");
  	if (self.view_ofs == '0 0 0')
  		return;         // intermission or finale
-@@ -1004,6 +1006,8 @@
+@@ -1004,6 +1007,8 @@
  void ()
  ClientConnect =
  {
@@ -44,7 +49,7 @@ diff -u -r1.7 client.qc
  	bprint (PRINT_HIGH, self.netname);
  	bprint (PRINT_HIGH, " entered the game\n");
  
-@@ -1022,6 +1026,8 @@
+@@ -1022,6 +1027,8 @@
  void ()
  ClientDisconnect =
  {
@@ -55,11 +60,11 @@ diff -u -r1.7 client.qc
  	bprint (PRINT_HIGH, " left the game with ");
 Index: defs.qc
 ===================================================================
-RCS file: /project/cvs/game-source/quakeworld/defs.qc,v
+RCS file: /var/qfcvs/game-source/quakeworld/defs.qc,v
 retrieving revision 1.4
 diff -u -r1.4 defs.qc
 --- defs.qc	2 Mar 2003 04:06:47 -0000	1.4
-+++ defs.qc	25 Aug 2003 01:17:33 -0000
++++ defs.qc	17 Dec 2006 10:52:50 -0000
 @@ -1,7 +1,8 @@
 +#include "frikbot.h"
  // SOURCE FOR GLOBALVARS_T C STRUCTURE ========================================
@@ -88,6 +93,17 @@ diff -u -r1.4 defs.qc
  string(string s) precache_sound         = #19;
  string(string s) precache_model         = #20;
  void(entity client, string s)stuffcmd = #21;
+@@ -542,8 +543,8 @@
+ void(float level, string s) bprint                              = #23;
+ void(entity client, float level, string s) sprint = #24;
+ void(string s) dprint                           = #25;
+-string(float f) ftos                            = #26;
+-string(vector v) vtos                           = #27;
++@extern string (float f) ftos;
++@extern string(vector v) vtos;
+ void() coredump                                         = #28;          // prints all edicts
+ void() traceon                                          = #29;          // turns statment trace on
+ void() traceoff                                         = #30;
 @@ -557,7 +558,7 @@
  float(entity e) checkbottom                     = #40;          // true if self is on ground
  float(vector v) pointcontents           = #41;          // returns a CONTENT_*
@@ -97,7 +113,7 @@ diff -u -r1.4 defs.qc
  float(string s) cvar = #45;                                             // return cvar.value
  void(string s) localcmd = #46;                                  // put string into local que
  entity(entity e) nextent = #47;                                 // for looping through all ents
-@@ -593,7 +594,7 @@
+@@ -593,13 +594,13 @@
  string(string s) precache_sound2        = #76;          // registered version only
  string(string s) precache_file2         = #77;          // registered version only
  
@@ -106,29 +122,20 @@ diff -u -r1.4 defs.qc
  												// values at level start
  												// for coop respawn
  void(entity killer, entity killee) logfrag = #79;       // add to stats
-Index: spectate.qc
-===================================================================
-RCS file: /project/cvs/game-source/quakeworld/spectate.qc,v
-retrieving revision 1.3
-diff -u -r1.3 spectate.qc
---- spectate.qc	4 Mar 2003 23:15:54 -0000	1.3
-+++ spectate.qc	25 Aug 2003 01:17:33 -0000
-@@ -19,6 +19,8 @@
- void ()
- SpectatorConnect =
- {
-+	ClientFixRankings ();
-+
- 	bprint (PRINT_MEDIUM, "Spectator ");
- 	bprint (PRINT_MEDIUM, self.netname);
- 	bprint (PRINT_MEDIUM, " entered the game\n");
+ 
+ string(entity e, string key) infokey    = #80;  // get a key value (world = serverinfo)
+-float(string s) stof                            = #81;          // convert string to float
++@extern float(string s) stof;
+ void(vector where, float set) multicast = #82;  // sends the temp message to a set
+ 												// of clients, possibly in PVS or PHS
+ 
 Index: world.qc
 ===================================================================
-RCS file: /project/cvs/game-source/quakeworld/world.qc,v
+RCS file: /var/qfcvs/game-source/quakeworld/world.qc,v
 retrieving revision 1.5
 diff -u -r1.5 world.qc
 --- world.qc	4 Mar 2003 23:15:54 -0000	1.5
-+++ world.qc	25 Aug 2003 01:17:33 -0000
++++ world.qc	17 Dec 2006 10:52:50 -0000
 @@ -17,6 +17,8 @@
  void ()
  worldspawn =

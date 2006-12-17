@@ -290,8 +290,7 @@ typedef struct bot_data_t bot_data_t;
 @extern float		waypoint_mode;
 @extern float		dump_mode; 
 @extern float		direct_route;
-@extern float		sv_friction, sv_gravity;
-@extern float		sv_accelerate, sv_maxspeed, sv_stopspeed;
+@extern float		sv_gravity;
 @extern Bot			route_table;
 @extern integer		busy_waypoints;
 

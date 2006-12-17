@@ -57,6 +57,9 @@ BotInit();  // FrikBot
 * add this line to StartFrame() in world.qc, at the very top
 BotFrame(); // FrikBot
 --------------------------------------
+* Add this to PlayerPreThink in client.qc at the very top
+BotPreFrame(); // FrikBot
+--------------------------------------
 * Add this line to PlayerPostThink in client.qc at the very top
 BotImpulses (); // FrikBot
 --------------------------------------
@@ -65,9 +68,6 @@ ClientInRankings(); // FrikBot
 --------------------------------------
 * Add these lines to the very top of ClientDisconnect in client.qc
 ClientDisconnected(); // FrikBot
---------------------------------------
-* Add these lines to the very top of SpectatorConnect in spectate.qc
-ClientFixRankings(); // FrikBot
 --------------------------------------
 */
 
@@ -123,8 +123,7 @@ float       real_frametime;
 float		bot_count, b_options, lasttime;
 float		waypoint_mode, dump_mode; 
 float		direct_route;
-float		sv_friction, sv_gravity;
-float		sv_accelerate, sv_maxspeed, sv_stopspeed;
+float		sv_gravity;
 Bot			route_table;
 integer		busy_waypoints;
 
@@ -192,28 +191,10 @@ it just links the bot into the mod
 */
 
 void ()
-ClientFixRankings =
+BotPreFrame =
 {
-	local integer cno;
-	local Bot bot = @self.@this;
-	local entity btmp;
-	local Bot btmp_bot;
-
-	if (bot.switch_wallhug > time)
-		return;
-	bot.switch_wallhug = 0;
-
-	btmp = nextent (NIL);
-	for (cno = 0; cno < 32; cno++) {
-		btmp_bot = btmp.@this;
-		if (!btmp_bot.ishuman) {
-			if (players[cno])
-				[btmp_bot updateClient];
-		}
-		cno++;
-		btmp = nextent (btmp);
-	}
-};
+	[@self.@this preThink];
+}
 
 void ()
 ClientInRankings =
@@ -435,8 +416,6 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
 
 - (void) preThink
 {
-	if (switch_wallhug)
-		ClientFixRankings ();
 	if (b_frags != ent.frags) {
 		if (b_frags > ent.frags) {
 			if (pointcontents (ent.origin) == CONTENT_LAVA)
@@ -511,11 +490,7 @@ BotFrame =
 	b_options = stof (h);
 	
 	// for the sake of speed
-	sv_maxspeed = cvar ("sv_maxspeed");
 	sv_gravity = cvar ("sv_gravity");
-	sv_friction = cvar ("sv_friction");
-	sv_accelerate = cvar ("sv_accelerate");
-	sv_stopspeed = cvar ("sv_stopspeed");
 	real_frametime = time - lasttime; // in QW frametime is fuxx0red
 	lasttime = time;
 
