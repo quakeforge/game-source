@@ -662,7 +662,7 @@
 @extern void(float to, float f) WriteChar;
 @extern void(float to, float f) WriteShort;
 @extern void(float to, float f) WriteLong;
-@extern void(float to, float f) WriteCoord;
+@extern void(float to, vector f) WriteCoordV;
 @extern void(float to, float f) WriteAngle;
 @extern void(float to, string s) WriteString;
 @extern void(float to, entity s) WriteEntity;

@@ -24,6 +24,7 @@
 {
 	self = [super initWithText: txt];
 	flag = flg;
+	return self;
 }
 
 - (string) text
@@ -44,6 +45,7 @@
 	self = [super initWithText: txt];
 	object = obj;
 	selector = sel;
+	return self;
 }
 
 - (void) select
@@ -114,8 +116,7 @@
 	local string s;
 	local integer i;
 
-	for (i = 0; i < 10; i++) {
-		if (!items[i])
+	for (i = 0; i < 10; i++) { if (!items[i])
 			break;
 		s = [items[i] text];
 		if (s)

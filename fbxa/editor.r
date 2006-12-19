@@ -3,64 +3,7 @@
 #include "string.h"
 #include "PropertyList.h"
 #include "qfile.h"
-
-@interface EditorState: Object
-{
-	ImpulseMenu menu;
-	ImpulseMenu prev_menu;
-	string confirm_text;
-	string confirm_cmd;
-
-	Waypoint current_way;
-	Waypoint last_way;
-	integer hold_select;
-	Bot test_bot;
-	integer edit_mode;
-}
-+main_menu;
-+waypoint_menu;
-+link_menu;
-+ai_flags_menu;
-+ai_flag2_menu;
-+bot_menu;
-+waylist_menu;
-+teleport_to_way;
-+close_menu;
-
-+move_waypoint;
-+delete_waypoint;
-+make_waypoint;
-+make_waypoint_link;
-+make_way_link_x2;
-+make_way_telelink;
-+show_waypoint_info;
-
-+unlink_waypoint;
-+create_link;
-+create_telelink;
-+delete_link;
-+create_link_x2;
-+delete_link_x2;
-
-+add_test_bot;
-+call_test_bot;
-+remove_test_bot;
-+stop_test_bot;
-+teleport_bot;
-
-+delete_all_waypoints;
-+dump_waypoints;
-+check_for_errors;
-+save_waypoints;
-
-+confirm;
-+cancel;
-
-+(integer)getHoldSelectState;
-+(void)toggleHoldSelectState;
-+(string)getConfirmText;
-+(Waypoint)current_way;
-@end
+#include "editor.h"
 
 @interface TeleportMenu: ImpulseValueMenu
 @end
@@ -90,7 +33,7 @@
 - initWithMask:(integer)msk;
 @end
 
-@implementation TeleportMenu: ImpulseValueMenu
+@implementation TeleportMenu
 -(id) init
 {
 	return [super initWithText:"-- Teleport to Way # --\n\n"
@@ -152,7 +95,7 @@
 
 -(void) toggleState
 {
-	[EditorState toggleHoldSelect];
+	[EditorState toggleHoldSelectState];
 }
 @end
 
@@ -227,6 +170,7 @@
 @static ImpulseListMenu waylist_menu;
 
 @static ConfirmationMenu confirm_menu;
+@static TeleportMenu teleport_menu;
 
 @static void init_menus (void)
 {
@@ -246,6 +190,7 @@
 					initWithText:"-- Waylist Management --"];
 
 	confirm_menu = [[ConfirmationMenu alloc] init];
+	teleport_menu = [[TeleportMenu alloc] init];
 
 	[main_menu addItem:[[CommandMenuItem alloc]
 						initWithText:">>Waypoint Management"
@@ -258,7 +203,7 @@
 	[main_menu addItem:[[CommandMenuItem alloc]
 						initWithText:">>AI Flag Management"
 						object:[EditorState class]
-						selector:@selector(ai_flag_menu)]];
+						selector:@selector(ai_flags_menu)]];
 	[main_menu addItem:[[CommandMenuItem alloc]
 						initWithText:">>Bot Management"
 						object:[EditorState class]
@@ -269,13 +214,13 @@
 						selector:@selector(waylist_menu)]];
 	[main_menu addItem:[[FlagMenuItem alloc]
 						initWithText:"Noclip"
-						flag:[[NoclipFlag alloc] init]]];
+						flagObject:[[NoclipFlag alloc] init]]];
 	[main_menu addItem:[[FlagMenuItem alloc]
 						initWithText:"Godmode"
-						flag:[[GodmodeFlag alloc] init]]];
+						flagObject:[[GodmodeFlag alloc] init]]];
 	[main_menu addItem:[[FlagMenuItem alloc]
 						initWithText:"Hold Select"
-						flag:[[HoldSelectFlag alloc] init]]];
+						flagObject:[[HoldSelectFlag alloc] init]]];
 	[main_menu addItem:[[CommandMenuItem alloc]
 						initWithText:"Teleport to Way #"
 						object:[EditorState class]
@@ -320,7 +265,7 @@
 	[waypoint_menu addItem:[[CommandMenuItem alloc]
 							initWithText:">>AI Flag Management"
 							object:[EditorState class]
-							selector:@selector(ai_flag_menu)]];
+							selector:@selector(ai_flags_menu)]];
 	[waypoint_menu addItem:[[CommandMenuItem alloc]
 							initWithText:">>Main Menu"
 							object:[EditorState class]
@@ -361,7 +306,7 @@
 	[link_menu addItem:[[CommandMenuItem alloc]
 						initWithText:">>AI Flag Management"
 						object:[EditorState class]
-						selector:@selector(ai_flag_menu)]];
+						selector:@selector(ai_flags_menu)]];
 	[link_menu addItem:[[CommandMenuItem alloc]
 						initWithText:">>Main Menu"
 						object:[EditorState class]
@@ -369,32 +314,32 @@
 
 	[ai_flags_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Door Flag"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_DOORFLAG]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_DOORFLAG]]];
 	[ai_flags_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Precision"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_PRECISION]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_PRECISION]]];
 	[ai_flags_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Surface for Air"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_SURFACE]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_SURFACE]]];
 	[ai_flags_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Blind mode"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_BLIND]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_BLIND]]];
 	[ai_flags_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Jump"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_JUMP]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_JUMP]]];
 	[ai_flags_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Directional"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_DIRECTIONAL]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_DIRECTIONAL]]];
 	[ai_flags_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Super Jump"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_SUPER_JUMP]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_SUPER_JUMP]]];
 	[ai_flags_menu addItem:[[MenuItem alloc] initWithText:""]];
 	[ai_flags_menu addItem:[[CommandMenuItem alloc]
 							initWithText:">>AI Flags page 2"
@@ -407,32 +352,32 @@
 
 	[ai_flag2_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Difficult"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_DIFFICULT]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_DIFFICULT]]];
 	[ai_flag2_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Wait for plat"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_PLAT_BOTTOM]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_PLAT_BOTTOM]]];
 	[ai_flag2_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Ride train"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_RIDE_TRAIN]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_RIDE_TRAIN]]];
 	[ai_flag2_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Door flag no open"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_DOOR_NO_OPEN]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_DOOR_NO_OPEN]]];
 	[ai_flag2_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Ambush"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_AMBUSH]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_AMBUSH]]];
 	[ai_flag2_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Snipe"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_SNIPER]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_SNIPER]]];
 	[ai_flag2_menu addItem:[[FlagMenuItem alloc]
 							initWithText:"Trace Test"
-							flag:[[FlagCluster alloc]
-								  initWithMask:AI_TRACE_TEST]]];
+							flagObject:[[FlagCluster alloc]
+										initWithMask:AI_TRACE_TEST]]];
 	[ai_flag2_menu addItem:[[MenuItem alloc] initWithText:""]];
 	[ai_flag2_menu addItem:[[CommandMenuItem alloc]
 							initWithText:">>AI Flags page 2"
@@ -493,10 +438,10 @@
 						   selector:@selector(save_waypoints)]];
 	[main_menu addItem:[[FlagMenuItem alloc]
 						initWithText:"Dynamic Mode"
-						flag:[[DynamicFlag alloc] init]]];
+						flagObject:[[DynamicFlag alloc] init]]];
 	[main_menu addItem:[[FlagMenuItem alloc]
 						initWithText:"Dynamic Link"
-						flag:[[DynamicLinkFlag alloc] init]]];
+						flagObject:[[DynamicLinkFlag alloc] init]]];
 	[waylist_menu addItem:[[MenuItem alloc] initWithText:""]];
 	[waylist_menu addItem:[[MenuItem alloc] initWithText:""]];
 	[waylist_menu addItem:[[MenuItem alloc] initWithText:""]];
@@ -515,48 +460,57 @@
 }
 
 @implementation EditorState: Object
++set_menu:(ImpulseMenu)item
+{
+	((Target) @self.@this).editor.menu = item;
+	((Target) @self.@this).editor.menu_time = time;
+}
+
 +main_menu
 {
-	((Target) @self.@this).editor.menu = main_menu;
+	[EditorState set_menu: main_menu];
 }
 
 +waypoint_menu
 {
-	((Target) @self.@this).editor.menu = waypoint_menu;
+	[EditorState set_menu: waypoint_menu];
 }
 
 +link_menu
 {
-	((Target) @self.@this).editor.menu = link_menu;
+	[EditorState set_menu: link_menu];
 }
 
 +ai_flags_menu
 {
-	((Target) @self.@this).editor.menu = ai_flags_menu;
+	[EditorState set_menu: ai_flags_menu];
 }
 
 +ai_flag2_menu
 {
-	((Target) @self.@this).editor.menu = ai_flag2_menu;
+	[EditorState set_menu: ai_flag2_menu];
 }
 
 +bot_menu
 {
-	((Target) @self.@this).editor.menu = bot_menu;
+	[EditorState set_menu: bot_menu];
 }
 
 +waylist_menu
 {
-	((Target) @self.@this).editor.menu = waylist_menu;
+	[EditorState set_menu: waylist_menu];
 }
 
 +teleport_to_way
 {
+	[EditorState set_menu: teleport_menu];
 }
 
 +close_menu
 {
-	((Target) @self.@this).editor.menu = NIL;
+	[EditorState set_menu: NIL];
+	[Waypoint hideAll];
+	waypoint_mode = WM_LOADED;
 }
 
 
@@ -882,6 +836,37 @@
 {
 	local EditorState editor = ((Target) @self.@this).editor;
 	return editor.current_way;
+}
+
++(void)impulse
+{
+	local Target player = (Target) @self.@this;
+	local EditorState editor = player.editor;
+
+	if (!editor) {
+		dprint ("start editor");
+		if (@self.impulse != 104)
+			return;
+		player.editor = [[EditorState alloc] init];
+		[EditorState main_menu];
+		@self.impulse = 0;
+		return;
+	}
+	@self.impulse = [editor.menu impulse:@self.impulse];
+	if (editor.menu_time < time) {
+		centerprint (@self, [editor.menu text]);
+		editor.menu_time = time + 1.25;
+	}
+}
+
+-(id)init
+{
+	if (!main_menu)
+		init_menus ();
+	self = [super init];
+	waypoint_mode = WM_EDITOR;
+	[Waypoint showAll];
+	return self;
 }
 
 @end

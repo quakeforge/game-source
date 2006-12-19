@@ -73,6 +73,7 @@ ClientDisconnected(); // FrikBot
 
 #include "libfrikbot.h"
 #include "cmd.h"
+#include "editor.h"
 
 integer []bot_way_ref;
 integer []bot_move_ref;
@@ -274,15 +275,26 @@ void () BotImpulses =
 {
 	local integer f;
 	local string h;
-	
-	if (@self.impulse == 100) {
+	local Target t = @self.@this;
+
+	if (t.editor)
+		[EditorState impulse];
+
+	switch (@self.impulse) {
+	case 100:
 		h = infokey (NIL, "skill");
 		f = (integer) stof (h);
 		BotConnect (0, f);
-	} else if (@self.impulse == 102)
+		break;
+	case 102:
 		[Bot kick];
-	else
+		break;
+	case 104:
+		[EditorState impulse];
+		break;
+	default:
 		return;
+	}
 	@self.impulse = 0;
 };
 
@@ -335,6 +347,9 @@ BotInit =
 	Cmd_AddCommand ("bot_add", bot_add_f);
 	Cmd_AddCommand ("bot_kick", bot_kick_f);
 	Cmd_AddCommand ("bot_loadway", bot_loadway_f);
+
+	precache_model ("progs/s_light.spr");
+	precache_model ("progs/s_bubble.spr");
 };
 
 /*
@@ -346,7 +361,18 @@ signs on to the server.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
-void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning = {};
+void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning =
+{
+	// used to show waypoint links for debugging
+	WriteByte (MSG_BROADCAST, 23);
+	if (flag)
+		WriteByte (MSG_BROADCAST, 6);	// TE_LIGHTNING2
+	else
+		WriteByte (MSG_BROADCAST, 17);	// TE_LIGHTNINGBLOOD
+	WriteEntity (MSG_BROADCAST, e2.ent);
+	WriteCoordV (MSG_BROADCAST, e1.origin);
+	WriteCoordV (MSG_BROADCAST, e2.origin);
+};
 
 @implementation Bot
 - (id) init
