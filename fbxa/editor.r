@@ -445,6 +445,8 @@
 	[waylist_menu addItem:[[MenuItem alloc] initWithText:""]];
 	[waylist_menu addItem:[[MenuItem alloc] initWithText:""]];
 	[waylist_menu addItem:[[MenuItem alloc] initWithText:""]];
+	[waylist_menu addItem:[[MenuItem alloc] initWithText:""]];
+	[waylist_menu addItem:[[MenuItem alloc] initWithText:""]];
 	[waylist_menu addItem:[[CommandMenuItem alloc]
 						   initWithText:">>Main Menu"
 						   object:[EditorState class]
