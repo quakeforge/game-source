@@ -411,6 +411,7 @@ Waypoint Loading from file
 {
 	if (ent) {
 		remove (ent);
+		ent = NIL;
 		own = 0;
 	}
 }

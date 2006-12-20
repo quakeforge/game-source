@@ -15,7 +15,6 @@
 	string confirm_cmd;
 
 	Target owner;
-	Waypoint current_way;
 	Waypoint last_way;
 	integer hold_select;
 	Bot test_bot;

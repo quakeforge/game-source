@@ -765,47 +765,48 @@
 
 +confirm
 {
-	local EditorState editor = ((Target) @self.@this).editor;
+	local Target player = (Target) @self.@this;
+	local EditorState editor = player.editor;
 	switch (editor.confirm_cmd) {
 	case "link ways":
-		if (editor.current_way) {
-			if (![editor.last_way linkWay:editor.current_way])
+		if (player.current_way) {
+			if (![editor.last_way linkWay:player.current_way])
 				sprint (@self, PRINT_HIGH, "Unable to link them\n");
 		}
 		break;
 	case "telelink ways":
-		if (editor.current_way) {
-			if (![editor.last_way teleLinkWay:editor.current_way])
+		if (player.current_way) {
+			if (![editor.last_way teleLinkWay:player.current_way])
 				sprint (@self, PRINT_HIGH, "Unable to link them\n");
 		}
 		break;
 	case "delete link":
-		if (editor.current_way) {
-			[editor.last_way unlinkWay:editor.current_way];
+		if (player.current_way) {
+			[editor.last_way unlinkWay:player.current_way];
 		}
 		break;
 	case "create link x2":
-		if (editor.current_way) {
-			if (![editor.last_way teleLinkWay:editor.current_way])
+		if (player.current_way) {
+			if (![editor.last_way teleLinkWay:player.current_way])
 				sprint (@self, PRINT_HIGH, "Unable to link 1 to 2\n");
-			if (![editor.current_way teleLinkWay:editor.last_way])
+			if (![player.current_way teleLinkWay:editor.last_way])
 				sprint (@self, PRINT_HIGH, "Unable to link 2 to 1\n");
 		}
 		break;
 	case "delete link x2":
-		if (editor.current_way) {
-			[editor.last_way unlinkWay:editor.current_way];
-			[editor.current_way unlinkWay:editor.last_way];
+		if (player.current_way) {
+			[editor.last_way unlinkWay:player.current_way];
+			[player.current_way unlinkWay:editor.last_way];
 		}
 		break;
 	case "delete all ways":
 		[Waypoint clearAll];
-		editor.current_way = editor.last_way = NIL;
+		player.current_way = editor.last_way = NIL;
 		break;
 	case "delete waypoint":
 		[waypoint_array removeItem:editor.last_way];
-		if (editor.current_way == editor.last_way)
-			editor.current_way = NIL;
+		if (player.current_way == editor.last_way)
+			player.current_way = NIL;
 		editor.last_way = NIL;
 		break;
 	}

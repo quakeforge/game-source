@@ -223,6 +223,7 @@ ClientDisconnected =
 			if (players[i].ent.enemy == e)
 				[players[i] lost:p:0];
 		}
+		[p releaseEditor];
 	}
 	[p release];
 };
@@ -503,6 +504,12 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning =
 -(integer)ishuman
 {
 	return ishuman;
+}
+
+-(void)releaseEditor
+{
+	if (editor)
+		[EditorState close_menu];
 }
 @end
 
