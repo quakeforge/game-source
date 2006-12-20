@@ -510,9 +510,12 @@
 
 +close_menu
 {
+	local Target player = (Target) @self.@this;
 	[EditorState set_menu: NIL];
 	[Waypoint hideAll];
 	waypoint_mode = WM_LOADED;
+	[player.editor release];
+	player.editor = NIL;
 }
 
 
@@ -836,8 +839,12 @@
 
 +(Waypoint)current_way
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	return editor.current_way;
+	return ((Target) @self.@this).current_way;
+}
+
+-(Waypoint)current_way
+{
+	return owner.current_way;
 }
 
 +(void)impulse
@@ -846,10 +853,9 @@
 	local EditorState editor = player.editor;
 
 	if (!editor) {
-		dprint ("start editor");
 		if (@self.impulse != 104)
 			return;
-		player.editor = [[EditorState alloc] init];
+		player.editor = [[EditorState alloc] initWithOwner:player];
 		[EditorState main_menu];
 		@self.impulse = 0;
 		return;
@@ -861,11 +867,12 @@
 	}
 }
 
--(id)init
+-(id)initWithOwner:(Target)owner
 {
 	if (!main_menu)
 		init_menus ();
 	self = [super init];
+	self.owner = owner;
 	waypoint_mode = WM_EDITOR;
 	[Waypoint showAll];
 	return self;

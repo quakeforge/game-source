@@ -373,9 +373,9 @@ very good all things considered.
 							[current_way linkWay:t];
 					}
 					if (editor) {
-						setmodel(t.ent, "progs/s_light.spr");
 						if (current_way)
-							setmodel(current_way.ent, "progs/s_bubble.spr");
+							[current_way deselect];
+						[t select];
 					}
 				}
 				current_way = t;

@@ -4,6 +4,7 @@
 @class ImpulseMenu;
 @class Waypoint;
 @class Bot;
+@class Target;
 
 @interface EditorState: Object
 {
@@ -13,6 +14,7 @@
 	string confirm_text;
 	string confirm_cmd;
 
+	Target owner;
 	Waypoint current_way;
 	Waypoint last_way;
 	integer hold_select;
@@ -62,9 +64,10 @@
 +(void)toggleHoldSelectState;
 +(string)getConfirmText;
 +(Waypoint)current_way;
+-(Waypoint)current_way;
 
 +(void)impulse;
--(id)init;
+-(id)initWithOwner:(Target)owner;
 @end
 
 #endif//__editor_h
