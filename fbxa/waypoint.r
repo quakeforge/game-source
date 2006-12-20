@@ -338,6 +338,7 @@ Waypoint Loading from file
 		else
 			[l addObject:[PLItem newString:"0"]];
 	}
+	[way addKey:"link" value:l];
 	[way addKey:"flags" value:[PLItem newString:itos (flags)]];
 	[list addObject:way];
 }
@@ -345,8 +346,9 @@ Waypoint Loading from file
 +(PLItem) plist
 {
 	local PLItem list = [PLItem newArray];
-	[waypoint_array makeObjectsPerformSelector:@selector(plitem)
+	[waypoint_array makeObjectsPerformSelector:@selector(plitem:)
 					withObject:list];
+	return list;
 }
 
 -(void) checkWay:(Target)ent

@@ -3,6 +3,7 @@
 #include "string.h"
 #include "PropertyList.h"
 #include "qfile.h"
+#include "qfs.h"
 #include "editor.h"
 
 @interface TeleportMenu: ImpulseValueMenu
@@ -753,7 +754,7 @@
 	local QFile file;
 	local PLItem plist;
 
-	file = Qopen ("temp.way", "wt");
+	file = QFS_Open ("temp.way", "wt");
 	if (!file) {
 		sprint (@self, PRINT_HIGH, "cound not create file temp.way\n");
 		return self;
