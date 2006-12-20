@@ -331,7 +331,10 @@ Waypoint Loading from file
 	local PLItem l = [PLItem newArray];
 	local integer i;
 
-	[way addKey:"origin" value:[PLItem newString:vtos (origin)]];
+	[way addKey:"origin" value:[PLItem newString:sprintf ("%g %g %g",
+														  origin.x,
+														  origin.y,
+														  origin.z)]];
 	for (i = 0; i < 4; i++) {
 		if (links[i])
 			[l addObject:[PLItem newString:itos ([links[i] id])]];
