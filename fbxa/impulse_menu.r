@@ -115,12 +115,24 @@
 	local string str = text;
 	local string s;
 	local integer i;
+	local string [10] is;
+	local integer max_len = 0, len;
 
-	for (i = 0; i < 10; i++) { if (!items[i])
+	for (i = 0; i < 10; i++) {
+		if (!items[i])
 			break;
-		s = [items[i] text];
+		is[i] = [items[i] text];
+		len = strlen(is[i]);
+		if (len > max_len)
+			max_len = len;
+	}
+	for (i = 0; i < 10; i++) {
+		if (!items[i])
+			break;
+		s = is[i];
 		if (s)
-			str = sprintf ("%s\n[%i] %s", str, (i + 1) % 10, s);
+			str = sprintf (sprintf ("%%s\n[%%i] %%-%ds", max_len),
+						   str, (i + 1) % 10, s);
 		else
 			str = sprintf ("%s\n", str);
 	}

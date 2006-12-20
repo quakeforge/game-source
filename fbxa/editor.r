@@ -135,6 +135,7 @@
 {
 	self = [super init];
 	mask = msk;
+	return self;
 }
 
 -(integer) getState
@@ -380,9 +381,9 @@
 										initWithMask:AI_TRACE_TEST]]];
 	[ai_flag2_menu addItem:[[MenuItem alloc] initWithText:""]];
 	[ai_flag2_menu addItem:[[CommandMenuItem alloc]
-							initWithText:">>AI Flags page 2"
+							initWithText:">>AI Flag Management"
 							object:[EditorState class]
-							selector:@selector(ai_flag2_menu)]];
+							selector:@selector(ai_flags_menu)]];
 	[ai_flag2_menu addItem:[[CommandMenuItem alloc]
 							initWithText:">>Main Menu"
 							object:[EditorState class]
@@ -485,11 +486,13 @@
 
 +ai_flags_menu
 {
+	dprint ("ai_flags_menu\n");
 	[EditorState set_menu: ai_flags_menu];
 }
 
 +ai_flag2_menu
 {
+	dprint ("ai_flag2_menu\n");
 	[EditorState set_menu: ai_flag2_menu];
 }
 
@@ -587,7 +590,7 @@
 	sprint (@self, PRINT_HIGH,
 			sprintf ("\nwaypoint info for waypoint #%i", [way id]));
 	sprint (@self, PRINT_HIGH,
-			sprintf ("\nAI Flag value: %#x", [way id]));
+			sprintf ("\nAI Flag value: %#x", way.flags));
 	for (i = 0; i < 4; i++) {
 		if (!way.links[i])
 			continue;
@@ -879,4 +882,8 @@
 	return self;
 }
 
+-(void)refresh
+{
+	menu_time = time;
+}
 @end

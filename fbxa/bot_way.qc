@@ -376,6 +376,7 @@ very good all things considered.
 						if (current_way)
 							[current_way deselect];
 						[t select];
+						[self.editor refresh];
 					}
 				}
 				current_way = t;

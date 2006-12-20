@@ -67,6 +67,7 @@
 
 +(void)impulse;
 -(id)initWithOwner:(Target)owner;
+-(void)refresh;
 @end
 
 #endif//__editor_h
