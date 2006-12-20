@@ -463,7 +463,7 @@
 }
 
 @implementation EditorState: Object
-+set_menu:(ImpulseMenu)item
++setMenu:(ImpulseMenu)item
 {
 	((Target) @self.@this).editor.menu = item;
 	((Target) @self.@this).editor.menu_time = time;
@@ -471,50 +471,50 @@
 
 +main_menu
 {
-	[EditorState set_menu: main_menu];
+	[EditorState setMenu: main_menu];
 }
 
 +waypoint_menu
 {
-	[EditorState set_menu: waypoint_menu];
+	[EditorState setMenu: waypoint_menu];
 }
 
 +link_menu
 {
-	[EditorState set_menu: link_menu];
+	[EditorState setMenu: link_menu];
 }
 
 +ai_flags_menu
 {
 	dprint ("ai_flags_menu\n");
-	[EditorState set_menu: ai_flags_menu];
+	[EditorState setMenu: ai_flags_menu];
 }
 
 +ai_flag2_menu
 {
 	dprint ("ai_flag2_menu\n");
-	[EditorState set_menu: ai_flag2_menu];
+	[EditorState setMenu: ai_flag2_menu];
 }
 
 +bot_menu
 {
-	[EditorState set_menu: bot_menu];
+	[EditorState setMenu: bot_menu];
 }
 
 +waylist_menu
 {
-	[EditorState set_menu: waylist_menu];
+	[EditorState setMenu: waylist_menu];
 }
 
 +teleport_to_way
 {
-	[EditorState set_menu: teleport_menu];
+	[EditorState setMenu: teleport_menu];
 }
 
 +close_menu
 {
 	local Target player = (Target) @self.@this;
-	[EditorState set_menu: NIL];
+	[EditorState setMenu: NIL];
 	[Waypoint hideAll];
 	waypoint_mode = WM_LOADED;
 	[player.editor release];
@@ -537,8 +537,8 @@
 	if (way) {
 		editor.prev_menu = editor.menu;
 		editor.confirm_text = "-- Delete Waypoint --\n\nAre you sure?";
-		editor.confirm_cmd = "delete waypoitn";
-		editor.menu = confirm_menu;
+		editor.confirm_cmd = "delete waypoint";
+		[EditorState setMenu:confirm_menu];
 		editor.last_way = way;
 	}
 }
@@ -619,7 +619,7 @@
 		editor.prev_menu = editor.menu;
 		editor.confirm_text = "-- Link Ways --\n\nSelect another way";
 		editor.confirm_cmd = "link ways";
-		editor.menu = confirm_menu;
+		[EditorState setMenu:confirm_menu];
 		editor.last_way = way;
 	}
 }
@@ -632,7 +632,7 @@
 		editor.prev_menu = editor.menu;
 		editor.confirm_text = "-- Telelink Ways --\n\nSelect another way";
 		editor.confirm_cmd = "telelink ways";
-		editor.menu = confirm_menu;
+		[EditorState setMenu:confirm_menu];
 		editor.last_way = way;
 	}
 }
@@ -645,7 +645,7 @@
 		editor.prev_menu = editor.menu;
 		editor.confirm_text = "-- Delete Link --\n\nSelect another way";
 		editor.confirm_cmd = "delete link";
-		editor.menu = confirm_menu;
+		[EditorState setMenu:confirm_menu];
 		editor.last_way = way;
 	}
 }
@@ -658,7 +658,7 @@
 		editor.prev_menu = editor.menu;
 		editor.confirm_text = "-- Create Link X2 --\n\nSelect another way";
 		editor.confirm_cmd = "create link x2";
-		editor.menu = confirm_menu;
+		[EditorState setMenu:confirm_menu];
 		editor.last_way = way;
 	}
 }
@@ -671,7 +671,7 @@
 		editor.prev_menu = editor.menu;
 		editor.confirm_text = "-- Delete Link X2 --\n\nSelect another way";
 		editor.confirm_cmd = "delete link x2";
-		editor.menu = confirm_menu;
+		[EditorState setMenu:confirm_menu];
 		editor.last_way = way;
 	}
 }
@@ -732,7 +732,7 @@
 	editor.prev_menu = editor.menu;
 	editor.confirm_text = "-- Delete ALL Ways --\n\nAre you sure?";
 	editor.confirm_cmd = "delete all ways";
-	editor.menu = confirm_menu;
+	[EditorState setMenu:confirm_menu];
 }
 
 +dump_waypoints
@@ -813,13 +813,13 @@
 		editor.last_way = NIL;
 		break;
 	}
-	editor.menu = editor.prev_menu;
+	[EditorState setMenu: editor.prev_menu];
 }
 
 +cancel
 {
 	local EditorState editor = ((Target) @self.@this).editor;
-	editor.menu = editor.prev_menu;
+	[EditorState setMenu: editor.prev_menu];
 }
 
 

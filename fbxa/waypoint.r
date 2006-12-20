@@ -83,6 +83,7 @@ Array waypoint_array;
 {
 	[self init];
 	[waypoint_array addItem: self];
+	[self release];
 	origin = org;
 	search_time = time;
 	distance = -1;
@@ -91,16 +92,12 @@ Array waypoint_array;
 
 -(id)initAt:(vector)org linkedTo:(integer[])link flags:(integer)flag
 {
-	[self init];
-	[waypoint_array addItem: self];
-	origin = org;
+	self = [self initAt:org];
 	links[0] = (Waypoint) link[0];
 	links[1] = (Waypoint) link[1];
 	links[2] = (Waypoint) link[2];
 	links[3] = (Waypoint) link[3];
 	flags = flag;
-	search_time = time;
-	distance = -1;
 	return self;
 }
 
@@ -110,9 +107,18 @@ Array waypoint_array;
 	//FIXME do entity based init
 }
 
+-(void)dealloc
+{
+	[waypoint_array makeObjectsPerformSelector:@selector(unlinkWay:)
+					withObject:self];
+	[super dealloc];
+}
+
 -(void)setOrigin:(vector)org
 {
 	origin = org;
+	if (ent)
+		setorigin (ent, org);
 }
 
 -(vector)origin
