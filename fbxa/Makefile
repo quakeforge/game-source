@@ -2,7 +2,8 @@ QFCC=qfcc
 #QCFLAGS=-z -qq -g -Werror
 QCFLAGS=-qq -g -Werror
 QCPPFLAGS=
-prefix=/usr/local
+libdir=$(shell pkg-config qfcc --variable=libdir)
+includedir=$(shell pkg-config qfcc --variable=includedir)
 
 libfrikbot_source = \
 	bot_ai.qc		\
@@ -46,7 +47,7 @@ clean:
 	rm -rf .deps
 
 install: libfrikbot.a
-	cp frikbot.h $(DESTDIR)$(prefix)/include/QF/ruamoko
-	cp libfrikbot.a $(DESTDIR)$(prefix)/lib/ruamoko
+	cp frikbot.h $(DESTDIR)$(includedir)
+	cp libfrikbot.a $(DESTDIR)$(libdir)
 
 -include $(libfrikbot_dep)
