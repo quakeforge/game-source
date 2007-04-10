@@ -9,6 +9,9 @@
 void() util_map_entity_init = {
 	self.deadflag = DEAD_NONLIVING;
 
+	setsize (self, self.mins, self.maxs);
+	setorigin (self, self.origin);	// Links BSP models
+
 	if (self.noise && sv_spawning) {
 		if (!self.volume)
 			self.volume = 0.5;
@@ -44,9 +47,6 @@ void() util_map_entity_init = {
 			precache_model (self.model);
 		setmodel (self, self.model);
 	}
-
-	setsize (self, self.mins, self.maxs);
-	setorigin (self, self.origin);	// Links BSP models
 };
 
 void() util_map_entity_cull = {
