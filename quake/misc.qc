@@ -23,12 +23,12 @@ void() light_use =
 	if (self.spawnflags & START_OFF)
 	{
 		lightstyle(self.style, "m");
-		self.spawnflags = self.spawnflags - START_OFF;
+		self.spawnflags &= ~START_OFF;
 	}
 	else
 	{
 		lightstyle(self.style, "a");
-		self.spawnflags = self.spawnflags + START_OFF;
+		self.spawnflags |= START_OFF;
 	}
 };
 

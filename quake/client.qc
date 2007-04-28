@@ -548,7 +548,7 @@ void() NextLevel =
 			serverflags |= 4;
 		} else if (!(serverflags & 8)) {
 			mapname = "e4m1";
-			serverflags -= 7; //FIXME should this be &= ~7?
+			serverflags &= ~7;
 		}
 
 		o = spawn();

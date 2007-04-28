@@ -111,7 +111,7 @@ void()	Tar_JumpTouch =
 //			self.velocity_x = (random () - 0.5) * 600;
 //			self.velocity_y = (random () - 0.5) * 600;
 //			self.velocity_z = 200;
-//			self.flags = self.flags - FL_ONGROUND;
+//			self.flags &= ~FL_ONGROUND;
 		}
 		return;	// not on ground yet
 	}

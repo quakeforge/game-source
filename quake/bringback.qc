@@ -31,11 +31,11 @@
 				break;
 			case "monster_fish":
 				setsize (self, '-16 -16 -24', '16 16 24');
-				self.flags = self.flags + FL_SWIM;
+				self.flags |= FL_SWIM;
 				break;
 			case "monster_wizard":
 				setsize (self, '-16 -16 -24', '16 16 40');
-				self.flags = self.flags + FL_FLY;
+				self.flags |= FL_FLY;
 				break;
 			default:
 				// about 3/4 of quakes critters use this size

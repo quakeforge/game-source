@@ -90,7 +90,7 @@ void()	Dog_JumpTouch =
 //			self.velocity_x = (random() - 0.5) * 600;
 //			self.velocity_y = (random() - 0.5) * 600;
 //			self.velocity_z = 200;
-//			self.flags = self.flags - FL_ONGROUND;
+//			self.flags &= ~FL_ONGROUND;
 		}
 		return;	// not on ground yet
 	}
@@ -160,7 +160,7 @@ void() dog_leap2	=[	$leap2,		dog_leap3	]
 	self.origin_z = self.origin_z + 1;
 	self.velocity = v_forward * 300 + '0 0 200';
 	if (self.flags & FL_ONGROUND)
-		self.flags = self.flags - FL_ONGROUND;
+		self.flags &= ~FL_ONGROUND;
 };
 
 void() dog_leap3	=[	$leap3,		dog_leap4	] {};
