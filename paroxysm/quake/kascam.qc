@@ -252,6 +252,7 @@ vector(float s, float v, float a) CamSmooth =
  }
  vec_x = s;
  vec_y = v;
+ vec_z = 0;
  return vec;
 };
 

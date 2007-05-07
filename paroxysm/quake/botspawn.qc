@@ -492,8 +492,6 @@ pn = -1;
 //POX - Define BotPrefs - semi-random based on skill level setting
 //Skill 1 (default) will spawn randomized bots (but no extremely bad or good ones)
 
-local float	r;
-
 //POX - speed
 	if (skill == 0)
 		bot.botpref_speed	= 0.1;
