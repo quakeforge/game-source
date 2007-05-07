@@ -46,11 +46,19 @@
 		spawn_tdeath (self.origin, self);
 		spawn_tfog (self.origin);
 
-		//Don't stay angry at everyone.
+		//Don't stay angry at everyone... All of the time. ;)
 		//Side note. NIL is the same as WORLD.
-		self.enemy = NIL;
-		//This HAS TO BE SET HERE, or the creature WILL NOT survive the motion test.
-		self.th_walk();
+		if (random() < 0.5)
+		{
+			//Not PO'd anymore.
+			self.enemy = NIL;
+			self.th_walk();
+		}
+		else
+		{
+			//Stay PO'd. Player won't know where you are!
+			self.th_run();
+		}
 
 		//We have to set the origin no matter what kind of creature it is, so the
 		//thing becomes solid again. (Maybe, maybe not? Can't hurt anyway...)
