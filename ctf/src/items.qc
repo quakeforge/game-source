@@ -264,7 +264,7 @@ void() armor_touch;
 
 void() armor_touch =
 {
-	local	float	type = 0, value = 0, bit = 0;
+	local	float	type, value, bit; type = value = bit = 0;
 	
 	if (other.health <= 0)
 		return;
@@ -440,7 +440,7 @@ float() W_BestWeapon;
 
 void() weapon_touch =
 {
-	local	float	hadammo, best, new = 0, old;
+	local	float	hadammo, best, new, old; new = 0;
 	local	entity	stemp;
 	local	float	leave;
 //McBain: added prevweapon local variable

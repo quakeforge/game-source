@@ -32,7 +32,7 @@ void(entity player,entity door) ObserverDoor =
   local entity d,d_master;
   local vector dmin,dmax;
     local float is_x,is_y,is_z,set;
-    local vector dir = '0 0 0',or;
+    local vector dir,or; dir = '0 0 0';
   
   d_master = d = door.owner;
   if (d_master) {

@@ -712,7 +712,8 @@ void() TossBackpack =
 
 void() Team_weapon_touch =
 {
-	local	float	hadammo, best, new = 0, old;
+	local	float	hadammo, best, new, old;
+	new = 0;
 	local entity stemp;
 
 	if (!(other.flags & FL_CLIENT))

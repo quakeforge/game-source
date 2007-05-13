@@ -61,6 +61,7 @@ entity (entity head, entity tail, float num) MakeChain =
 {
         local entity link, prevlink;
         local float linknum;
+		link = world;
 
         linknum = num;
         num = num + 1;

@@ -35,10 +35,10 @@ entity(float disp) identify_player =
 {
 	// e is a temp entity; guy is our current best guess
 	// as to at whom the player is pointing
-	local entity e, guy = world;
+	local entity e, guy; guy = world;
 
 	// The best "closeness" heuristic so far.
-	local float closeness = -1;
+	local float closeness; closeness = -1;
 
 	// Temp vars.
 	local vector diff, point;

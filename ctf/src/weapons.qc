@@ -1047,7 +1047,7 @@ W_ChangeWeapon
 */
 void() W_ChangeWeapon =
 {
-	local	float	it, am, fl = 0;
+	local	float	it, am, fl; fl = 0;
 	
 	it = self.items;
 	am = 0;
