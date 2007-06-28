@@ -220,7 +220,7 @@ Waypoint Loading from file
 {
 	local QFile file;
 	local PLItem plist;
-	local string plist_data, l;
+	local string plist_data;
 	local integer i, count;
 
 	file = QFS_OpenFile (path);
@@ -228,9 +228,7 @@ Waypoint Loading from file
 		dprint (sprintf ("could not load file: %s", path));
 		return;
 	}
-	plist_data = str_new ();
-	while ((l = Qgetline (file)))
-		str_cat (plist_data, l);
+	plist_data = Qreadstring (file, Qfilesize (file));
 	Qclose (file);
 	plist = [PLItem newFromString:plist_data];
 	str_free (plist_data);
