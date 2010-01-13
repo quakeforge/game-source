@@ -27,6 +27,11 @@ libfrikbot_source = \
 libfrikbot_obj = $(addsuffix .o,$(basename $(libfrikbot_source)))
 libfrikbot_dep = $(addprefix .deps/,$(addsuffix .d,$(basename $(libfrikbot_source))))
 
+map_%.o: map_%.qc
+	@mkdir -p .deps
+	@$(QFCC) -M -q $(QCPPFLAGS) -c $< | sed -e 's/\(\.qc\)\?\.o\>/.o/' > .deps/`basename $@ .o`.d
+	$(QFCC) $(QCFLAGS) -Cvector-calls $(QCPPFLAGS) -c -o $@ $<
+
 %.o: %.r
 	@mkdir -p .deps
 	@$(QFCC) -M -q $(QCPPFLAGS) -c $< | sed -e 's/\(\.r\)\?\.o\>/.o/' > .deps/`basename $@ .o`.d
