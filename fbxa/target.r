@@ -49,7 +49,7 @@ this notice in its entirety.
 
 @static hashtab_t target_tab;
 
-struct target_s = {
+struct target_s {
 	@defs (Target)
 };
 

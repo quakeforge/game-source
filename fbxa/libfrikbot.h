@@ -6,7 +6,7 @@
 @class Waypoint;
 @class EditorState;
 
-struct bot_data_t = {
+struct bot_data_t {
 	string name;
 	float pants, shirt;
 };
