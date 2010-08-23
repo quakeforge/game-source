@@ -13,8 +13,8 @@
 @end
 
 @protocol FlagMenuItem
--(integer) getState;
--(void) toggleState;
+-(integer) state;
+-(void) toggle;
 @end
 
 @interface FlagMenuItem: MenuItem

@@ -62,12 +62,12 @@
 @end
 
 @implementation NoclipFlag
--(integer) getState
+-(integer) state
 {
 	return @self.movetype == MOVETYPE_NOCLIP;
 }
 
--(void) toggleState
+-(void) toggle
 {
 	if (@self.movetype == MOVETYPE_NOCLIP)
 		@self.movetype = MOVETYPE_WALK;
@@ -77,36 +77,36 @@
 @end
 
 @implementation GodmodeFlag
--(integer) getState
+-(integer) state
 {
 	return !!(@self.flags & FL_GODMODE);
 }
 
--(void) toggleState
+-(void) toggle
 {
 	@self.flags ^= FL_GODMODE;
 }
 @end
 
 @implementation HoldSelectFlag
--(integer) getState
+-(integer) state
 {
 	return [EditorState getHoldSelectState];
 }
 
--(void) toggleState
+-(void) toggle
 {
 	[EditorState toggleHoldSelectState];
 }
 @end
 
 @implementation DynamicFlag
--(integer) getState
+-(integer) state
 {
 	return waypoint_mode == WM_EDITOR_DYNAMIC;
 }
 
--(void) toggleState
+-(void) toggle
 {
 	if (waypoint_mode == WM_EDITOR_DYNAMIC)
 		waypoint_mode = WM_EDITOR;
@@ -116,13 +116,13 @@
 @end
 
 @implementation DynamicLinkFlag
--(integer) getState
+-(integer) state
 {
 	local integer mode = waypoint_mode;
 	return mode == WM_EDITOR_DYNAMIC || mode == WM_EDITOR_DYNLINK;
 }
 
--(void) toggleState
+-(void) toggle
 {
 	if (waypoint_mode == WM_EDITOR_DYNLINK)
 		waypoint_mode = WM_EDITOR;
@@ -139,7 +139,7 @@
 	return self;
 }
 
--(integer) getState
+-(integer) state
 {
 	local Waypoint way = [EditorState current_way];
 	if (!way)
@@ -147,7 +147,7 @@
 	return !!(way.flags & mask);
 }
 
--(void) toggleState
+-(void) toggle
 {
 	local Waypoint way = [EditorState current_way];
 	if (way)

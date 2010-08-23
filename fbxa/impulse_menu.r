@@ -29,13 +29,13 @@
 
 - (string) text
 {
-	local integer state = (integer)[flag getState];
+	local integer state = (integer)[flag state];
 	return sprintf ("[%c] %s", state ? '#' : ' ', [super text]);
 }
 
 - (void) select
 {
-	[flag toggleState];
+	[flag toggle];
 }
 @end
 
