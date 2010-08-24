@@ -1,0 +1,90 @@
+- Bot::frame
+	-Bot obstacles
+		-Bot jump
+		-Bot obstructed
+	-Bot preThink
+		-Bot startTopic
+		-Bot dynamicWaypoint
+			-Bot lost
+				-Bot targetDrop
+					-Bot targetOnstack
+					-Bot setSearchTime
+				-Waypoint clearRouteForBot
+				-Bot findWaypoint
+				-Waypoint clearMyRoute
+				-Bot setSearchTime
+			-Waypoint canSee
+			-Waypoint linkWay
+			-Waypoint teleLinkWay
+			-Bot recognizePlat
+	-Bot sendMove
+		-Bot obstructed
+	-Bot AI
+		+Waypoint clearMyRoute
+		-Bot startTopic
+		-Bot lookForCrap
+			+Target forEntity
+			-Bot priorityForThing
+				-Target priority
+			+Waypoint find
+
+			-Bot targetOnstack
+			-Bot targetAdd
+			-Bot getPath
+		-Bot movetogoal
+			-Bot walkmove
+			-Bot keysForDir
+			-Bot dodgeObstruction
+			-Bot recognizePlat
+		-Bot path
+			-Bot checkLost
+			-Bot targetOnstack
+			-Bot findRoute
+			-Bot lost
+			-Bot targetAdd
+			-Waypoint isLinkedTo
+			-Bot findThing
+			+Target forEntity
+			-Bot weaponSwitch
+		-Bot roam
+			-Bot spawnTempWaypoints
+		-Bot angleSet
+		-Bot fightStyle
+			-Bot canSee
+			+Target forEntity
+			-Bot shoot
+			-Bot weaponSwitch
+			-Bot sizePlayer
+			-Bot startTopic
+			-Bot walkmove
+		-Bot weaponSwitch
+		-Bot dodgeStuff
+			-Bot sizePlayer
+			+Target forEntity
+			-Bot canSee
+		-Bot handleAI
+			-Bot findThing
+			-Bot lost
+			-Bot weaponSwitch
+			-Bot targetAdd
+			+Target forEntity
+			-Bot jump
+			-Bot canRJ
+			-Waypoint recognizePlat
+			-Bot keysForDir
+			-Bot walkmove
+		-Bot chat
+			-Bot say
+			-Bot startTopic
+			-Bot sayTeam
+			-Bot sayInit
+			-Bot say2
+
+saved1 origin.x
+saved2 origin.y
+saved3 origin.z
+scratch1 target1
+scratch2 target2
+scratch3 target3
+scratch4 target4
+saved4 b_aiflags
