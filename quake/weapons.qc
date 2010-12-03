@@ -304,7 +304,7 @@ void() W_FireRocket =
 {
 	local entity	missile;
 	
-	self.currentammo = self.ammo_rockets--;
+	self.currentammo = --self.ammo_rockets;
 	
 	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
 
@@ -408,7 +408,7 @@ void() W_FireLightning =
 	}
 	self.punchangle_x = -2;
 
-	self.currentammo = self.ammo_cells--;
+	self.currentammo = --self.ammo_cells;
 
 	org = self.origin + '0 0 16';
 	
@@ -451,7 +451,7 @@ void() W_FireGrenade =
 {
 	local entity	missile;
 	
-	self.currentammo = self.ammo_rockets--;
+	self.currentammo = --self.ammo_rockets;
 	
 	sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
 
@@ -559,7 +559,7 @@ void(float ox) W_FireSpikes =
 
 	sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
-	self.currentammo = self.ammo_nails--;
+	self.currentammo = --self.ammo_nails;
 	dir = aim (self, 1000);
 	launch_spike (self.origin + '0 0 16' + v_right * ox, dir);
 
