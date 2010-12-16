@@ -51,6 +51,7 @@ typedef struct bot_data_t bot_data_t;
 
 	Waypoint chain;
 }
++(void)loadFile:(string)path;
 +(void)clearAll;
 +(Waypoint)waypointForNum:(integer)num;
 +(void)fixWaypoints;
@@ -139,6 +140,7 @@ typedef struct bot_data_t bot_data_t;
 - (void) disconnect;
 
 - (void) updateClient;
+- (void) releaseEditor;
 @end
 
 @interface Bot (Misc)

@@ -1,9 +1,11 @@
+#include <string.h>
+#include <PropertyList.h>
+#include <qfile.h>
+#include <qfs.h>
+#include <Array.h>
+
 #include "impulse_menu.h"
 #include "libfrikbot.h"
-#include "string.h"
-#include "PropertyList.h"
-#include "qfile.h"
-#include "qfs.h"
 #include "editor.h"
 
 @interface TeleportMenu: ImpulseValueMenu
@@ -49,7 +51,7 @@
 	if ((imp = [super impulse:imp]) == 104) {
 		imp = 0;
 		if (value)
-			way = (Waypoint) [waypoint_array getItemAt:value - 1];
+			way = (Waypoint) [waypoint_array objectAtIndex:value - 1];
 		value = 0;
 		if (way)
 			setorigin (@self, way.origin - @self.view_ofs);
@@ -697,7 +699,7 @@
 {
 	local EditorState editor = ((Target) @self.@this).editor;
 	if (editor.test_bot)
-		[editor.test_bot getPath:[Target forEntity:@self], TRUE];
+		[editor.test_bot getPath:[Target forEntity:@self] :TRUE];
 }
 
 +remove_test_bot
@@ -808,7 +810,7 @@
 		player.current_way = editor.last_way = NIL;
 		break;
 	case "delete waypoint":
-		[waypoint_array removeItem:editor.last_way];
+		[waypoint_array removeObject:editor.last_way];
 		if (player.current_way == editor.last_way)
 			player.current_way = NIL;
 		editor.last_way = NIL;

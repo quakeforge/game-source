@@ -1,6 +1,7 @@
 *.a
 *.dat
 *.qfo
+*.o
 *.sym
 .deps
 ChangeLog

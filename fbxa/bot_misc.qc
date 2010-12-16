@@ -112,16 +112,19 @@ Sets bot's name and colors
 {
 	local Bot ty;
 
-	ty = [bot_array removeItemAt:0];
-	if (ty)
-		[ty disconnect];
+	if ([bot_array count]) {
+		ty = [bot_array objectAtIndex:0];
+		[bot_array removeObjectAtIndex:0];
+		if (ty)
+			[ty disconnect];
+	}
 }
 
 -(void)add
 {
 	if (!bot_array)
 		bot_array = [[Array alloc] init];
-	[bot_array addItem: self];
+	[bot_array addObject: self];
 }
 
 /*

@@ -71,6 +71,8 @@ ClientDisconnected(); // FrikBot
 --------------------------------------
 */
 
+#include <Array.h>
+
 #include "libfrikbot.h"
 #include "cmd.h"
 #include "editor.h"
@@ -478,7 +480,7 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning =
 	bot_count--;
 
 	SV_FreeClient (ent);
-	[bot_array removeItem:self];
+	[bot_array removeObject:self];
 }
 
 -(void)frame
@@ -501,12 +503,12 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning =
 	// FIXME: do teams properly
 }
 
--(integer)ishuman
+- (integer) ishuman
 {
 	return ishuman;
 }
 
--(void)releaseEditor
+- (void) releaseEditor
 {
 	if (editor)
 		[EditorState close_menu];

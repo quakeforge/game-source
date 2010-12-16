@@ -1,6 +1,6 @@
 QFCC=qfcc
 #QCFLAGS=-z -qq -g -Werror
-QCFLAGS=-qq -g -Werror
+QCFLAGS=-qq -g -Werror -Wall
 QCPPFLAGS=
 libdir=$(shell pkg-config qfcc --variable=libdir)
 includedir=$(shell pkg-config qfcc --variable=includedir)

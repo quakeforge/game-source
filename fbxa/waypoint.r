@@ -69,7 +69,10 @@ Array waypoint_array;
 
 -(integer)id
 {
-	return [waypoint_array findItem:self] + 1;
+	integer index = [waypoint_array indexOfObject:self];
+	if (index != NotFound)
+		return  index + 1;
+	return 0;
 }
 
 -(id)init
@@ -82,7 +85,7 @@ Array waypoint_array;
 -(id)initAt:(vector)org
 {
 	[self init];
-	[waypoint_array addItem: self];
+	[waypoint_array addObject: self];
 	[self release];
 	origin = org;
 	search_time = time;
@@ -230,7 +233,7 @@ Waypoint Loading from file
 	}
 	plist_data = Qreadstring (file, Qfilesize (file));
 	Qclose (file);
-	plist = [PLItem newFromString:plist_data];
+	plist = [PLItem fromString:plist_data];
 	str_free (plist_data);
 
 	[Waypoint clearAll];
@@ -238,10 +241,10 @@ Waypoint Loading from file
 	count = [(PLArray)plist numObjects];
 	dprint (sprintf ("%i waypoints\n", count));
 	for (i = 0; i < count; i++) {
-		local PLItem way = [plist getObjectAtIndex:i];
+		local PLDictionary way = (PLDictionary) [(PLArray) plist getObjectAtIndex:i];
 		local PLString s = (PLString) [way getObjectForKey:"origin"];
 		local vector org = stov (sprintf ("'%s'", [s string]));
-		local PLItem links = [way getObjectForKey:"link"];
+		local PLArray links = (PLArray) [way getObjectForKey:"link"];
 		//FIXME compiler/vm "bug" makes passing pointers to locals dangerous
 
 		s = (PLString) [way getObjectForKey:"flags"];
@@ -274,7 +277,7 @@ Waypoint Loading from file
 {
 	if (!num)
 		return NIL;
-	return [waypoint_array getItemAt:num - 1];
+	return [waypoint_array objectAtIndex:num - 1];
 }
 
 -(void)fix
@@ -325,8 +328,8 @@ Waypoint Loading from file
 
 -(void)plitem:(PLItem)list
 {
-	local PLItem way = [PLItem newDictionary];
-	local PLItem l = [PLItem newArray];
+	local PLDictionary way = (PLDictionary) [PLItem newDictionary];
+	local PLArray l = (PLArray) [PLItem newArray];
 	local integer i;
 
 	[way addKey:"origin" value:[PLItem newString:sprintf ("%g %g %g",
@@ -341,7 +344,7 @@ Waypoint Loading from file
 	}
 	[way addKey:"link" value:l];
 	[way addKey:"flags" value:[PLItem newString:itos (flags)]];
-	[list addObject:way];
+	[(PLArray) list addObject:way];
 }
 
 +(PLItem) plist
@@ -386,7 +389,7 @@ Waypoint Loading from file
 
 	count = [waypoint_array count];
 	for (i = 0; i < count; i++) {
-		w = [waypoint_array getItemAt:i];
+		w = [waypoint_array objectAtIndex:i];
 		dif = w.origin - org;
 		dist = dif * dif;		// dist squared, really
 		if (dist < rad) {

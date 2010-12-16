@@ -222,7 +222,7 @@ Finds the closest, fisible, waypoint to e
 	}
 	count = [waypoint_array count];
 	for (i = 0; i < count; i++) {
-		t = [waypoint_array getItemAt:i];
+		t = [waypoint_array objectAtIndex:i];
 		// real players cut through ignore types
 		if (dst < 20)
 			return best;

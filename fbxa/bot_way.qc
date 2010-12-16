@@ -42,9 +42,11 @@ this notice in its entirety.
 
 */
 
+#include <Array.h>
+#include <List.h>
+
 #include "libfrikbot.h"
-#include "Array.h"
-#include "List.h"
+#include "editor.h"
 
 integer bot_way_linker;
 
@@ -54,7 +56,7 @@ integer bot_way_linker;
 {
 	if (current_way == what)
 		current_way = NIL;
-	[waypoint_array removeItem:what];
+	[waypoint_array removeObject:what];
 	[what release];
 }
 
@@ -113,7 +115,7 @@ an object.
 	best = NIL;
 	count = [waypoint_array count];
 	for (i = 0; i < count; i++) {
-		t = [waypoint_array getItemAt:i];
+		t = [waypoint_array objectAtIndex:i];
 		tdst = vlen(t.origin - ent.origin);
 		if ((tdst < dst) &&  (t.bot_bits & flag)) {
 			if ((lastone == NIL) || ([lastone isLinkedTo:t])) {
