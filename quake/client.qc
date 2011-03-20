@@ -124,6 +124,7 @@ entity() FindIntermission =
 		return spot;
 
 	objerror ("FindIntermission: no spot");
+	return nil;	//FIXME need noreturn
 };
 
 string nextmap;

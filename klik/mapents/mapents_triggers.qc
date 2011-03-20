@@ -153,7 +153,7 @@ void() trigger_teleport = {
 		self.noise = "ambience/hum1.wav";
 	setmodel(self, self.model);
 
-	self.model = NIL;
+	self.model = nil;
 	self.modelindex = 0;
 
 	util_map_entity_init();

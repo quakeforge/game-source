@@ -47,11 +47,11 @@
 
 -(integer) impulse:(integer)imp
 {
-	local Waypoint way = NIL;
+	local Waypoint *way = nil;
 	if ((imp = [super impulse:imp]) == 104) {
 		imp = 0;
 		if (value)
-			way = (Waypoint) [waypoint_array objectAtIndex:value - 1];
+			way = (Waypoint *) [waypoint_array objectAtIndex:value - 1];
 		value = 0;
 		if (way)
 			setorigin (@self, way.origin - @self.view_ofs);
@@ -143,7 +143,7 @@
 
 -(integer) state
 {
-	local Waypoint way = [EditorState current_way];
+	local Waypoint *way = [EditorState current_way];
 	if (!way)
 		return 0;
 	return !!(way.flags & mask);
@@ -151,7 +151,7 @@
 
 -(void) toggle
 {
-	local Waypoint way = [EditorState current_way];
+	local Waypoint *way = [EditorState current_way];
 	if (way)
 		way.flags ^= mask;
 }
@@ -165,16 +165,16 @@
 }
 @end
 
-@static ImpulseListMenu main_menu;
-@static ImpulseListMenu waypoint_menu;
-@static ImpulseListMenu link_menu;
-@static ImpulseListMenu ai_flags_menu;
-@static ImpulseListMenu ai_flag2_menu;
-@static ImpulseListMenu bot_menu;
-@static ImpulseListMenu waylist_menu;
+@static ImpulseListMenu *main_menu;
+@static ImpulseListMenu *waypoint_menu;
+@static ImpulseListMenu *link_menu;
+@static ImpulseListMenu *ai_flags_menu;
+@static ImpulseListMenu *ai_flag2_menu;
+@static ImpulseListMenu *bot_menu;
+@static ImpulseListMenu *waylist_menu;
 
-@static ConfirmationMenu confirm_menu;
-@static TeleportMenu teleport_menu;
+@static ConfirmationMenu *confirm_menu;
+@static TeleportMenu *teleport_menu;
 
 @static void init_menus (void)
 {
@@ -466,77 +466,88 @@
 }
 
 @implementation EditorState: Object
-+setMenu:(ImpulseMenu)item
++setMenu:(ImpulseMenu *)item
 {
-	((Target) @self.@this).editor.menu = item;
-	((Target) @self.@this).editor.menu_time = time;
+	((Target *) @self.@this).editor.menu = item;
+	((Target *) @self.@this).editor.menu_time = time;
+	return self;
 }
 
 +main_menu
 {
 	[EditorState setMenu: main_menu];
+	return self;
 }
 
 +waypoint_menu
 {
 	[EditorState setMenu: waypoint_menu];
+	return self;
 }
 
 +link_menu
 {
 	[EditorState setMenu: link_menu];
+	return self;
 }
 
 +ai_flags_menu
 {
 	dprint ("ai_flags_menu\n");
 	[EditorState setMenu: ai_flags_menu];
+	return self;
 }
 
 +ai_flag2_menu
 {
 	dprint ("ai_flag2_menu\n");
 	[EditorState setMenu: ai_flag2_menu];
+	return self;
 }
 
 +bot_menu
 {
 	[EditorState setMenu: bot_menu];
+	return self;
 }
 
 +waylist_menu
 {
 	[EditorState setMenu: waylist_menu];
+	return self;
 }
 
 +teleport_to_way
 {
 	[EditorState setMenu: teleport_menu];
+	return self;
 }
 
 +close_menu
 {
-	local Target player = (Target) @self.@this;
-	[EditorState setMenu: NIL];
+	local Target *player = (Target *) @self.@this;
+	[EditorState setMenu: nil];
 	[Waypoint hideAll];
 	waypoint_mode = WM_LOADED;
 	[player.editor release];
-	player.editor = NIL;
+	player.editor = nil;
+	return self;
 }
 
 
 +move_waypoint
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
 	if (way)
 		[way setOrigin: @self.origin + @self.view_ofs];
+	return self;
 }
 
 +delete_waypoint
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
 	if (way) {
 		editor.prev_menu = editor.menu;
 		editor.confirm_text = "-- Delete Waypoint --\n\nAre you sure?";
@@ -544,49 +555,54 @@
 		[EditorState setMenu:confirm_menu];
 		editor.last_way = way;
 	}
+	return self;
 }
 
 +make_waypoint
 {
 	[[Waypoint alloc] initAt: @self.origin + @self.view_ofs];
+	return self;
 }
 
 +make_waypoint_link
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
-	local Waypoint new = [[Waypoint alloc]
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
+	local Waypoint *new = [[Waypoint alloc]
 						  initAt: @self.origin + @self.view_ofs];
 	if (!way || ![way linkWay: new])
 		sprint (@self, PRINT_HIGH, "Unable to link them\n");
+	return self;
 }
 
 +make_way_link_x2
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
-	local Waypoint new = [[Waypoint alloc]
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
+	local Waypoint *new = [[Waypoint alloc]
 						  initAt: @self.origin + @self.view_ofs];
 	if (!way || ![way linkWay: new])
 		sprint (@self, PRINT_HIGH, "Unable to link old to new\n");
 	if (!way || ![new linkWay: way])
 		sprint (@self, PRINT_HIGH, "Unable to link new to old\n");
+	return self;
 }
 
 +make_way_telelink
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
-	local Waypoint new = [[Waypoint alloc]
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
+	local Waypoint *new = [[Waypoint alloc]
 						  initAt: @self.origin + @self.view_ofs];
 	if (!way || ![way teleLinkWay: new])
 		sprint (@self, PRINT_HIGH, "Unable to link them\n");
+	return self;
 }
 
 +show_waypoint_info
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
 	local integer i;
 	if (!way)
 		return self;
@@ -603,21 +619,23 @@
 						 i + 1, [way.links[i] id]));
 	}
 	sprint (@self, PRINT_HIGH, "\n\n");
+	return self;
 }
 
 
 +unlink_waypoint
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
 	if (way)
 		[way clearLinks];
+	return self;
 }
 
 +create_link
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
 	if (way) {
 		editor.prev_menu = editor.menu;
 		editor.confirm_text = "-- Link Ways --\n\nSelect another way";
@@ -625,12 +643,13 @@
 		[EditorState setMenu:confirm_menu];
 		editor.last_way = way;
 	}
+	return self;
 }
 
 +create_telelink
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
 	if (way) {
 		editor.prev_menu = editor.menu;
 		editor.confirm_text = "-- Telelink Ways --\n\nSelect another way";
@@ -638,12 +657,13 @@
 		[EditorState setMenu:confirm_menu];
 		editor.last_way = way;
 	}
+	return self;
 }
 
 +delete_link
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
 	if (way) {
 		editor.prev_menu = editor.menu;
 		editor.confirm_text = "-- Delete Link --\n\nSelect another way";
@@ -651,12 +671,13 @@
 		[EditorState setMenu:confirm_menu];
 		editor.last_way = way;
 	}
+	return self;
 }
 
 +create_link_x2
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
 	if (way) {
 		editor.prev_menu = editor.menu;
 		editor.confirm_text = "-- Create Link X2 --\n\nSelect another way";
@@ -664,12 +685,13 @@
 		[EditorState setMenu:confirm_menu];
 		editor.last_way = way;
 	}
+	return self;
 }
 
 +delete_link_x2
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
 	if (way) {
 		editor.prev_menu = editor.menu;
 		editor.confirm_text = "-- Delete Link X2 --\n\nSelect another way";
@@ -677,12 +699,13 @@
 		[EditorState setMenu:confirm_menu];
 		editor.last_way = way;
 	}
+	return self;
 }
 
 
 +add_test_bot
 {
-	local EditorState editor = ((Target) @self.@this).editor;
+	local EditorState *editor = ((Target *) @self.@this).editor;
 	local integer f;
 	local string h;
 
@@ -690,71 +713,79 @@
 		sprint (@self, PRINT_HIGH, "already have test bot\n");
 		return self;
 	}
-	h = infokey (NIL, "skill");
+	h = infokey (nil, "skill");
 	f = (integer) stof (h);
 	editor.test_bot = BotConnect (0, f);
+	return self;
 }
 
 +call_test_bot
 {
-	local EditorState editor = ((Target) @self.@this).editor;
+	local EditorState *editor = ((Target *) @self.@this).editor;
 	if (editor.test_bot)
 		[editor.test_bot getPath:[Target forEntity:@self] :TRUE];
+	return self;
 }
 
 +remove_test_bot
 {
-	local EditorState editor = ((Target) @self.@this).editor;
+	local EditorState *editor = ((Target *) @self.@this).editor;
 	if (editor.test_bot)
 		[editor.test_bot disconnect];
+	return self;
 }
 
 +stop_test_bot
 {
-	local EditorState editor = ((Target) @self.@this).editor;
+	local EditorState *editor = ((Target *) @self.@this).editor;
 	if (editor.test_bot) {
 		[editor.test_bot targetClearAll];
-		route_table = NIL;
+		route_table = nil;
 	}
+	return self;
 }
 
 +teleport_bot
 {
-	local EditorState editor = ((Target) @self.@this).editor;
-	local Waypoint way = [editor current_way];
+	local EditorState *editor = ((Target *) @self.@this).editor;
+	local Waypoint *way = [editor current_way];
 	if (way && editor.test_bot)
 		setorigin (editor.test_bot.ent, [way origin]);
 	if (!way)
 		sprint(@self, PRINT_HIGH, "select a waypoint first\n");
+	return self;
 }
 
 
 +delete_all_waypoints
 {
-	local EditorState editor = ((Target) @self.@this).editor;
+	local EditorState *editor = ((Target *) @self.@this).editor;
 	editor.prev_menu = editor.menu;
 	editor.confirm_text = "-- Delete ALL Ways --\n\nAre you sure?";
 	editor.confirm_cmd = "delete all ways";
 	[EditorState setMenu:confirm_menu];
+	return self;
 }
 
 +dump_waypoints
 {
-	local PLItem plist = [Waypoint plist];
+	local PLItem *plist = [Waypoint plist];
 	bprint (PRINT_HIGH, [plist write]);
 	bprint (PRINT_HIGH, "\n");
 	[plist release];
+	return self;
 }
 
 +check_for_errors
 {
 	[Waypoint check:[Target forEntity:@self]];
+	return self;
 }
 
 +save_waypoints
 {
 	local QFile file;
-	local PLItem plist;
+	local PLItem *plist;
 
 	file = QFS_Open ("temp.way", "wt");
 	if (!file) {
@@ -766,13 +797,14 @@
 	[plist release];
 	Qclose (file);
 	sprint (@self, PRINT_HIGH, "waypoints saved to temp.way\n");
+	return self;
 }
 
 
 +confirm
 {
-	local Target player = (Target) @self.@this;
-	local EditorState editor = player.editor;
+	local Target *player = (Target *) @self.@this;
+	local EditorState *editor = player.editor;
 	switch (editor.confirm_cmd) {
 	case "link ways":
 		if (player.current_way) {
@@ -807,57 +839,59 @@
 		break;
 	case "delete all ways":
 		[Waypoint clearAll];
-		player.current_way = editor.last_way = NIL;
+		player.current_way = editor.last_way = nil;
 		break;
 	case "delete waypoint":
 		[waypoint_array removeObject:editor.last_way];
 		if (player.current_way == editor.last_way)
-			player.current_way = NIL;
-		editor.last_way = NIL;
+			player.current_way = nil;
+		editor.last_way = nil;
 		break;
 	}
 	[EditorState setMenu: editor.prev_menu];
+	return self;
 }
 
 +cancel
 {
-	local EditorState editor = ((Target) @self.@this).editor;
+	local EditorState *editor = ((Target *) @self.@this).editor;
 	[EditorState setMenu: editor.prev_menu];
+	return self;
 }
 
 
 +(integer)getHoldSelectState
 {
-	local EditorState editor = ((Target) @self.@this).editor;
+	local EditorState *editor = ((Target *) @self.@this).editor;
 	return editor.hold_select != 0;
 }
 
 +(void)toggleHoldSelectState
 {
-	local EditorState editor = ((Target) @self.@this).editor;
+	local EditorState *editor = ((Target *) @self.@this).editor;
 	editor.hold_select = !editor.hold_select;
 }
 
 +(string)getConfirmText
 {
-	local EditorState editor = ((Target) @self.@this).editor;
+	local EditorState *editor = ((Target *) @self.@this).editor;
 	return editor.confirm_text;
 }
 
-+(Waypoint)current_way
++(Waypoint *)current_way
 {
-	return ((Target) @self.@this).current_way;
+	return ((Target *) @self.@this).current_way;
 }
 
--(Waypoint)current_way
+-(Waypoint *)current_way
 {
 	return owner.current_way;
 }
 
 +(void)impulse
 {
-	local Target player = (Target) @self.@this;
-	local EditorState editor = player.editor;
+	local Target *player = (Target *) @self.@this;
+	local EditorState *editor = player.editor;
 
 	if (!editor) {
 		if (@self.impulse != 104)
@@ -874,7 +908,7 @@
 	}
 }
 
--(id)initWithOwner:(Target)owner
+-(id)initWithOwner:(Target *)owner
 {
 	if (!main_menu)
 		init_menus ();

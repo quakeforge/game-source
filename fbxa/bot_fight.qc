@@ -47,9 +47,9 @@ integer bot_fight_linker;
 /*
 weapon_range
 
-_x "sweet spot range" - try to maintain this range if possible
-_y minimum range bot can be to be effective (rl/gl) (move away)
-_z maximum range bot can be to be effective (lg/axe) (move in)
+.x "sweet spot range" - try to maintain this range if possible
+.y minimum range bot can be to be effective (rl/gl) (move away)
+.z maximum range bot can be to be effective (lg/axe) (move in)
 */
 vector (integer wep)
 weapon_range =
@@ -77,7 +77,7 @@ weapon_range =
 };
 
 @implementation Bot (Fight)
--(float)sizePlayer:(Target)targ
+-(float)sizePlayer:(Target *)targ
 {
 	local float		sz;
 	local entity e = targ.ent;
@@ -130,7 +130,7 @@ weapon_range =
 	if (waypoint_mode > WM_LOADED)
 		return;
 
-	avoid = NIL;
+	avoid = nil;
 
 	if (ent.enemy) {
 		v = ent.origin - realorigin (ent.enemy);
@@ -142,7 +142,7 @@ weapon_range =
 	}
 	avdist = 256;
 
-	foe = find (NIL, classname, "grenade");
+	foe = find (nil, classname, "grenade");
 	while (foe) {
 		flen = vlen (foe.origin - ent.origin);
 		if (flen < avdist) {
@@ -152,7 +152,7 @@ weapon_range =
 		foe = find (foe, classname, "grenade");
 	}
 	if (!avoid) {
-		foe = find (NIL, classname, "missile");
+		foe = find (nil, classname, "missile");
 		while (foe) {
 			if (foe.owner != ent) {
 				flen = vlen (foe.origin - ent.origin);
@@ -164,7 +164,7 @@ weapon_range =
 			foe = find(foe, classname, "missile");
 		}
 		if (!avoid) {
-			foe = find(NIL, classname, "spike");
+			foe = find(nil, classname, "spike");
 			while (foe) {
 				if (foe.owner != ent) {
 					flen = vlen(foe.origin - ent.origin);
@@ -185,7 +185,7 @@ weapon_range =
 					if (foe.health > 0) {
 						flen = vlen (foe.origin - ent.origin);
 						if (flen < foedist) {
-							local Target targ = [Target forEntity:foe];
+							local Target *targ = [Target forEntity:foe];
 							tsz = [self sizePlayer:targ];
 							if (tsz < foesz) {
 								if ([self canSee:targ]) {
@@ -202,7 +202,7 @@ weapon_range =
 		}		
 	} else {
 		local integer i = 0;
-		local Bot foe;
+		local Bot *foe;
 		for (i = 0; i < 32; i++) {
 			if (!(foe = players[i])) continue;
 			if (foe == self) continue;
@@ -271,7 +271,7 @@ Pick a weapon based on range / ammo
 		}
 
 		v = weapon_range (flag);
-		if (brange < v_y || brange > v_z)
+		if (brange < v.y || brange > v.z)
 			it &= ~flag;
 		else {
 			if (pulse)
@@ -286,10 +286,10 @@ Pick a weapon based on range / ammo
 	// quick little function to stop making him shoot the wrong way ! Argh
 	local float g;
 
-	g = angcomp (ent.v_angle_x, b_angle.x);
+	g = angcomp (ent.v_angle.x, b_angle.x);
 	if (fabs (g) > 30)
 		return; // argh, too far away
-	g = angcomp (ent.v_angle_y, b_angle.y);
+	g = angcomp (ent.v_angle.y, b_angle.y);
 	if (fabs (g) > 30)
 		return; // not again!
 	buttons |= 1;
@@ -307,13 +307,13 @@ attacking an enemy.
 	local vector	v, v1 = '0 0 0', v2 = '0 0 0', org;
 
 	if (ent.enemy.health <= 0) {
-		ent.enemy = NIL;
+		ent.enemy = nil;
 		return;
 	} else if (!ent.enemy.takedamage) {
-		ent.enemy = NIL;
+		ent.enemy = nil;
 		return;
 	} else if (![self canSee:[Target forEntity:ent.enemy]]) {
-		ent.enemy = NIL;
+		ent.enemy = nil;
 		return;
 	}
 
@@ -323,10 +323,10 @@ attacking an enemy.
 	// decide if I should shoot
 	foedist = vlen (org - ent.origin);
 	v = weapon_range ((integer)ent.weapon);
-	if (foedist > v_y && foedist < v_z) {
+	if (foedist > v.y && foedist < v.z) {
 		traceline (ent.origin + ent.view_ofs,
-				   ent.origin + ent.view_ofs + v_forward * v_z, FALSE, ent);
-		if (vlen(trace_endpos - (ent.origin + ent.view_ofs)) >= v_y) {
+				   ent.origin + ent.view_ofs + v_forward * v.z, FALSE, ent);
+		if (vlen(trace_endpos - (ent.origin + ent.view_ofs)) >= v.y) {
 			// try to avoid shooting teammates
 			if (trace_ent.classname == "player")
 				if ((trace_ent.team == ent.team && teamplay) || (coop))
@@ -355,19 +355,19 @@ attacking an enemy.
 				v = avoid.velocity;
 			else
 				v = normalize (avoid.origin - ent.origin);
-			v1_x = v_y;
-			v1_y = v_y * -1;
-			v2_x = v_y;
-			v2_y = v_y * -1;
+			v1.x = v.y;
+			v1.y = v.y * -1;
+			v2.x = v.y;
+			v2.y = v.y * -1;
 			foedist = vlen (avoid.origin - (ent.origin + v1));
 			if (foedist < vlen (avoid.origin - (ent.origin + v2)))
 				[self walkmove:v2];
 			else
 				[self walkmove:v1];
 		} else if (!(ent.enemy.flags & FL_MONSTER)) {
-			if (foedist + 32 <  v_x)
+			if (foedist + 32 <  v.x)
 				[self walkmove:ent.origin - org];
-			else if (foedist - 32 >  v_x)
+			else if (foedist - 32 >  v.x)
 				[self walkmove:org - ent.origin];
 			else if (wallhug)
 				[self walkmove:v_right];

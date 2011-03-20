@@ -57,9 +57,9 @@ checks to see if an entity is on the bot's stack
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(integer)targetOnstack:(Target)scot
+-(integer)targetOnstack:(Target *)scot
 {
-	if (scot == NIL)
+	if (scot == nil)
 		return FALSE;
 	else if (targets[0] == scot)
 		return 1;
@@ -83,9 +83,9 @@ LIFO stack, this will be the bot's new targets[0]
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)targetAdd:(Target)e
+-(void)targetAdd:(Target *)e
 {
-	if (e == NIL)
+	if (e == nil)
 		return;
 	if ([self targetOnstack:e])
 		return;
@@ -110,26 +110,26 @@ is gone too.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)targetDrop:(Target)e
+-(void)targetDrop:(Target *)e
 {
 	switch ([self targetOnstack:e]) {
 	case 1:
 		targets[0] = targets[1];
 		targets[1] = targets[2];
 		targets[2] = targets[3];
-		targets[3] = NIL;
+		targets[3] = nil;
 		break;
 	case 2:
 		targets[0] = targets[2];
 		targets[1] = targets[3];
-		targets[2] = targets[3] = NIL;
+		targets[2] = targets[3] = nil;
 		break;
 	case 3:
 		targets[0] = targets[3];
-		targets[1] = targets[2] = targets[3] = NIL;
+		targets[1] = targets[2] = targets[3] = nil;
 		break;
 	case 4:
-		targets[0] = targets[1] = targets[2] = targets[3] = NIL;
+		targets[0] = targets[1] = targets[2] = targets[3] = nil;
 	default:
 		break;
 	}
@@ -138,7 +138,7 @@ is gone too.
 
 -(void)targetClearAll
 {
-	targets[0] = targets[1] = targets[2] = targets[3] = NIL;
+	targets[0] = targets[1] = targets[2] = targets[3] = nil;
 }
 
 /*
@@ -150,18 +150,18 @@ Bot has lost its target.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)lost:(Target)targ :(integer)success
+-(void)lost:(Target *)targ :(integer)success
 {
 	if (!targ)
 		return;
 
 	[self targetDrop:targ];
 	if ([targ classname] == "waypoint")
-		[(Waypoint)targ clearRouteForBot:self];
+		[(Waypoint *)targ clearRouteForBot:self];
 
 	// find a new route
 	if (!success) {
-		targets[0] = targets[1] = targets[2] = targets[3] = NIL;
+		targets[0] = targets[1] = targets[2] = targets[3] = nil;
 		last_way = [self findWaypoint:current_way];
 		[Waypoint clearMyRoute:self];
 		b_aiflags = 0;
@@ -172,7 +172,7 @@ Bot has lost its target.
                 
 		if (targ.ent.flags & FL_ITEM) {
 			if (!targ.ent.model)
-				targ._last = NIL;
+				targ._last = nil;
 			else
 				targ._last = self;
 		}
@@ -192,19 +192,19 @@ removed.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)checkLost:(Target)targ
+-(void)checkLost:(Target *)targ
 {
 	local vector dist;
 
-	if (targ == NIL)
+	if (targ == nil)
 		return;
 
 	dist = [targ realorigin] - ent.origin;
-	dist_z = 0;
+	dist.z = 0;
 
 	// waypoints and items are lost if you get close enough to them
 	if ([targ isKindOfClass:[Waypoint class]]) {
-		local Waypoint way = (Waypoint) targ;
+		local Waypoint *way = (Waypoint *) targ;
 		if ([way classname] == "waypoint") {
 			if (!(b_aiflags & (AI_SNIPER | AI_AMBUSH))) {
 				if (b_aiflags & AI_RIDE_TRAIN) {
@@ -222,7 +222,7 @@ removed.
 				[self lost:way :TRUE];
 		}
 	} else if ([targ isKindOfClass:[Bot class]]) {
-		local Bot bot = (Bot) targ;
+		local Bot *bot = (Bot *) targ;
 		if (bot.ent.health <= 0)
 			[self lost:bot :TRUE];
 		else if ((coop) || (teamplay && bot.ent.team == ent.team)) {
@@ -258,7 +258,7 @@ removed.
 			if (targ.ent.frame) {
 				[self lost:targ :TRUE];
 				if (ent.enemy == targ.ent)
-					ent.enemy = NIL;
+					ent.enemy = nil;
 	//			if (target[0])
 	//				[self getPath:target[0] :TRUE];
 			}
@@ -275,9 +275,9 @@ removed.
 	}
 	// lose any target way above the bot's head
 	// FIXME: if the bot can fly in your mod..
-	if ((targ.ent.origin_z - ent.origin_z) > 64) {
+	if ((targ.ent.origin.z - ent.origin.z) > 64) {
 		dist = targ.ent.origin - ent.origin;
-		dist_z = 0;
+		dist.z = 0;
 		if (vlen (dist) < 32)
 			if (ent.flags & FL_ONGROUND)
 				if (![self recognizePlat:FALSE])
@@ -328,7 +328,7 @@ based b_aiflags.
 				}
 			} else {
 				if (newt.targetname) {
-					newt = find (NIL, target, newt.targetname);
+					newt = find (nil, target, newt.targetname);
 					if (newt.health > 0) {
 						ent.enemy = newt;
 						[self weaponSwitch:1];
@@ -355,7 +355,7 @@ based b_aiflags.
 			b_aiflags &= ~AI_SUPER_JUMP;
 			if ([self canRJ]) {
 				[self jump];
-				ent.v_angle_x = b_angle.x = 80;
+				ent.v_angle.x = b_angle.x = 80;
 				buttons |= 1;
 			} else
 				[self lost: targets[0] :FALSE];
@@ -378,7 +378,7 @@ based b_aiflags.
 		} else {
 			if ([self recognizePlat:FALSE]) {
 				v = realorigin (trace_ent) + trace_ent.origin - ent.origin;
-				v_z = 0;
+				v.z = 0;
 				if (vlen (v) < 24)
 					keys &= ~KEY_MOVE;
 				else {
@@ -392,7 +392,7 @@ based b_aiflags.
 		newt = [self findThing:"plat"];
 		if (newt.state != 1) {
 			v =  ent.origin - realorigin (newt);
-			v_z = 0;
+			v.z = 0;
 			if (vlen (v) > 96)
 				keys &= ~KEY_MOVE;
 			else
@@ -434,7 +434,7 @@ confused
 -(void)path
 {
 
-	local Waypoint jj;
+	local Waypoint *jj;
 	local entity e, tele;
 
 	[self checkLost:targets[0]];
@@ -480,12 +480,12 @@ confused
 				// linked doors fix
 				if (trace_ent.owner)
 					trace_ent = trace_ent.owner;
-				if ((trace_ent.health > 0) && (ent.enemy == NIL)) {
+				if ((trace_ent.health > 0) && (ent.enemy == nil)) {
 					ent.enemy = trace_ent;
 					[self weaponSwitch:1];
 					b_aiflags |= AI_BLIND; // nick knack paddy hack
 				} else if (trace_ent.targetname) {
-					e = find (NIL, target, trace_ent.targetname);
+					e = find (nil, target, trace_ent.targetname);
 					if (e.health > 0) {
 						ent.enemy = e;
 						[self weaponSwitch:1];
@@ -525,7 +525,7 @@ the bot finds things it wants to kill/grab.
 // 50 - 90 bot will hunt these as vital items
 
 // *!* Make sure you add code to checkLost to remove the target *!*
--(integer)priority:(Bot)bot
+-(integer)priority:(Bot *)bot
 {
 	local integer p;
 
@@ -551,7 +551,7 @@ the bot finds things it wants to kill/grab.
 	return p;
 }
 
--(integer)priorityForThing:(Target)thing
+-(integer)priorityForThing:(Target *)thing
 {
 	local integer p;
 	// This is the most executed function in the bot. Careful what you do here.
@@ -572,8 +572,8 @@ the bot finds things it wants to kill/grab.
 
 -(void)lookForCrap:(integer)scope
 {
-	local Target foe, best = NIL;
-	local Waypoint way;
+	local Target *foe, *best = nil;
+	local Waypoint *way;
 	local integer thatp, bestp;
 	local float radius;
 
@@ -604,7 +604,7 @@ the bot finds things it wants to kill/grab.
 		thatp = [self priorityForThing:way];
 		if (thatp)
 			if (!scope)
-				if (!sisible (ent, NIL, way.origin))
+				if (!sisible (ent, nil, way.origin))
 					thatp = 0;
 		if (thatp > bestp) {
 			bestp = thatp;
@@ -613,7 +613,7 @@ the bot finds things it wants to kill/grab.
 		way = way.chain;
 	}
 
-	if (best == NIL)
+	if (best == nil)
 		return;
 	if (![self targetOnstack:best]) {	
 		[self targetAdd:best];
@@ -665,7 +665,7 @@ generally making the bot look good.
 			view = normalize (view - ent.origin);
 		}
 		view = vectoangles (view);
-		view_x = view_x * -1;
+		view.x = view.x * -1;
 		b_angle = view;
 	} else if (targets[0]) {
 		view = [targets[0] realorigin];
@@ -673,7 +673,7 @@ generally making the bot look good.
 			view = view + '0 0 48';
 		view -= (ent.origin + ent.view_ofs);
 		view = vectoangles (view);
-		view_x = -view_x;
+		view.x = -view.x;
 		b_angle = view;
 	} else
 		b_angle.x = 0;
@@ -687,7 +687,7 @@ generally making the bot look good.
 			ent.v_angle.x += 360;
 		while (ent.v_angle.x > 180)
 			ent.v_angle.x -= 360;
-	} else if ((ent.enemy == NIL || ent.enemy.movetype == MOVETYPE_PUSH)
+	} else if ((ent.enemy == nil || ent.enemy.movetype == MOVETYPE_PUSH)
 			   && (targets[0] ? [targets[0] classname] != "player" : 1)) {
 		keys &= ~KEY_LOOK;
 		ent.v_angle = b_angle;
@@ -734,9 +734,9 @@ frame, the ai_time limits it's actual updating
 		keys = 0;
 		b_aiflags = 0;
 		[Waypoint clearMyRoute:self];
-		targets[0] = targets[1] = targets[2] = targets[3] = NIL;
-		ent.enemy = NIL;
-		last_way = NIL;
+		targets[0] = targets[1] = targets[2] = targets[3] = nil;
+		ent.enemy = nil;
+		last_way = nil;
 		return;
 	}
 		

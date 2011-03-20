@@ -403,9 +403,9 @@ weapon_touch
 
 void() weapon_touch =
 {
-	local	float	hadammo, best, new = NIL, old;
+	local	float	hadammo, best, new = nil, old;
 	local	entity	stemp;
-	local	float	leave = NIL;
+	local	float	leave = nil;
 	// For client weapon_switch
 	local	float	w_switch;
 	if (!(other.flags & FL_CLIENT))
@@ -1218,7 +1218,7 @@ void() Spawn_QuadCore =
 	@self.quadcore = qcore;
 	
 	qcore.nextthink = time + 999999999;
-	qcore.think = NIL;
+	qcore.think = nil;
 };
 
 /*QUAKED item_artifact_super_damage (0 .5 .8) (-16 -16 -24) (16 16 32)

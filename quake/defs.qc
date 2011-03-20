@@ -491,8 +491,6 @@ float	AS_MISSILE		= 4;
 .string		mdl;
 .vector		mangle;			// angle at start
 
-.vector		oldorigin;		// only used by secret door
-
 .float		t_length, t_width;
 
 

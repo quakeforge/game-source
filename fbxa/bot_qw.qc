@@ -77,11 +77,11 @@ ClientDisconnected(); // FrikBot
 #include "cmd.h"
 #include "editor.h"
 
-integer []bot_way_ref;
-integer []bot_move_ref;
-integer []bot_chat_ref;
-float []stagger_think_ref;
-integer []bot_fight_ref;
+integer *bot_way_ref;
+integer *bot_move_ref;
+integer *bot_chat_ref;
+float *stagger_think_ref;
+integer *bot_fight_ref;
 
 void ()
 bot_map_load =
@@ -119,7 +119,7 @@ for all variable in the bot...
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
-Bot [32] players;
+Bot *players[32];
 
 // -------globals-----
 float       real_frametime;
@@ -127,7 +127,7 @@ float		bot_count, b_options, lasttime;
 float		waypoint_mode, dump_mode; 
 float		direct_route;
 float		sv_gravity;
-Bot			route_table;
+Bot			*route_table;
 integer		busy_waypoints;
 
 float coop = 0; // hack
@@ -161,7 +161,7 @@ direct messages to the bots, it crashes quake :-(
 void (entity e)
 setspawnparms =
 {
-   if (((Bot)e.@this).ishuman)
+   if (((Bot *)e.@this).ishuman)
 	   frik_setspawnparms (e);
    else
 	   SetNewParms ();
@@ -170,7 +170,7 @@ setspawnparms =
 vector (entity e, float sped)
 aim =
 {
-   ((Bot)e.@this).missile_speed = sped;
+   ((Bot *)e.@this).missile_speed = sped;
    return frik_aim (e, sped);
 };
 
@@ -181,9 +181,9 @@ sound =
    if (samp == "items/inv3.wav")
 	   return;
    else if (e.classname == "player")
-	   ((Bot)e.@this).b_sound = time + 1;
+	   ((Bot *)e.@this).b_sound = time + 1;
    else if (other.classname == "player")
-	   ((Bot)other.@this).b_sound = time + 1;
+	   ((Bot *)other.@this).b_sound = time + 1;
 };
 
 /*
@@ -212,10 +212,10 @@ void ()
 ClientDisconnected =
 {
 	local integer cl_no = ClientNumber (@self);
-	local Bot p = NIL;
+	local Bot *p = nil;
 
 	p = players[cl_no];
-	players[cl_no] = NIL;
+	players[cl_no] = nil;
 	if (p) {
 		local entity e = p.ent;
 		local integer i;
@@ -235,7 +235,7 @@ ClientDisconnected =
 integer (entity cl)
 ClientNumber =
 {
-	local entity e = NIL;
+	local entity e = nil;
 	local integer f = -1;
 
 	do {
@@ -247,17 +247,16 @@ ClientNumber =
 	return f;
 };
 
-Bot (integer whatbot, integer whatskill)
-BotConnect =
+Bot *BotConnect (integer whatbot, integer whatskill)
 {
 	local entity cl;
-	local Bot bot;
-	local bot_data_t [] name;
+	local Bot *bot;
+	local bot_data_t *name;
 
 	cl = SV_AllocClient ();
 	if (!cl) {
 		bprint (PRINT_HIGH, "Unable to connect a bot, server is full.\n");
-		return NIL;
+		return nil;
 	}
 
 	if (whatbot)
@@ -278,14 +277,14 @@ void () BotImpulses =
 {
 	local integer f;
 	local string h;
-	local Target t = @self.@this;
+	local Target *t = @self.@this;
 
 	if (t.editor)
 		[EditorState impulse];
 
 	switch (@self.impulse) {
 	case 100:
-		h = infokey (NIL, "skill");
+		h = infokey (nil, "skill");
 		f = (integer) stof (h);
 		BotConnect (0, f);
 		break;
@@ -309,7 +308,7 @@ bot_add_f =
 	local integer c = Cmd_Argc ();
 
 	if (c == 1) {
-		skill = (integer) stof (infokey (NIL, "skill"));
+		skill = (integer) stof (infokey (nil, "skill"));
 	} else if (c == 2) {
 		skill = (integer) stof (Cmd_Argv (1));
 	} else {
@@ -364,7 +363,7 @@ signs on to the server.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
-void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning =
+void DeveloperLightning (Waypoint *e1, Waypoint *e2, integer flag)
 {
 	// used to show waypoint links for debugging
 	WriteByte (MSG_BROADCAST, 23);
@@ -383,7 +382,7 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning =
 	return [super init];
 }
 
-- (id) initWithEntity:(entity) e named:(bot_data_t [])name skill:(integer)skill
+- (id) initWithEntity:(entity) e named:(bot_data_t *)name skill:(integer)skill
 {
 	local integer cl_no = ClientNumber (e);
 	local entity uself;
@@ -391,7 +390,7 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning =
 	SV_Spawn (e);
 
 	if (!(self = [super initWithEntity:e]))
-		return NIL;
+		return nil;
 
 	[self add];
 
@@ -434,7 +433,7 @@ void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning =
 	local integer cno;
 
 	if (!(self = [super initWithEntity:e]))
-		return NIL;
+		return nil;
 
    	cno = (integer)e.colormap - 1;
 	b_clientno = cno;
@@ -521,7 +520,7 @@ BotFrame =
 	local string h;
 	local integer i;
 	
-	h = infokey (NIL, "bot_options");
+	h = infokey (nil, "bot_options");
 	b_options = stof (h);
 	
 	// for the sake of speed

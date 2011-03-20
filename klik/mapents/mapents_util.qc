@@ -131,9 +131,9 @@ float() util_use_targets = {
 	if (self.count > 0) {
 		self.count--;
 		if (!self.count) {
-			self.targetname = NIL;
-			self.target = NIL;
-			self.killtarget = NIL;
+			self.targetname = nil;
+			self.target = nil;
+			self.killtarget = nil;
 
 			self.use = NOTHING_function;
 			self.touch = NOTHING_function;

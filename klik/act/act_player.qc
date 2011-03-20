@@ -686,8 +686,8 @@ player_takeitem =
 	local float eid;
 
 	nitem = 0;
-	str1 = NIL;
-	str2 = NIL;
+	str1 = nil;
+	str2 = nil;
 
 	while ((eid = equip_iter (other)) != -1) {
 		if (equip_query (self, eid))
@@ -714,7 +714,7 @@ player_takeitem =
 			self.armortype = other.armortype;
 
 			_item_xprint_strs (nitem, str1, str2);
-			str2 = NIL;
+			str2 = nil;
 			if (self.armortype >= 0.8)
 				str1 = "strong armor";
 			else if (self.armortype >= 0.6)

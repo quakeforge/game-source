@@ -43,7 +43,7 @@ this notice in its entirety.
 #include "libfrikbot.h"
 #include "Array.h"
 
-bot_data_t [32] bot_data = {
+bot_data_t bot_data[32] = {
 	{"Vincent",   11,  0},
 	{"Bishop",     1,  3},
 	{"Nomad",     13,  2},
@@ -78,7 +78,7 @@ bot_data_t [32] bot_data = {
 	{"Mercury",   10,  5},
 };
 
-Array bot_array;
+Array *bot_array;
 
 @implementation Bot (Misc)
 /*
@@ -86,31 +86,31 @@ BotName
 
 Sets bot's name and colors
 */
-+(bot_data_t [])name:(integer)r
++(bot_data_t *)name:(integer)r
 {
 	if (r < 0 || r >= 32)
-		return NIL;
+		return nil;
 	return &bot_data[r];
 }
 
-+(bot_data_t [])randomName
++(bot_data_t *)randomName
 {
 	local integer test;
-	local bot_data_t [] h;
+	local bot_data_t *h;
 	local entity t;
 
 	while (1) {
 		test = (integer) (32 * random ());
 		h = [Bot name:test];
-		t = find (NIL, netname, h.name);
-		if (t == NIL)
+		t = find (nil, netname, h.name);
+		if (t == nil)
 			return h;
 	}
 }
 
 +(void)kick
 {
-	local Bot ty;
+	local Bot *ty;
 
 	if ([bot_array count]) {
 		ty = [bot_array objectAtIndex:0];
@@ -141,10 +141,10 @@ is the entity in the bot's field of view
 	yawn = (yawn + targ.view_ofs) - (ent.origin + ent.view_ofs);
 	yawn = normalize (yawn);
 	yawn = vectoangles (yawn);
-	g = angcomp (ent.v_angle_x, yawn_x);
+	g = angcomp (ent.v_angle.x, yawn.x);
 	if (fabs (g) > 45)
 		return FALSE;
-	g = angcomp (ent.v_angle_y, yawn_y);
+	g = angcomp (ent.v_angle.y, yawn.y);
 	if (fabs (g) > 60)
 		return FALSE;
 	return TRUE;
@@ -183,6 +183,7 @@ sisible =
 		return TRUE;
 	else if (trace_fraction == 1)
 		return TRUE;
+	return FALSE;
 };
 
 /*

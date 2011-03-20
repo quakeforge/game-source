@@ -177,6 +177,7 @@ float()	WizardAttackFinished =
 		self.attack_state = AS_SLIDING;
 		self.think = wiz_side1;
 	}
+	return 0;
 };
 
 /*

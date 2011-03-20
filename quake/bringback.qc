@@ -51,7 +51,7 @@
 		if (random() < 0.5)
 		{
 			//Not PO'd anymore.
-			self.enemy = NIL;
+			self.enemy = nil;
 			self.th_walk();
 		}
 		else

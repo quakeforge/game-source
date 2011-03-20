@@ -259,6 +259,6 @@ ClientDisconnect =
 			" frags\n");
 
 	override_set_th_kill (self, NOTHING_function);
-	self.deathmsg1 = NIL;
+	self.deathmsg1 = nil;
 	damage (self, self, self, DAMAGE_MUSTDIE, NOTHING_function);
 };

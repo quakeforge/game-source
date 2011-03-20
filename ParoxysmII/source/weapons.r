@@ -1069,7 +1069,7 @@ W_ChangeWeapon
 void() W_ChangeWeapon =
 {
 	local float	no_ammo = 0;
-	local float selected = NIL;
+	local float selected = nil;
 
 	@self.which_ammo = 0; // Default ammo to shells for SuperShotgun
 

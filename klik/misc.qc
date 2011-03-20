@@ -33,7 +33,7 @@ safe_remove =
 {
 	e.takedamage = DAMAGE_NO;
 	e.solid = SOLID_NOT;
-	e.model = NIL;
+	e.model = nil;
 	e.modelindex = 0;
 
 	e.think = SUB_remove;

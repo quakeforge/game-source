@@ -213,6 +213,7 @@ FindIntermission =
 		return spot;
 	
 	objerror ("FindIntermission: no spot");
+	return nil;		//FIXME need no return
 };
 
 void ()
@@ -488,6 +489,7 @@ ValidateUser =
 
 	return true;
 */
+	return 1;
 };
 
 /*

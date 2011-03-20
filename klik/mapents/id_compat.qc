@@ -319,7 +319,7 @@ trigger_counter =
 {
 	util_map_entity_init ();
 
-	self.model = NIL;
+	self.model = nil;
 	self.modelindex = 0;
 
 	if (!self.count)

@@ -5,7 +5,7 @@ SRC=	buttons.r builtins.r client.r combat.r defs.r doors.r dynlight.r \
 
 HEADERS = client.rh paroxysm.rh config.rh
 
-RFLAGS += -DQUAKEWORLD -Wall -Werror -g
+RFLAGS += -DQUAKEWORLD -Wall -Werror -g -Cvector-components
 QFCC = qfcc
 
 INSTALLDIR = $(HOME)/.quake/paroxysm/

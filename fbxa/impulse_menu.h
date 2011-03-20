@@ -49,9 +49,9 @@
 
 @interface ImpulseListMenu: ImpulseMenu
 {
-	MenuItem [10]items;
+	MenuItem *items[10];
 }
-- (void) addItem:(MenuItem)item;
+- (void) addItem:(MenuItem *)item;
 @end
 
 #endif//__impulse_menu_h

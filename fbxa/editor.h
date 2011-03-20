@@ -8,16 +8,16 @@
 
 @interface EditorState: Object
 {
-	ImpulseMenu menu;
-	ImpulseMenu prev_menu;
+	ImpulseMenu *menu;
+	ImpulseMenu *prev_menu;
 	float menu_time;
 	string confirm_text;
 	string confirm_cmd;
 
-	Target owner;
-	Waypoint last_way;
+	Target *owner;
+	Waypoint *last_way;
 	integer hold_select;
-	Bot test_bot;
+	Bot *test_bot;
 	integer edit_mode;
 }
 +main_menu;
@@ -62,11 +62,11 @@
 +(integer)getHoldSelectState;
 +(void)toggleHoldSelectState;
 +(string)getConfirmText;
-+(Waypoint)current_way;
--(Waypoint)current_way;
++(Waypoint *)current_way;
+-(Waypoint *)current_way;
 
 +(void)impulse;
--(id)initWithOwner:(Target)owner;
+-(id)initWithOwner:(Target *)owner;
 -(void)refresh;
 @end
 

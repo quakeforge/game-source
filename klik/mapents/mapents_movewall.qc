@@ -239,8 +239,8 @@ float(float d) _movewall_door_takedamage = {
 				/* Use target if you need it to go more
 				   than once */
 				self.message = "";
-				self.noise1 = NIL;
-				self.noise2 = NIL;
+				self.noise1 = nil;
+				self.noise2 = nil;
 			}
 
 			self = self.enemy;
@@ -277,8 +277,8 @@ void() _movewall_door_touch = {
 				/* Use target if you need it to go more
 				   than once */
 				self.message = "";
-				self.noise1 = NIL;
-				self.noise2 = NIL;
+				self.noise1 = nil;
+				self.noise2 = nil;
 			}
 			self = self.enemy;
 		}
@@ -337,12 +337,12 @@ void() _door_link = {
 
 		tail.message = "";
 
-		tail.noise1 = NIL;
-		tail.noise2 = NIL;
-		tail.noise3 = NIL;
-		tail.noise4 = NIL;
-		tail.noise5 = NIL;
-		tail.noise6 = NIL;
+		tail.noise1 = nil;
+		tail.noise2 = nil;
+		tail.noise3 = nil;
+		tail.noise4 = nil;
+		tail.noise5 = nil;
+		tail.noise6 = nil;
 	}
 
 	tail.enemy = world;
@@ -730,8 +730,8 @@ void() _movewall_secret_use = {
 void() _movewall_secret_think = {
 	if (floor (self.state) != self.state) {
 		if (self.count == 0 && self.state == 0.5) {
-			self.message = NIL;
-			self.noise2 = NIL;
+			self.message = nil;
+			self.noise2 = nil;
 
 			if (!util_use_targets ()) {
 				self.velocity = '0 0 0';

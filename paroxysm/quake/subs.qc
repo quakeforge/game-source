@@ -22,6 +22,7 @@ vector() SetMovedir =
 	}
 	
 	self.angles = '0 0 0';
+	return nil;
 };
 
 /*

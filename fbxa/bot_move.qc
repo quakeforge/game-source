@@ -79,17 +79,17 @@ void (vector start, vector mins, vector maxs, vector end, float type,
 		// use mouse emulation
 		anglespeed = 1.5 * real_frametime;
 		// 1.5 is the default cl_anglespeedkey & bot always has +speed
-		ent.v_angle_y += anglespeed * key_state (keys, KEY_LOOKLEFT) * 140;
+		ent.v_angle.y += anglespeed * key_state (keys, KEY_LOOKLEFT) * 140;
 		// 140 is default cl_yawspeed
-		ent.v_angle_y -= anglespeed * key_state (keys, KEY_LOOKRIGHT) * 140;
+		ent.v_angle.y -= anglespeed * key_state (keys, KEY_LOOKRIGHT) * 140;
 		// 140 is default cl_yawspeed
-		ent.v_angle_x -= anglespeed * key_state (keys, KEY_LOOKUP) * 150;
+		ent.v_angle.x -= anglespeed * key_state (keys, KEY_LOOKUP) * 150;
 		// 150 is default cl_pitchspeed
-		ent.v_angle_x += anglespeed * key_state (keys, KEY_LOOKDOWN) * 150;
+		ent.v_angle.x += anglespeed * key_state (keys, KEY_LOOKDOWN) * 150;
 		// 150 is default cl_pitchspeed
 	} else {
-		view.x = angcomp (b_angle.x, ent.v_angle_x);
-		view.y = angcomp (b_angle.y, ent.v_angle_y);
+		view.x = angcomp (b_angle.x, ent.v_angle.x);
+		view.y = angcomp (b_angle.y, ent.v_angle.y);
 		view.z = 0;
 		if (vlen (view) > 30) {
 			mouse_emu += (view * 30);
@@ -172,10 +172,10 @@ void (vector start, vector mins, vector maxs, vector end, float type,
 	if (ret && flag) {
 		// afect bot movement too
 		if (keys & KEY_MOVEUP) {
-			if (trace_ent.velocity_z > 0)
+			if (trace_ent.velocity.z > 0)
 				keys &= ~KEY_MOVE;
 		} else if (keys & KEY_MOVEDOWN) {
-			if (trace_ent.velocity_z < 0)
+			if (trace_ent.velocity.z < 0)
 				keys &= ~KEY_MOVE;
 		}
 	}
@@ -189,13 +189,13 @@ void (vector start, vector mins, vector maxs, vector end, float type,
 	local vector keydir;
 
 	outkeys = 0;
-	if (sdir_x || sdir_y) {
+	if (sdir.x || sdir.y) {
 		// Everything is tested against 60 degrees, this allows the bot to
 		// overlap the keys 30 degrees on each diagonal 45 degrees might look
 		// more realistic
 
  		keydir = vectoangles (sdir);
-		tang = angcomp (keydir_y, ent.v_angle_y);
+		tang = angcomp (keydir.y, ent.v_angle.y);
 		if ((tang <= 150) && (tang >= 30))
 			outkeys |= KEY_MOVELEFT;
 		else if ((tang >= -150) && (tang <= -30))
@@ -205,9 +205,9 @@ void (vector start, vector mins, vector maxs, vector end, float type,
 		else if (fabs(tang) >= 120)
 			outkeys |= KEY_MOVEBACK;
 	}
-	if (sdir_z > 0.7)
+	if (sdir.z > 0.7)
 		outkeys |= KEY_MOVEUP;
-	else if (sdir_z < 0.7)
+	else if (sdir.z < 0.7)
 		outkeys |= KEY_MOVEDOWN;
 	return outkeys;
 }
@@ -234,7 +234,7 @@ manuever around.
 	if (b_aiflags & AI_PRECISION)
 		return;
 
-	disway_z = 0;
+	disway.z = 0;
 
 	if (targets[0]) {
 		if (b_aiflags & AI_OBSTRUCTED) {
@@ -246,20 +246,20 @@ manuever around.
 		}
 		org = [targets[0] realorigin];
 		obs_dir = whichway;
-		disway_x = whichway_y * -1;
-		disway_y = whichway_x;
+		disway.x = whichway.y * -1;
+		disway.y = whichway.x;
 		dist = vlen (org - (ent.origin + disway));
-		disway_x = whichway_y;
-		disway_y = whichway_x * -1;
+		disway.x = whichway.y;
+		disway.y = whichway.x * -1;
 		wallhug = (vlen (org - (ent.origin + disway)) > dist);
 		b_aiflags |= AI_OBSTRUCTED;
 		
 	} else {
-		disway_x = whichway_y * -1;
-		disway_y = whichway_x;
+		disway.x = whichway.y * -1;
+		disway.y = whichway.x;
 		dist = vlen (disway - obs_dir);
-		disway_x = whichway_y;
-		disway_y = whichway_x * -1;
+		disway.x = whichway.y;
+		disway.y = whichway.x * -1;
 		wallhug = (vlen (disway - obs_dir) < dist);
 		obs_dir = whichway;
 
@@ -285,15 +285,15 @@ Also responsible for jumping gaps.
 		return;
 
 	ang = normalize(ent.velocity);
-	ang_z = 0;
+	ang.z = 0;
 	start = ent.origin + ang * 32; // ahem
-	start_z = ent.origin_z + ent.maxs_z;
+	start.z = ent.origin.z + ent.maxs.z;
 	stop = start;
-	stop_z = ent.origin_z + ent.mins_z;
+	stop.z = ent.origin.z + ent.mins.z;
 	traceline (start, stop - '0 0 256', TRUE, ent);
 	if (trace_allsolid || trace_startsolid)
 		return;
-	hgt = trace_endpos_z - stop_z;
+	hgt = trace_endpos.z - stop.z;
 
 	if (hgt > 18) {
 		[self jump];
@@ -309,14 +309,14 @@ Also responsible for jumping gaps.
 	test = vlen(trace_endpos - start);
 	if (test <= 20)
 		return; // it's a walkable gap, do nothing
-	ang_x = ent.velocity_y * -1;
-	ang_y = ent.velocity_x;
+	ang.x = ent.velocity.y * -1;
+	ang.y = ent.velocity.x;
 	ang = normalize (ang);
 	traceline (start - (ang * 10), start + (ang * 10), TRUE, ent);
 	if ((trace_fraction != 1) || trace_startsolid)
 		return; // gap is only 20 wide, walkable	
 	ang = ent.velocity;
-	ang_z = 0;
+	ang.z = 0;
 	dist = ((540 / sv_gravity) * vlen (ang))/* + 32*/;
 	if (test > dist) {
 		// I can't make it
@@ -327,7 +327,7 @@ Also responsible for jumping gaps.
 		} else {
 			if (targets[0]) {
 				stop = [targets[0] realorigin];
-				if ((stop_z - ent.origin_z) < -32)
+				if ((stop.z - ent.origin.z) < -32)
 					return; // safe to fall
 			}
 			[self obstructed: ang :FALSE];
@@ -345,7 +345,7 @@ Also responsible for jumping gaps.
 			} else {
 				if (targets[0]) {
 					stop = [targets[0] realorigin];
-					if ((stop_z - ent.origin_z) < -32)
+					if ((stop.z - ent.origin.z) < -32)
 						return; // safe to fall
 				}
 				[self obstructed: ang :FALSE];
@@ -372,7 +372,7 @@ Also responsible for jumping gaps.
 	if (hgt < -18) {
 		if (targets[0]) {
 			stop = [targets[0] realorigin];
-			if ((stop_z - ent.origin_z) < -32)
+			if ((stop.z - ent.origin.z) < -32)
 				return; // safe to fall
 		}
 		[self jump];
@@ -420,7 +420,7 @@ I have no idea how well it will work
 			way.x = obs_dir.y;
 			way.y = obs_dir.x * -1;
 		}
-		way_z = 0;
+		way.z = 0;
 		keys &= ~KEY_MOVE;
 		keys |= [self keysForDir: way];
 	}
@@ -440,7 +440,7 @@ blah
 	local vector way;
 	local float g;
 
-	if (targets[0] == NIL) {
+	if (targets[0] == nil) {
 		makevectors(ent.v_angle);
 		[self walkmove: v_forward];
 		return;
@@ -459,10 +459,10 @@ blah
 	[self recognizePlat: TRUE];
 
 	if (b_aiflags & AI_PRECISION) {
-		g = angcomp (ent.v_angle_x, b_angle.x);
+		g = angcomp (ent.v_angle.x, b_angle.x);
 		if (fabs (g) > 10)
 			keys &= ~KEY_MOVE;
-		g = angcomp (ent.v_angle_y, b_angle.y);
+		g = angcomp (ent.v_angle.y, b_angle.y);
 		if (fabs(g) > 10)
 			keys &= ~KEY_MOVE;
 	}
@@ -506,14 +506,14 @@ own waypoints.
 		loopcount--;
 		org = ent.origin + ent.view_ofs;
 		ang = ent.angles;
-		ang_y = frik_anglemod (ang_y - 90 + (180 * random ()));
-		ang_x = 0; // avoid upward sloping
+		ang.y = frik_anglemod (ang.y - 90 + (180 * random ()));
+		ang.x = 0; // avoid upward sloping
 		makevectors (ang);
 		traceline (org, org + v_forward * 2300, TRUE, ent);
 		if (trace_fraction != 1) {
 			org1 = trace_endpos;
 			ang = normalize (trace_plane_normal);
-			ang_z = 0; // avoid upward sloping
+			ang.z = 0; // avoid upward sloping
 			traceline (org1, org1 + (ang * 2300), TRUE, ent);
 			if ((trace_fraction != 1) && (vlen(trace_endpos - org1) >= 64)) {
 				org = trace_endpos;
@@ -530,6 +530,6 @@ own waypoints.
 			}
 		}
 	}
-	b_angle.y = ent.v_angle_y + 10;
+	b_angle.y = ent.v_angle.y + 10;
 }
 @end

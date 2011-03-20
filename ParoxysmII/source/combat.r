@@ -83,7 +83,7 @@ void (entity targ, entity attacker) Killed =
 	ClientObituary (@self, attacker);
 	
 	@self.takedamage = DAMAGE_NO;
-	@self.touch = NIL;
+	@self.touch = nil;
 	@self.effects = 0;
 
 /*SERVER

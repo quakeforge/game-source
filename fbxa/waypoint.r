@@ -50,9 +50,9 @@ this notice in its entirety.
 #include "string.h"
 #include "PropertyList.h"
 
-Array waypoint_array;
+Array *waypoint_array;
 @static entity waypoint_thinker;
-@static List waypoint_queue;
+@static List *waypoint_queue;
 
 @static void () waypoint_init =
 {
@@ -79,7 +79,7 @@ Array waypoint_array;
 {
 	if (!waypoint_array)
 		waypoint_init ();
-	return [super initWithEntity:NIL];
+	return [super initWithEntity:nil];
 }
 
 -(id)initAt:(vector)org
@@ -93,13 +93,13 @@ Array waypoint_array;
 	return self;
 }
 
--(id)initAt:(vector)org linkedTo:(integer[])link flags:(integer)flag
+-(id)initAt:(vector)org linkedTo:(integer*)link flags:(integer)flag
 {
 	self = [self initAt:org];
-	links[0] = (Waypoint) link[0];
-	links[1] = (Waypoint) link[1];
-	links[2] = (Waypoint) link[2];
-	links[3] = (Waypoint) link[3];
+	links[0] = (Waypoint *) link[0];
+	links[1] = (Waypoint *) link[1];
+	links[2] = (Waypoint *) link[2];
+	links[3] = (Waypoint *) link[3];
 	flags = flag;
 	return self;
 }
@@ -108,6 +108,7 @@ Array waypoint_array;
 {
 	[self initAt:ent.origin];
 	//FIXME do entity based init
+	return self;
 }
 
 -(void)dealloc
@@ -136,10 +137,10 @@ Array waypoint_array;
 
 -(void)clearLinks
 {
-	links[0] = links[1] = links[2] = links[3] = NIL;
+	links[0] = links[1] = links[2] = links[3] = nil;
 }
 
--(integer)isLinkedTo:(Waypoint)way
+-(integer)isLinkedTo:(Waypoint *)way
 {
 	local integer i;
 
@@ -156,7 +157,7 @@ Array waypoint_array;
 	return 0;
 }
 
--(integer)linkWay:(Waypoint)way
+-(integer)linkWay:(Waypoint *)way
 {
 	local integer i;
 
@@ -175,7 +176,7 @@ Array waypoint_array;
 }
 
 // Link Ways part 2, used only for teleporters
--(integer)teleLinkWay:(Waypoint)way
+-(integer)teleLinkWay:(Waypoint *)way
 {
 	local integer i;
 
@@ -194,7 +195,7 @@ Array waypoint_array;
 	return 0;
 }
 
--(void)unlinkWay:(Waypoint)way
+-(void)unlinkWay:(Waypoint *)way
 {
 	local integer i;
 
@@ -206,7 +207,7 @@ Array waypoint_array;
 	for (i = 0; i < 4; i++) {
 		if (links[i] == way) {
 			flags &= ~(AI_TELELINK_1 << i);
-			links[i] = NIL;
+			links[i] = nil;
 		}
 	}
 }
@@ -222,7 +223,7 @@ Waypoint Loading from file
 +(void)loadFile:(string)path
 {
 	local QFile file;
-	local PLItem plist;
+	local PLItem *plist;
 	local string plist_data;
 	local integer i, count;
 
@@ -238,26 +239,26 @@ Waypoint Loading from file
 
 	[Waypoint clearAll];
 
-	count = [(PLArray)plist numObjects];
+	count = [(PLArray *)plist numObjects];
 	dprint (sprintf ("%i waypoints\n", count));
 	for (i = 0; i < count; i++) {
-		local PLDictionary way = (PLDictionary) [(PLArray) plist getObjectAtIndex:i];
-		local PLString s = (PLString) [way getObjectForKey:"origin"];
+		local PLDictionary *way = (PLDictionary *) [(PLArray *) plist getObjectAtIndex:i];
+		local PLString *s = (PLString *) [way getObjectForKey:"origin"];
 		local vector org = stov (sprintf ("'%s'", [s string]));
-		local PLArray links = (PLArray) [way getObjectForKey:"link"];
+		local PLArray *links = (PLArray *) [way getObjectForKey:"link"];
 		//FIXME compiler/vm "bug" makes passing pointers to locals dangerous
 
-		s = (PLString) [way getObjectForKey:"flags"];
+		s = (PLString *) [way getObjectForKey:"flags"];
 		local integer flags = stoi ([s string]);
 
-		@static integer[4] link;
-		s = (PLString) [links getObjectAtIndex:0];
+		@static integer link[4];
+		s = (PLString *) [links getObjectAtIndex:0];
 		link[0] = stoi ([s string]);
-		s = (PLString) [links getObjectAtIndex:1];
+		s = (PLString *) [links getObjectAtIndex:1];
 		link[1] = stoi ([s string]);
-		s = (PLString) [links getObjectAtIndex:2];
+		s = (PLString *) [links getObjectAtIndex:2];
 		link[2] = stoi ([s string]);
-		s = (PLString) [links getObjectAtIndex:3];
+		s = (PLString *) [links getObjectAtIndex:3];
 		link[3] = stoi ([s string]);
 
 		[[Waypoint alloc] initAt:org linkedTo:link flags:flags];
@@ -273,10 +274,10 @@ Waypoint Loading from file
 	waypoint_init ();
 }
 
-+(Waypoint)waypointForNum:(integer)num
++(Waypoint *)waypointForNum:(integer)num
 {
 	if (!num)
-		return NIL;
+		return nil;
 	return [waypoint_array objectAtIndex:num - 1];
 }
 
@@ -326,10 +327,10 @@ Waypoint Loading from file
 	//[waypoint_array makeObjectsPerformSelector:@selector(debug)];
 }
 
--(void)plitem:(PLItem)list
+-(void)plitem:(PLItem *)list
 {
-	local PLDictionary way = (PLDictionary) [PLItem newDictionary];
-	local PLArray l = (PLArray) [PLItem newArray];
+	local PLDictionary *way = (PLDictionary *) [PLItem newDictionary];
+	local PLArray *l = (PLArray *) [PLItem newArray];
 	local integer i;
 
 	[way addKey:"origin" value:[PLItem newString:sprintf ("%g %g %g",
@@ -344,18 +345,18 @@ Waypoint Loading from file
 	}
 	[way addKey:"link" value:l];
 	[way addKey:"flags" value:[PLItem newString:itos (flags)]];
-	[(PLArray) list addObject:way];
+	[(PLArray *) list addObject:way];
 }
 
-+(PLItem) plist
++(PLItem *) plist
 {
-	local PLItem list = [PLItem newArray];
+	local PLItem *list = [PLItem newArray];
 	[waypoint_array makeObjectsPerformSelector:@selector(plitem:)
 					withObject:list];
 	return list;
 }
 
--(void) checkWay:(Target)ent
+-(void) checkWay:(Target *)ent
 {
 	local integer i;
 	for (i = 0; i < 4; i++)
@@ -372,18 +373,18 @@ Waypoint Loading from file
 				sprintf ("Waypoitn %i links to itself\n", [self id]));
 }
 
-+(void) check:(Target)ent
++(void) check:(Target *)ent
 {
 	[waypoint_array makeObjectsPerformSelector:@selector(checkWay)
 					withObject:ent];
 }
 
-+(Waypoint)find:(vector)org radius:(float)rad
++(Waypoint *)find:(vector)org radius:(float)rad
 {
 	local vector dif;
 	local float dist;
 	local integer i, count;
-	local Waypoint way = NIL, w;
+	local Waypoint *way = nil, *w;
 
 	rad = rad * rad;			// radius squared
 
@@ -423,7 +424,7 @@ Waypoint Loading from file
 {
 	if (ent) {
 		remove (ent);
-		ent = NIL;
+		ent = nil;
 		own = 0;
 	}
 }
@@ -458,7 +459,7 @@ Route & path table management
 -(void)clearRoute
 {
 	busy = FALSE;
-	enemy = NIL;
+	enemy = nil;
 	distance = -1; // not in table
 }
 
@@ -468,12 +469,12 @@ Route & path table management
 	[waypoint_array makeObjectsPerformSelector:@selector (clearRoute)];
 }
 
--(void)clearRouteForBot:(Bot)bot
+-(void)clearRouteForBot:(Bot *)bot
 {
 	bot_bits &= ~bot.b_clientflag;
 }
 
-+(void)clearMyRoute:(Bot) bot
++(void)clearMyRoute:(Bot *) bot
 {
 	[waypoint_array makeObjectsPerformSelector:@selector (clearRouteForBot:)
 					withObject:bot];
@@ -490,7 +491,7 @@ tripping the runaway loop counter
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
--(void)followLink:(Waypoint)e2 :(integer)bBit
+-(void)followLink:(Waypoint *)e2 :(integer)bBit
 {
 	local float dist;
 	
@@ -529,7 +530,7 @@ tripping the runaway loop counter
 	if (flags & AI_TRACE_TEST) {
 		for (i = 0; i < 4; i++) {
 			if (links[i]) {
-				traceline (origin, links[i].origin, TRUE, /*self*/NIL);
+				traceline (origin, links[i].origin, TRUE, /*self*/nil);
 				if (trace_fraction == 1)
 					[self followLink:links[i] :AI_TELELINK_1 << i];
 			}
@@ -554,7 +555,7 @@ tripping the runaway loop counter
 	if ((waypoint_thinker.@this = [waypoint_queue removeItemAtHead])) {
 		local id obj = waypoint_thinker.@this;
 		local IMP imp = [obj methodForSelector: @selector (waypointThink)];
-		waypoint_thinker.think = (void ()) imp;
+		waypoint_thinker.think = (void ()()) imp;
 		waypoint_thinker.nextthink = time;
 	}
 }
@@ -565,14 +566,14 @@ tripping the runaway loop counter
 		[waypoint_queue addItemAtTail: self];
 	} else {
 		local IMP imp = [self methodForSelector: @selector (waypointThink)];
-		waypoint_thinker.think = (void ()) imp;
+		waypoint_thinker.think = (void ()()) imp;
 		waypoint_thinker.nextthink = time;
 		waypoint_thinker.@this = self;
 	}
 	return self;
 }
 
--(integer)priority:(Bot)bot
+-(integer)priority:(Bot *)bot
 {
 		if (flags & AI_SNIPER)
 			return 30;
@@ -609,7 +610,7 @@ BSP/QC Waypoint loading
 
 void() waypoint =
 {	
-	local Waypoint way = [[Waypoint alloc] initFromEntity: @self];
+	local Waypoint *way = [[Waypoint alloc] initFromEntity: @self];
 };
 
 /*	create a new waypoint using frikbot style info
@@ -623,11 +624,11 @@ void() waypoint =
 */
 void(vector org, vector bit1, integer bit4, integer flargs) make_way =
 {
-	local Waypoint y = [[Waypoint alloc] initAt:org];
+	local Waypoint *y = [[Waypoint alloc] initAt:org];
 	waypoint_mode = WM_LOADED;
 	y.flags = flargs;
-	y.links[0] = (Waypoint) (integer) bit1_x;
-	y.links[1] = (Waypoint) (integer) bit1_y;
-	y.links[2] = (Waypoint) (integer) bit1_z;
-	y.links[3] = (Waypoint) (integer) bit4;
+	y.links[0] = (Waypoint *) (integer) bit1.x;
+	y.links[1] = (Waypoint *) (integer) bit1.y;
+	y.links[2] = (Waypoint *) (integer) bit1.z;
+	y.links[3] = (Waypoint *) (integer) bit4;
 };

@@ -82,7 +82,7 @@ void() _powerup_think = {
 
 		if (powerup.noise) {
 			sound(self, CHAN_AUTO, powerup.noise, 1, ATTN_NORM);
-			powerup.noise = NIL;
+			powerup.noise = nil;
 		}
 
 		powerup.air_finished += 1;
@@ -410,7 +410,7 @@ void() _ring_think = {
 
 		if (powerup.noise) {
 			sound(self, CHAN_AUTO, powerup.noise, 1, ATTN_NORM);
-			powerup.noise = NIL;
+			powerup.noise = nil;
 		}
 
 		powerup.air_finished += 1;

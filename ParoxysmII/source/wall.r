@@ -43,7 +43,7 @@ void () brik_touch =
 	if (@self.velocity == '0 0 0') {
 		@self.avelocity = '0 0 0';
 		@self.solid = SOLID_NOT;
-		@self.touch = NIL;
+		@self.touch = nil;
 		@self.think = SUB_Remove;
 		@self.nextthink = time + (2 * random());
 		return;

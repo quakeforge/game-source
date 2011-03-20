@@ -54,7 +54,7 @@ void() multi_trigger =
 		// we can't just remove (@self) here, because this is a touch function
 		// called wheil C code is looping through area links...
 
-		@self.touch = NIL;
+		@self.touch = nil;
 		@self.nextthink = time + 0.1;
 		@self.think = SUB_Remove;
 	}

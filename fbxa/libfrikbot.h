@@ -15,20 +15,20 @@ typedef struct bot_data_t bot_data_t;
 @interface Target: Entity
 {
 @public
-	Waypoint current_way;
+	Waypoint *current_way;
 	integer hold_select;
-	Target _last;
-	EditorState editor;
+	Target *_last;
+	EditorState *editor;
 }
-+(Target)forEntity:(entity)e;
++(Target *)forEntity:(entity)e;
 -(vector)realorigin;
 -(vector)origin;
--(integer)canSee:(Target)targ ignoring:(entity)ignore;
+-(integer)canSee:(Target *)targ ignoring:(entity)ignore;
 -(void)setOrigin:(vector) org;
 -(integer)recognizePlat:(integer)flag;
 -(integer)ishuman;
--(integer)priority:(Bot)bot;
--(Waypoint)findWaypoint:(Waypoint)start;
+-(integer)priority:(Bot *)bot;
+-(Waypoint *)findWaypoint:(Waypoint *)start;
 -(float)searchTime;
 -(void)setSearchTime:(float)st;
 -(string)classname;
@@ -37,7 +37,7 @@ typedef struct bot_data_t bot_data_t;
 @interface Waypoint: Target
 {
 @public
-	Waypoint [4] links;
+	Waypoint *links[4];
 	integer flags;
 	vector origin;
 
@@ -46,21 +46,21 @@ typedef struct bot_data_t bot_data_t;
 	integer bot_bits;
 	integer busy;	//???
 	float distance;
-	Waypoint enemy;
+	Waypoint *enemy;
 	float search_time;
 
-	Waypoint chain;
+	Waypoint *chain;
 }
 +(void)loadFile:(string)path;
 +(void)clearAll;
-+(Waypoint)waypointForNum:(integer)num;
++(Waypoint *)waypointForNum:(integer)num;
 +(void)fixWaypoints;
-+(PLItem)plist;
-+(void)check:(Target)ent;
++(PLItem *)plist;
++(void)check:(Target *)ent;
 
 +(void)clearRouteTable;
-+(void)clearMyRoute:(Bot) bot;
-+(Waypoint)find:(vector)org radius:(float)rad;
++(void)clearMyRoute:(Bot *) bot;
++(Waypoint *)find:(vector)org radius:(float)rad;
 
 +(void)showAll;
 +(void)hideAll;
@@ -72,22 +72,22 @@ typedef struct bot_data_t bot_data_t;
 -(id)initAt:(vector)org;
 -(id)initFromEntity:(entity)ent;
 
--(integer)isLinkedTo:(Waypoint)way;
--(integer)linkWay:(Waypoint)way;
--(integer)teleLinkWay:(Waypoint)way;
--(void)unlinkWay:(Waypoint)way;
+-(integer)isLinkedTo:(Waypoint *)way;
+-(integer)linkWay:(Waypoint *)way;
+-(integer)teleLinkWay:(Waypoint *)way;
+-(void)unlinkWay:(Waypoint *)way;
 
--(void)followLink:(Waypoint)e2 :(integer)bBit;
+-(void)followLink:(Waypoint *)e2 :(integer)bBit;
 -(void)waypointThink;
 
 -(void)clearLinks;
 -(void)clearRoute;
--(void)clearRouteForBot:(Bot)bot;
+-(void)clearRouteForBot:(Bot *)bot;
 
 -(id)queueForThink;
 @end
 @class Array;
-@extern Array waypoint_array;
+@extern Array *waypoint_array;
 
 @interface Bot: Target
 {
@@ -119,9 +119,9 @@ typedef struct bot_data_t bot_data_t;
 	integer dyn_flags;
 	integer dyn_plat;
 	float dyn_time;
-	Waypoint temp_way;
-	Waypoint last_way;
-	Target [4] targets;
+	Waypoint *temp_way;
+	Waypoint *last_way;
+	Target *targets[4];
 	entity avoid;
 	vector obs_dir;
 	vector b_dir;
@@ -132,7 +132,7 @@ typedef struct bot_data_t bot_data_t;
 	float portal_time;
 }
 - (id) init;
-- (id) initWithEntity: (entity) e named:(bot_data_t [])name skill:(integer)skill;
+- (id) initWithEntity: (entity) e named:(bot_data_t *)name skill:(integer)skill;
 - (id) initFromPlayer: (entity) e;
 - (void) preThink;
 - (void) postThink;
@@ -144,8 +144,8 @@ typedef struct bot_data_t bot_data_t;
 @end
 
 @interface Bot (Misc)
-+(bot_data_t [])name:(integer)r;
-+(bot_data_t [])randomName;
++(bot_data_t *)name:(integer)r;
++(bot_data_t *)randomName;
 -(integer)fov:(entity)targ;
 
 +(void)kick;
@@ -167,22 +167,22 @@ typedef struct bot_data_t bot_data_t;
 @end
 
 @interface Bot (AI)
--(integer)targetOnstack:(Target)scot;
--(void)targetAdd:(Target)e;
--(void)targetDrop:(Target)e;
+-(integer)targetOnstack:(Target *)scot;
+-(void)targetAdd:(Target *)e;
+-(void)targetDrop:(Target *)e;
 -(void)targetClearAll;
--(void)lost:(Target)targ :(integer)success;
--(void)checkLost:(Target)targ;
+-(void)lost:(Target *)targ :(integer)success;
+-(void)checkLost:(Target *)targ;
 -(void)handleAI;
 -(void)path;
 -(void)lookForCrap:(integer)scope;
 -(void)angleSet;
 -(void)AI;
--(integer)priorityForThing:(Target)thing;
+-(integer)priorityForThing:(Target *)thing;
 @end
 
 @interface Bot (Fight)
--(float)sizePlayer:(Target)targ;
+-(float)sizePlayer:(Target *)targ;
 -(void)dodgeStuff;
 -(void)weaponSwitch:(float)brange;
 -(void)shoot;
@@ -190,16 +190,16 @@ typedef struct bot_data_t bot_data_t;
 @end
 
 @interface Bot (Way)
--(void)deleteWaypoint:(Waypoint)what;
+-(void)deleteWaypoint:(Waypoint *)what;
 -(entity)findThing:(string)s;
--(Waypoint)findRoute:(Waypoint)lastone;
--(void)markPath:(Target)this;
--(void)getPath:(Target)this :(integer)direct;
+-(Waypoint *)findRoute:(Waypoint *)lastone;
+-(void)markPath:(Target *)this;
+-(void)getPath:(Target *)this :(integer)direct;
 -(integer)beginRoute;
 -(void)spawnTempWaypoint:(vector)org;
 -(void)dynamicWaypoint;
 
--(integer)canSee:(Target)targ;
+-(integer)canSee:(Target *)targ;
 @end
 
 @interface Bot (Chat)
@@ -285,7 +285,7 @@ typedef struct bot_data_t bot_data_t;
 #define OPT_NOCHAT	2
 
 // -------globals-----
-@extern Bot [32] players;
+@extern Bot *players[32];
 @extern float		real_frametime;
 @extern float		bot_count, b_options;
 @extern float		lasttime;
@@ -293,14 +293,14 @@ typedef struct bot_data_t bot_data_t;
 @extern float		dump_mode; 
 @extern float		direct_route;
 @extern float		sv_gravity;
-@extern Bot			route_table;
+@extern Bot			*route_table;
 @extern integer		busy_waypoints;
 
 @extern float coop;
 
 // -------ProtoTypes------
 // external, in main code
-@extern Bot (integer whatbot, integer whatskill) BotConnect;
+@extern Bot *BotConnect (integer whatbot, integer whatskill);
 @extern void()				ClientConnect;
 @extern void()				ClientDisconnect;
 @extern void()				SetNewParms;
@@ -318,13 +318,13 @@ typedef struct bot_data_t bot_data_t;
 @extern void () map_dm6;
 
 // ai & misc
-@extern Array bot_array;
+@extern Array *bot_array;
 @extern float(float y1, float y2)	angcomp;
 @extern float(entity ent, entity targ, vector targ_origin)		sisible;
 @extern vector(entity ent)		realorigin;
 @extern float(float v)			frik_anglemod;
 
-@extern void(Waypoint e1, Waypoint e2, integer flag) DeveloperLightning;
+@extern void DeveloperLightning(Waypoint *e1, Waypoint *e2, integer flag);
 
 /*
 	angles is pitch yaw roll

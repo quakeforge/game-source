@@ -115,7 +115,7 @@
 	local string str = text;
 	local string s;
 	local integer i;
-	local string [10] is;
+	local string is[10];
 	local integer max_len = 0, len;
 
 	for (i = 0; i < 10; i++) {
@@ -139,7 +139,7 @@
 	return str;
 }
 
-- (void) addItem:(MenuItem) item
+- (void) addItem:(MenuItem *) item
 {
 	local integer i;
 

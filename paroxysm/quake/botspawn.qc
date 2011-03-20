@@ -30,7 +30,7 @@ float (string st) check_bot_name =
       }
       botname = find(botname, classname, "bot");
    }
-
+	return FALSE;
 };
 
 string() bot_name =

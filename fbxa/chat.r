@@ -44,7 +44,7 @@ this notice in its entirety.
 
 integer bot_chat_linker;
 
-@static Bot b_originator;
+@static Bot *b_originator;
 @static integer b_topic;
 /* FBX Topics
 

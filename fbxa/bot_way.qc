@@ -52,10 +52,10 @@ integer bot_way_linker;
 
 @implementation Bot (Way)
 
--(void)deleteWaypoint:(Waypoint)what
+-(void)deleteWaypoint:(Waypoint *)what
 {
 	if (current_way == what)
-		current_way = NIL;
+		current_way = nil;
 	[waypoint_array removeObject:what];
 	[what release];
 }
@@ -76,9 +76,9 @@ in bot_ai.qc
 	local float tdst, dst;
 	local entity best;
 	dst = 100000;
-	best = NIL;
-	t = find (NIL, classname, s);
-	while (t != NIL) {
+	best = nil;
+	t = find (nil, classname, s);
+	while (t != nil) {
 		tdst = vlen(((t.absmin + t.absmax) * 0.5) - ent.origin);
 		if (tdst < dst) {
 			dst = tdst;
@@ -102,23 +102,23 @@ an object.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
--(Waypoint)findRoute:(Waypoint)lastone
+-(Waypoint *)findRoute:(Waypoint *)lastone
 {
 	// kinda like FindWaypoint, only of this bots route though
-	local Waypoint t, best;
+	local Waypoint *t, *best;
 	local float dst, tdst;
 	local integer flag;
 	local integer count, i;
 
 	flag = b_clientflag;
 	dst = 100000;
-	best = NIL;
+	best = nil;
 	count = [waypoint_array count];
 	for (i = 0; i < count; i++) {
 		t = [waypoint_array objectAtIndex:i];
 		tdst = vlen(t.origin - ent.origin);
 		if ((tdst < dst) &&  (t.bot_bits & flag)) {
-			if ((lastone == NIL) || ([lastone isLinkedTo:t])) {
+			if ((lastone == nil) || ([lastone isLinkedTo:t])) {
 				dst = tdst;
 				best = t;
 			}
@@ -140,9 +140,9 @@ different bot.
 */
 
 
--(void)markPath:(Target)this
+-(void)markPath:(Target *)this
 {
-	local Waypoint t;
+	local Waypoint *t;
 	local integer flag;
 
 	[Waypoint clearMyRoute:self];
@@ -153,7 +153,7 @@ different bot.
 	if ([this classname] != "player")
 		this.current_way = t;
 		
-	if (t.enemy == NIL) {
+	if (t.enemy == nil) {
 		[self lost:this :FALSE];
 		if (waypoint_mode == WM_DYNAMIC)
 			route_failed = TRUE;
@@ -205,27 +205,27 @@ Boy it's confusing.
 	[Waypoint clearRouteTable];
 	last_way = [self findWaypoint:current_way];
 
-	if (last_way != NIL) {
+	if (last_way != nil) {
 		last_way.distance = vlen(last_way.origin - ent.origin);
 		[last_way queueForThink];
 		last_way.busy = TRUE;
 		busy_waypoints = 1;
 		return TRUE;
 	} else {
-		route_table = NIL;
+		route_table = nil;
 		busy_waypoints = 0;
 		return FALSE;
 	}
 }
 
--(void)getPath:(Target)this :(integer)direct
+-(void)getPath:(Target *)this :(integer)direct
 {
-	if (this == NIL)
+	if (this == nil)
 		return;
 
 	if (route_table == self) {
 		if (busy_waypoints <= 0) {
-			route_table = NIL;
+			route_table = nil;
 			[self markPath:this];
 		}
 		return;
@@ -249,7 +249,7 @@ Temporary Marker code
 
 -(void)spawnTempWaypoint:(vector)org
 {	
-	local Waypoint tep;
+	local Waypoint *tep;
 
 	if (!temp_way)
 		temp_way = tep = [[Waypoint alloc] init];
@@ -269,7 +269,7 @@ very good all things considered.
 */
 -(void)dynamicWaypoint
 {
-	local Waypoint t;
+	local Waypoint *t;
 	local float dist, dynlink = 0, dynpoint = 0, editor = 0;
 
 	if (teleport_time > portal_time) {
@@ -277,7 +277,7 @@ very good all things considered.
 			dyn_flags = 2;
 			if (!ishuman) {
 				[self lost:targets[0] :TRUE];
-				ent.enemy = NIL;
+				ent.enemy = nil;
 			}
 		}
 		portal_time = teleport_time;
@@ -322,7 +322,7 @@ very good all things considered.
 			}
 		}
 		dyn_dest = '0 0 0';
-		current_way = NIL;
+		current_way = nil;
 		dyn_flags = 0;
 		return;
 	}
@@ -344,7 +344,7 @@ very good all things considered.
 	// display the links for editor mode
 	if (editor) {
 		if (current_way) {
-			local Waypoint way = current_way;
+			local Waypoint *way = current_way;
 			local integer i;
 
 			for (i = 0; i < 4; i++) {
@@ -435,7 +435,7 @@ very good all things considered.
 	}
 }
 
--(integer)canSee:(Target)targ
+-(integer)canSee:(Target *)targ
 {
 	local float		thruwater = 0, pc1 = 0, pc2 = 0;
 	local vector	spot1, org;

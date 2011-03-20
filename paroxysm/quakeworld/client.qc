@@ -94,6 +94,7 @@ entity() FindIntermission =
 		return spot;
 	
 	objerror ("FindIntermission: no spot");
+	return nil;
 };
 
 void() GotoNextMap =
@@ -385,6 +386,7 @@ float(entity e) ValidateUser =
 	}
 	return true;
 */
+	return 1;
 };
 /*
 ===========

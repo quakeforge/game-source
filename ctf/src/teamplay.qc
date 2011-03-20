@@ -366,6 +366,7 @@ float(float color) TeamColorIsLegal =
                 return TRUE;
         if( (color == TEAM_COLOR2) && (TEAM_COLOR2 >= 0) )
                 return TRUE;
+        return FALSE;
 };
 
 float(float t) TeamGetShirt =

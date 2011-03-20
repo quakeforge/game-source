@@ -53,34 +53,35 @@ struct target_s {
 	@defs (Target)
 };
 
-@static unsigned (void []ele, void []unused) target_get_hash =
+@static unsigned target_get_hash (void *ele, void *unused)
 {
-	local Target t = ele;
-	return ((unsigned[])&t.ent)[0];
+	local Target *t = ele;
+	//return ((unsigned*)&t.ent)[0];
+	return nil;//FIXME
 };
 
-@static integer (void []e1, void[]e2, void []unused) target_compare =
+@static integer target_compare (void *e1, void*e2, void *unused)
 {
-	local Target t1 = e1;
-	local Target t2 = e2;
+	local Target *t1 = e1;
+	local Target *t2 = e2;
 	return t1.ent == t2.ent;
 };
 
 @implementation Target
 
-+(Target)forEntity:(entity)e
++(Target *)forEntity:(entity)e
 {
-	local Target t;
+	local Target *t;
 	local struct target_s ele;
 
 	if (!e)
-		return NIL;
+		return nil;
 
 	if (e.classname == "player")
 		return e.@this;
 
 	if (!target_tab) {
-		target_tab = Hash_NewTable (1021, NIL, NIL, NIL);
+		target_tab = Hash_NewTable (1021, nil, nil, nil);
 		Hash_SetHashCompare (target_tab, target_get_hash, target_compare);
 	}
 	ele.ent = e;
@@ -103,7 +104,7 @@ struct target_s {
 	return ent.origin;
 }
 
--(integer)canSee:(Target)targ ignoring:(entity)ignore
+-(integer)canSee:(Target *)targ ignoring:(entity)ignore
 {
 	local vector	spot1, spot2;
 
@@ -129,7 +130,7 @@ struct target_s {
 {
 	local vector org = [self origin];
 	traceline (org, org - '0 0 64', TRUE, ent);
-	if (trace_ent != NIL)
+	if (trace_ent != nil)
 		return TRUE;
 	else
 		return FALSE;
@@ -140,7 +141,7 @@ struct target_s {
 	return 0;
 }
 
--(integer)priority:(Bot)bot
+-(integer)priority:(Bot *)bot
 {
 	if ((ent.flags & FL_ITEM) && ent.model && ent.search_time < time) {
 		// ugly hack
@@ -203,9 +204,9 @@ functions big lag causer
 
 Finds the closest, fisible, waypoint to e
 */
--(Waypoint)findWaypoint:(Waypoint)start
+-(Waypoint *)findWaypoint:(Waypoint *)start
 {
-	local Waypoint best, t;
+	local Waypoint *best, *t;
 	local float dst, tdst;
 	local vector org;
 	local integer count, i;
@@ -218,7 +219,7 @@ Finds the closest, fisible, waypoint to e
 		best = start;
 	} else {
 		dst = 100000;
-		best = NIL;
+		best = nil;
 	}
 	count = [waypoint_array count];
 	for (i = 0; i < count; i++) {
@@ -229,7 +230,7 @@ Finds the closest, fisible, waypoint to e
 		if (!(t.flags & AI_IGNORE_TYPES) || ishuman) {
 			tdst = vlen (t.origin - org);
 			if (tdst < dst) {
-				if (sisible (ent, NIL, t.origin)) {
+				if (sisible (ent, nil, t.origin)) {
 					dst = tdst;
 					best = t;
 				}
