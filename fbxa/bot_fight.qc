@@ -42,7 +42,7 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 
-integer bot_fight_linker;
+int bot_fight_linker;
 
 /*
 weapon_range
@@ -51,7 +51,7 @@ weapon_range
 .y minimum range bot can be to be effective (rl/gl) (move away)
 .z maximum range bot can be to be effective (lg/axe) (move in)
 */
-vector (integer wep)
+vector (int wep)
 weapon_range =
 {
 	switch (wep) {
@@ -201,7 +201,7 @@ weapon_range =
 			}
 		}		
 	} else {
-		local integer i = 0;
+		local int i = 0;
 		local Bot *foe;
 		for (i = 0; i < 32; i++) {
 			if (!(foe = players[i])) continue;
@@ -230,10 +230,10 @@ Pick a weapon based on range / ammo
 */
 -(void)weaponSwitch:(float)brange
 {
-	local integer	it, flag = 0, pulse = 0;
+	local int	it, flag = 0, pulse = 0;
 	local vector	v;
 
-	it = (integer) ent.items & 127;
+	it = (int) ent.items & 127;
 
 	while (it) {
 		if ((ent.ammo_rockets >= 1) && (it & IT_ROCKET_LAUNCHER)) {
@@ -322,7 +322,7 @@ attacking an enemy.
 
 	// decide if I should shoot
 	foedist = vlen (org - ent.origin);
-	v = weapon_range ((integer)ent.weapon);
+	v = weapon_range ((int)ent.weapon);
 	if (foedist > v.y && foedist < v.z) {
 		traceline (ent.origin + ent.view_ofs,
 				   ent.origin + ent.view_ofs + v_forward * v.z, FALSE, ent);

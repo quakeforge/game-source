@@ -13,7 +13,7 @@
 @end
 
 @protocol FlagMenuItem
--(integer) state;
+-(int) state;
 -(void) toggle;
 @end
 
@@ -37,13 +37,13 @@
 	string text;
 }
 - (id) initWithText:(string)txt;
-- (integer) impulse:(integer)imp;
+- (int) impulse:(int)imp;
 - (string) text;
 @end
 
 @interface ImpulseValueMenu: ImpulseMenu
 {
-	integer value;
+	int value;
 }
 @end
 

@@ -537,7 +537,7 @@ void(vector org) launch_shrapnel =
 //and now the bomb code...
 void() ShrapnelExplode =
 {	
-	local integer 	i;
+	local int 	i;
 
 	local vector	direction;
 	

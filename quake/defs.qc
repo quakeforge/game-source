@@ -445,7 +445,7 @@ float		skill;
 
 .float		speed;
 
-.integer	lefty;
+.int	lefty;
 
 .float	search_time;
 .float	attack_state;

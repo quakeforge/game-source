@@ -57,7 +57,7 @@ checks to see if an entity is on the bot's stack
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(integer)targetOnstack:(Target *)scot
+-(int)targetOnstack:(Target *)scot
 {
 	if (scot == nil)
 		return FALSE;
@@ -150,7 +150,7 @@ Bot has lost its target.
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
--(void)lost:(Target *)targ :(integer)success
+-(void)lost:(Target *)targ :(int)success
 {
 	if (!targ)
 		return;
@@ -525,9 +525,9 @@ the bot finds things it wants to kill/grab.
 // 50 - 90 bot will hunt these as vital items
 
 // *!* Make sure you add code to checkLost to remove the target *!*
--(integer)priority:(Bot *)bot
+-(int)priority:(Bot *)bot
 {
-	local integer p;
+	local int p;
 
 	if (ent.health <= 0)
 		return 0;
@@ -551,9 +551,9 @@ the bot finds things it wants to kill/grab.
 	return p;
 }
 
--(integer)priorityForThing:(Target *)thing
+-(int)priorityForThing:(Target *)thing
 {
-	local integer p;
+	local int p;
 	// This is the most executed function in the bot. Careful what you do here.
 	if (pointcontents ([thing origin]) < -3)
 		return 0;
@@ -565,16 +565,16 @@ the bot finds things it wants to kill/grab.
 		if (thing.current_way.distance == -1)
 			return 0;
 		else
-			p += (integer) ((13000 - thing.current_way.distance) * 0.05);
+			p += (int) ((13000 - thing.current_way.distance) * 0.05);
 	}
 	return p;
 }
 
--(void)lookForCrap:(integer)scope
+-(void)lookForCrap:(int)scope
 {
 	local Target *foe, *best = nil;
 	local Waypoint *way;
-	local integer thatp, bestp;
+	local int thatp, bestp;
 	local float radius;
 
 	if (scope == 1)
@@ -730,7 +730,7 @@ frame, the ai_time limits it's actual updating
 	// playerstatus bars, and the mod probably already compensated for that
 
 	if (ent.health < 1) { 
-		buttons = (integer) (random() * 2);
+		buttons = (int) (random() * 2);
 		keys = 0;
 		b_aiflags = 0;
 		[Waypoint clearMyRoute:self];

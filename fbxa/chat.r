@@ -42,10 +42,10 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 
-integer bot_chat_linker;
+int bot_chat_linker;
 
 @static Bot *b_originator;
-@static integer b_topic;
+@static int b_topic;
 /* FBX Topics
 
 b_originator == self
@@ -105,7 +105,7 @@ b_originator == targ
 }
 
 // I didn't like the old code so this is very stripped down
--(void)startTopic:(integer)topic
+-(void)startTopic:(int)topic
 {
 	if (random() < 0.2) {
 		b_topic = topic;

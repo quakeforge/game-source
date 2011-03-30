@@ -11,7 +11,7 @@
 #define SPAWN_METAL		4
 #define SPAWN_WOOD		8
 
-.integer gib_caught; // if a gib bounces more than 4 times it's removed
+.int gib_caught; // if a gib bounces more than 4 times it's removed
 
 vector (float dm, vector dir) VelocityForRubble =
 {

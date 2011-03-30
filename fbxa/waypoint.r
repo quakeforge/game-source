@@ -67,9 +67,9 @@ Array *waypoint_array;
 
 @implementation Waypoint
 
--(integer)id
+-(int)id
 {
-	integer index = [waypoint_array indexOfObject:self];
+	int index = [waypoint_array indexOfObject:self];
 	if (index != NotFound)
 		return  index + 1;
 	return 0;
@@ -93,7 +93,7 @@ Array *waypoint_array;
 	return self;
 }
 
--(id)initAt:(vector)org linkedTo:(integer*)link flags:(integer)flag
+-(id)initAt:(vector)org linkedTo:(int*)link flags:(int)flag
 {
 	self = [self initAt:org];
 	links[0] = (Waypoint *) link[0];
@@ -140,9 +140,9 @@ Array *waypoint_array;
 	links[0] = links[1] = links[2] = links[3] = nil;
 }
 
--(integer)isLinkedTo:(Waypoint *)way
+-(int)isLinkedTo:(Waypoint *)way
 {
-	local integer i;
+	local int i;
 
 	if (way == self || !way || !self)
 		return 0;
@@ -157,9 +157,9 @@ Array *waypoint_array;
 	return 0;
 }
 
--(integer)linkWay:(Waypoint *)way
+-(int)linkWay:(Waypoint *)way
 {
-	local integer i;
+	local int i;
 
 	if (self == way || !self || !way)
 		return 0;
@@ -176,9 +176,9 @@ Array *waypoint_array;
 }
 
 // Link Ways part 2, used only for teleporters
--(integer)teleLinkWay:(Waypoint *)way
+-(int)teleLinkWay:(Waypoint *)way
 {
-	local integer i;
+	local int i;
 
 	if (self == way || !self || !way)
 		return 0;
@@ -197,7 +197,7 @@ Array *waypoint_array;
 
 -(void)unlinkWay:(Waypoint *)way
 {
-	local integer i;
+	local int i;
 
 	if (self == way || !self || !way)
 		return;
@@ -225,7 +225,7 @@ Waypoint Loading from file
 	local QFile file;
 	local PLItem *plist;
 	local string plist_data;
-	local integer i, count;
+	local int i, count;
 
 	file = QFS_OpenFile (path);
 	if (!file) {
@@ -249,9 +249,9 @@ Waypoint Loading from file
 		//FIXME compiler/vm "bug" makes passing pointers to locals dangerous
 
 		s = (PLString *) [way getObjectForKey:"flags"];
-		local integer flags = stoi ([s string]);
+		local int flags = stoi ([s string]);
 
-		@static integer link[4];
+		@static int link[4];
 		s = (PLString *) [links getObjectAtIndex:0];
 		link[0] = stoi ([s string]);
 		s = (PLString *) [links getObjectAtIndex:1];
@@ -274,7 +274,7 @@ Waypoint Loading from file
 	waypoint_init ();
 }
 
-+(Waypoint *)waypointForNum:(integer)num
++(Waypoint *)waypointForNum:(int)num
 {
 	if (!num)
 		return nil;
@@ -283,10 +283,10 @@ Waypoint Loading from file
 
 -(void)fix
 {
-	local integer i, tmp;
+	local int i, tmp;
 
 	for (i = 0; i < 4; i++) {
-		tmp = (integer)links[i];
+		tmp = (int)links[i];
 		links[i] = [Waypoint waypointForNum:tmp];
 	}
 }
@@ -295,7 +295,7 @@ Waypoint Loading from file
 // you don't want this. it's harsh. overflows normal servers and clients
 -(void) debug
 {
-	local integer i;
+	local int i;
 	local vector dir, dest, pos;
 
 	@self = spawn ();
@@ -331,7 +331,7 @@ Waypoint Loading from file
 {
 	local PLDictionary *way = (PLDictionary *) [PLItem newDictionary];
 	local PLArray *l = (PLArray *) [PLItem newArray];
-	local integer i;
+	local int i;
 
 	[way addKey:"origin" value:[PLItem newString:sprintf ("%g %g %g",
 														  origin.x,
@@ -358,7 +358,7 @@ Waypoint Loading from file
 
 -(void) checkWay:(Target *)ent
 {
-	local integer i;
+	local int i;
 	for (i = 0; i < 4; i++)
 		if (links[i])
 			break;
@@ -383,7 +383,7 @@ Waypoint Loading from file
 {
 	local vector dif;
 	local float dist;
-	local integer i, count;
+	local int i, count;
 	local Waypoint *way = nil, *w;
 
 	rad = rad * rad;			// radius squared
@@ -491,7 +491,7 @@ tripping the runaway loop counter
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
--(void)followLink:(Waypoint *)e2 :(integer)bBit
+-(void)followLink:(Waypoint *)e2 :(int)bBit
 {
 	local float dist;
 	
@@ -522,7 +522,7 @@ tripping the runaway loop counter
 
 -(void)waypointThink
 {
-	local integer i;
+	local int i;
 
 	if (distance == -1)
 		return;
@@ -573,7 +573,7 @@ tripping the runaway loop counter
 	return self;
 }
 
--(integer)priority:(Bot *)bot
+-(int)priority:(Bot *)bot
 {
 		if (flags & AI_SNIPER)
 			return 30;
@@ -615,20 +615,20 @@ void() waypoint =
 
 /*	create a new waypoint using frikbot style info
 	org		origin of the waypoint
-	bit1	first 3 links (cast to integer)
+	bit1	first 3 links (cast to int)
 	bit4	fourth link
 	flargs	various flags
 
 	links are 1 based with 0 being no link and 1 being the first waypoint
 	created, 2 the second and so on.
 */
-void(vector org, vector bit1, integer bit4, integer flargs) make_way =
+void(vector org, vector bit1, int bit4, int flargs) make_way =
 {
 	local Waypoint *y = [[Waypoint alloc] initAt:org];
 	waypoint_mode = WM_LOADED;
 	y.flags = flargs;
-	y.links[0] = (Waypoint *) (integer) bit1.x;
-	y.links[1] = (Waypoint *) (integer) bit1.y;
-	y.links[2] = (Waypoint *) (integer) bit1.z;
-	y.links[3] = (Waypoint *) (integer) bit4;
+	y.links[0] = (Waypoint *) (int) bit1.x;
+	y.links[1] = (Waypoint *) (int) bit1.y;
+	y.links[2] = (Waypoint *) (int) bit1.z;
+	y.links[3] = (Waypoint *) (int) bit4;
 };

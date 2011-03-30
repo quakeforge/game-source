@@ -86,7 +86,7 @@ BotName
 
 Sets bot's name and colors
 */
-+(bot_data_t *)name:(integer)r
++(bot_data_t *)name:(int)r
 {
 	if (r < 0 || r >= 32)
 		return nil;
@@ -95,12 +95,12 @@ Sets bot's name and colors
 
 +(bot_data_t *)randomName
 {
-	local integer test;
+	local int test;
 	local bot_data_t *h;
 	local entity t;
 
 	while (1) {
-		test = (integer) (32 * random ());
+		test = (int) (32 * random ());
 		h = [Bot name:test];
 		t = find (nil, netname, h.name);
 		if (t == nil)
@@ -132,7 +132,7 @@ fov
 
 is the entity in the bot's field of view
 */
--(integer)fov:(entity)targ
+-(int)fov:(entity)targ
 {
 	local float		g;
 	local vector	yawn;

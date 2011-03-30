@@ -31,9 +31,9 @@
 
 @interface FlagCluster: Object <FlagMenuItem>
 {
-	integer mask;
+	int mask;
 }
-- initWithMask:(integer)msk;
+- initWithMask:(int)msk;
 @end
 
 @implementation TeleportMenu
@@ -45,7 +45,7 @@
 							   "Waypoint #"];
 }
 
--(integer) impulse:(integer)imp
+-(int) impulse:(int)imp
 {
 	local Waypoint *way = nil;
 	if ((imp = [super impulse:imp]) == 104) {
@@ -64,7 +64,7 @@
 @end
 
 @implementation NoclipFlag
--(integer) state
+-(int) state
 {
 	return @self.movetype == MOVETYPE_NOCLIP;
 }
@@ -79,7 +79,7 @@
 @end
 
 @implementation GodmodeFlag
--(integer) state
+-(int) state
 {
 	return !!(@self.flags & FL_GODMODE);
 }
@@ -91,7 +91,7 @@
 @end
 
 @implementation HoldSelectFlag
--(integer) state
+-(int) state
 {
 	return [EditorState getHoldSelectState];
 }
@@ -103,7 +103,7 @@
 @end
 
 @implementation DynamicFlag
--(integer) state
+-(int) state
 {
 	return waypoint_mode == WM_EDITOR_DYNAMIC;
 }
@@ -118,9 +118,9 @@
 @end
 
 @implementation DynamicLinkFlag
--(integer) state
+-(int) state
 {
-	local integer mode = waypoint_mode;
+	local int mode = waypoint_mode;
 	return mode == WM_EDITOR_DYNAMIC || mode == WM_EDITOR_DYNLINK;
 }
 
@@ -134,14 +134,14 @@
 @end
 
 @implementation FlagCluster
--(id) initWithMask:(integer)msk
+-(id) initWithMask:(int)msk
 {
 	self = [super init];
 	mask = msk;
 	return self;
 }
 
--(integer) state
+-(int) state
 {
 	local Waypoint *way = [EditorState current_way];
 	if (!way)
@@ -603,7 +603,7 @@
 {
 	local EditorState *editor = ((Target *) @self.@this).editor;
 	local Waypoint *way = [editor current_way];
-	local integer i;
+	local int i;
 	if (!way)
 		return self;
 	sprint (@self, PRINT_HIGH,
@@ -706,7 +706,7 @@
 +add_test_bot
 {
 	local EditorState *editor = ((Target *) @self.@this).editor;
-	local integer f;
+	local int f;
 	local string h;
 
 	if (editor.test_bot) {
@@ -714,7 +714,7 @@
 		return self;
 	}
 	h = infokey (nil, "skill");
-	f = (integer) stof (h);
+	f = (int) stof (h);
 	editor.test_bot = BotConnect (0, f);
 	return self;
 }
@@ -860,7 +860,7 @@
 }
 
 
-+(integer)getHoldSelectState
++(int)getHoldSelectState
 {
 	local EditorState *editor = ((Target *) @self.@this).editor;
 	return editor.hold_select != 0;

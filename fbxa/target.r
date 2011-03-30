@@ -60,7 +60,7 @@ struct target_s {
 	return nil;//FIXME
 };
 
-@static integer target_compare (void *e1, void*e2, void *unused)
+@static int target_compare (void *e1, void*e2, void *unused)
 {
 	local Target *t1 = e1;
 	local Target *t2 = e2;
@@ -104,7 +104,7 @@ struct target_s {
 	return ent.origin;
 }
 
--(integer)canSee:(Target *)targ ignoring:(entity)ignore
+-(int)canSee:(Target *)targ ignoring:(entity)ignore
 {
 	local vector	spot1, spot2;
 
@@ -126,7 +126,7 @@ struct target_s {
 {
 }
 
-- (integer) recognizePlat: (integer) flag
+- (int) recognizePlat: (int) flag
 {
 	local vector org = [self origin];
 	traceline (org, org - '0 0 64', TRUE, ent);
@@ -136,12 +136,12 @@ struct target_s {
 		return FALSE;
 }
 
--(integer)ishuman
+-(int)ishuman
 {
 	return 0;
 }
 
--(integer)priority:(Bot *)bot
+-(int)priority:(Bot *)bot
 {
 	if ((ent.flags & FL_ITEM) && ent.model && ent.search_time < time) {
 		// ugly hack
@@ -209,8 +209,8 @@ Finds the closest, fisible, waypoint to e
 	local Waypoint *best, *t;
 	local float dst, tdst;
 	local vector org;
-	local integer count, i;
-	local integer ishuman = [self ishuman];
+	local int count, i;
+	local int ishuman = [self ishuman];
 
 	org = [self realorigin];
 

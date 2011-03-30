@@ -1315,7 +1315,7 @@ void(entity targ, entity attacker) ClientObituary =
 	local float	attackerteam;
 	local float	targteam;
 #endif
-	local integer	gibbed = (targ.health < -40);
+	local int	gibbed = (targ.health < -40);
 
 #ifdef QUAKEWORLD
 	attackerteam = INFOKEY (attacker, "team");

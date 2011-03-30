@@ -16,9 +16,9 @@
 
 	Target *owner;
 	Waypoint *last_way;
-	integer hold_select;
+	int hold_select;
 	Bot *test_bot;
-	integer edit_mode;
+	int edit_mode;
 }
 +main_menu;
 +waypoint_menu;
@@ -59,7 +59,7 @@
 +confirm;
 +cancel;
 
-+(integer)getHoldSelectState;
++(int)getHoldSelectState;
 +(void)toggleHoldSelectState;
 +(string)getConfirmText;
 +(Waypoint *)current_way;

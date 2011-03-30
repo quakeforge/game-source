@@ -42,9 +42,9 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 
-integer bot_move_linker;
+int bot_move_linker;
 
-float (integer keys, integer key) key_state =
+float (int keys, int key) key_state =
 {
 	return ((keys & key) != 0) ? 1.0 : 0.0;
 };
@@ -61,7 +61,7 @@ void (vector start, vector mins, vector maxs, vector end, float type,
 	local float anglespeed;
 	local vector view;
 	local vector probe, start;
-	local integer obstructed = 0;
+	local int obstructed = 0;
 
 	movevect.y += (350 * key_state (keys, KEY_MOVERIGHT));
 	movevect.y -= (350 * key_state (keys, KEY_MOVELEFT));
@@ -133,7 +133,7 @@ void (vector start, vector mins, vector maxs, vector end, float type,
 	buttons |= 4;
 }
 
-- (integer) canRJ
+- (int) canRJ
 {
 	// this returns true of the bot can rocket/superjump/hook
 	// if your mod doesn't have an RL you can just return FALSE all the time
@@ -162,9 +162,9 @@ void (vector start, vector mins, vector maxs, vector end, float type,
 		return FALSE;
 }
 
-- (integer) recognizePlat: (integer) flag
+- (int) recognizePlat: (int) flag
 {
-	local integer ret;
+	local int ret;
 
 	if (!(ent.flags & FL_ONGROUND))
 		return FALSE;
@@ -182,9 +182,9 @@ void (vector start, vector mins, vector maxs, vector end, float type,
 	return ret;
 }
 
--(integer)keysForDir: (vector) sdir
+-(int)keysForDir: (vector) sdir
 {
-	local integer outkeys;
+	local int outkeys;
 	local float tang;
 	local vector keydir;
 
@@ -218,7 +218,7 @@ frik_obstructed
 Bot has hit a ledge or wall that he should
 manuever around.
 */
--(void)obstructed: (vector) whichway : (integer) danger
+-(void)obstructed: (vector) whichway : (int) danger
 {
 	local float dist;
 	local vector disway, org;
@@ -468,7 +468,7 @@ blah
 	}
 }
 
--(integer)walkmove: (vector) weird
+-(int)walkmove: (vector) weird
 {
 	// okay so it's not walkmove
 	// sue me

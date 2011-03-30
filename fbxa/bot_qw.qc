@@ -77,11 +77,11 @@ ClientDisconnected(); // FrikBot
 #include "cmd.h"
 #include "editor.h"
 
-integer *bot_way_ref;
-integer *bot_move_ref;
-integer *bot_chat_ref;
+int *bot_way_ref;
+int *bot_move_ref;
+int *bot_chat_ref;
 float *stagger_think_ref;
-integer *bot_fight_ref;
+int *bot_fight_ref;
 
 void ()
 bot_map_load =
@@ -128,7 +128,7 @@ float		waypoint_mode, dump_mode;
 float		direct_route;
 float		sv_gravity;
 Bot			*route_table;
-integer		busy_waypoints;
+int		busy_waypoints;
 
 float coop = 0; // hack
 
@@ -139,8 +139,8 @@ void(entity e)             frik_setspawnparms  = #78;
 entity () SV_AllocClient = #0;
 void (entity e) SV_FreeClient = #0;
 void (entity e, string str) SV_SetUserinfo = #0;
-void (entity e, integer ping) SV_SetPing = #0;
-void (entity cl, float sec, vector angles, vector move, integer buttons, integer impulse) SV_UserCmd = #0;
+void (entity e, int ping) SV_SetPing = #0;
+void (entity cl, float sec, vector angles, vector move, int buttons, int impulse) SV_UserCmd = #0;
 void (entity cl) SV_Spawn = #0;
 void () Break = #6;
 
@@ -202,7 +202,7 @@ BotPreFrame =
 void ()
 ClientInRankings =
 {
-	local integer cl_no = ClientNumber (@self);
+	local int cl_no = ClientNumber (@self);
 
 	if (!players[cl_no])
 		players[cl_no] = [[Bot alloc] initFromPlayer:@self];
@@ -211,14 +211,14 @@ ClientInRankings =
 void ()
 ClientDisconnected =
 {
-	local integer cl_no = ClientNumber (@self);
+	local int cl_no = ClientNumber (@self);
 	local Bot *p = nil;
 
 	p = players[cl_no];
 	players[cl_no] = nil;
 	if (p) {
 		local entity e = p.ent;
-		local integer i;
+		local int i;
 		for (i = 0; i < 32; i++) {
 			if (!players[i])
 				continue;
@@ -232,11 +232,11 @@ ClientDisconnected =
 
 // BotConnect and related functions. -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-integer (entity cl)
+int (entity cl)
 ClientNumber =
 {
 	local entity e = nil;
-	local integer f = -1;
+	local int f = -1;
 
 	do {
 		f++;
@@ -247,7 +247,7 @@ ClientNumber =
 	return f;
 };
 
-Bot *BotConnect (integer whatbot, integer whatskill)
+Bot *BotConnect (int whatbot, int whatskill)
 {
 	local entity cl;
 	local Bot *bot;
@@ -275,7 +275,7 @@ related functions.
 */
 void () BotImpulses =
 {
-	local integer f;
+	local int f;
 	local string h;
 	local Target *t = @self.@this;
 
@@ -285,7 +285,7 @@ void () BotImpulses =
 	switch (@self.impulse) {
 	case 100:
 		h = infokey (nil, "skill");
-		f = (integer) stof (h);
+		f = (int) stof (h);
 		BotConnect (0, f);
 		break;
 	case 102:
@@ -303,17 +303,17 @@ void () BotImpulses =
 void ()
 bot_add_f =
 {
-	local integer whatbot = 0;
-	local integer skill;
-	local integer c = Cmd_Argc ();
+	local int whatbot = 0;
+	local int skill;
+	local int c = Cmd_Argc ();
 
 	if (c == 1) {
-		skill = (integer) stof (infokey (nil, "skill"));
+		skill = (int) stof (infokey (nil, "skill"));
 	} else if (c == 2) {
-		skill = (integer) stof (Cmd_Argv (1));
+		skill = (int) stof (Cmd_Argv (1));
 	} else {
-		whatbot = (integer) stof (Cmd_Argv (1));
-		skill = (integer) stof (Cmd_Argv (2));
+		whatbot = (int) stof (Cmd_Argv (1));
+		skill = (int) stof (Cmd_Argv (2));
 	}
 	BotConnect (whatbot, skill);
 };
@@ -363,7 +363,7 @@ signs on to the server.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
-void DeveloperLightning (Waypoint *e1, Waypoint *e2, integer flag)
+void DeveloperLightning (Waypoint *e1, Waypoint *e2, int flag)
 {
 	// used to show waypoint links for debugging
 	WriteByte (MSG_BROADCAST, 23);
@@ -382,9 +382,9 @@ void DeveloperLightning (Waypoint *e1, Waypoint *e2, integer flag)
 	return [super init];
 }
 
-- (id) initWithEntity:(entity) e named:(bot_data_t *)name skill:(integer)skill
+- (id) initWithEntity:(entity) e named:(bot_data_t *)name skill:(int)skill
 {
-	local integer cl_no = ClientNumber (e);
+	local int cl_no = ClientNumber (e);
 	local entity uself;
 
 	SV_Spawn (e);
@@ -430,12 +430,12 @@ void DeveloperLightning (Waypoint *e1, Waypoint *e2, integer flag)
 
 - (id) initFromPlayer: (entity) e
 {
-	local integer cno;
+	local int cno;
 
 	if (!(self = [super initWithEntity:e]))
 		return nil;
 
-   	cno = (integer)e.colormap - 1;
+   	cno = (int)e.colormap - 1;
 	b_clientno = cno;
 	ishuman = TRUE;
 	switch_wallhug = time + 1;
@@ -502,7 +502,7 @@ void DeveloperLightning (Waypoint *e1, Waypoint *e2, integer flag)
 	// FIXME: do teams properly
 }
 
-- (integer) ishuman
+- (int) ishuman
 {
 	return ishuman;
 }
@@ -518,7 +518,7 @@ void ()
 BotFrame =
 {
 	local string h;
-	local integer i;
+	local int i;
 	
 	h = infokey (nil, "bot_options");
 	b_options = stof (h);

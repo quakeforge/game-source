@@ -48,7 +48,7 @@ this notice in its entirety.
 #include "libfrikbot.h"
 #include "editor.h"
 
-integer bot_way_linker;
+int bot_way_linker;
 
 @implementation Bot (Way)
 
@@ -107,8 +107,8 @@ an object.
 	// kinda like FindWaypoint, only of this bots route though
 	local Waypoint *t, *best;
 	local float dst, tdst;
-	local integer flag;
-	local integer count, i;
+	local int flag;
+	local int count, i;
 
 	flag = b_clientflag;
 	dst = 100000;
@@ -143,7 +143,7 @@ different bot.
 -(void)markPath:(Target *)this
 {
 	local Waypoint *t;
-	local integer flag;
+	local int flag;
 
 	[Waypoint clearMyRoute:self];
 
@@ -189,7 +189,7 @@ Boy it's confusing.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
--(integer)beginRoute
+-(int)beginRoute
 {
 	if (busy_waypoints > 0)
 		return FALSE;
@@ -218,7 +218,7 @@ Boy it's confusing.
 	}
 }
 
--(void)getPath:(Target *)this :(integer)direct
+-(void)getPath:(Target *)this :(int)direct
 {
 	if (this == nil)
 		return;
@@ -345,7 +345,7 @@ very good all things considered.
 	if (editor) {
 		if (current_way) {
 			local Waypoint *way = current_way;
-			local integer i;
+			local int i;
 
 			for (i = 0; i < 4; i++) {
 				if (way.links[i]) {
@@ -435,7 +435,7 @@ very good all things considered.
 	}
 }
 
--(integer)canSee:(Target *)targ
+-(int)canSee:(Target *)targ
 {
 	local float		thruwater = 0, pc1 = 0, pc2 = 0;
 	local vector	spot1, org;

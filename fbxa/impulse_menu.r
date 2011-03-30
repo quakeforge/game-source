@@ -29,7 +29,7 @@
 
 - (string) text
 {
-	local integer state = (integer)[flag state];
+	local int state = (int)[flag state];
 	return sprintf ("[%c] %s", state ? '#' : ' ', [super text]);
 }
 
@@ -62,7 +62,7 @@
 	return self;
 }
 
-- (integer) impulse: (integer) imp
+- (int) impulse: (int) imp
 {
 	return imp;
 }
@@ -74,7 +74,7 @@
 @end
 
 @implementation ImpulseValueMenu
-- (integer) impulse: (integer) imp
+- (int) impulse: (int) imp
 {
 	if (imp < 1 || imp > 10)
 		return imp;
@@ -94,14 +94,14 @@
 	value = 0;
 }
 
-- (integer) value
+- (int) value
 {
 	return value;
 }
 @end
 
 @implementation ImpulseListMenu
-- (integer) impulse: (integer) imp
+- (int) impulse: (int) imp
 {
 	if (imp < 1 || imp > 10)
 		return imp;
@@ -114,9 +114,9 @@
 {
 	local string str = text;
 	local string s;
-	local integer i;
+	local int i;
 	local string is[10];
-	local integer max_len = 0, len;
+	local int max_len = 0, len;
 
 	for (i = 0; i < 10; i++) {
 		if (!items[i])
@@ -141,7 +141,7 @@
 
 - (void) addItem:(MenuItem *) item
 {
-	local integer i;
+	local int i;
 
 	for (i = 0; i < 10; i++) {
 		if (!items[i]) {

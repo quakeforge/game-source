@@ -134,7 +134,7 @@ float(float a) CamReAngle =
 
 // point visibility test
 
-integer(vector vec) CamVisible =
+int(vector vec) CamVisible =
 {
  traceline(self.origin,vec,TRUE,self);
  return ((trace_fraction == 1) && !((trace_inopen && trace_inwater)));
@@ -143,7 +143,7 @@ integer(vector vec) CamVisible =
 // entity visibility test
 // suited for players and player size bots; may vary for various classnames
 
-integer(entity ent) CamVisibleEnt =
+int(entity ent) CamVisibleEnt =
 {
  local vector vec;
 
@@ -215,7 +215,7 @@ float(float d, float a) CamHurry =
 vector(float s, float v, float a) CamSmooth =
 {
  local float dt,t1,t2,v2,as,sv2;
- local integer b;
+ local int b;
  local vector vec;
 
  s = CamReAngle(s);
