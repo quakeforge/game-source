@@ -8,14 +8,14 @@ diff -u -r1.4 Makefile
 @@ -1,5 +1,7 @@
  all: qwprogs.dat
 -qwprogs.dat: progs.src *.qc
--	qfcc -Werror -Wall -g --advanced
+-	qfcc -Cvector-components -Werror -Wall -g --advanced
 +qwprogs.dat: qwprogs.o
 +	qfcc -g -o qwprogs.dat qwprogs.o -lfrikbot -lr -lqw
 +qwprogs.o: progs.src *.qc
-+	qfcc --advanced -Dself=@self -g -c -o qwprogs.o
++	qfcc -Cvector-components --advanced -Dself=@self -g -c -o qwprogs.o
  clean:
--	rm -f core *.dat *.sym progdefs.h
-+	rm -f core *.dat *.sym progdefs.h *.o
+-	rm -f core *.dat *.sym progdefs.h *.p *.i1 *.i2
++	rm -f core *.dat *.sym progdefs.h *.p *.i1 *.i2 *.o
 Index: client.qc
 ===================================================================
 RCS file: /var/qfcvs/game-source/quakeworld/client.qc,v
