@@ -45,7 +45,6 @@ this notice in its entirety.
 #include "libfrikbot.h"
 #include "Array.h"
 #include "hash.h"
-#include "List.h"
 
 @static hashtab_t target_tab;
 

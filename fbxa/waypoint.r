@@ -44,7 +44,6 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 #include "Array.h"
-#include "List.h"
 #include "qfile.h"
 #include "qfs.h"
 #include "string.h"
@@ -52,13 +51,13 @@ this notice in its entirety.
 
 Array *waypoint_array;
 @static entity waypoint_thinker;
-@static List *waypoint_queue;
+@static Array *waypoint_queue;
 
 @static void () waypoint_init =
 {
 	waypoint_array = [[Array alloc] init];
 	if (!waypoint_queue)
-		waypoint_queue = [[List alloc] init];
+		waypoint_queue = [[Array alloc] init];
 	if (!waypoint_thinker) {
 		waypoint_thinker = spawn ();
 		waypoint_thinker.classname = "waypoint_thinker";
@@ -552,18 +551,20 @@ tripping the runaway loop counter
 			direct_route = FALSE;
 		}
 	}
-	if ((waypoint_thinker.@this = [waypoint_queue removeItemAtHead])) {
+	if ([waypoint_queue count]
+		&& (waypoint_thinker.@this = [waypoint_queue lastObject])) {
 		local id obj = waypoint_thinker.@this;
 		local IMP imp = [obj methodForSelector: @selector (waypointThink)];
 		waypoint_thinker.think = (void ()()) imp;
 		waypoint_thinker.nextthink = time;
+		[waypoint_queue removeLastObject];
 	}
 }
 
 -(id)queueForThink
 {
 	if (waypoint_thinker.@this) {
-		[waypoint_queue addItemAtTail: self];
+		[waypoint_queue addObject: self];
 	} else {
 		local IMP imp = [self methodForSelector: @selector (waypointThink)];
 		waypoint_thinker.think = (void ()()) imp;

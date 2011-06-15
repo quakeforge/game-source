@@ -43,7 +43,6 @@ this notice in its entirety.
 */
 
 #include <Array.h>
-#include <List.h>
 
 #include "libfrikbot.h"
 #include "editor.h"
