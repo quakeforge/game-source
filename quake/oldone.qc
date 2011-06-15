@@ -252,7 +252,7 @@ void() monster_oldone =
 	precache_sound2 ("boss2/pop2.wav");
 
 	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
+	self.movetype = MOVETYPE_NONE;
 	
 	setmodel (self, "progs/oldone.mdl");
 	setsize (self, '-160 -128 -24', '160 128 256');
