@@ -1,5 +1,6 @@
 *.dat
 *.qfo
+*.o
 *.sym
 .deps
 Makefile.deps
