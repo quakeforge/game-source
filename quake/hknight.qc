@@ -52,6 +52,7 @@ $frame magicc1 magicc2 magicc3 magicc4 magicc5 magicc6 magicc7 magicc8
 $frame magicc9 magicc10 magicc11
 
 
+void() hknight_random_magic;
 void() hknight_char_a1;
 void() hknight_run1;
 void() hk_idle_sound;
@@ -239,7 +240,7 @@ void()	hknight_magica10 =[	$magica10,	hknight_magica11] {hknight_shot(1);};
 void()	hknight_magica11 =[	$magica11,	hknight_magica12] {hknight_shot(2);};
 void()	hknight_magica12 =[	$magica12,	hknight_magica13] {hknight_shot(3);};
 void()	hknight_magica13 =[	$magica13,	hknight_magica14] {ai_face();};
-void()	hknight_magica14 =[	$magica14,	hknight_run1	] {ai_face();};
+void()	hknight_magica14 =[	$magica14,	hknight_run1	] {ai_face();hknight_random_magic();};
 
 //============================================================================
 
@@ -255,7 +256,7 @@ void()	hknight_magicb9 =[	$magicb9,	hknight_magicb10] {hknight_shot(0);};
 void()	hknight_magicb10 =[	$magicb10,	hknight_magicb11] {hknight_shot(1);};
 void()	hknight_magicb11 =[	$magicb11,	hknight_magicb12] {hknight_shot(2);};
 void()	hknight_magicb12 =[	$magicb12,	hknight_magicb13] {hknight_shot(3);};
-void()	hknight_magicb13 =[	$magicb13,	hknight_run1] {ai_face();};
+void()	hknight_magicb13 =[	$magicb13,	hknight_run1] {ai_face();hknight_random_magic();};
 
 //============================================================================
 
@@ -269,7 +270,7 @@ void()	hknight_magicc7 =[	$magicc7,	hknight_magicc8	] {hknight_shot(-1);};
 void()	hknight_magicc8 =[	$magicc8,	hknight_magicc9	] {hknight_shot(0);};
 void()	hknight_magicc9 =[	$magicc9,	hknight_magicc10] {hknight_shot(1);};
 void()	hknight_magicc10 =[	$magicc10,	hknight_magicc11] {hknight_shot(2);};
-void()	hknight_magicc11 =[	$magicc11,	hknight_run1] {hknight_shot(3);};
+void()	hknight_magicc11 =[	$magicc11,	hknight_run1] {hknight_shot(3);hknight_random_magic();};
 
 //===========================================================================
 
@@ -399,6 +400,18 @@ void() hknight_melee =
 	}
 };
 
+void() hknight_random_magic =
+{
+	local float zufall;
+	zufall = random ();
+	if (zufall > 0.65)
+		self.th_missile = hknight_magica1;
+	else if (zufall < 0.34)
+		self.th_missile = hknight_magicb1;
+	else
+		self.th_missile = hknight_magicc1;
+};
+
 /*QUAKED monster_hell_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
 void() monster_hell_knight =
@@ -437,7 +450,7 @@ void() monster_hell_knight =
 	self.th_walk = hknight_walk1;
 	self.th_run = hknight_run1;
 	self.th_melee = hknight_melee;
-	self.th_missile = hknight_magicc1;
+	self.th_missile = hknight_random_magic;
 	self.th_pain = hknight_pain;
 	self.th_die = hknight_die;
 	
