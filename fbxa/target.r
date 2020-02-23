@@ -46,7 +46,7 @@ this notice in its entirety.
 #include "Array.h"
 #include "hash.h"
 
-@static hashtab_t target_tab;
+@static hashtab_t *target_tab;
 
 struct target_s {
 	@defs (Target)

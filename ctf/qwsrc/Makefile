@@ -1,5 +1,5 @@
 all: qwprogs.dat
 qwprogs.dat: progs.src *.qc
-	qfcc -Cvector-components -Werror -Wall -g --advanced
+	qfcc --advanced -Cvector-components,const-initializers -Werror -Wall -g
 clean:
 	rm -f core *.dat *.sym progdefs.h
