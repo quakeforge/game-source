@@ -30,7 +30,7 @@ libfrikbot_dep = $(addprefix .deps/,$(addsuffix .d,$(basename $(libfrikbot_sourc
 map_%.o: map_%.qc
 	@mkdir -p .deps
 	@$(QFCC) -M -q $(QCPPFLAGS) -c $< | sed -e 's/\(\.qc\)\?\.o\>/.o/' > .deps/`basename $@ .o`.d
-	$(QFCC) $(QCFLAGS) -Cvector-calls $(QCPPFLAGS) -c -o $@ $<
+	$(QFCC) $(QCFLAGS) -Cno-promote-float,vector-calls $(QCPPFLAGS) -c -o $@ $<
 
 %.o: %.r
 	@mkdir -p .deps

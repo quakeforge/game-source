@@ -9,7 +9,7 @@ CPP=cpp
 CPPFLAGS=-I. -Iweapons -Imdl -Iact -Imapents
 
 QFCC=qfcc
-QFCCFLAGS=-qg -Cvector-components -Wall -Werror $(CPPFLAGS)
+QFCCFLAGS=-qg -Cno-promote-float,vector-components -Wall -Werror $(CPPFLAGS)
 
 ###############################################
 
