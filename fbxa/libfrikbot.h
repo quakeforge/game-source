@@ -108,7 +108,6 @@ typedef struct bot_data_t bot_data_t;
 	float ai_time;
 	float b_sound;
 	float missile_speed;
-	float portal_time;
 	int b_skill;
 	float switch_wallhug;
 	int b_aiflags;
