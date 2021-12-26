@@ -54,15 +54,15 @@ struct target_s {
 
 @static unsigned target_get_hash (void *ele, void *unused)
 {
-	local Target *t = ele;
+	local Target *t = (Target *) ele;
 	//return ((unsigned*)&t.ent)[0];
 	return nil;//FIXME
 };
 
 @static int target_compare (void *e1, void*e2, void *unused)
 {
-	local Target *t1 = e1;
-	local Target *t2 = e2;
+	local Target *t1 = (Target *) e1;
+	local Target *t2 = (Target *) e2;
 	return t1.ent == t2.ent;
 };
 
@@ -84,7 +84,7 @@ struct target_s {
 		Hash_SetHashCompare (target_tab, target_get_hash, target_compare);
 	}
 	ele.ent = e;
-	t = Hash_FindElement (target_tab, &ele);
+	t = (Target *) Hash_FindElement (target_tab, &ele);
 	if (t)
 		return t;
 
