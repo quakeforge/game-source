@@ -50,7 +50,7 @@ float (int keys, int key) key_state =
 };
 
 void (vector start, vector mins, vector maxs, vector end, float type,
-      entity passent) checkmove = #98;              // Wrapper around SV_Move.
+      entity passent) tracebox = #98;              // Wrapper around SV_Move.
 
 
 @implementation Bot (Move)
@@ -109,7 +109,7 @@ void (vector start, vector mins, vector maxs, vector end, float type,
 	if (probe) {
 		probe = normalize (probe);
 		probe = probe * 32 + start;
-		checkmove (start, ent.mins, ent.maxs, probe, 1, ent);
+		tracebox (start, ent.mins, ent.maxs, probe, 1, ent);
 		if (trace_fraction != 1) {
 			obstructed = 1;
 			probe = (probe - start);
