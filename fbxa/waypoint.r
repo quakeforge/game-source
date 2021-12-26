@@ -231,10 +231,8 @@ Waypoint Loading from file
 		dprint (sprintf ("could not load file: %s", path));
 		return;
 	}
-	plist_data = Qreadstring (file, Qfilesize (file));
+	plist = [PLItem fromFile:file];
 	Qclose (file);
-	plist = [PLItem fromString:plist_data];
-	str_free (plist_data);
 
 	[Waypoint clearAll];
 
@@ -363,13 +361,13 @@ Waypoint Loading from file
 			break;
 	if (i == 4)
 		sprint (ent.ent, PRINT_HIGH,
-				sprintf ("Waypoitn %i has no outbount links\n", [self id]));
+				sprintf ("Waypoint %i has no outbount links\n", [self id]));
 	for (i = 0; i < 4; i++)
 		if (links[i] == self)
 			break;
 	if (i != 4)
 		sprint (ent.ent, PRINT_HIGH,
-				sprintf ("Waypoitn %i links to itself\n", [self id]));
+				sprintf ("Waypoint %i links to itself\n", [self id]));
 }
 
 +(void) check:(Target *)ent
