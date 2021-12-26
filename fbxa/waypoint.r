@@ -46,6 +46,7 @@ this notice in its entirety.
 #include "Array.h"
 #include "qfile.h"
 #include "qfs.h"
+#include "legacy_string.h"
 #include "string.h"
 #include "PropertyList.h"
 
@@ -223,7 +224,6 @@ Waypoint Loading from file
 {
 	local QFile file;
 	local PLItem *plist;
-	local string plist_data;
 	local int i, count;
 
 	file = QFS_OpenFile (path);
