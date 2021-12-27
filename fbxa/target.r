@@ -195,6 +195,20 @@ struct target_s {
 	return 0;
 }
 
+static int
+waypoint_visible (Waypoint *way, void *data)
+{
+	Bot        *bot = (Bot *) data;
+
+	// real players cut through ignore types
+	if (bot.ishuman || !(way.flags & AI_IGNORE_TYPES)) {
+		traceline (bot.ent.origin, way.origin, TRUE, bot.ent);
+		if (trace_fraction == 1) {
+			return 1;
+		}
+	}
+	return 0;
+}
 /*
 FindWaypoint
 
@@ -220,23 +234,8 @@ Finds the closest, fisible, waypoint to e
 		dst = 100000;
 		best = nil;
 	}
-	count = [waypoint_array count];
-	for (i = 0; i < count; i++) {
-		t = [waypoint_array objectAtIndex:i];
-		// real players cut through ignore types
-		if (dst < 20)
-			return best;
-		if (!(t.flags & AI_IGNORE_TYPES) || ishuman) {
-			tdst = vlen (t.origin - org);
-			if (tdst < dst) {
-				if (sisible (ent, nil, t.origin)) {
-					dst = tdst;
-					best = t;
-				}
-			}
-		}
-	} 
-	return best;
+	return [Waypoint nearest:ent.origin start:start
+						test:waypoint_visible data:self];
 }
 
 -(float)searchTime

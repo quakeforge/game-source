@@ -50,22 +50,25 @@ this notice in its entirety.
 #include "string.h"
 #include "PropertyList.h"
 
-Array *waypoint_array;
+@static Array *waypoint_array;
 @static entity waypoint_thinker;
 @static Array *waypoint_queue;
 
-@static void () waypoint_init =
+@implementation Waypoint
+
++(void) initialize
 {
 	waypoint_array = [[Array alloc] init];
-	if (!waypoint_queue)
-		waypoint_queue = [[Array alloc] init];
-	if (!waypoint_thinker) {
-		waypoint_thinker = spawn ();
-		waypoint_thinker.classname = "waypoint_thinker";
-	}
+	waypoint_queue = [[Array alloc] init];
+	waypoint_thinker = spawn ();
+	waypoint_thinker.classname = "waypoint_thinker";
 };
 
-@implementation Waypoint
++(void)removeWaypoint:(Waypoint *)way
+{
+	[waypoint_array removeObject:way];
+	[way release];
+}
 
 -(int)id
 {
@@ -77,8 +80,6 @@ Array *waypoint_array;
 
 -(id)init
 {
-	if (!waypoint_array)
-		waypoint_init ();
 	return [super initWithEntity:nil];
 }
 
@@ -266,9 +267,7 @@ Waypoint Loading from file
 +(void)clearAll
 {
 	dprint ("Waypoint clearAll\n");
-	if (waypoint_array)
-		[waypoint_array release];
-	waypoint_init ();
+	[waypoint_array removeAllObjects];
 }
 
 +(Waypoint *)waypointForNum:(int)num
@@ -396,6 +395,29 @@ Waypoint Loading from file
 		}
 	}
 	return way;
+}
+
++(Waypoint *)nearest:(vector)org start:(Waypoint *) start
+			    test:(waytest_t) test data:(void*)data
+{
+	float       best_dist = 1e9;
+	Waypoint   *best_way = nil;
+
+	if (start) {
+		best_dist = (start.origin - org) * (start.origin - org);
+		best_way = start;
+	}
+
+	int         count = [waypoint_array count];
+	for (int i = 0; best_dist > 400 && i < count; i++) {
+		Waypoint   *way = [waypoint_array objectAtIndex: i];
+		float       dist = (way.origin - org) * (way.origin - org);
+		if (dist < best_dist && test (way, data)) {
+			best_dist = dist;
+			best_way = way;
+		}
+	}
+	return best_way;
 }
 
 -(void)show

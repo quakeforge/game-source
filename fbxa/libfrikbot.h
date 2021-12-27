@@ -34,6 +34,8 @@ typedef struct bot_data_t bot_data_t;
 -(string)classname;
 @end
 
+typedef int waytest_t (Waypoint *way, void *data);
+
 @interface Waypoint: Target
 {
 @public
@@ -61,6 +63,10 @@ typedef struct bot_data_t bot_data_t;
 +(void)clearRouteTable;
 +(void)clearMyRoute:(Bot *) bot;
 +(Waypoint *)find:(vector)org radius:(float)rad;
++(Waypoint *)nearest:(vector)org start:(Waypoint *) start
+			    test:(waytest_t) test data:(void*)data;
+
++(void)removeWaypoint:(Waypoint *)way;
 
 +(void)showAll;
 +(void)hideAll;
@@ -86,8 +92,8 @@ typedef struct bot_data_t bot_data_t;
 
 -(id)queueForThink;
 @end
+
 @class Array;
-@extern Array *waypoint_array;
 
 @interface Bot: Target
 {
@@ -120,6 +126,7 @@ typedef struct bot_data_t bot_data_t;
 	float dyn_time;
 	Waypoint *temp_way;
 	Waypoint *last_way;
+	Waypoint *last_waypoint; //FIXME see findRoute
 	Target *targets[4];
 	entity avoid;
 	vector obs_dir;

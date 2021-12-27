@@ -42,8 +42,6 @@ this notice in its entirety.
 
 */
 
-#include <Array.h>
-
 #include "libfrikbot.h"
 #include "editor.h"
 
@@ -55,8 +53,7 @@ int bot_way_linker;
 {
 	if (current_way == what)
 		current_way = nil;
-	[waypoint_array removeObject:what];
-	[what release];
+	[Waypoint removeWaypoint:what];
 }
 
 /*
@@ -101,29 +98,20 @@ an object.
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 */
 
+static int
+waypoint_on_route (Waypoint *way, void *data)
+{
+	Bot        *bot = (Bot *) data;
+	return (bot.b_clientflag & way.bot_bits)
+		   && (!bot.last_waypoint || [bot.last_waypoint isLinkedTo:way]);
+}
+
 -(Waypoint *)findRoute:(Waypoint *)lastone
 {
 	// kinda like FindWaypoint, only of this bots route though
-	local Waypoint *t, *best;
-	local float dst, tdst;
-	local int flag;
-	local int count, i;
-
-	flag = b_clientflag;
-	dst = 100000;
-	best = nil;
-	count = [waypoint_array count];
-	for (i = 0; i < count; i++) {
-		t = [waypoint_array objectAtIndex:i];
-		tdst = vlen(t.origin - ent.origin);
-		if ((tdst < dst) &&  (t.bot_bits & flag)) {
-			if ((lastone == nil) || ([lastone isLinkedTo:t])) {
-				dst = tdst;
-				best = t;
-			}
-		} 
-	} 
-	return best;
+	last_waypoint = lastone;	//FIXME want local var but...
+	return [Waypoint nearest:ent.origin start:nil
+						test:waypoint_on_route data:self];
 }
 
 /*

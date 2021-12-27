@@ -51,7 +51,7 @@
 	if ((imp = [super impulse:imp]) == 104) {
 		imp = 0;
 		if (value)
-			way = (Waypoint *) [waypoint_array objectAtIndex:value - 1];
+			way = [Waypoint waypointForNum:value];
 		value = 0;
 		if (way)
 			setorigin (@self, way.origin - @self.view_ofs);
@@ -842,7 +842,7 @@
 		player.current_way = editor.last_way = nil;
 		break;
 	case "delete waypoint":
-		[waypoint_array removeObject:editor.last_way];
+		[Waypoint removeWaypoint:editor.last_way];
 		if (player.current_way == editor.last_way)
 			player.current_way = nil;
 		editor.last_way = nil;
