@@ -1,29 +1,23 @@
-Index: Makefile
-===================================================================
-RCS file: /var/qfcvs/game-source/quakeworld/Makefile,v
-retrieving revision 1.4
-diff -u -r1.4 Makefile
---- Makefile	20 Sep 2003 04:21:13 -0000	1.4
-+++ Makefile	17 Dec 2006 10:52:50 -0000
+diff --git a/quakeworld/Makefile b/quakeworld/Makefile
+index ef3e4c63c..4b5072439 100644
+--- a/quakeworld/Makefile
++++ b/quakeworld/Makefile
 @@ -1,5 +1,7 @@
  all: qwprogs.dat
 -qwprogs.dat: progs.src *.qc
--	qfcc -Cvector-components -Werror -Wall -g --advanced
+-	qfcc --advanced -Cno-promote-float,vector-components,const-initializers -Werror -Wall -g
 +qwprogs.dat: qwprogs.o
 +	qfcc -g -o qwprogs.dat qwprogs.o -lfrikbot -lr -lqw
 +qwprogs.o: progs.src *.qc
-+	qfcc -Cvector-components --advanced -Dself=@self -g -c -o qwprogs.o
++	qfcc --advanced -Cno-promote-float,vector-components,const-initializers -Werror -Wall -Dself=@self -O -g -c -o qwprogs.o
  clean:
 -	rm -f core *.dat *.sym progdefs.h *.p *.i1 *.i2
 +	rm -f core *.dat *.sym progdefs.h *.p *.i1 *.i2 *.o
-Index: client.qc
-===================================================================
-RCS file: /var/qfcvs/game-source/quakeworld/client.qc,v
-retrieving revision 1.8
-diff -u -r1.8 client.qc
---- client.qc	8 Feb 2004 04:52:32 -0000	1.8
-+++ client.qc	17 Dec 2006 10:52:50 -0000
-@@ -772,6 +772,7 @@
+diff --git a/quakeworld/client.qc b/quakeworld/client.qc
+index 0a2a7ecfe..08e71a967 100644
+--- a/quakeworld/client.qc
++++ b/quakeworld/client.qc
+@@ -773,6 +773,7 @@ Called every frame before physics are run
  void ()
  PlayerPreThink =
  {
@@ -31,7 +25,7 @@ diff -u -r1.8 client.qc
  	if (intermission_running) {
  		IntermissionThink ();   // otherwise a button could be missed between
  		return;                                 // the think tics
-@@ -969,6 +970,8 @@
+@@ -970,6 +971,8 @@ Called every frame after physics are run
  void ()
  PlayerPostThink =
  {
@@ -40,7 +34,7 @@ diff -u -r1.8 client.qc
  //	dprint ("post think\n");
  	if (self.view_ofs == '0 0 0')
  		return;         // intermission or finale
-@@ -1004,6 +1007,8 @@
+@@ -1005,6 +1008,8 @@ called when a player connects to a server
  void ()
  ClientConnect =
  {
@@ -49,7 +43,7 @@ diff -u -r1.8 client.qc
  	bprint (PRINT_HIGH, self.netname);
  	bprint (PRINT_HIGH, " entered the game\n");
  
-@@ -1022,6 +1027,8 @@
+@@ -1023,6 +1028,8 @@ called when a player disconnects from a server
  void ()
  ClientDisconnect =
  {
@@ -58,15 +52,12 @@ diff -u -r1.8 client.qc
  	// let everyone else know
  	bprint (PRINT_HIGH, self.netname);
  	bprint (PRINT_HIGH, " left the game with ");
-Index: defs.qc
-===================================================================
-RCS file: /var/qfcvs/game-source/quakeworld/defs.qc,v
-retrieving revision 1.4
-diff -u -r1.4 defs.qc
---- defs.qc	2 Mar 2003 04:06:47 -0000	1.4
-+++ defs.qc	17 Dec 2006 10:52:50 -0000
+diff --git a/quakeworld/defs.qc b/quakeworld/defs.qc
+index 806db533f..13bf81e8d 100644
+--- a/quakeworld/defs.qc
++++ b/quakeworld/defs.qc
 @@ -1,7 +1,8 @@
-+#include "frikbot.h"
++#include <frikbot.h>
  // SOURCE FOR GLOBALVARS_T C STRUCTURE ========================================
  
  // system globals
@@ -75,7 +66,7 @@ diff -u -r1.4 defs.qc
  entity          other;
  entity          world;
  float           time;
-@@ -518,7 +519,7 @@
+@@ -518,7 +519,7 @@ void(entity e, string m) setmodel       = #3;           // set movetype and soli
  void(entity e, vector min, vector max) setsize = #4;
  //void() break                                            = #6;
  float() random                                          = #7;           // returns 0 - 1
@@ -84,7 +75,7 @@ diff -u -r1.4 defs.qc
  vector(vector v) normalize                      = #9;
  void(string e) error                            = #10;
  void(string e) objerror                         = #11;
-@@ -534,7 +535,7 @@
+@@ -534,7 +535,7 @@ void(entity e) remove                           = #15;
  // a forent of world is ignored
  void(vector v1, vector v2, float nomonsters, entity forent) traceline = #16;    
  entity() checkclient                            = #17;  // returns a client to look for
@@ -93,7 +84,7 @@ diff -u -r1.4 defs.qc
  string(string s) precache_sound         = #19;
  string(string s) precache_model         = #20;
  void(entity client, string s)stuffcmd = #21;
-@@ -542,8 +543,8 @@
+@@ -542,8 +543,8 @@ entity(vector org, float rad) findradius = #22;
  void(float level, string s) bprint                              = #23;
  void(entity client, float level, string s) sprint = #24;
  void(string s) dprint                           = #25;
@@ -104,7 +95,7 @@ diff -u -r1.4 defs.qc
  void() coredump                                         = #28;          // prints all edicts
  void() traceon                                          = #29;          // turns statment trace on
  void() traceoff                                         = #30;
-@@ -557,7 +558,7 @@
+@@ -557,7 +558,7 @@ float(float v) ceil                                     = #38;          // small
  float(entity e) checkbottom                     = #40;          // true if self is on ground
  float(vector v) pointcontents           = #41;          // returns a CONTENT_*
  float(float f) fabs = #43;
@@ -113,7 +104,7 @@ diff -u -r1.4 defs.qc
  float(string s) cvar = #45;                                             // return cvar.value
  void(string s) localcmd = #46;                                  // put string into local que
  entity(entity e) nextent = #47;                                 // for looping through all ents
-@@ -593,13 +594,13 @@
+@@ -593,13 +594,13 @@ string(string s) precache_model2        = #75;          // registered version on
  string(string s) precache_sound2        = #76;          // registered version only
  string(string s) precache_file2         = #77;          // registered version only
  
@@ -129,14 +120,11 @@ diff -u -r1.4 defs.qc
  void(vector where, float set) multicast = #82;  // sends the temp message to a set
  												// of clients, possibly in PVS or PHS
  
-Index: world.qc
-===================================================================
-RCS file: /var/qfcvs/game-source/quakeworld/world.qc,v
-retrieving revision 1.5
-diff -u -r1.5 world.qc
---- world.qc	4 Mar 2003 23:15:54 -0000	1.5
-+++ world.qc	17 Dec 2006 10:52:50 -0000
-@@ -17,6 +17,8 @@
+diff --git a/quakeworld/world.qc b/quakeworld/world.qc
+index 8f350f5a6..6922c0d45 100644
+--- a/quakeworld/world.qc
++++ b/quakeworld/world.qc
+@@ -17,6 +17,8 @@ World Types:
  void ()
  worldspawn =
  {
@@ -145,7 +133,7 @@ diff -u -r1.5 world.qc
  	lastspawn = world;
  	InitBodyQueue ();
  
-@@ -189,6 +191,8 @@
+@@ -189,6 +191,8 @@ worldspawn =
  void ()
  StartFrame =
  {
