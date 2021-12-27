@@ -114,7 +114,6 @@ Sets bot's name and colors
 
 	if ([bot_array count]) {
 		ty = [bot_array objectAtIndex:0];
-		[bot_array removeObjectAtIndex:0];
 		if (ty)
 			[ty disconnect];
 	}
