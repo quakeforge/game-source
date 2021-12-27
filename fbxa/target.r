@@ -48,15 +48,14 @@ this notice in its entirety.
 
 @static hashtab_t *target_tab;
 
-struct target_s {
+typedef struct target_s {
 	@defs (Target)
-};
+} target_t;
 
 @static unsigned target_get_hash (void *ele, void *unused)
 {
-	local Target *t = (Target *) ele;
-	//return ((unsigned*)&t.ent)[0];
-	return nil;//FIXME
+	local Target *t1 = (Target *) ele;
+	return *(unsigned*)(&t1.ent);
 };
 
 @static int target_compare (void *e1, void*e2, void *unused)
@@ -68,10 +67,16 @@ struct target_s {
 
 @implementation Target
 
++(void)initialize
+{
+	target_tab = Hash_NewTable (1021, nil, nil, nil);
+	Hash_SetHashCompare (target_tab, target_get_hash, target_compare);
+}
+
 +(Target *)forEntity:(entity)e
 {
 	local Target *t;
-	local struct target_s ele;
+	static target_t ele;//FIXME want local, but...
 
 	if (!e)
 		return nil;
@@ -79,10 +84,6 @@ struct target_s {
 	if (e.classname == "player")
 		return e.@this;
 
-	if (!target_tab) {
-		target_tab = Hash_NewTable (1021, nil, nil, nil);
-		Hash_SetHashCompare (target_tab, target_get_hash, target_compare);
-	}
 	ele.ent = e;
 	t = (Target *) Hash_FindElement (target_tab, &ele);
 	if (t)
