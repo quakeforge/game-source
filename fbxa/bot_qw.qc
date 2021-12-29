@@ -136,6 +136,7 @@ void(entity e, float chan, string samp, float vol, float atten) frik_sound = #8;
 vector(entity e, float sped)       frik_aim = #44; 
 void(entity e)             frik_setspawnparms  = #78;
 
+int (entity e) SV_ClientNumber = #0;
 entity () SV_AllocClient = #0;
 void (entity e) SV_FreeClient = #0;
 void (entity e, string str) SV_SetUserinfo = #0;
@@ -202,7 +203,7 @@ BotPreFrame =
 void ()
 ClientInRankings =
 {
-	local int cl_no = ClientNumber (@self);
+	local int cl_no = SV_ClientNumber (@self);
 
 	if (!players[cl_no])
 		players[cl_no] = [[Bot alloc] initFromPlayer:@self];
@@ -211,7 +212,7 @@ ClientInRankings =
 void ()
 ClientDisconnected =
 {
-	local int cl_no = ClientNumber (@self);
+	local int cl_no = SV_ClientNumber (@self);
 	local Bot *p = nil;
 
 	p = players[cl_no];
@@ -231,21 +232,6 @@ ClientDisconnected =
 };
 
 // BotConnect and related functions. -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-int (entity cl)
-ClientNumber =
-{
-	local entity e = nil;
-	local int f = -1;
-
-	do {
-		f++;
-		e = nextent (e);
-	} while (f < 33 && e != cl);
-	if (f == 33)
-		Break ();
-	return f;
-};
 
 Bot *BotConnect (int whatbot, int whatskill)
 {
@@ -384,7 +370,7 @@ void DeveloperLightning (Waypoint *e1, Waypoint *e2, int flag)
 
 - (id) initWithEntity:(entity) e named:(bot_data_t *)name skill:(int)skill
 {
-	local int cl_no = ClientNumber (e);
+	local int cl_no = SV_ClientNumber (e);
 	local entity uself;
 
 	SV_Spawn (e);
