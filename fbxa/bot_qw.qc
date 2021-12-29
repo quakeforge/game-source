@@ -76,6 +76,7 @@ ClientDisconnected(); // FrikBot
 #include "libfrikbot.h"
 #include "cmd.h"
 #include "editor.h"
+#include "waypoint.h"
 
 int *bot_way_ref;
 int *bot_move_ref;

@@ -42,9 +42,11 @@ this notice in its entirety.
 
 */
 
+#include <Array.h>
+#include <hash.h>
+
 #include "libfrikbot.h"
-#include "Array.h"
-#include "hash.h"
+#include "waypoint.h"
 
 @static hashtab_t *target_tab;
 

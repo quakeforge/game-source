@@ -7,6 +7,7 @@
 #include "impulse_menu.h"
 #include "libfrikbot.h"
 #include "editor.h"
+#include "waypoint.h"
 
 @interface TeleportMenu: ImpulseValueMenu
 @end

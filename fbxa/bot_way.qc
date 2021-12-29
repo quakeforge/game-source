@@ -44,6 +44,7 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 #include "editor.h"
+#include "waypoint.h"
 
 int bot_way_linker;
 

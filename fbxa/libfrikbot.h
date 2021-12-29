@@ -34,65 +34,6 @@ typedef struct bot_data_t bot_data_t;
 -(string)classname;
 @end
 
-typedef int waytest_t (Waypoint *way, void *data);
-
-@interface Waypoint: Target
-{
-@public
-	Waypoint *links[4];
-	int flags;
-	vector origin;
-
-	int is_temp;
-
-	int bot_bits;
-	int busy;	//???
-	float distance;
-	Waypoint *enemy;
-	float search_time;
-
-	Waypoint *chain;
-}
-+(void)loadFile:(string)path;
-+(void)clearAll;
-+(Waypoint *)waypointForNum:(int)num;
-+(void)fixWaypoints;
-+(PLItem *)plist;
-+(void)check:(Target *)ent;
-
-+(void)clearRouteTable;
-+(void)clearMyRoute:(Bot *) bot;
-+(Waypoint *)find:(vector)org radius:(float)rad;
-+(Waypoint *)nearest:(vector)org start:(Waypoint *) start
-			    test:(waytest_t) test data:(void*)data;
-
-+(void)removeWaypoint:(Waypoint *)way;
-
-+(void)showAll;
-+(void)hideAll;
--(void)deselect;
--(void)select;
-
--(int)id;
--(id)init;
--(id)initAt:(vector)org;
--(id)initFromEntity:(entity)ent;
-
--(int)isLinkedTo:(Waypoint *)way;
--(int)linkWay:(Waypoint *)way;
--(int)teleLinkWay:(Waypoint *)way;
--(void)unlinkWay:(Waypoint *)way;
-
--(void)followLink:(Waypoint *)e2 :(int)bBit;
--(void)waypointThink;
-
--(void)clearLinks;
--(void)clearRoute;
--(void)clearRouteForBot:(Bot *)bot;
-
--(id)queueForThink;
-@end
-
 @class Array;
 
 @interface Bot: Target
@@ -196,7 +137,6 @@ typedef int waytest_t (Waypoint *way, void *data);
 @end
 
 @interface Bot (Way)
--(void)deleteWaypoint:(Waypoint *)what;
 -(entity)findThing:(string)s;
 -(Waypoint *)findRoute:(Waypoint *)lastone;
 -(void)markPath:(Target *)this;
@@ -243,50 +183,12 @@ typedef int waytest_t (Waypoint *way, void *data);
 #define KEY_MOVE		(KEY_MOVEBACK|KEY_MOVEFORWARD|KEY_MOVERIGHT\
 						 |KEY_MOVELEFT|KEY_MOVEDOWN|KEY_MOVEUP)
 
-// these are aiflags for waypoints
-// some overlap to the bot
-#define AI_TELELINK_1	0x00001	// link type
-#define AI_TELELINK_2	0x00002	// link type
-#define AI_TELELINK_3	0x00004	// link type
-#define AI_TELELINK_4	0x00008	// link type
-#define AI_DOORFLAG		0x00010	// read ahead
-#define AI_PRECISION	0x00020	// read ahead + point
-#define AI_SURFACE		0x00040	// point 
-#define AI_BLIND		0x00080	// read ahead + point
-#define AI_JUMP			0x00100	// point + ignore
-#define AI_DIRECTIONAL	0x00200	// read ahead + ignore
-#define AI_PLAT_BOTTOM	0x00400	// read ahead 
-#define AI_RIDE_TRAIN	0x00800	// read ahead 
-#define AI_SUPER_JUMP	0x01000	// point + ignore + route test
-#define AI_SNIPER		0x02000	// point type 
-#define AI_AMBUSH		0x04000	// point type
-#define AI_DOOR_NO_OPEN	0x08000	// read ahead
-#define AI_DIFFICULT	0x10000	// route test
-#define AI_TRACE_TEST	0x20000	// route test
-
-// addition masks
-#define AI_POINT_TYPES 		(AI_AMBUSH|AI_SNIPER|AI_SUPER_JUMP|AI_JUMP\
-							 |AI_BLIND|AI_SURFACE|AI_PRECISION)
-#define AI_READAHEAD_TYPES	(AI_DOOR_NO_OPEN|AI_RIDE_TRAIN|AI_PLAT_BOTTOM\
-							 |AI_DIRECTIONAL)
-#define AI_IGNORE_TYPES		(AI_SUPER_JUMP|AI_DIRECTIONAL|AI_JUMP)
-
 // these are flags for bots/players (dynamic/editor flags)
 #define AI_OBSTRUCTED	1
 #define AI_HOLD_SELECT	2
 #define AI_ROUTE_FAILED	2
 #define AI_WAIT			4
 #define AI_DANGER		8
-
-#define WM_UNINIT		0
-#define WM_DYNAMIC		1
-#define WM_LOADING		2
-#define WM_LOADED		3
-// editor modes aren't available in QW, but we retain support of them
-// since the editor is still built into the AI in places
-#define WM_EDITOR		4
-#define WM_EDITOR_DYNAMIC	5
-#define WM_EDITOR_DYNLINK	6
 
 #define OPT_NOCHAT	2
 
@@ -310,9 +212,6 @@ typedef int waytest_t (Waypoint *way, void *data);
 @extern void()				ClientConnect;
 @extern void()				ClientDisconnect;
 @extern void()				SetNewParms;
-
-// rankings
-@extern int (entity e) ClientNumber;
 
 @extern void(vector org, vector bit1, int bit4, int flargs) make_way;
 

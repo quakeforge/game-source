@@ -41,6 +41,7 @@ this notice in its entirety.
 */
 
 #include "libfrikbot.h"
+#include "waypoint.h"
 
 int bot_move_linker;
 

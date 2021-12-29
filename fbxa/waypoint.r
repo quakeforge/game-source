@@ -42,13 +42,15 @@ this notice in its entirety.
 
 */
 
+#include <Array.h>
+#include <qfile.h>
+#include <qfs.h>
+#include <legacy_string.h>
+#include <string.h>
+#include <PropertyList.h>
+
 #include "libfrikbot.h"
-#include "Array.h"
-#include "qfile.h"
-#include "qfs.h"
-#include "legacy_string.h"
-#include "string.h"
-#include "PropertyList.h"
+#include "waypoint.h"
 
 @static Array *waypoint_array;
 @static entity waypoint_thinker;

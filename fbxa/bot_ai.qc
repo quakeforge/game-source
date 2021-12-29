@@ -43,6 +43,7 @@ this notice in its entirety.
 */
 
 #include "libfrikbot.h"
+#include "waypoint.h"
 
 float stagger_think;
 
