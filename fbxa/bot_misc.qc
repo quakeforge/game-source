@@ -81,6 +81,11 @@ bot_data_t bot_data[32] = {
 Array *bot_array;
 
 @implementation Bot (Misc)
+
++(void) initialize
+{
+	bot_array = [[Array alloc] init];
+}
 /*
 BotName
 
@@ -121,8 +126,6 @@ Sets bot's name and colors
 
 -(void)add
 {
-	if (!bot_array)
-		bot_array = [[Array alloc] init];
 	[bot_array addObject: self];
 }
 
