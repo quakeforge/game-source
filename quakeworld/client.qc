@@ -285,7 +285,7 @@ SelectSpawnPoint =
 	numspots = 0;
 	totalspots = 0;
 
-	// testinfo_player_start is only found in regioned levels
+	// testinfo_player_start is found only in regioned levels
 	spot = find (world, classname, "testplayerstart");
 	if (spot)
 		return spot;
