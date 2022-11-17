@@ -1,5 +1,7 @@
 // SOURCE FOR GLOBALVARS_T C STRUCTURE ========================================
-
+#if __RUAMOKO__ > 1
+#pragma math vector_mult @dot
+#endif
 // system globals
 entity          self;
 entity          other;
