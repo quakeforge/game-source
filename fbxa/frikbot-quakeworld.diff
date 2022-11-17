@@ -82,7 +82,7 @@ index 45931b5a0..a735d7160 100644
  void(vector v1, vector v2, float nomonsters, entity forent) traceline = #16;    
  entity() checkclient                            = #17;  // returns a client to look for
 -entity(entity start, .string fld, string match) find = #18;
-+entity(entity start, ...) find = #18;
++@attribute(no_va_list) entity(entity start, ...) find = #18;
  string(string s) precache_sound         = #19;
  string(string s) precache_model         = #20;
  void(entity client, string s)stuffcmd = #21;
