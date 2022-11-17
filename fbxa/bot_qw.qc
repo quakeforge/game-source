@@ -148,6 +148,21 @@ void (entity cl, float sec, vector angles, vector move, int buttons, int impulse
 void (entity cl) SV_Spawn = #0;
 void () Break = #6;
 
+int obj_get_retaincount (id object);
+static AutoreleasePool *autorelease_pool;
+static void
+arp_start (void)
+{
+	autorelease_pool = [[AutoreleasePool alloc] init];
+}
+
+static void
+arp_end (void)
+{
+	[autorelease_pool release];
+	autorelease_pool = nil;
+}
+
 //----------------------------------------------------------------------------
 
 /*
@@ -463,9 +478,11 @@ void DeveloperLightning (Waypoint *e1, Waypoint *e2, int flag)
 
 -(void)frame
 {
+	arp_start ();
 	[self obstacles];
 	[self sendMove];
 	[self AI];
+	arp_end ();
 }
 
 -(void) updateClient
