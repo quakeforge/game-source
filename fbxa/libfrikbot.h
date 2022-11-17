@@ -82,7 +82,6 @@ typedef struct bot_data_t bot_data_t;
 - (id) initWithEntity: (entity) e named:(bot_data_t *)name skill:(int)skill;
 - (id) initFromPlayer: (entity) e;
 - (void) preThink;
-- (void) postThink;
 - (void) frame;
 - (void) disconnect;
 

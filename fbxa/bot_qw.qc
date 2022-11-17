@@ -444,16 +444,6 @@ void DeveloperLightning (Waypoint *e1, Waypoint *e2, int flag)
 	[self dynamicWaypoint];
 }
 
-- (void) postThink
-{
-	local entity uself;
-
-	uself = @self;
-	@self = ent;
-	PlayerPostThink ();
-	@self = uself;
-}
-
 -(void)disconnect
 {
 	local entity uself;
@@ -472,7 +462,6 @@ void DeveloperLightning (Waypoint *e1, Waypoint *e2, int flag)
 -(void)frame
 {
 	[self obstacles];
-	[self preThink];
 	[self sendMove];
 	[self AI];
 }
