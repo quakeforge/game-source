@@ -1,5 +1,7 @@
 #include "Entity.h"
 
+#pragma math vector_mult @dot
+
 @class PLItem;
 
 @class Bot;

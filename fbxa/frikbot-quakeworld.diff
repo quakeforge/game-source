@@ -1,15 +1,15 @@
 diff --git a/quakeworld/Makefile b/quakeworld/Makefile
-index ef3e4c63c..4b5072439 100644
+index aa22357c6..b378efce7 100644
 --- a/quakeworld/Makefile
 +++ b/quakeworld/Makefile
 @@ -1,5 +1,7 @@
  all: qwprogs.dat
 -qwprogs.dat: progs.src *.qc
--	qfcc --advanced -Cno-promote-float,vector-components,const-initializers -Werror -Wall -g
+-	qfcc --ruamoko -Cno-promote-float,vector-components,const-initializers -Werror -Wall -O
 +qwprogs.dat: qwprogs.o
 +	qfcc -g -o qwprogs.dat qwprogs.o -lfrikbot -lr -lqw
 +qwprogs.o: progs.src *.qc
-+	qfcc --advanced -Cno-promote-float,vector-components,const-initializers -Werror -Wall -Dself=@self -O -g -c -o qwprogs.o
++	qfcc --ruamoko -Cno-promote-float,vector-components,const-initializers -Werror -Wall -Dself=@self -O -g -c -o qwprogs.o
  clean:
 -	rm -f core *.dat *.sym progdefs.h *.p *.i1 *.i2
 +	rm -f core *.dat *.sym progdefs.h *.p *.i1 *.i2 *.o
@@ -53,20 +53,22 @@ index 0a2a7ecfe..08e71a967 100644
  	bprint (PRINT_HIGH, self.netname);
  	bprint (PRINT_HIGH, " left the game with ");
 diff --git a/quakeworld/defs.qc b/quakeworld/defs.qc
-index 806db533f..13bf81e8d 100644
+index 45931b5a0..a735d7160 100644
 --- a/quakeworld/defs.qc
 +++ b/quakeworld/defs.qc
-@@ -1,7 +1,8 @@
+@@ -1,9 +1,10 @@
 +#include <frikbot.h>
  // SOURCE FOR GLOBALVARS_T C STRUCTURE ========================================
- 
+ #if __RUAMOKO__ > 1
+ #pragma math vector_mult @dot
+ #endif
  // system globals
 -entity          self;
 +//entity          self;
  entity          other;
  entity          world;
  float           time;
-@@ -518,7 +519,7 @@ void(entity e, string m) setmodel       = #3;           // set movetype and soli
+@@ -520,7 +521,7 @@ void(entity e, string m) setmodel       = #3;           // set movetype and soli
  void(entity e, vector min, vector max) setsize = #4;
  //void() break                                            = #6;
  float() random                                          = #7;           // returns 0 - 1
@@ -75,7 +77,7 @@ index 806db533f..13bf81e8d 100644
  vector(vector v) normalize                      = #9;
  void(string e) error                            = #10;
  void(string e) objerror                         = #11;
-@@ -534,7 +535,7 @@ void(entity e) remove                           = #15;
+@@ -536,7 +537,7 @@ void(entity e) remove                           = #15;
  // a forent of world is ignored
  void(vector v1, vector v2, float nomonsters, entity forent) traceline = #16;    
  entity() checkclient                            = #17;  // returns a client to look for
@@ -84,7 +86,7 @@ index 806db533f..13bf81e8d 100644
  string(string s) precache_sound         = #19;
  string(string s) precache_model         = #20;
  void(entity client, string s)stuffcmd = #21;
-@@ -542,8 +543,8 @@ entity(vector org, float rad) findradius = #22;
+@@ -544,8 +545,8 @@ entity(vector org, float rad) findradius = #22;
  void(float level, string s) bprint                              = #23;
  void(entity client, float level, string s) sprint = #24;
  void(string s) dprint                           = #25;
@@ -95,7 +97,7 @@ index 806db533f..13bf81e8d 100644
  void() coredump                                         = #28;          // prints all edicts
  void() traceon                                          = #29;          // turns statment trace on
  void() traceoff                                         = #30;
-@@ -557,7 +558,7 @@ float(float v) ceil                                     = #38;          // small
+@@ -559,7 +560,7 @@ float(float v) ceil                                     = #38;          // small
  float(entity e) checkbottom                     = #40;          // true if self is on ground
  float(vector v) pointcontents           = #41;          // returns a CONTENT_*
  float(float f) fabs = #43;
@@ -104,7 +106,7 @@ index 806db533f..13bf81e8d 100644
  float(string s) cvar = #45;                                             // return cvar.value
  void(string s) localcmd = #46;                                  // put string into local que
  entity(entity e) nextent = #47;                                 // for looping through all ents
-@@ -593,13 +594,13 @@ string(string s) precache_model2        = #75;          // registered version on
+@@ -595,13 +596,13 @@ string(string s) precache_model2        = #75;          // registered version on
  string(string s) precache_sound2        = #76;          // registered version only
  string(string s) precache_file2         = #77;          // registered version only
  
