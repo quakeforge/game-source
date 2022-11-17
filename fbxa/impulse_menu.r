@@ -115,7 +115,7 @@
 	local string str = text;
 	local string s;
 	local int i;
-	local string is[10];
+	local string is[10] = {};
 	local int max_len = 0, len;
 
 	for (i = 0; i < 10; i++) {

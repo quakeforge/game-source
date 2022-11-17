@@ -72,6 +72,8 @@ ClientDisconnected(); // FrikBot
 */
 
 #include <Array.h>
+#include <AutoreleasePool.h>
+#include <string.h>
 
 #include "libfrikbot.h"
 #include "cmd.h"
@@ -125,7 +127,7 @@ Bot *players[32];
 // -------globals-----
 float       real_frametime;
 float		bot_count, b_options, lasttime;
-float		waypoint_mode, dump_mode; 
+int			waypoint_mode, dump_mode;
 float		direct_route;
 float		sv_gravity;
 Bot			*route_table;
@@ -242,7 +244,7 @@ Bot *BotConnect (int whatbot, int whatskill)
 
 	cl = SV_AllocClient ();
 	if (!cl) {
-		bprint (PRINT_HIGH, "Unable to connect a bot, server is full.\n");
+		bprint ((float)PRINT_HIGH, "Unable to connect a bot, server is full.\n");
 		return nil;
 	}
 

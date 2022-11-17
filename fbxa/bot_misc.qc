@@ -42,6 +42,7 @@ this notice in its entirety.
 
 #include "libfrikbot.h"
 #include "Array.h"
+#include "string.h"
 
 bot_data_t bot_data[32] = {
 	{"Vincent",   11,  0},

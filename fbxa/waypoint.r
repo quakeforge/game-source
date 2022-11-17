@@ -231,7 +231,7 @@ Waypoint Loading from file
 
 	file = QFS_OpenFile (path);
 	if (!file) {
-		dprint (sprintf ("could not load file: %s", path));
+		dprint (sprintf ("could not load file: %s\n", path));
 		return;
 	}
 	plist = [PLItem fromFile:file];

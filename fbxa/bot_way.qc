@@ -42,6 +42,8 @@ this notice in its entirety.
 
 */
 
+#include <string.h>
+
 #include "libfrikbot.h"
 #include "editor.h"
 #include "waypoint.h"
@@ -136,9 +138,7 @@ different bot.
 	[Waypoint clearMyRoute:self];
 
 	t = [this findWaypoint:this.current_way];
-	// FIXME
-	// ugh, better way to find players please!!!
-	if ([this classname] != "player")
+	if (!ishuman)
 		this.current_way = t;
 		
 	if (t.enemy == nil) {
@@ -287,8 +287,9 @@ very good all things considered.
 
 	// if there's nothing for dynamic to do..
 	if (!dynpoint) {
-		if (!editor)
+		if (!editor) {
 			return;
+		}
 	}
 	// for speed sake, I won't have bots dynamic waypoint in coop
 	if (!ishuman)
