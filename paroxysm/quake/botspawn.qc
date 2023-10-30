@@ -149,7 +149,7 @@ local entity spot;
 		//setmodel(self, "progs/eyes.mdl");
 					
 		self.invisible_time = 1;
-		self.invisible_finished = time + 9999999999;
+		self.invisible_finished = time + 1999999999;
 
 	}
 	else
@@ -403,7 +403,7 @@ pn = -1;
 		//bot.skin = 0;
 		
 		bot.invisible_time = 1;
-		bot.invisible_finished = time + 9999999999;
+		bot.invisible_finished = time + 1999999999;
 		
 	}
 	

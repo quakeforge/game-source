@@ -542,7 +542,7 @@ void() PutClientInServer =
 		
 		self.items |= IT_INVISIBILITY;
 		self.invisible_time = 1;
-		self.invisible_finished = time + 9999999999;
+		self.invisible_finished = time + 1999999999;
 	}
 // - POX - New DM mode stuff -----------------------------------------------------
 /*	if (deathmatch == 4)
