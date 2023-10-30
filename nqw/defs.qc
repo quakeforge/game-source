@@ -5,7 +5,7 @@
 
 ==============================================================================
 */
-
+#pragma math vector_mult @dot
 // system globals
 entity			self;
 entity			other;

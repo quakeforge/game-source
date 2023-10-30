@@ -1,3 +1,4 @@
+#pragma math vector_mult @dot
 #ifdef QUAKEWORLD
 # include "config.qw"
 #else

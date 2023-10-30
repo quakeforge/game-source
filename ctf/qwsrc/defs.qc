@@ -21,7 +21,7 @@
 
 	$Id$
 */
-
+#pragma math vector_mult @dot
 // SOURCE FOR GLOBALVARS_T C STRUCTURE ========================================
 
 // system globals =============================================

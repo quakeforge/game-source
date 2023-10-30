@@ -1,3 +1,4 @@
+#pragma math vector_mult @dot
 #include "system.qh"
 #include "builtins.qh"
 
