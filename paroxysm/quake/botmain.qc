@@ -2008,7 +2008,8 @@ local float		dist;
 };
 
 
-/* POX - not needed
+// POX - not needed
+#if 0
 // ==============================
 void() bot_lightning =
 // ------------------------------
@@ -2042,7 +2043,7 @@ void() bot_lightning =
 	sound (self, CHAN_WEAPON, "weapons/lhit.wav", 1, ATTN_NORM);
 	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 };
-
+#endif
 
 /*
 ==========================================================================
@@ -2061,7 +2062,8 @@ void() bot_lightning =
 ==========================================================================
 */
 
-/*POX - frames are referenced by absolute numbers for  reuse in different visibleweapon models
+//POX - frames are referenced by absolute numbers for  reuse in different visibleweapon models
+#if 0
 // Frame macros
 
 $cd /raid/quake/id1/models/player_4
@@ -2130,7 +2132,7 @@ $frame axattb1 axattb2 axattb3 axattb4 axattb5 axattb6
 $frame axattc1 axattc2 axattc3 axattc4 axattc5 axattc6
 
 $frame axattd1 axattd2 axattd3 axattd4 axataxattd6
-*/
+#endif
 
 // movement animation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -2499,3 +2501,4 @@ void() bot_attack =
 };
 
 //POX - I split the spawning functions from this main file (see botspawn.qc)
+

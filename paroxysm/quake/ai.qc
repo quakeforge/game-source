@@ -220,8 +220,7 @@ Sets the global variable current_yaw
 Called every 0.1 sec by monsters
 ============
 */
-/*
-
+#if 0
 void() ChangeYaw =
 {
 	local float		ideal, move;
@@ -261,12 +260,10 @@ void() ChangeYaw =
 
 	self.angles_y = current_yaw;
 };
+#endif
 
-*/
-
-/*
 //============================================================================
-
+#if 0
 void() HuntTarget =
 {
 	self.goalentity = self.enemy;
@@ -354,7 +351,7 @@ To avoid spending too much time, only a single client (or fakeclient) is
 checked each frame.  This means multi player games will have slightly
 slower noticing monsters.
 ============
-
+*/
 float() FindTarget =
 {
 	local entity	client;
@@ -424,7 +421,6 @@ float() FindTarget =
 	return TRUE;
 };
 
-*//*
 //=============================================================================
 
 void(float dist) ai_forward =
@@ -438,13 +434,13 @@ void(float dist) ai_back =
 };
 
 
-
+/*
 =============
 ai_pain
 
 stagger back a bit
 =============
-
+*/
 void(float dist) ai_pain =
 {
 	ai_back (dist);
@@ -458,25 +454,25 @@ void(float dist) ai_pain =
 
 };
 
-
+/*
 =============
 ai_painforward
 
 stagger back a bit
 =============
-
+*/
 void(float dist) ai_painforward =
 {
 	walkmove (self.ideal_yaw, dist);
 };
 
-
+/*
 =============
 ai_walk
 
 The monster is walking it's beat
 =============
-
+*/
 void(float dist) ai_walk =
 {
 	local vector		mtemp;
@@ -496,13 +492,13 @@ void(float dist) ai_walk =
 };
 
 
-
+/*
 =============
 ai_stand
 
 The monster is staying in one place for a while, with slight angle turns
 =============
-
+*/
 void() ai_stand =
 {
 	if (FindTarget ())
@@ -518,13 +514,13 @@ void() ai_stand =
 
 };
 
-
+/*
 =============
 ai_turn
 
 don't move, but turn towards ideal_yaw
 =============
-
+*/
 void() ai_turn =
 {
 	if (FindTarget ())
@@ -535,11 +531,11 @@ void() ai_turn =
 
 //=============================================================================
 
-
+/*
 =============
 ChooseTurn
 =============
-
+*/
 void(vector dest3) ChooseTurn =
 {
 	local vector	dir, newdir;
@@ -564,12 +560,12 @@ void(vector dest3) ChooseTurn =
 	dir_z = 0;
 	self.ideal_yaw = vectoyaw(dir); 
 };
-
+/*
 ============
 FacingIdeal
 
 ============
-
+*/
 float() FacingIdeal =
 {
 	local	float	delta;
@@ -608,13 +604,13 @@ float() CheckAnyAttack =
 };
 
 
-
+/*
 =============
 ai_run_melee
 
 Turn and close until within an angle to launch a melee attack
 =============
-
+*/
 void() ai_run_melee =
 {
 	self.ideal_yaw = enemy_yaw;
@@ -628,13 +624,13 @@ void() ai_run_melee =
 };
 
 
-
+/*
 =============
 ai_run_missile
 
 Turn in place until within an angle to launch a missile attack
 =============
-
+*/
 void() ai_run_missile =
 {
 	self.ideal_yaw = enemy_yaw;
@@ -647,13 +643,13 @@ void() ai_run_missile =
 };
 
 
-
+/*
 =============
 ai_run_slide
 
 Strafe sideways, but stay at aproximately the same range
 =============
-
+*/
 void() ai_run_slide =
 {
 	local float	ofs;
@@ -674,6 +670,7 @@ void() ai_run_slide =
 };
 
 
+/*
 =============
 From Scourge of Armagon:
 ai_run_dodge
@@ -682,13 +679,13 @@ Strafe sideways, but continue moving towards the enemy
 
 Called when attack_state is set to AS_DODGING
 =============
+*/
 
 void() ai_run_dodge =
 {
 	local float	ofs;
    local float newyaw;
 
-/*
 // attempt to jump over missiles
    if (self.enemy.weaponframe == 1)
       {
@@ -700,7 +697,7 @@ void() ai_run_dodge =
 	 }
       self.ltime = self.ltime + 1.0;
       }
-*//*
+
    self.nextthink = time + 0.1;
    if (self.lefty)
       ofs = 40;
@@ -728,7 +725,8 @@ void() ai_run_dodge =
    walkmove (newyaw, movedist);
    ChangeYaw ();
 };
-*/
+
+#endif
 
 /*
 =============

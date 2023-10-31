@@ -424,7 +424,7 @@ _player_water_jump =
 void ()
 player_prethink =
 {
-	/* Gasp for air if we weren't swimming..
+	/* Gasp for air if we weren't swimming.. */
 	/* Checking here rather than later, with mdl_mod is a HACK */
 	/* It avoids the gasp when the player hasn't communicated
 	   with the server in a while (it happens..) */

@@ -327,9 +327,9 @@ void() item_megahealth_rot =
 		@self.think = SUB_regen;
 	//}
 };
-/* + POX - see sheilds.qc
+// + POX - see sheilds.qc
 //ARMOR
-/* - POX
+// - POX
 /*
 ===============================================================================
 WEAPONS
